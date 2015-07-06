@@ -1,0 +1,28 @@
+package fi.vm.sade.hakuperusteet
+
+import java.net.URLEncoder
+import java.security.MessageDigest
+import java.util.Base64
+
+import org.scalatra._
+import org.slf4j.LoggerFactory
+
+
+class TestServlet extends ScalatraServlet {
+
+  val logger = LoggerFactory.getLogger(this.getClass)
+
+  get("/") {
+    val hashInput: String = Seq("name", "birth-date", "mail") map (params(_)) mkString ("")
+    val query = Map(
+      "name" -> URLEncoder.encode(params("name"), "UTF-8"),
+      "birth-date" -> URLEncoder.encode(params("birth-date"), "UTF-8"),
+      "mail" -> URLEncoder.encode(params("mail"), "UTF-8"),
+      "hash" -> sha256(hashInput)
+    )
+    halt(status = 303, headers = Map("Location" -> url(params("url"), query, false, false, false)))
+  }
+
+  private def sha256(input: String): String =
+    Base64.getUrlEncoder().encodeToString(MessageDigest.getInstance("SHA-256").digest(input.getBytes("UTF-8")))
+}
