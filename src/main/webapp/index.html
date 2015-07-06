@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hakuperusteet</title>
+</head>
+<body>
+<h1>Hakuperusteet</h1>
+<div id="response"></div>
+<script>
+    var req = new XMLHttpRequest();
+    req.onload = function () {
+        document.getElementById("response").textContent = this.responseText;
+    }
+    req.open("get", "/api/v1/status");
+    req.send();
+</script>
+</body>
+</html>
