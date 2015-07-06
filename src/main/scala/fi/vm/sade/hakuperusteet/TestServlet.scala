@@ -4,11 +4,12 @@ import java.net.URLEncoder
 import java.security.MessageDigest
 import java.util.Base64
 
+import fi.vm.sade.hakuperusteet.Types.Oid
 import org.scalatra._
 import org.slf4j.LoggerFactory
 
 
-class TestServlet(secrets: Map[String, String]) extends ScalatraServlet {
+class TestServlet(secrets: Map[Oid, String]) extends ScalatraServlet {
 
   val logger = LoggerFactory.getLogger(this.getClass)
 
