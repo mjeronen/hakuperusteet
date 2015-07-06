@@ -8,12 +8,13 @@ import org.scalatra._
 import org.slf4j.LoggerFactory
 
 
-class TestServlet extends ScalatraServlet {
+class TestServlet(secrets: Map[String, String]) extends ScalatraServlet {
 
   val logger = LoggerFactory.getLogger(this.getClass)
 
   get("/") {
-    val hashInput: String = Seq("name", "birth-date", "mail") map (params(_)) mkString ("")
+    val secret = secrets get params("oid")
+    val hashInput: String = Seq("name", "birth-date", "mail", "oid") map (params(_)) mkString ("") + secret.get
     val query = Map(
       "name" -> URLEncoder.encode(params("name"), "UTF-8"),
       "birth-date" -> URLEncoder.encode(params("birth-date"), "UTF-8"),
