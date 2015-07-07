@@ -1,4 +1,8 @@
-import java.util.Properties
+import java.math.BigInteger
+import java.security.KeyFactory
+import java.security.interfaces.RSAPrivateKey
+import java.security.spec.RSAPrivateKeySpec
+import java.util.{Random, Properties}
 import javax.servlet.ServletContext
 
 import fi.vm.sade.hakuperusteet.{StatusServlet, TestServlet}
@@ -23,8 +27,10 @@ class ScalatraBootstrap extends LifeCycle {
   }
 
   override def init(context: ServletContext) {
-    val secrets = loadProperties("secrets.properties").asScala.toMap
+    val key = KeyFactory.getInstance("RSA")
+      .generatePrivate(new RSAPrivateKeySpec(new BigInteger(1024, new Random()), new BigInteger("13")))
+      .asInstanceOf[RSAPrivateKey]
     context mount (new StatusServlet, "/api/v1/status")
-    context mount (new TestServlet(secrets), "/api/v1/test")
+    context mount (new TestServlet(key), "/api/v1/test")
   }
 }

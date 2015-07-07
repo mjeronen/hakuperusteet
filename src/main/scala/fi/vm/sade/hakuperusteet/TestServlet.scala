@@ -1,45 +1,66 @@
 package fi.vm.sade.hakuperusteet
 
 import java.net.URLEncoder
-import java.security.MessageDigest
+import java.security.interfaces.RSAPrivateKey
+import java.security.{PrivateKey, Signature}
 import java.util.Base64
 
-import fi.vm.sade.hakuperusteet.Types.Oid
 import org.joda.time.LocalDate
 import org.joda.time.format.ISODateTimeFormat
-import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
+import org.json4s.native.JsonMethods._
 import org.scalatra._
 import org.slf4j.LoggerFactory
 
 import scalaz._
-import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
+import scalaz.syntax.applicative._
 
 
-class TestServlet(secrets: Map[Oid, String]) extends ScalatraServlet {
+class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
 
   val logger = LoggerFactory.getLogger(this.getClass)
 
-  private def sha256(input: String): String =
-    Base64.getUrlEncoder().encodeToString(MessageDigest.getInstance("SHA-256").digest(input.getBytes("UTF-8")))
-
-  case class Parameters(name: String, birthDate: LocalDate, mail: String, oid: Oid) {
-    def hash(secret: String): String =
-      sha256(Seq(name, birthDate.toString, mail, oid, secret) mkString)
+  case class Parameters(firstName: String,
+                        lastName: String,
+                        birthDate: LocalDate,
+                        email: String,
+                        shouldPay: Boolean,
+                        hasPaid: Boolean) {
+    def sign(key: PrivateKey): Array[Byte] = {
+      val signature = Signature.getInstance("SHA256withRSA")
+      signature.initSign(key)
+      signature.update(Seq(firstName, lastName, birthDate.toString, email, shouldPay, hasPaid)
+        mkString ("") getBytes ("UTF-8"))
+      signature.sign()
+    }
   }
 
-  private def validateBirthDate(input: String): ValidationNel[String, LocalDate] =
-    try { ISODateTimeFormat.date().parseLocalDate(input).successNel }
-    catch { case ex: IllegalArgumentException => ex.getMessage.failureNel }
+  private def parseCheckbox(key: String, params: Map[String, String]): ValidationNel[String, Boolean] =
+    if (params.contains(key)) true.successNel
+    else false.successNel
 
-  private def validateOid(input: String): ValidationNel[String, Oid] =
-    if (input.nonEmpty) input.successNel
-    else "Empty oid".failureNel
+  private def parseBirthDate(input: String): ValidationNel[String, LocalDate] =
+    try {
+      ISODateTimeFormat.date().parseLocalDate(input).successNel
+    }
+    catch {
+      case ex: IllegalArgumentException => ex.getMessage.failureNel
+    }
 
   private def parseParameters(params: Map[String, String]): ValidationNel[String, Parameters] =
-    (validateBirthDate(params("birth-date")) |@| validateOid(params("oid"))) { (birthDate, oid) =>
-      Parameters(params("name"), birthDate, params("mail"), oid)
+    (parseBirthDate(params("birth-date"))
+      |@| parseCheckbox("should-pay", params)
+      |@| parseCheckbox("has-paid", params)
+      ) { (birthDate: LocalDate, shouldPay: Boolean, hasPaid: Boolean) =>
+      Parameters(
+        params("first-name"),
+        params("last-name"),
+        birthDate,
+        params("email"),
+        shouldPay,
+        hasPaid
+      )
     }
 
   get("/") {
@@ -50,11 +71,13 @@ class TestServlet(secrets: Map[Oid, String]) extends ScalatraServlet {
       },
       parameters => {
         val query = Map(
-          "name" -> parameters.name,
+          "first-name" -> parameters.firstName,
+          "last-name" -> parameters.lastName,
           "birth-date" -> parameters.birthDate.toString,
-          "mail" -> parameters.mail,
-          "oid" -> parameters.oid,
-          "hash" -> parameters.hash(secrets get parameters.oid get)
+          "email" -> parameters.email,
+          "should-pay" -> parameters.shouldPay.toString,
+          "has-paid" -> parameters.hasPaid.toString,
+          "hash" -> Base64.getEncoder.encodeToString(parameters.sign(key))
         ) mapValues (URLEncoder.encode(_, "UTF-8"))
         halt(status = 303, headers = Map("Location" -> url(params("url"), query, false, false, false)))
       })
