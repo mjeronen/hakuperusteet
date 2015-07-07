@@ -36,6 +36,10 @@ class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
     }
   }
 
+  private def parseNonEmpty(key: String)(input: String): ValidationNel[String, String] =
+    if (input.nonEmpty) input.successNel
+    else ("Empty parameter: " + key).failureNel
+
   private def parseCheckbox(key: String, params: Map[String, String]): ValidationNel[String, Boolean] =
     if (params.contains(key)) true.successNel
     else false.successNel
@@ -49,15 +53,18 @@ class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
     }
 
   private def parseParameters(params: Map[String, String]): ValidationNel[String, Parameters] =
-    (parseBirthDate(params("birth-date"))
+    (parseNonEmpty("first-name")(params("first-name"))
+      |@| parseNonEmpty("last-name")(params("last-name"))
+      |@| parseBirthDate(params("birth-date"))
+      |@| parseNonEmpty("email")(params("email"))
       |@| parseCheckbox("should-pay", params)
       |@| parseCheckbox("has-paid", params)
-      ) { (birthDate: LocalDate, shouldPay: Boolean, hasPaid: Boolean) =>
+      ) { (firstName, lastName, birthDate, email, shouldPay, hasPaid) =>
       Parameters(
-        params("first-name"),
-        params("last-name"),
+        firstName,
+        lastName,
         birthDate,
-        params("email"),
+        email,
         shouldPay,
         hasPaid
       )
