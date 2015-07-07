@@ -30,8 +30,7 @@ class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
     def sign(key: PrivateKey): Array[Byte] = {
       val signature = Signature.getInstance("SHA256withRSA")
       signature.initSign(key)
-      signature.update(Seq(firstName, lastName, birthDate.toString, email, shouldPay, hasPaid)
-        mkString ("") getBytes ("UTF-8"))
+      signature.update(Seq(firstName, lastName, birthDate, email, shouldPay, hasPaid) mkString ("") getBytes ("UTF-8"))
       signature.sign()
     }
   }

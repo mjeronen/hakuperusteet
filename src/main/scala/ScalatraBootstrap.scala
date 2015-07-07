@@ -1,15 +1,13 @@
-import java.math.BigInteger
+import java.nio.file.{Files, Paths}
 import java.security.KeyFactory
 import java.security.interfaces.RSAPrivateKey
-import java.security.spec.RSAPrivateKeySpec
-import java.util.{Random, Properties}
+import java.security.spec.PKCS8EncodedKeySpec
+import java.util.Properties
 import javax.servlet.ServletContext
 
 import fi.vm.sade.hakuperusteet.{StatusServlet, TestServlet}
 import org.scalatra.LifeCycle
 import org.slf4j.LoggerFactory
-
-import scala.collection.JavaConverters._
 
 
 class ScalatraBootstrap extends LifeCycle {
@@ -21,16 +19,24 @@ class ScalatraBootstrap extends LifeCycle {
     val propertiesFile = getClass().getClassLoader().getResource(propertiesFilePath)
     logger.info("Using properties file " + propertiesFile.getPath())
     val propertiesStream = propertiesFile.openStream()
-    prop.load(propertiesStream)
-    propertiesStream.close()
+    try {
+      prop.load(propertiesStream)
+    } finally {
+      propertiesStream.close()
+    }
     prop
   }
 
-  override def init(context: ServletContext) {
-    val key = KeyFactory.getInstance("RSA")
-      .generatePrivate(new RSAPrivateKeySpec(new BigInteger(1024, new Random()), new BigInteger("13")))
+  private def readRSAPrivateKey(filePath: String): RSAPrivateKey = {
+    val keyBytes = Files.readAllBytes(Paths.get(getClass.getClassLoader.getResource(filePath).toURI))
+    KeyFactory.getInstance("RSA")
+      .generatePrivate(new PKCS8EncodedKeySpec(keyBytes))
       .asInstanceOf[RSAPrivateKey]
-    context mount (new StatusServlet, "/api/v1/status")
-    context mount (new TestServlet(key), "/api/v1/test")
+  }
+
+  override def init(context: ServletContext) {
+    val testKey = readRSAPrivateKey("testkey.der")
+    context mount(new StatusServlet, "/api/v1/status")
+    context mount(new TestServlet(testKey), "/api/v1/test")
   }
 }
