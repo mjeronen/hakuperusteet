@@ -8,6 +8,7 @@ object HakuperusteetBuild extends Build {
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.11.7"
   val ScalatraVersion = "2.3.1"
+  val artifactory = "https://artifactory.oph.ware.fi/artifactory/"
 
   lazy val project = Project (
     "hakuperusteet",
@@ -27,7 +28,14 @@ object HakuperusteetBuild extends Build {
         "javax.servlet" % "javax.servlet-api" % "3.1.0",
         "org.json4s" %% "json4s-native" % "3.2.11",
         "org.scalaz" %% "scalaz-core" % "7.1.3"
-      )
+      ),
+      credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+      publishTo := {
+        if (Version.trim.endsWith("SNAPSHOT"))
+          Some("snapshots" at artifactory + "/oph-sade-snapshot-local;build.timestamp=" + new java.util.Date().getTime)
+        else
+          Some("releases" at artifactory + "/oph-sade-release-local")
+      }
     )
   )
 }
