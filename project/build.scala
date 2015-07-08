@@ -1,6 +1,7 @@
 import sbt._
 import Keys._
 import org.scalatra.sbt._
+import sbtassembly.AssemblyKeys._
 
 object HakuperusteetBuild extends Build {
   val Organization = "fi.vm.sade"
@@ -13,7 +14,8 @@ object HakuperusteetBuild extends Build {
   lazy val project = Project (
     "hakuperusteet",
     file("."),
-    settings = ScalatraPlugin.scalatraWithJRebel ++ Seq(
+    settings = ScalatraPlugin.scalatraWithJRebel ++ sbtassembly.AssemblyPlugin.assemblySettings ++
+      addArtifact(Artifact("hakuperusteet", "assembly"), sbtassembly.AssemblyKeys.assembly) ++ Seq(
       organization := Organization,
       name := Name,
       version := Version,
@@ -29,6 +31,7 @@ object HakuperusteetBuild extends Build {
         "org.json4s" %% "json4s-native" % "3.2.11",
         "org.scalaz" %% "scalaz-core" % "7.1.3"
       ),
+      assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
       publishTo := {
         if (Version.trim.endsWith("SNAPSHOT"))
