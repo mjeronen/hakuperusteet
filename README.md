@@ -1,5 +1,14 @@
 # hakuperusteet
 
+## Configuration
+
+As default, the application runs in the port `8080`. This can be changed by
+setting the environment variable `PORT`.
+
+## Standalone JAR
+
+`sbt assembly` builds a standalone jar.
+
 ## Test API
 
 The application serves a simple test form in `/test_form.html`. The form can
