@@ -13,8 +13,8 @@ import org.scalatra._
 import org.slf4j.LoggerFactory
 
 import scalaz._
-import scalaz.syntax.validation._
 import scalaz.syntax.applicative._
+import scalaz.syntax.validation._
 
 
 class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
@@ -83,7 +83,7 @@ class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
           "email" -> parameters.email,
           "should-pay" -> parameters.shouldPay.toString,
           "has-paid" -> parameters.hasPaid.toString,
-          "hash" -> Base64.getEncoder.encodeToString(parameters.sign(key))
+          "signature" -> Base64.getEncoder.encodeToString(parameters.sign(key))
         ) mapValues (URLEncoder.encode(_, "UTF-8"))
         halt(status = 303, headers = Map("Location" -> url(params("url"), query, false, false, false)))
       })
