@@ -29,7 +29,8 @@ object HakuperusteetBuild extends Build {
         "org.eclipse.jetty" % "jetty-plus" % "9.3.0.v20150612" % "container",
         "javax.servlet" % "javax.servlet-api" % "3.1.0",
         "org.json4s" %% "json4s-native" % "3.2.11",
-        "org.scalaz" %% "scalaz-core" % "7.1.3"
+        "org.scalaz" %% "scalaz-core" % "7.1.3",
+        "com.netaporter" %% "scala-uri" % "0.4.7"
       ),
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
