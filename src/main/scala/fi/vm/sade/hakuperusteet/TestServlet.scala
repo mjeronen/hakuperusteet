@@ -69,7 +69,7 @@ class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
       )
     }
 
-  get("/") {
+  post("/") {
     parseParameters(params).bitraverse(
       errors => {
         contentType = "application/json"
