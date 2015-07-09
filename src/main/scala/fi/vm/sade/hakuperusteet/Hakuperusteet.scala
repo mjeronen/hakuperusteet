@@ -11,10 +11,10 @@ object Hakuperusteet {
     val port = if(System.getenv("PORT") != null) System.getenv("PORT").toInt else 8080
     val server = new Server(port)
     val context = new WebAppContext()
-    context setContextPath ("/")
+    context setContextPath ("/hakuperusteet/")
     context.setResourceBase("src/main/webapp")
     context.addEventListener(new ScalatraListener)
-    context.addServlet(classOf[DefaultServlet], "/")
+    context.addServlet(classOf[DefaultServlet], "/hakuperusteet/")
 
     server.setHandler(context)
 
