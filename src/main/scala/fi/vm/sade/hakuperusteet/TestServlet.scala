@@ -1,11 +1,13 @@
 package fi.vm.sade.hakuperusteet
 
+import java.io.ByteArrayOutputStream
 import java.security.interfaces.RSAPrivateKey
-import java.security.{PrivateKey, Signature}
+import java.security.spec.PKCS8EncodedKeySpec
+import java.security.{KeyFactory, Signature}
 import java.util.Base64
 
 import com.netaporter.uri.Uri
-import com.netaporter.uri.config.UriConfig
+import com.typesafe.config.Config
 import org.joda.time.LocalDate
 import org.joda.time.format.ISODateTimeFormat
 import org.json4s.JsonDSL._
@@ -19,9 +21,28 @@ import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
 
 
-class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
+class TestServlet(configuration: Config) extends ScalatraServlet {
+
+  private def readTestKey(): RSAPrivateKey = {
+    val in = this.getClass.getClassLoader.getResourceAsStream(configuration.getString("testkey-resource-path"))
+    try {
+      val out = new ByteArrayOutputStream()
+      val buffer: Array[Byte] = new Array(512)
+      var i = in.read(buffer, 0, 512)
+      while (i > 0) {
+        out.write(buffer, 0, i)
+        i = in.read(buffer, 0, 512)
+      }
+      KeyFactory.getInstance("RSA")
+        .generatePrivate(new PKCS8EncodedKeySpec(out.toByteArray))
+        .asInstanceOf[RSAPrivateKey]
+    } finally {
+      in.close()
+    }
+  }
 
   val logger = LoggerFactory.getLogger(this.getClass)
+  val key = readTestKey()
 
   type ValidationResult[A] = ValidationNel[String, A]
 
@@ -31,7 +52,7 @@ class TestServlet(key: RSAPrivateKey) extends ScalatraServlet {
                         email: String,
                         shouldPay: Boolean,
                         hasPaid: Boolean) {
-    def sign(key: PrivateKey): Array[Byte] = {
+    def sign(key: RSAPrivateKey): Array[Byte] = {
       val signature = Signature.getInstance("SHA256withRSA")
       signature.initSign(key)
       signature.update(Seq(firstName, lastName, birthDate, email, shouldPay, hasPaid) mkString ("") getBytes ("UTF-8"))
