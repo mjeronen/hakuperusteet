@@ -13,9 +13,9 @@ object Hakuperusteet {
     val server = new Server(port)
     val context = new WebAppContext()
     context setContextPath ("/hakuperusteet/")
-    context.setResourceBase("src/main/webapp")
+    context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
     context.addEventListener(new ScalatraListener)
-    context.addServlet(classOf[DefaultServlet], "/hakuperusteet/")
+    context.addServlet(classOf[DefaultServlet], "/")
 
     server.setHandler(context)
 
