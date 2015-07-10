@@ -5,9 +5,12 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.webapp.WebAppContext
 import org.scalatra.servlet.ScalatraListener
+import org.slf4j.LoggerFactory
 
 
 object Hakuperusteet {
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   def main(args: Array[String]) {
     val port = ConfigFactory.load().getInt("port")
     val server = new Server(port)
@@ -21,5 +24,6 @@ object Hakuperusteet {
 
     server.start
     server.join
+    logger.info(s"Hakuperusteet-server started on port $port")
   }
 }

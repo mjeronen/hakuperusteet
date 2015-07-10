@@ -118,7 +118,10 @@ class TestServlet(configuration: Config) extends ScalatraServlet {
         contentType = "application/json"
         halt(status = 400, body = compact(render("errors" -> errors.list)))
       },
-      uri => halt(status = 303, headers = Map("Location" -> uri.toString))
+      uri => {
+        logger.info("Redirecting to " + uri.toString)
+        halt(status = 303, headers = Map("Location" -> uri.toString))
+      }
       )
   }
 }

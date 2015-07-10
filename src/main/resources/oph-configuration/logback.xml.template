@@ -5,7 +5,7 @@
         <append>true</append>
         <encoder>
             <charset>utf-8</charset>
-            <pattern>%d{ISO8601} %-5p {%X{user}} [%t] %-5p %c: %m%n</pattern>
+            <pattern>%d{ISO8601} %-5p {\%X{user}} [%t] %-5p %c: %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>/var/log/hakuperusteet/oph-hakuperusteet-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
