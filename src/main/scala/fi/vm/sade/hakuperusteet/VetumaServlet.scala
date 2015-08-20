@@ -29,4 +29,18 @@ class VetumaServlet(config: Config) extends ScalatraServlet {
     v.toUrl
   }
 
+  post("/return/ok") {
+    val url = config.getString("host.url.base") + "/vetuma_return.html?result=ok"
+    halt(status = 303, headers = Map("Location" -> url.toString))
+  }
+
+  post("/return/cancel") {
+    val url = config.getString("host.url.base") + "vetuma_return.html?result=cancel"
+    halt(status = 303, headers = Map("Location" -> url))
+  }
+
+  post("/return/error") {
+    val url = config.getString("host.url.base") + "vetuma_return.html?result=error"
+    halt(status = 303, headers = Map("Location" -> url))
+  }
 }
