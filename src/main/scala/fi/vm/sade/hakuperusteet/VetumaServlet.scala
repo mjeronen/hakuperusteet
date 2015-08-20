@@ -1,6 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
+import fi.vm.sade.hakuperusteet.vetuma.{Vetuma, VetumaUrl}
 import org.joda.time.DateTime
 import org.scalatra.ScalatraServlet
 

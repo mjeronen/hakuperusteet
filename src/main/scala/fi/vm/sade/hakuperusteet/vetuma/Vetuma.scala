@@ -1,4 +1,4 @@
-package fi.vm.sade.hakuperusteet
+package fi.vm.sade.hakuperusteet.vetuma
 
 import java.net.URLEncoder
 
