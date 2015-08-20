@@ -7,15 +7,14 @@ import org.eclipse.jetty.webapp.WebAppContext
 import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
 
-
-object Hakuperusteet {
+object HakuperusteetServer {
   val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]) {
     val port = ConfigFactory.load().getInt("port")
     val server = new Server(port)
     val context = new WebAppContext()
-    context setContextPath ("/hakuperusteet/")
+    context setContextPath("/hakuperusteet/")
     context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")
