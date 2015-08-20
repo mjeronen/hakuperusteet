@@ -2,6 +2,7 @@ import sbt._
 import Keys._
 import org.scalatra.sbt._
 import sbtassembly.AssemblyKeys._
+import sbtassembly.{PathList, MergeStrategy}
 
 object HakuperusteetBuild extends Build {
   val Organization = "fi.vm.sade"
@@ -36,6 +37,10 @@ object HakuperusteetBuild extends Build {
         "joda-time" % "joda-time" % "2.8.2"
       ),
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
+      assemblyMergeStrategy in assembly := {
+        case PathList("logback.xml") => MergeStrategy.discard
+        case x => (assemblyMergeStrategy in assembly).value(x)
+      },
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
       publishTo := {
         if (Version.trim.endsWith("SNAPSHOT"))
