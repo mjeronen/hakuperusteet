@@ -38,3 +38,9 @@ case class VetumaUrl(host: String, timestamp: DateTime, language: String, return
 
   def toUrl = s"$host?$query&MAC=$mac"
 }
+
+object Vetuma {
+  val random = new java.util.Random
+
+  def generateOrderNumber = random.nextInt(10000000).toString
+}

@@ -124,11 +124,4 @@ class TestServlet(configuration: Config) extends ScalatraServlet {
       }
       )
   }
-
-  get("/openvetuma") {
-    val v = VetumaUrl("https://testitunnistus.suomi.fi/VETUMAPayment/", DateTime.now, "fi", "https://localhost/ShowPayment.asp",
-      "https://localhost/ShowCancel.asp", "https://localhost/ShowError.asp", "Text to be shown",
-      "100,00", "1234561", "123", "Message to buyer", "Message to seller", "Message to form")
-    v.toUrl
-  }
 }
