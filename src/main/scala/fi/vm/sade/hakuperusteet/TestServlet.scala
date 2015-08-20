@@ -8,7 +8,7 @@ import java.util.Base64
 
 import com.netaporter.uri.Uri
 import com.typesafe.config.Config
-import org.joda.time.LocalDate
+import org.joda.time.{DateTime, LocalDate}
 import org.joda.time.format.ISODateTimeFormat
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
@@ -123,5 +123,12 @@ class TestServlet(configuration: Config) extends ScalatraServlet {
         halt(status = 303, headers = Map("Location" -> uri.toString))
       }
       )
+  }
+
+  get("/openvetuma") {
+    val v = VetumaUrl("https://testitunnistus.suomi.fi/VETUMAPayment/", DateTime.now, "fi", "https://localhost/ShowPayment.asp",
+      "https://localhost/ShowCancel.asp", "https://localhost/ShowError.asp", "Text to be shown",
+      "100,00", "1234561", "123", "Message to buyer", "Message to seller", "Message to form")
+    v.toUrl
   }
 }

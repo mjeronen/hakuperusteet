@@ -32,7 +32,8 @@ object HakuperusteetBuild extends Build {
         "org.json4s" %% "json4s-native" % "3.2.11",
         "org.scalaz" %% "scalaz-core" % "7.1.3",
         "com.netaporter" %% "scala-uri" % "0.4.7",
-        "commons-codec" % "commons-codec" % "1.6"
+        "commons-codec" % "commons-codec" % "1.6",
+        "joda-time" % "joda-time" % "2.8.2"
       ),
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
