@@ -1,7 +1,3 @@
-import com.typesafe.sbt.web.Import._
-import com.typesafe.sbt.web.SbtWeb
-import com.github.ddispaltro.reactjs.Import._
-
 import sbt._
 import Keys._
 import org.scalatra.sbt._
@@ -40,11 +36,12 @@ object HakuperusteetBuild extends Build {
         "commons-codec" % "commons-codec" % "1.6",
         "joda-time" % "joda-time" % "2.8.2"
       ),
-      WebKeys.packagePrefix in Assets := "webapp/",
-      WebKeys.packagePrefix in assembly := "webapp/",
-      ReactJsKeys.harmony := true,
-      ReactJsKeys.es6module := true,
-      (managedClasspath in Runtime) += (packageBin in Assets).value,
+
+      compile <<= (compile in Compile) dependsOn npmBuildTask,
+      npmBuildTask := {
+        "npm install" !
+      },
+
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       assemblyMergeStrategy in assembly := {
         case PathList("logback.xml") => MergeStrategy.discard
@@ -58,5 +55,7 @@ object HakuperusteetBuild extends Build {
           Some("releases" at artifactory + "/oph-sade-release-local")
       }
     )
-  ).enablePlugins(SbtWeb)
+  )
+
+  lazy val npmBuildTask = taskKey[Unit]("Execute the npm build command to build the ui")
 }

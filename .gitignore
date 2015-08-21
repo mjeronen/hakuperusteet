@@ -17,3 +17,6 @@ project/plugins/project/
 .worksheet
 
 .idea
+
+#npm build stuff
+node_modules/
