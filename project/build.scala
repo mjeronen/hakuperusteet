@@ -1,3 +1,6 @@
+import com.typesafe.sbt.web.Import._
+import com.typesafe.sbt.web.SbtWeb
+
 import sbt._
 import Keys._
 import org.scalatra.sbt._
@@ -36,6 +39,9 @@ object HakuperusteetBuild extends Build {
         "commons-codec" % "commons-codec" % "1.6",
         "joda-time" % "joda-time" % "2.8.2"
       ),
+      WebKeys.packagePrefix in Assets := "webapp/",
+      WebKeys.packagePrefix in assembly := "webapp/",
+      (managedClasspath in Runtime) += (packageBin in Assets).value,
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       assemblyMergeStrategy in assembly := {
         case PathList("logback.xml") => MergeStrategy.discard
@@ -49,5 +55,5 @@ object HakuperusteetBuild extends Build {
           Some("releases" at artifactory + "/oph-sade-release-local")
       }
     )
-  )
+  ).enablePlugins(SbtWeb)
 }

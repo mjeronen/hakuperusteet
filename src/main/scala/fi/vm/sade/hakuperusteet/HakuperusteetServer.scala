@@ -44,7 +44,7 @@ object HakuperusteetServer {
   private def createSSLConnector(port: Int, server: Server) = {
     val sslContextFactory = new SslContextFactory
     sslContextFactory.setKeyStoreType("jks")
-    sslContextFactory.setKeyStorePath(this.getClass.getClassLoader.getResource("keystore").getPath)
+    sslContextFactory.setKeyStorePath(this.getClass.getClassLoader.getResource("keystore").toExternalForm)
     sslContextFactory.setKeyStorePassword("keystore")
     sslContextFactory.setKeyManagerPassword("keystore")
 
