@@ -9,3 +9,4 @@ export default class HakuperusteetApp extends React.Component {
   }
 
 }
+React.render(React.createElement(HakuperusteetApp, {}), document.getElementById('app'))
