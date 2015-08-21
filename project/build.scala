@@ -37,10 +37,10 @@ object HakuperusteetBuild extends Build {
         "joda-time" % "joda-time" % "2.8.2"
       ),
 
+      compile <<= (compile in Compile) dependsOn npmInstallTask,
       compile <<= (compile in Compile) dependsOn npmBuildTask,
-      npmBuildTask := {
-        "npm install" !
-      },
+      npmInstallTask := { "npm install" !},
+      npmBuildTask := { "npm run build" !},
 
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       assemblyMergeStrategy in assembly := {
@@ -57,5 +57,6 @@ object HakuperusteetBuild extends Build {
     )
   )
 
-  lazy val npmBuildTask = taskKey[Unit]("Execute the npm build command to build the ui")
+  lazy val npmInstallTask = taskKey[Unit]("Execute the npm install command")
+  lazy val npmBuildTask = taskKey[Unit]("Execute the npm build command")
 }

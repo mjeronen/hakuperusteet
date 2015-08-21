@@ -6,7 +6,7 @@ module.exports = {
   },
   output: {
     path: outputDir,
-    filename: "js/[name].js",
+    filename: "webapp/js/[name].js",
     sourceMapFilename: "js/[name].map.json"
   },
   module: {
