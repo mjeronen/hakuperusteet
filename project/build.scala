@@ -1,5 +1,6 @@
 import com.typesafe.sbt.web.Import._
 import com.typesafe.sbt.web.SbtWeb
+import com.github.ddispaltro.reactjs.Import._
 
 import sbt._
 import Keys._
@@ -41,6 +42,8 @@ object HakuperusteetBuild extends Build {
       ),
       WebKeys.packagePrefix in Assets := "webapp/",
       WebKeys.packagePrefix in assembly := "webapp/",
+      ReactJsKeys.harmony := true,
+      ReactJsKeys.es6module := true,
       (managedClasspath in Runtime) += (packageBin in Assets).value,
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       assemblyMergeStrategy in assembly := {
