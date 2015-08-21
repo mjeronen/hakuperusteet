@@ -2,22 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hakuperusteet</title>
+    <title>Opetushallitus - Hakuperusteet</title>
 </head>
 <body>
-<h1>Hakuperusteet</h1>
-<div id="response"></div>
-<script>
-    var req = new XMLHttpRequest();
-    req.onload = function () {
-        var response = JSON.parse(this.responseText);
-        document.getElementById("response").textContent = response.msg;
-    }
-    req.open("get", "api/v1/status");
-    req.send();
-</script>
-  <br/>
-  <br/>
-  <a href="test_form.html">Testiformi</a>
+  <div id="app"></div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.4/es5-shim.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.4/es5-sham.min.js"></script>
+  <script src="Hakuperusteet.js"></script>
 </body>
 </html>
