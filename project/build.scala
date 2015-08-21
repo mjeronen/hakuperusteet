@@ -3,6 +3,7 @@ import Keys._
 import org.scalatra.sbt._
 import sbtassembly.AssemblyKeys._
 import sbtassembly.{PathList, MergeStrategy}
+import com.earldouglas.xwp.XwpPlugin._
 
 object HakuperusteetBuild extends Build {
   val Organization = "fi.vm.sade"
@@ -16,7 +17,8 @@ object HakuperusteetBuild extends Build {
     "hakuperusteet",
     file("."),
     settings = ScalatraPlugin.scalatraWithJRebel ++ sbtassembly.AssemblyPlugin.assemblySettings ++
-      addArtifact(Artifact("hakuperusteet", "assembly"), sbtassembly.AssemblyKeys.assembly) ++ Seq(
+      addArtifact(Artifact("hakuperusteet", "assembly"), sbtassembly.AssemblyKeys.assembly) ++
+      com.earldouglas.xwp.XwpPlugin.jetty() ++ Seq(
       organization := Organization,
       name := Name,
       version := Version,
