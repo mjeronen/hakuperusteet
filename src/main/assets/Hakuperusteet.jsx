@@ -2,23 +2,31 @@ import React from 'react'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
-import Header from './Header.jsx'
-import Footer from './Footer.jsx'
-import BaseEducation from './BaseEducation.jsx'
+import HttpUtil from './HttpUtil.js'
+import FormController from './FormController.js'
+import HakuperusteetPage from './HakuperusteetPage.jsx'
 
-export default class HakuperusteetApp extends React.Component {
+const propertiesUrl = "/hakuperusteet/api/v1/properties/"
+const propertiesP = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
 
-
-  render() {
-    return <div>
-        <Header />
-        <div>Hakuperusteet main page</div>
-
-        <BaseEducation props={this.props} />
-
-        <Footer />
-      </div>
+function initApp() {
+  const controller = new FormController({
+    "propertiesP": propertiesP
+  })
+  const stateProperty = controller.initialize()
+  const getReactComponent = function(state) {
+    return <HakuperusteetPage controller={controller} state={state} />
   }
-
+  return { stateProperty: stateProperty, getReactComponent: getReactComponent }
 }
-React.render(React.createElement(HakuperusteetApp, {}), document.getElementById('app'))
+
+const app = initApp()
+app.stateProperty.onValue((state) => {
+  console.log("Updating UI with state:", state)
+  try {
+    React.render(app.getReactComponent(state), document.getElementById('app'))
+  } catch (e) {
+    console.log('Error from React.render with state', state, e)
+  }
+})
+
