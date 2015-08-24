@@ -13,7 +13,7 @@ export default class HakuperusteetApp extends React.Component {
     return <div>
       <Header />
       <div>Hakuperusteet main page</div>
-      <BaseEducation props={this.props.properties} />
+      <BaseEducation state={state} />
       <Footer />
     </div>
   }

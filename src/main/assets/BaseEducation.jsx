@@ -5,14 +5,11 @@ import _ from 'lodash'
 import Countries from './Countries.jsx'
 
 export default class BaseEducation extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
+    const state = this.props.state
     return <div>
       <p>Please select your base education country.</p>
-      <Countries countries={this.props.countries} />
+      <Countries countries={state.countries} />
     </div>
   }
 }
