@@ -6,11 +6,13 @@ export default class Countries extends React.Component {
     super(props)
   }
   render() {
+    const lang = this.props.lang.toUpperCase()
     const emptyCountries = [{ id: "", name: "Choose.."}]
     const countries =  _.isUndefined(this.props.countries) ? emptyCountries : this.props.countries
     return <select>
         {countries.map(function(country) {
-          return <option key={country.id}>{country.name}</option>
+          const name = country.metadata.filter(function(meta) {return meta.kieli == lang})[0].nimi
+          return <option key={country.koodiArvo}>{name}</option>
         })}
       </select>
   }
