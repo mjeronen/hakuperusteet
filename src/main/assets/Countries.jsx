@@ -9,10 +9,17 @@ export default class Countries extends React.Component {
     const lang = this.props.lang.toUpperCase()
     const emptyCountries = [{ id: "", name: "Choose.."}]
     const countries =  _.isUndefined(this.props.countries) ? emptyCountries : this.props.countries
+
+    var parseValues = function (country) {
+      const name = country.metadata.filter(function (meta) { return meta.kieli == lang})[0].nimi
+      return { id: country.koodiArvo, name: name }
+    }
+    var sortWith = function(n) { return n.name }
+    const result = _.sortBy(countries.map(parseValues), sortWith)
+
     return <select>
-        {countries.map(function(country) {
-          const name = country.metadata.filter(function(meta) {return meta.kieli == lang})[0].nimi
-          return <option key={country.koodiArvo}>{name}</option>
+        {result.map(function(country) {
+          return <option key={country.id}>{country.name}</option>
         })}
       </select>
   }
