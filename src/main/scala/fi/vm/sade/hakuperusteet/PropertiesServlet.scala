@@ -8,7 +8,7 @@ import org.json4s.JsonDSL._
 
 class PropertiesServlet(configuration: Config) extends ScalatraServlet {
   before() {
-    contentType = formats("json")
+    contentType = "application/json"
   }
 
   get("/") {
