@@ -6,13 +6,13 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
 
-class PropertiesServlet(configuration: Config) extends ScalatraServlet {
+class PropertiesServlet(config: Config) extends ScalatraServlet {
   before() {
     contentType = "application/json"
   }
 
   get("/") {
-    val properties = Map("koodistoCountriesUrl" -> ConfigFactory.load().getString("koodisto.countries.url"))
+    val properties = Map("koodistoCountriesUrl" -> config.getString("koodisto.countries.url"))
     compact(render(properties))
   }
 }

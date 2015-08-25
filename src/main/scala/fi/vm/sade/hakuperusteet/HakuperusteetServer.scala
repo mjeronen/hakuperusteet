@@ -1,5 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.servlet.DefaultServlet
@@ -7,29 +9,33 @@ import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.webapp.WebAppContext
 import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
+import Configuration._
 
 object HakuperusteetServer {
   val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]) {
-    val portHttp = ConfigFactory.load().getInt("port.http")
-    val portHttps = ConfigFactory.load().getInt("port.https")
+
+    val portHttp = props.getInt("hakuperusteet.port.http")
+    val portHttps = props.getInt("hakuperusteet.port.https")
 
     val server = new Server()
     server.setHandler(createContext)
-    server.setConnectors(createConnectors(portHttp, portHttps, server))
+    server.setConnectors(createConnectors(8080, 18080, server))
 
     server.start
     server.join
     logger.info(s"Hakuperusteet-server started on ports $portHttp and $portHttps")
   }
-
   private def createConnectors(portHttp: Int, portHttps: Int, server: Server): Array[Connector] = {
+    Array(createHttpConnector(portHttp, server)) ++
+      Option(portHttps).map(p => Array(createSSLConnector(p,server))).getOrElse(Array())
+  }
+
+  private def createHttpConnector(portHttp: Int, server: Server): Connector = {
     val httpConnector = new ServerConnector(server, new HttpConnectionFactory(new HttpConfiguration))
     httpConnector.setPort(portHttp)
-    val httpsConnector = createSSLConnector(portHttps, server)
-    val connectors: Array[Connector] = List(httpConnector, httpsConnector).toArray
-    connectors
+    httpConnector
   }
 
   private def createContext: WebAppContext = {
@@ -41,7 +47,7 @@ object HakuperusteetServer {
     context
   }
 
-  private def createSSLConnector(port: Int, server: Server) = {
+  private def createSSLConnector(port: Int, server: Server): Connector = {
     val sslContextFactory = new SslContextFactory
     sslContextFactory.setKeyStoreType("jks")
     sslContextFactory.setKeyStorePath(this.getClass.getClassLoader.getResource("keystore").toExternalForm)
@@ -56,4 +62,12 @@ object HakuperusteetServer {
     https.setPort(port)
     https
   }
+}
+
+object Configuration {
+  def props = ConfigFactory
+    .parseFile(new File(sys.props.getOrElse("hakuperusteet.properties","")))
+    .withFallback(ConfigFactory.parseResources("reference.conf"))
+    .resolve
+
 }
