@@ -23,7 +23,7 @@ class VetumaServlet(config: Config) extends ScalatraServlet {
       config.getString("vetuma.amount"),
       ref,
       orderNro,
-      config.getString("vetuma.msg.bueyr"),
+      config.getString("vetuma.msg.buyer"),
       config.getString("vetuma.msg.seller"),
       config.getString("vetuma.msg.form")
     )
