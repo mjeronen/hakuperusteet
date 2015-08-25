@@ -17,12 +17,12 @@ export default class Countries extends React.Component {
       return { id: country.koodiArvo, name: name }
     }
     var sortWith = function(n) { return n.name }
-    const result = _.sortBy(countries.map(parseValues), sortWith)
+    var toOptions = function (country) { return <option key={country.id}>{country.name}</option> }
+    const result = _.sortBy(countries.map(parseValues), sortWith).map(toOptions)
+    result.unshift(<option key="">Choose..</option>)
 
     return <select onChange={(e) => controller.componentOnChangeListener(field, e.target.value)}>
-        {result.map(function(country) {
-          return <option key={country.id}>{country.name}</option>
-        })}
+        {result}
       </select>
   }
 }
