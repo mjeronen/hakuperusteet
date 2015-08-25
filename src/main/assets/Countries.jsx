@@ -6,6 +6,8 @@ export default class Countries extends React.Component {
     super(props)
   }
   render() {
+    const field = "country"
+    const controller = this.props.controller
     const lang = this.props.lang.toUpperCase()
     const emptyCountries = [{ id: "", name: "Choose.."}]
     const countries =  _.isUndefined(this.props.countries) ? emptyCountries : this.props.countries
@@ -17,7 +19,7 @@ export default class Countries extends React.Component {
     var sortWith = function(n) { return n.name }
     const result = _.sortBy(countries.map(parseValues), sortWith)
 
-    return <select>
+    return <select onChange={(e) => controller.componentOnChangeListener(field, e.target.value)}>
         {result.map(function(country) {
           return <option key={country.id}>{country.name}</option>
         })}
