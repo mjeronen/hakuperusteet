@@ -33,6 +33,7 @@ object HakuperusteetBuild extends Build {
         "org.http4s" %% "http4s-argonaut"    % http4sVersion,
         "org.http4s" %% "http4s-blaze-client" % http4sVersion,
         "org.scalatra" %% "scalatra" % ScalatraVersion,
+        "org.scalatra" %% "scalatra-auth" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
         "ch.qos.logback" % "logback-classic" % "1.1.2" % "runtime",
         "org.eclipse.jetty" % "jetty-webapp" % "9.3.0.v20150612" % "container;compile",
