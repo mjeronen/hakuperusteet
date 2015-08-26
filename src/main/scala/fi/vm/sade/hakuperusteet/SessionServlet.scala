@@ -1,6 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
+import fi.vm.sade.hakuperusteet.google.GoogleBackendAuthentication
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
@@ -13,7 +14,16 @@ class SessionServlet(config: Config) extends ScalatraServlet {
 
   post("/") {
     val json = parse(request.body)
-    val sessionData = Map("email"-> json \ "email")
-    compact(render(sessionData))
+    val email = (json \ "email").extract[String]
+    val token = (json \ "token").extract[String]
+
+    val googleOk = GoogleBackendAuthentication.authenticate(config, email, token)
+
+    if (googleOk) {
+      val sessionData = Map("email"-> email)
+      compact(render(sessionData))
+    } else {
+      halt(status = 403, body = "Backend authentication failed")
+    }
   }
 }
