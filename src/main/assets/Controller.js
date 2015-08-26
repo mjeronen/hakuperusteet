@@ -2,12 +2,14 @@ import Bacon from 'baconjs'
 
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './Dispatcher'
-import GoogleAuthentication from './GoogleAuthentication'
+import {initAuthentication} from './GoogleAuthentication'
 
 const dispatcher = new Dispatcher()
 const events = {
   initialState: 'initialState',
-  updateField: 'updateField'
+  updateField: 'updateField',
+  signIn: 'signIn',
+  signOut: 'signIn'
 }
 
 export default class Controller {
@@ -17,8 +19,7 @@ export default class Controller {
 
   initialize() {
     const propertiesP = Bacon.fromPromise(HttpUtil.get(this.propertiesUrl))
-    const auth = new GoogleAuthentication(dispatcher)
-    propertiesP.onValue(auth.initialize)
+    propertiesP.onValue(initAuthentication(dispatcher, events))
 
     const countriesFromKoodisto = function(props) { return Bacon.fromPromise(HttpUtil.get(props.koodistoCountriesUrl)) }
     const countriesP = propertiesP.flatMap(countriesFromKoodisto)
@@ -32,7 +33,9 @@ export default class Controller {
 
     const formFieldValuesP = Bacon.update({},
       [dispatcher.stream(events.initialState)], Controller.onInitialState,
-      [dispatcher.stream(events.updateField)], Controller.onUpdateField)
+      [dispatcher.stream(events.updateField)], Controller.onUpdateField,
+      [dispatcher.stream(events.signIn)], Controller.signIn,
+      [dispatcher.stream(events.signOut)], Controller.signOut)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
   }
@@ -44,6 +47,19 @@ export default class Controller {
   static createFieldUpdate(field, value) {
     return { id: field.id, field: field, value: value }
   }
+
+  static signIn(state, data) {
+    console.log("signIn controller")
+    console.log(data)
+    return state
+  }
+
+  static signOut(state, data) {
+    console.log("signOut controller")
+    console.log(data)
+    return state
+  }
+
 
   static onInitialState(state, realInitialState) {
     return realInitialState
