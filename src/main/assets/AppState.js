@@ -1,7 +1,7 @@
 import Bacon from 'baconjs'
 
 import HttpUtil from './util/HttpUtil.js'
-import Dispatcher from './Dispatcher'
+import Dispatcher from './util/Dispatcher'
 import {initAuthentication} from './GoogleAuthentication'
 
 const dispatcher = new Dispatcher()
