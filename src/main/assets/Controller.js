@@ -2,6 +2,7 @@ import Bacon from 'baconjs'
 
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './Dispatcher'
+import GoogleAuthentication from './GoogleAuthentication'
 
 const dispatcher = new Dispatcher()
 const events = {
@@ -16,6 +17,9 @@ export default class Controller {
 
   initialize() {
     const propertiesP = Bacon.fromPromise(HttpUtil.get(this.propertiesUrl))
+    const auth = new GoogleAuthentication(dispatcher)
+    propertiesP.onValue(auth.initialize)
+
     const countriesFromKoodisto = function(props) { return Bacon.fromPromise(HttpUtil.get(props.koodistoCountriesUrl)) }
     const countriesP = propertiesP.flatMap(countriesFromKoodisto)
 

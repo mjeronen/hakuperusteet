@@ -6,9 +6,9 @@ export default class Header extends React.Component {
   }
 
   render() {
-    return <section id="topbar">
+    return <section id="bottombar">
       <hr/>
-      <div id="top-container">
+      <div id="bottom-container">
         <img id="logo" src="img/logo.png"/>
       </div>
     </section>

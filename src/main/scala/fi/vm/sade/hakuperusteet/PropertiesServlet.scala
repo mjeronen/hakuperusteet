@@ -12,7 +12,10 @@ class PropertiesServlet(config: Config) extends ScalatraServlet {
   }
 
   get("/") {
-    val properties = Map("koodistoCountriesUrl" -> config.getString("koodisto.countries.url"))
+    val properties = Map(
+      "koodistoCountriesUrl" -> config.getString("koodisto.countries.url"),
+      "googleAuthenticationClientId" -> config.getString("google.authentication.client.id")
+    )
     compact(render(properties))
   }
 }
