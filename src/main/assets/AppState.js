@@ -41,13 +41,22 @@ export function initAppState(props) {
   }
 
   function onSessionFromServer(state, sessionData) {
-    return {...state, sessionData}
+    if (_.isUndefined(sessionData.email)) {
+      delete state['sessionData']
+      return state
+    } else {
+      return {...state, sessionData}
+    }
   }
 }
 
 function checkSession(sessionUrl) {
   return (user) => {
-    return Bacon.fromPromise(HttpUtil.post(sessionUrl, user))
+    if (_.isUndefined(user.email)) {
+      return Bacon.once({})
+    } else {
+      return Bacon.fromPromise(HttpUtil.post(sessionUrl, user))
+    }
   }
 }
 

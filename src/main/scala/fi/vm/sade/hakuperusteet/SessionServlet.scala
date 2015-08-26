@@ -13,10 +13,7 @@ class SessionServlet(config: Config) extends ScalatraServlet {
 
   post("/") {
     val json = parse(request.body)
-
-    println(json)
-
-    val properties = Map("foo"-> "bar")
-    compact(render(properties))
+    val sessionData = Map("email"-> json \ "email")
+    compact(render(sessionData))
   }
 }

@@ -5,7 +5,7 @@ import _ from 'lodash'
 import Header from './Header.jsx'
 import Footer from './Footer.jsx'
 import GoogleAuthentication from './GoogleAuthentication.jsx'
-import BaseEducation from './BaseEducation.jsx'
+import UserDataForm from './UserDataForm.jsx'
 
 export default class HakuperusteetPage extends React.Component {
   render() {
@@ -15,7 +15,10 @@ export default class HakuperusteetPage extends React.Component {
       <Header />
       <div>Hakuperusteet main page</div>
       <GoogleAuthentication state={state} />
-      <BaseEducation state={state} controller={controller} />
+      { !_.isUndefined(state.sessionData)
+        ? <UserDataForm state={state} controller={controller}/>
+        : null
+      }
       <Footer />
     </div>
   }
