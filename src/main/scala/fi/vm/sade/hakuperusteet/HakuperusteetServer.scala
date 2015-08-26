@@ -1,7 +1,6 @@
 package fi.vm.sade.hakuperusteet
 
 import java.io.File
-
 import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.servlet.DefaultServlet
@@ -11,11 +10,11 @@ import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
 import Configuration._
 
+
 object HakuperusteetServer {
   val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]) {
-
     val portHttp = props.getInt("hakuperusteet.port.http")
     val portHttps = props.getInt("hakuperusteet.port.https")
 

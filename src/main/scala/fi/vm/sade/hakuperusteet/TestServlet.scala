@@ -112,6 +112,10 @@ class TestServlet(configuration: Config) extends ScalatraServlet {
       ))
     }
 
+  get("/") {
+    "Helou"
+  }
+
   post("/") {
     parseSignedUri(params) bitraverse (
       errors => {

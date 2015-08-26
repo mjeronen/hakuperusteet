@@ -11,7 +11,9 @@ object HakuperusteetBuild extends Build {
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.11.7"
   val ScalatraVersion = "2.3.1"
+  val http4sVersion = "0.9.1"
   val artifactory = "https://artifactory.oph.ware.fi/artifactory/"
+
 
   lazy val project = Project (
     "hakuperusteet",
@@ -23,8 +25,13 @@ object HakuperusteetBuild extends Build {
       name := Name,
       version := Version,
       scalaVersion := ScalaVersion,
+      resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
       resolvers += Classpaths.typesafeReleases,
       libraryDependencies ++= Seq(
+        //"org.http4s" %% "http4s-blaze-server" % http4sVersion,
+        "org.http4s" %% "http4s-dsl"         % http4sVersion,
+        "org.http4s" %% "http4s-argonaut"    % http4sVersion,
+        "org.http4s" %% "http4s-blaze-client" % http4sVersion,
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
         "ch.qos.logback" % "logback-classic" % "1.1.2" % "runtime",
@@ -38,6 +45,10 @@ object HakuperusteetBuild extends Build {
         "commons-codec" % "commons-codec" % "1.6",
         "joda-time" % "joda-time" % "2.8.2"
       ),
+      libraryDependencies ++= Seq(
+        "org.scalatest" % "scalatest_2.11" % "2.2.4",
+        "org.typelevel" %% "scalaz-scalatest" % "0.2.2"
+      ).map(_ % "test"),
 
       compile <<= (compile in Compile) dependsOn npmInstallTask,
       compile <<= (compile in Compile) dependsOn npmBuildTask,
