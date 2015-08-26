@@ -6,7 +6,8 @@ import {initAppState, componentOnChangeListener} from './AppState.js'
 import HakuperusteetPage from './HakuperusteetPage.jsx'
 
 const appState = initAppState({
-  propertiesUrl: "/hakuperusteet/api/v1/properties/"
+  propertiesUrl: "/hakuperusteet/api/v1/properties/",
+  sessionUrl: "/hakuperusteet/api/v1/session/"
 })
 
 appState
