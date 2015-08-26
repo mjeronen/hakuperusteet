@@ -21,7 +21,7 @@ object HakuperusteetServer {
 
     val server = new Server()
     server.setHandler(createContext)
-    server.setConnectors(createConnectors(8080, 18080, server))
+    server.setConnectors(createConnectors(portHttp, portHttps, server))
 
     server.start
     server.join
