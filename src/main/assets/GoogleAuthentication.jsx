@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import {googleAuthenticationRenderFailure} from './GoogleAuthentication'
+import {googleAuthenticationRenderFailure} from './util/GoogleAuthentication'
 
 export default class GoogleAuthentication extends React.Component {
   componentDidMount() {
