@@ -14,7 +14,7 @@ export default class HakuperusteetPage extends React.Component {
     return <div>
       <Header />
       <div>Hakuperusteet main page</div>
-      <GoogleAuthentication state={state} controller={controller} />
+      <GoogleAuthentication state={state} />
       <BaseEducation state={state} controller={controller} />
       <Footer />
     </div>
