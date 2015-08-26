@@ -1,6 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 
+import {googleAuthenticationRenderFailure} from './GoogleAuthentication'
+
 export default class GoogleAuthentication extends React.Component {
   componentDidMount() {
     gapi.signin2.render('googleAuthentication', {
@@ -8,8 +10,7 @@ export default class GoogleAuthentication extends React.Component {
       'height': 50,
       'longtitle': true,
       'theme': 'dark',
-      'onsuccess': GoogleAuthentication.onSuccess,
-      'onfailure': GoogleAuthentication.onFailure
+      'onfailure': googleAuthenticationRenderFailure
     })
   }
 

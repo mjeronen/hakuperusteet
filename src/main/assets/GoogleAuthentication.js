@@ -15,14 +15,8 @@ export function initAuthentication(dispatcher, events) {
   }
 }
 
-export default class GoogleAuthentication {
-
-  static onSuccess(x) {
-    console.log(x)
-  }
-
-  static onFailure() {
-    console.log("failure")
-  }
+export function googleAuthenticationRenderFailure(x) {
+  console.log("Google auth render error")
+  console.log(x)
 }
 
