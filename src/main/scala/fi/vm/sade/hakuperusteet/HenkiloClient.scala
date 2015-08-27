@@ -83,12 +83,8 @@ class CasAbleClient(casClient: CasClient, casParams: CasParams, client: Client =
     case (req:Request, session: JSessionId) => req.withHeaders(headers.Cookie(Cookie("JSESSIONID", session)))
   }
 
-  private def sessionExpired(resp: Response): Boolean = {
-    val expired =
+  private def sessionExpired(resp: Response): Boolean =
     resp.status.code == org.http4s.Status.Found.code && resp.headers.get(Location).exists(_.value.contains("/cas/login"))
-    System.err.println("DID SESSION EXPIRE? " + expired)
-    expired
-  }
 
   override def shutdown(): Task[Unit] = client.shutdown()
 
