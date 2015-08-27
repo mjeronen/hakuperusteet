@@ -85,7 +85,6 @@ function handleUserDataSubmit(state, userDataUrl) {
     country: state.country
   }
   Bacon.fromPromise(HttpUtil.post(userDataUrl, userData)).onValue((result) => {
-    console.log(result)
     dispatcher.push(events.updateField, { field: 'henkiloOid', value: result.henkiloOid })
   })
 }
