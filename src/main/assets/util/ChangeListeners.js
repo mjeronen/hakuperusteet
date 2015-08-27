@@ -1,9 +1,18 @@
 
 export function initChangeListeners(dispatcher, events) {
-  function componentOnChangeListener(field, newValue) {
-    dispatcher.push(events.updateField, { field: field, value: newValue })
+
+  function valueChanges(fieldName) {
+    return (e) => {
+      dispatcher.push(events.updateField, { field: fieldName, value: e.target.value })
+    }
   }
 
-  return { componentOnChangeListener: componentOnChangeListener }
+  function checkedChanges(fieldName) {
+    return (e) => {
+      dispatcher.push(events.updateField, { field: fieldName, value: e.target.checked })
+    }
+  }
+
+  return { valueChanges: valueChanges, checkedChanges: checkedChanges }
 }
 

@@ -21,7 +21,7 @@ export default class Countries extends React.Component {
     const result = _.sortBy(countries.map(parseValues), sortWith).map(toOptions)
     result.unshift(<option key="">Choose..</option>)
 
-    return <select onChange={(e) => controller.componentOnChangeListener(field, e.target.value)}>
+    return <select onChange={controller.valueChanges(field)}>
         {result}
       </select>
   }

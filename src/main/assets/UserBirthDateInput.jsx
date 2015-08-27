@@ -7,15 +7,15 @@ export default class UserBirthDateInput extends React.Component {
     const state = this.props.state
     return <div>
         <label htmlFor="birthDate">Birth Date</label>
-        <input type="text" id="birthDate" name="birthDate" onChange={(e) => controller.componentOnChangeListener("birthDate", e.target.value)}/>
+        <input type="text" id="birthDate" name="birthDate" onChange={controller.valueChanges("birthDate")}/>
         <br />
-        <input type="checkbox" name="finnishSSN" id="finnishSSN" onChange={(e) => controller.componentOnChangeListener("hasFinnishSSN", e.target.checked)} />
+        <input type="checkbox" name="finnishSSN" id="finnishSSN" onChange={ontroller.checkedChanges("hasFinnishSSN")} />
         <label htmlFor="hasFinnishSSH">I have Finnish Social Security Number</label>
         <br />
         { (!_.isUndefined(state.hasFinnishSSN) && state.hasFinnishSSN === true)
           ? <div>
             <label htmlFor="finnishSSN">SSN</label>
-            <input type="text" id="finnishSSN" name="finnishSSN" onChange={(e) => controller.componentOnChangeListener("finnishSSN", e.target.value)}/>
+            <input type="text" id="finnishSSN" name="finnishSSN" onChange={controller.valueChanges("finnishSSN")}/>
           </div>
           : null
         }
