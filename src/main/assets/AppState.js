@@ -7,7 +7,8 @@ import {initChangeListeners} from './util/ChangeListeners'
 
 const dispatcher = new Dispatcher()
 const events = {
-  updateField: 'updateField'
+  updateField: 'updateField',
+  submitForm: 'submitForm'
 }
 
 export function changeListeners() {
@@ -30,7 +31,8 @@ export function initAppState(props) {
     [propertiesS, countriesS], onStateInit,
     [userS], onLoginLogout,
     [sessionS], onSessionFromServer,
-    [dispatcher.stream(events.updateField)], onUpdateField
+    [dispatcher.stream(events.updateField)], onUpdateField,
+    [dispatcher.stream(events.submitForm)], onSubmitForm
   )
 
   function onStateInit(state, properties, countries) {
@@ -52,6 +54,11 @@ export function initAppState(props) {
     } else {
       return {...state, sessionData}
     }
+  }
+
+  function onSubmitForm(state, form) {
+    console.log("submit", form)
+    return state
   }
 }
 

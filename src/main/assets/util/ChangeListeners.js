@@ -9,6 +9,11 @@ export function initChangeListeners(dispatcher, events) {
     dispatcher.push(events.updateField, { field: e.target.id, value: e.target.checked })
   }
 
-  return { valueChanges: valueChanges, checkedChanges: checkedChanges }
+  function formSubmits(e) {
+    e.preventDefault()
+    dispatcher.push(events.submitForm, e.target.id)
+  }
+
+  return { valueChanges: valueChanges, checkedChanges: checkedChanges, formSubmits: formSubmits }
 }
 
