@@ -44,7 +44,11 @@ object HakuperusteetBuild extends Build {
         "org.scalaz" %% "scalaz-core" % "7.1.3",
         "com.netaporter" %% "scala-uri" % "0.4.7",
         "commons-codec" % "commons-codec" % "1.6",
-        "joda-time" % "joda-time" % "2.8.2"
+        "joda-time" % "joda-time" % "2.8.2",
+        "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
+        "com.typesafe.slick" %% "slick" % "3.1.0-M2",
+        "com.typesafe.slick" %% "slick-codegen" % "3.1.0-M2",
+        "org.flywaydb" % "flyway-core" % "3.2.1"
       ),
       libraryDependencies ++= Seq(
         "org.scalatest" % "scalatest_2.11" % "2.2.4",
