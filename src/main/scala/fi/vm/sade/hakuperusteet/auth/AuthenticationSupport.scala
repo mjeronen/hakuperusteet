@@ -37,10 +37,11 @@ trait AuthenticationSupport extends ScentrySupport[User] with BasicAuthSupport[U
       scentry.strategies("Google").unauthenticated()
     }
   }
-
   override protected def registerAuthStrategies = {
     scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration))
   }
+
+  def failUnlessAuthenticated = if (!isAuthenticated) halt(401)
 }
 
 class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config) extends ScentryStrategy[User] {

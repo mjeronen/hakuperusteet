@@ -17,6 +17,7 @@ class SessionServlet(config: Config) extends ScalatraServlet with Authentication
 
   post("/") {
     authenticate
+    failUnlessAuthenticated
 
     val json = parse(request.body)
     val email = (json \ "email").extract[String]
