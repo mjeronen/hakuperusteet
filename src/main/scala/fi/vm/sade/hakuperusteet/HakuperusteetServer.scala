@@ -1,7 +1,5 @@
 package fi.vm.sade.hakuperusteet
 
-import java.io.File
-import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.util.ssl.SslContextFactory
@@ -61,12 +59,4 @@ object HakuperusteetServer {
     https.setPort(port)
     https
   }
-}
-
-object Configuration {
-  def props = ConfigFactory
-    .parseFile(new File(sys.props.getOrElse("hakuperusteet.properties","")))
-    .withFallback(ConfigFactory.parseResources("reference.conf"))
-    .resolve
-
 }
