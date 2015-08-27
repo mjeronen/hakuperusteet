@@ -27,3 +27,14 @@ openssl as follows.
 3. Extract the public key from the keypair in PEM and DER formats:  
    `cat key.pem | openssl rsa -pubout -inform PEM -outform PEM > key.pub.pem`  
    `cat key.pem | openssl rsa -pubout -inform PEM -outform DER > key.pub.der`
+
+## Local Postgres setup
+
+MacOS users install docker with command `rew cask install dockertoolbox`. 
+
+1. Create new docker-machine `docker-machine create —-driver virtualbox dockerV`
+2. eval "$(docker-machine env dockerVM)"`
+3. Check DOCKER_HOST variable
+4. edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
+5. `docker run -p 5432:5432 postgres`
+6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
