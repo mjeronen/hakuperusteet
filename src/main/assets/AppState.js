@@ -16,7 +16,7 @@ export function changeListeners() {
 }
 
 export function initAppState(props) {
-  const {propertiesUrl, sessionUrl, userDataUrl} = props
+  const {propertiesUrl, sessionUrl} = props
   const initialState = {}
 
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
@@ -58,7 +58,7 @@ export function initAppState(props) {
 
   function onSubmitForm(state, form) {
     if (form === "userDataForm") {
-      handleUserDataSubmit(state, userDataUrl)
+      handleUserDataSubmit(state, state.properties.userDataUrl)
     }
     return state
   }

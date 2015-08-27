@@ -13,6 +13,8 @@ class PropertiesServlet(config: Config) extends ScalatraServlet {
 
   get("/") {
     val properties = Map(
+      "userDataUrl" -> "/hakuperusteet/api/v1/session/userData",
+      "vetumaStartUrl" -> "/hakuperusteet/api/v1/vetuma/openvetuma",
       "koodistoCountriesUrl" -> config.getString("koodisto.countries.url"),
       "googleAuthenticationClientId" -> config.getString("google.authentication.client.id")
     )
