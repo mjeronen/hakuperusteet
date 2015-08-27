@@ -3,10 +3,15 @@ import Bacon from 'baconjs'
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
 import {initAuthentication} from './util/GoogleAuthentication'
+import {initChangeListeners} from './ChangeListeners'
 
 const dispatcher = new Dispatcher()
 const events = {
   updateField: 'updateField'
+}
+
+export function changeListeners() {
+  return initChangeListeners(dispatcher, events)
 }
 
 export function initAppState(props) {

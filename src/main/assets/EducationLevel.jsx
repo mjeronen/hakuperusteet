@@ -5,7 +5,7 @@ export default class EducationLevel extends React.Component {
   render() {
     const field = "educationLevel"
     const controller = this.props.controller
-    return <select onChange={(e) => controller(field, e.target.value)}>
+    return <select onChange={(e) => controller.componentOnChangeListener(field, e.target.value)}>
         <option name="">Choose...</option>
         <option name="bachelor">Bachelor's Degree</option>
         <option name="master">Master's Degree</option>

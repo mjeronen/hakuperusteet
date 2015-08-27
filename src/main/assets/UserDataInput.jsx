@@ -7,7 +7,7 @@ export default class UserDataInput extends React.Component {
     const name = this.props.name
     return <div>
         <label htmlFor={name}>{title}</label>
-        <input type="text" id={name} name={name} onChange={(e) => controller(name, e.target.value)}/>
+        <input type="text" id={name} name={name} onChange={(e) => controller.componentOnChangeListener(name, e.target.value)}/>
       </div>
   }
 }

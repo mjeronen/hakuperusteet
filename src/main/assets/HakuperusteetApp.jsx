@@ -2,7 +2,7 @@ import React from 'react'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
-import {initAppState, componentOnChangeListener} from './AppState.js'
+import {initAppState, changeListeners} from './AppState.js'
 import HakuperusteetPage from './HakuperusteetPage.jsx'
 
 const appState = initAppState({
@@ -14,7 +14,7 @@ appState
   .filter(state => !_.isEmpty(state))
   .onValue((state) => {
     const getReactComponent = function(state) {
-      return <HakuperusteetPage controller={componentOnChangeListener} state={state} />
+      return <HakuperusteetPage controller={changeListeners()} state={state} />
     }
     console.log("Updating UI with state:", state)
     try {
