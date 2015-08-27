@@ -23,14 +23,12 @@ export function initAppState(props) {
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const userS = propertiesS.flatMap(initAuthentication)
   const countriesS = propertiesS
-      .map('.koodistoCountriesUrl')
-      .map(HttpUtil.get)
-      .flatMapLatest(Bacon.fromPromise)
+    .map('.koodistoCountriesUrl')
+    .map(HttpUtil.get)
+    .flatMapLatest(Bacon.fromPromise)
   const sessionS = userS.flatMap(checkSession(sessionUrl))
 
-  const updateFieldS = dispatcher
-      .stream(events.updateField)
-      .merge(serverUpdatesBus)
+  const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
 
   const stateP = Bacon.update(initialState,
     [propertiesS, countriesS], onStateInit,
@@ -38,11 +36,12 @@ export function initAppState(props) {
     [sessionS], onSessionFromServer,
     [updateFieldS], onUpdateField)
 
-  const formSubmittedS = stateP
-      .sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
-      .filter(({form}) => form === 'userDataForm')
-      .flatMapLatest(({state}) => submitUserDataToServer(state))
-  serverUpdatesBus.plug(formSubmittedS)
+  const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
+
+  const userDataFormSubmittedP = formSubmittedS
+    .filter(({form}) => form === 'userDataForm')
+    .flatMapLatest(({state}) => submitUserDataToServer(state))
+  serverUpdatesBus.plug(userDataFormSubmittedP)
 
   return stateP
 
