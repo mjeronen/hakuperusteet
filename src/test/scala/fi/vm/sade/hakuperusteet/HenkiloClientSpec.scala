@@ -10,35 +10,38 @@ import org.http4s.client.Client
 import org.http4s.dsl._
 
 import scalaz.concurrent.Task
-import scalaz.stream._
-
+import org.json4s._
+import org.json4s.native.JsonMethods._
+import org.json4s.native.Serialization.{read, write}
 
 class HenkiloClientSpec extends FlatSpec with Matchers {
   val virkailijaUri: Uri = Uri(path = "https://localhost")
 
   behavior of "HenkiloClient"
 
-  it should "inject a CAS session into a http request as a JSESSIONID cookie" in {
-    val casParams = CasParams("/sijoittelu-service", "foo", "bar")
+  it should "send and receive json with CAS headers in place" in {
+    val casParams = CasParams("/authentication-service", "foo", "bar")
     val casMock = new CasMock(virkailijaUrl = virkailijaUri, params = casParams)
     val mock = new Client {
       override def shutdown(): Task[Unit] = Task.now[Unit] {}
       override def prepare(req: Request): Task[Response] = req match {
-        case req@ GET -> Root / "sijoittelu-service" / "resources" / "tila" / "hakukohde" / "1.2.246.562.20.31751481081" =>
+        case req@ POST -> Root / "authentication-service" / "resources" / "s2s" / "hakuperusteet" =>
           casMock.addStep("valid session")
-          Ok("""{"personOid":"1.2.3.4"}""")
+          Ok("""{"personOid":"1.2.3.4","email":"","firstName":"","lastName":"","birthDate":"","gender":"","nationality":"FI","idpentityid":""}""")
         case _ =>
           casMock.addStep("invalid request")
           NotFound()
       }
     }
+
     val client = new CasAbleClient(new CasClient(virkailijaUri, casMock),
-      CasParams("/sijoittelu-service", "foo", "bar"), mock)
+      CasParams("/authentication-service", "foo", "bar"), mock)
     val henkiloClient = new HenkiloClient(virkailijaUri, client)
 
-    val henkilo = henkiloClient .haeHenkilo(LöyhästiTunnistettuHenkilö(email="",henkilötunnus="1.2.246.562.20.31751481081")).run
+    val henkilo:User = henkiloClient .haeHenkilo(List(User.empty(""))).run
 
-    henkilo.personOid shouldEqual "1.2.3.4"
+    henkilo.personOid.get shouldEqual "1.2.3.4"
+    henkilo.personId shouldEqual None
 
     casMock.steps should be (List(
       "created TGT-123",

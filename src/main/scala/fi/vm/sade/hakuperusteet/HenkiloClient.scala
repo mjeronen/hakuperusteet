@@ -11,7 +11,7 @@ import scodec.bits.ByteVector
 import org.http4s._
 import org.http4s.client.Client
 import org.http4s.headers.Location
-
+import org.json4s.native.Serialization.write
 import scala.util.matching.Regex
 import scalaz.concurrent.{Future, Task}
 import scalaz.stream._
@@ -20,13 +20,12 @@ import org.http4s._
 import org.http4s.client.Client
 import scodec.bits.ByteVector
 import Uri._
-import org.json4s.native.Serialization.read
+import org.json4s._
+import org.json4s.native.JsonMethods._
+import org.json4s.native.Serialization.{read, write}
 import scalaz.\/._
 import scalaz.concurrent.{Future, Task}
 import scalaz.stream.{Process, async, channel, Channel}
-
-case class LöyhästiTunnistettuHenkilö(email: String, henkilötunnus: String)
-case class Henkilo(personOid: String)
 
 class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) {
   def this(henkiloServerUrl: String, client: Client) = this(new Task(
@@ -35,7 +34,7 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
         leftMap((fail: ParseFailure) => new IllegalArgumentException(fail.sanitized))
     )).run, client)
 
-  def haeHenkilo(henkilo: LöyhästiTunnistettuHenkilö): Task[Henkilo] = client.prepAs[Henkilo](req(henkilo.henkilötunnus))(json4sOf[Henkilo]).
+  def haeHenkilo(users: List[User]): Task[User] = client.prepAs[User](req(users))(json4sOf[User]).
     handle {
     case e: ParseException =>
       println(s"parse error details: ${e.failure.details}")
@@ -45,20 +44,20 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
       throw e
   }
 
-  private def sijoitteluPath(hakukohde: String) = s"/sijoittelu-service/resources/tila/hakukohde/$hakukohde"
+  private def reqHeaders: Headers = Headers(ActingSystem("hakuperusteet.hakuperusteet.backend"))
 
-  private def reqHeaders: Headers = Headers(ActingSystem("valintarekisteri.valintarekisteri.backend"))
-
-  private def req(hakukohde: String) = Request(
-    method = Method.GET,
-    uri = resolve(henkiloServerUrl, Uri(path = sijoitteluPath(hakukohde))),
+  private def req(users: List[User]) = Request(
+    method = Method.POST,
+    uri = resolve(henkiloServerUrl, Uri(path = "/authentication-service/resources/s2s/hakuperusteet")),
     headers = reqHeaders
-  )
+  ).withBody(users)(json4sEncoderOf)
 
   def parseJson4s[A] (json:String)(implicit formats: Formats, mf: Manifest[A]) = scala.util.Try(read[A](json)).map(right).recover{
     case t => left(ParseFailure("json decoding failed", t.getMessage))
-
   }.get
+
+  def json4sEncoderOf[A <: AnyRef](implicit formats: Formats, mf: Manifest[A]): EntityEncoder[A] = EntityEncoder.stringEncoder(Charset.`UTF-8`).contramap[A](item => write[A](item))
+  .withContentType(`Content-Type`(MediaType.`application/json`))
 
   def json4sOf[A](implicit formats: Formats, mf: Manifest[A]): EntityDecoder[A] = EntityDecoder.decodeBy[A](MediaType.`application/json`){(msg) =>
     DecodeResult(EntityDecoder.decodeString(msg)(Charset.`UTF-8`).map(parseJson4s[A]))
