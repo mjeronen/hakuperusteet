@@ -23,6 +23,9 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Scalatra
     val email = (json \ "email").extract[String]
     val token = (json \ "token").extract[String]
 
+    val usr = db.findUser(email)
+    println(usr)
+
     val sessionData = Map("email"-> email)
     compact(render(sessionData))
   }

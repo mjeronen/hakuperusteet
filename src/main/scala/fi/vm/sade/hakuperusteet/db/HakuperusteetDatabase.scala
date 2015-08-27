@@ -3,12 +3,24 @@ package fi.vm.sade.hakuperusteet.db
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
+import fi.vm.sade.hakuperusteet.db.generated.Tables
+import fi.vm.sade.hakuperusteet.db.generated.Tables.UserRow
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
 import slick.util.AsyncExecutor
 import org.flywaydb.core.Flyway
 
-case class HakuperusteetDatabase(db: DB)
+import scala.concurrent.duration.Duration
+import scala.concurrent.Await
+
+case class HakuperusteetDatabase(db: DB) {
+  def findUser(email: String): Option[UserRow] = {
+    val q = Tables.User.filter(_.email === email)
+    val action = q.result
+    val f = db.run(action.headOption)
+    Await.result(f, Duration.Inf)
+  }
+}
 
 object HakuperusteetDatabase extends LazyLogging {
   type DB = PostgresDriver.backend.DatabaseDef
