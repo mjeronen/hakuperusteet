@@ -9,7 +9,7 @@ export default class UserBirthDateInput extends React.Component {
         <label htmlFor="birthDate">Birth Date</label>
         <input type="text" id="birthDate" name="birthDate" onChange={controller.valueChanges("birthDate")}/>
         <br />
-        <input type="checkbox" name="finnishSSN" id="finnishSSN" onChange={ontroller.checkedChanges("hasFinnishSSN")} />
+        <input type="checkbox" name="finnishSSN" id="finnishSSN" onChange={controller.checkedChanges("hasFinnishSSN")} />
         <label htmlFor="hasFinnishSSH">I have Finnish Social Security Number</label>
         <br />
         { (!_.isUndefined(state.hasFinnishSSN) && state.hasFinnishSSN === true)
