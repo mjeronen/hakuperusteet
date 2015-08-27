@@ -33,8 +33,9 @@ openssl as follows.
 MacOS users install docker with command `rew cask install dockertoolbox`. 
 
 1. Create new docker-machine `docker-machine create —-driver virtualbox dockerV`
-2. eval "$(docker-machine env dockerVM)"`
+2. Eval "$(docker-machine env dockerVM)"`
 3. Check DOCKER_HOST variable
-4. edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
+4. Edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
 5. `docker run -p 5432:5432 postgres`
 6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
+7. Create Slick-db-classes `./sbt "run-main fi.vm.sade.hakuperusteet.db.CodeGenerator"` 

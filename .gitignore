@@ -20,3 +20,6 @@ project/plugins/project/
 
 #npm build stuff
 node_modules/
+
+#slick generated classes
+src/main/scala/fi/vm/sade/hakuperusteet/db/generated/
