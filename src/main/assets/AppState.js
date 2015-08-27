@@ -3,7 +3,7 @@ import Bacon from 'baconjs'
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
 import {initAuthentication} from './util/GoogleAuthentication'
-import {initChangeListeners} from './ChangeListeners'
+import {initChangeListeners} from './util/ChangeListeners'
 
 const dispatcher = new Dispatcher()
 const events = {
