@@ -19,6 +19,7 @@ export function initAppState(props) {
   const {propertiesUrl, sessionUrl} = props
   const initialState = {}
 
+  const serverUpdatesBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const userS = propertiesS.flatMap(initAuthentication)
   const countriesS = propertiesS
@@ -27,13 +28,23 @@ export function initAppState(props) {
       .flatMapLatest(Bacon.fromPromise)
   const sessionS = userS.flatMap(checkSession(sessionUrl))
 
-  return Bacon.update(initialState,
+  const updateFieldS = dispatcher
+      .stream(events.updateField)
+      .merge(serverUpdatesBus)
+
+  const stateP = Bacon.update(initialState,
     [propertiesS, countriesS], onStateInit,
     [userS], onLoginLogout,
     [sessionS], onSessionFromServer,
-    [dispatcher.stream(events.updateField)], onUpdateField,
-    [dispatcher.stream(events.submitForm)], onSubmitForm
-  )
+    [updateFieldS], onUpdateField)
+
+  const formSubmittedS = stateP
+      .sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
+      .filter(({form}) => form === 'userDataForm')
+      .flatMapLatest(({state}) => submitUserDataToServer(state))
+  serverUpdatesBus.plug(formSubmittedS)
+
+  return stateP
 
   function onStateInit(state, properties, countries) {
     return {...state, properties, countries}
@@ -55,20 +66,13 @@ export function initAppState(props) {
       return {...state, sessionData}
     }
   }
-
-  function onSubmitForm(state, form) {
-    if (form === "userDataForm") {
-      handleUserDataSubmit(state, state.properties.userDataUrl)
-    }
-    return state
-  }
 }
 
 function checkSession(sessionUrl) {
   return (user) => (_.isUndefined(user.email)) ? Bacon.once({}) : Bacon.fromPromise(HttpUtil.post(sessionUrl, user))
 }
 
-function handleUserDataSubmit(state, userDataUrl) {
+function submitUserDataToServer(state) {
   const userData = {
     firstName: state.firstName,
     lastName: state.lastName,
@@ -78,7 +82,5 @@ function handleUserDataSubmit(state, userDataUrl) {
     educationLevel: state.educationLevel,
     country: state.country
   }
-  Bacon.fromPromise(HttpUtil.post(userDataUrl, userData)).onValue((result) => {
-    dispatcher.push(events.updateField, { field: 'henkiloOid', value: result.henkiloOid })
-  })
+  return Bacon.fromPromise(HttpUtil.post(state.properties.userDataUrl, userData))
 }

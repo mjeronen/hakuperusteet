@@ -33,7 +33,9 @@ class SessionServlet(config: Config) extends ScalatraServlet with Authentication
 
     println(json)
 
-    val response = Map("henkiloOid" -> "1.1.1.1.")
+    val response = Map(
+      "field" -> "henkiloOid",
+      "value" -> "1.1.1.1")
 
     //todo: store data to local db
     //todo: create henkilo to henkilopalvelu
