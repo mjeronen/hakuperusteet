@@ -15,7 +15,7 @@ class SessionServlet(config: Config) extends ScalatraServlet with Authentication
     contentType = "application/json"
   }
 
-  post("/") {
+  post("/authenticate") {
     authenticate
     failUnlessAuthenticated
 
@@ -25,5 +25,18 @@ class SessionServlet(config: Config) extends ScalatraServlet with Authentication
 
     val sessionData = Map("email"-> email)
     compact(render(sessionData))
+  }
+
+  post("/userData") {
+    //failUnlessAuthenticated
+    val json = parse(request.body)
+
+    println(json)
+
+    val response = Map("henkiloOid" -> "1.1.1.1.")
+
+    //todo: store data to local db
+    //todo: create henkilo to henkilopalvelu
+    compact(render(response))
   }
 }

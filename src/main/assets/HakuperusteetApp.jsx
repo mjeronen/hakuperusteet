@@ -6,8 +6,9 @@ import {initAppState, changeListeners} from './AppState.js'
 import HakuperusteetPage from './HakuperusteetPage.jsx'
 
 const appState = initAppState({
-  propertiesUrl: "/hakuperusteet/api/v1/properties/",
-  sessionUrl: "/hakuperusteet/api/v1/session/"
+  propertiesUrl: "/hakuperusteet/api/v1/properties",
+  sessionUrl: "/hakuperusteet/api/v1/session/authenticate",
+  userDataUrl: "/hakuperusteet/api/v1/session/userData"
 })
 
 appState

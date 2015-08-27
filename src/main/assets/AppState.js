@@ -16,7 +16,7 @@ export function changeListeners() {
 }
 
 export function initAppState(props) {
-  const {propertiesUrl, sessionUrl} = props
+  const {propertiesUrl, sessionUrl, userDataUrl} = props
   const initialState = {}
 
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
@@ -57,7 +57,9 @@ export function initAppState(props) {
   }
 
   function onSubmitForm(state, form) {
-    console.log("submit", form)
+    if (form === "userDataForm") {
+      handleUserDataSubmit(state, userDataUrl)
+    }
     return state
   }
 }
@@ -70,4 +72,20 @@ function checkSession(sessionUrl) {
       return Bacon.fromPromise(HttpUtil.post(sessionUrl, user))
     }
   }
+}
+
+function handleUserDataSubmit(state, userDataUrl) {
+  const userData = {
+    firstName: state.firstName,
+    lastName: state.lastName,
+    birthDate: state.birthDate,
+    finnishSSN: state.finnishSSN,
+    nationality: state.nationality,
+    educationLevel: state.educationLevel,
+    country: state.country
+  }
+  Bacon.fromPromise(HttpUtil.post(userDataUrl, userData)).onValue((result) => {
+    console.log(result)
+    dispatcher.push(events.updateField, { field: 'henkiloOid', value: result.henkiloOid })
+  })
 }

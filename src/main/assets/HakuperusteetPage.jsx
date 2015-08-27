@@ -15,7 +15,7 @@ export default class HakuperusteetPage extends React.Component {
       <Header />
       <div>Hakuperusteet main page</div>
       <GoogleAuthentication state={state} />
-      { !_.isUndefined(state.sessionData)
+      { _.isUndefined(state.henkiloOid)
         ? <UserDataForm state={state} controller={controller}/>
         : null
       }
