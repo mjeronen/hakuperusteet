@@ -64,7 +64,3 @@ function checkSession(sessionUrl) {
     }
   }
 }
-
-export function componentOnChangeListener(field, newValue) {
-  dispatcher.push(events.updateField, { field: field, value: newValue })
-}
