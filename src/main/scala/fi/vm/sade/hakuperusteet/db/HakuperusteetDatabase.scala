@@ -1,6 +1,7 @@
 package fi.vm.sade.hakuperusteet.db
 
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
@@ -9,7 +10,7 @@ import org.flywaydb.core.Flyway
 
 case class HakuperusteetDatabase(db: DB)
 
-object HakuperusteetDatabase {
+object HakuperusteetDatabase extends LazyLogging {
   type DB = PostgresDriver.backend.DatabaseDef
 
   def init(config: Config)(implicit executor: AsyncExecutor): HakuperusteetDatabase = {
@@ -28,7 +29,7 @@ object HakuperusteetDatabase {
       flyway.setValidateOnMigrate(false)
       flyway.migrate
     } catch {
-      case e: Exception => println("Migration failure", e)
+      case e: Exception => logger.error("Migration failure", e)
     }
   }
 }

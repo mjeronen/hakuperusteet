@@ -36,6 +36,7 @@ object HakuperusteetBuild extends Build {
         "org.scalatra" %% "scalatra-auth" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
         "ch.qos.logback" % "logback-classic" % "1.1.2" % "runtime",
+        "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
         "org.eclipse.jetty" % "jetty-webapp" % "9.3.0.v20150612" % "container;compile",
         "org.eclipse.jetty" % "jetty-plus" % "9.3.0.v20150612" % "container",
         "javax.servlet" % "javax.servlet-api" % "3.1.0",
