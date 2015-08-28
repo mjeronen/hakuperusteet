@@ -27,13 +27,12 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
       override def prepare(req: Request): Task[Response] = req match {
         case req@ POST -> Root / "authentication-service" / "resources" / "s2s" / "hakuperusteet" =>
           casMock.addStep("valid session")
-          Ok("""{"personOid":"1.2.3.4","email":"","firstName":"","lastName":"","birthDate":"","gender":"","nationality":"FI","idpentityid":""}""")
+          Ok("""{"personOid":"1.2.3.4","email":"","firstName":"","lastName":"","birthDate":1440742941926,"gender":"","nationality":"FI","idpentityid":""}""")
         case _ =>
           casMock.addStep("invalid request")
           NotFound()
       }
     }
-
     val client = new CasAbleClient(new CasClient(virkailijaUri, casMock),
       CasParams("/authentication-service", "foo", "bar"), mock)
     val henkiloClient = new HenkiloClient(virkailijaUri, client)
@@ -42,6 +41,7 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
 
     henkilo.personOid.get shouldEqual "1.2.3.4"
     henkilo.personId shouldEqual None
+    henkilo.birthDate shouldEqual new java.util.Date(1440742941926L)
 
     casMock.steps should be (List(
       "created TGT-123",
@@ -51,6 +51,8 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
     ))
   }
 }
+
+
 
 class CasMock(var ticket: String = "123",
               virkailijaUrl: Uri = Uri(path = "https://localhost"),
