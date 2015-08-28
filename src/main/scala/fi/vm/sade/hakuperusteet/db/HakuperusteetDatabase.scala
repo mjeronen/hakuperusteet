@@ -18,10 +18,10 @@ case class HakuperusteetDatabase(db: DB) {
     def run: R = Await.result(db.run(r), Duration.Inf)
   }
 
-  def findUser(email: String): Option[UserRow] = {
-    val q = Tables.User.filter(_.email === email)
-    q.result.headOption.run
-  }
+  def findUser(email: String): Option[UserRow] =
+    Tables.User.filter(_.email === email).result.headOption.run
+
+  def upsertUser(user: UserRow) = Tables.User.insertOrUpdate(user)
 }
 
 object HakuperusteetDatabase extends LazyLogging {
