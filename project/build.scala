@@ -49,7 +49,8 @@ object HakuperusteetBuild extends Build {
         "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
         "com.typesafe.slick" %% "slick" % "3.1.0-M2",
         "com.typesafe.slick" %% "slick-codegen" % "3.1.0-M2",
-        "org.flywaydb" % "flyway-core" % "3.2.1"
+        "org.flywaydb" % "flyway-core" % "3.2.1",
+        "com.google.api-client" % "google-api-client" % "1.20.0"
       ),
       libraryDependencies ++= Seq(
         "org.scalatest" % "scalatest_2.11" % "2.2.4",
