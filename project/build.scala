@@ -55,12 +55,13 @@ object HakuperusteetBuild extends Build {
         "org.scalatest" % "scalatest_2.11" % "2.2.4",
         "org.typelevel" %% "scalaz-scalatest" % "0.2.2"
       ).map(_ % "test"),
-
+      mainClass in (Compile, run) := Some("fi.vm.sade.hakuperusteet.HakuperusteetServer"),
       compile <<= (compile in Compile) dependsOn npmInstallTask,
       compile <<= (compile in Compile) dependsOn npmBuildTask,
       npmInstallTask := { "npm install" !},
       npmBuildTask := { "npm run build" !},
 
+      mainClass in assembly := Some("fi.vm.sade.hakuperusteet.HakuperusteetServer"),
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       assemblyMergeStrategy in assembly := {
         case PathList("logback.xml") => MergeStrategy.discard
