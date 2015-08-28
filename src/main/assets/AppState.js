@@ -26,6 +26,7 @@ export function initAppState(props) {
     .map('.koodistoCountriesUrl')
     .map(HttpUtil.get)
     .flatMapLatest(Bacon.fromPromise)
+    .mapError(function(_) { return [] })
   const sessionS = userS.flatMap(checkSession(sessionUrl))
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
