@@ -14,11 +14,13 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
 case class HakuperusteetDatabase(db: DB) {
+  implicit class RunAndAwait[R](r: slick.dbio.DBIOAction[R, slick.dbio.NoStream, Nothing]) {
+    def run: R = Await.result(db.run(r), Duration.Inf)
+  }
+
   def findUser(email: String): Option[UserRow] = {
     val q = Tables.User.filter(_.email === email)
-    val action = q.result
-    val f = db.run(action.headOption)
-    Await.result(f, Duration.Inf)
+    q.result.headOption.run
   }
 }
 
