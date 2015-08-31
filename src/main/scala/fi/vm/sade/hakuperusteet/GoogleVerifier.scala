@@ -16,12 +16,5 @@ object GoogleVerifier {
     .setAudience(List(client_id))
     .build()
 
-  def verify(token: String): Option[Payload] =
-      Option(verifier.verify(token)).map(_.getPayload)
-        .filter(_.getAuthorizedParty.equals(client_id))
-        .filter(m => {
-          System.err.println(m.getHostedDomain)
-          true
-        })
-
+  def verify(token: String): Boolean = verifier.verify(token).getPayload.getAuthorizedParty == client_id
 }
