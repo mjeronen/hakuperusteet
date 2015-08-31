@@ -19,7 +19,8 @@ object GoogleVerifier extends LazyLogging {
 
   def verify(token: String): Boolean = Option(verifier.verify(token)).map(_.getPayload)
     .map(logAndReturnIdentity)
-    .exists(p => p.getHostedDomain == hostedDomain && p.getAuthorizedParty == clientId)
+    //.exists(p => p.getHostedDomain == hostedDomain && p.getAuthorizedParty == clientId) // todo: fixme 
+    .exists(p => p.getAuthorizedParty == clientId)
 
   private def logAndReturnIdentity(p: Payload) = {
     logger.info("Hosted Domain {}", Option(p).map(_.getHostedDomain).getOrElse("'payload was null'"))
