@@ -3,7 +3,7 @@ import Bacon from 'baconjs'
 export function initAuthentication(properties) {
   return Bacon.fromBinder(sink => {
     gapi.load('auth2', () => {
-      const auth2 = gapi.auth2.init({client_id: properties.googleAuthenticationClientId})
+      const auth2 = gapi.auth2.init({client_id: properties.googleAuthenticationClientId, hosted_domain:properties.googleAuthenticationHostedDomain})
       auth2.currentUser.listen(currentUser => {
         if (currentUser.isSignedIn()) {
           const email = currentUser.getBasicProfile().getEmail()

@@ -16,7 +16,8 @@ class PropertiesServlet(config: Config) extends ScalatraServlet {
       "userDataUrl" -> "/hakuperusteet/api/v1/session/userData",
       "vetumaStartUrl" -> "/hakuperusteet/api/v1/vetuma/openvetuma",
       "koodistoCountriesUrl" -> config.getString("koodisto.countries.url"),
-      "googleAuthenticationClientId" -> config.getString("google.authentication.client.id")
+      "googleAuthenticationClientId" -> config.getString("google.authentication.client.id"),
+      "googleAuthenticationHostedDomain" -> config.getString("google.authentication.hosted.domain")
     )
     compact(render(properties))
   }
