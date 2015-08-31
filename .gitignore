@@ -22,4 +22,4 @@ project/plugins/project/
 node_modules/
 
 #slick generated classes
-src/main/scala/fi/vm/sade/hakuperusteet/db/generated/
+#src/main/scala/fi/vm/sade/hakuperusteet/db/generated/
