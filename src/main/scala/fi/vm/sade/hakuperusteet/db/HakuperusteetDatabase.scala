@@ -1,5 +1,7 @@
 package fi.vm.sade.hakuperusteet.db
 
+import java.util.Date
+
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.User
@@ -19,12 +21,12 @@ case class HakuperusteetDatabase(db: DB) {
     def run: R = Await.result(db.run(r), Duration.Inf)
   }
 
-  def findUser(email: String): Option[UserRow] =
-    Tables.User.filter(_.email === email).result.headOption.run
+  def findUser(email: String): Option[User] =
+    Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentity, u.gender, u.nationality, u.educationLevel, u.educationCountry))
 
   def insertUser(user: User) = {
     val useAutoIncrementId = 0
-    val newUserRow = UserRow(useAutoIncrementId, user.personId, user.email, user.firstName, user.lastName, user.gender,
+    val newUserRow = UserRow(useAutoIncrementId, user.personId, user.email, user.idpentityid, user.firstName, user.lastName, user.gender,
       new java.sql.Date(user.birthDate.getTime), user.personId, user.nationality, user.educationLevel, user.educationCountry)
     val y = (Tables.User returning Tables.User) += newUserRow
     y.run
@@ -48,7 +50,7 @@ object HakuperusteetDatabase extends LazyLogging {
       flyway.setDataSource(url, user, password)
       flyway.setSchemas("hakuperusteet")
       flyway.setValidateOnMigrate(false)
-      flyway.clean // removeMe
+      //flyway.clean // removeMe
       flyway.migrate
     } catch {
       case e: Exception => logger.error("Migration failure", e)

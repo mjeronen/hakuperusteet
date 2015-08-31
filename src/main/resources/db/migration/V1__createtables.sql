@@ -18,6 +18,7 @@ CREATE TABLE "user"
   id serial PRIMARY KEY,
   henkilo_oid character varying(255),
   email character varying(255) NOT NULL,
+  idpentity character varying(255) NOT NULL,
   firstname character varying(255) NOT NULL,
   lastname character varying(255) NOT NULL,
   gender character varying(255) NOT NULL,
