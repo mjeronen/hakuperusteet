@@ -36,11 +36,11 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Scalatra
     println("Email? " + email)
     println("Token? " + token)
 
-    if (!verify(token)) {
-      logger.error("Unauthorized user {}", email)
-      halt(401, "Token verify error")
+    if (verify(token)) {
+      logger.info("authenticate: authorized user {}", email)
     } else {
-      logger.error("Authorized user {}", email)
+      logger.error("authenticate: unauthorized user {}", email)
+      halt(401, "Token verify error")
     }
 
     val usr = db.findUser(email)
