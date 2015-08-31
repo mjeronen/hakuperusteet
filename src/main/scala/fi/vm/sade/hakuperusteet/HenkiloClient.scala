@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import java.net.URLEncoder
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.CasClient.JSessionId
 import org.http4s.Uri._
 import org.http4s.headers.{`Set-Cookie`, `Content-Type`, Location}
@@ -27,7 +28,7 @@ import scalaz.\/._
 import scalaz.concurrent.{Future, Task}
 import scalaz.stream.{Process, async, channel, Channel}
 
-class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) {
+class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {
   def this(henkiloServerUrl: String, client: Client) = this(new Task(
     Future.now(
       Uri.fromString(henkiloServerUrl).
@@ -53,7 +54,9 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
   ).withBody(users)(json4sEncoderOf)
 
   def parseJson4s[A] (json:String)(implicit formats: Formats, mf: Manifest[A]) = scala.util.Try(read[A](json)).map(right).recover{
-    case t => left(ParseFailure("json decoding failed", t.getMessage))
+    case t =>
+      logger.error("json decodign failed", t)
+      left(ParseFailure("json decoding failed", t.getMessage))
   }.get
 
   def json4sEncoderOf[A <: AnyRef](implicit formats: Formats, mf: Manifest[A]): EntityEncoder[A] = EntityEncoder.stringEncoder(Charset.`UTF-8`).contramap[A](item => write[A](item))
