@@ -35,7 +35,7 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
         leftMap((fail: ParseFailure) => new IllegalArgumentException(fail.sanitized))
     )).run, client)
 
-  def haeHenkilo(users: List[User]): Task[User] = client.prepAs[User](req(users))(json4sOf[User]).
+  def haeHenkilo(user: User): Task[User] = client.prepAs[User](req(user))(json4sOf[User]).
     handle {
     case e: ParseException =>
       println(s"parse error details: ${e.failure.details}")
@@ -47,11 +47,11 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
 
   private def reqHeaders: Headers = Headers(ActingSystem("hakuperusteet.hakuperusteet.backend"))
 
-  private def req(users: List[User]) = Request(
+  private def req(user: User) = Request(
     method = Method.POST,
     uri = resolve(henkiloServerUrl, Uri(path = "/authentication-service/resources/s2s/hakuperusteet")),
     headers = reqHeaders
-  ).withBody(users)(json4sEncoderOf)
+  ).withBody(user)(json4sEncoderOf)
 
   def parseJson4s[A] (json:String)(implicit formats: Formats, mf: Manifest[A]) = scala.util.Try(read[A](json)).map(right).recover{
     case t =>
