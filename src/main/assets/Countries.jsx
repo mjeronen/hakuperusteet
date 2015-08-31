@@ -6,7 +6,7 @@ export default class Countries extends React.Component {
     super(props)
   }
   render() {
-    const field = "country"
+    const field = "educationCountry"
     const controller = this.props.controller
     const lang = this.props.lang.toUpperCase()
     const emptyCountries = [{ id: "", name: "Choose.."}]

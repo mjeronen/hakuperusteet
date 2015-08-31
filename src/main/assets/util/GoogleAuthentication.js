@@ -12,7 +12,8 @@ export function initAuthentication(properties) {
         if (currentUser.isSignedIn()) {
           const email = currentUser.getBasicProfile().getEmail()
           const token = currentUser.getAuthResponse().id_token
-          sink({email, token})
+          const idpentityid = "google"
+          sink({email, token, idpentityid})
         } else {
           sink({})
         }

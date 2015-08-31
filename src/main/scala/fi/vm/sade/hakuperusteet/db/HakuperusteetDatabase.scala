@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet.db
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
+import fi.vm.sade.hakuperusteet.User
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
 import fi.vm.sade.hakuperusteet.db.generated.Tables.UserRow
@@ -21,7 +22,13 @@ case class HakuperusteetDatabase(db: DB) {
   def findUser(email: String): Option[UserRow] =
     Tables.User.filter(_.email === email).result.headOption.run
 
-  def upsertUser(user: UserRow) = Tables.User.insertOrUpdate(user)
+  def insertUser(user: User) = {
+    val useAutoIncrementId = 0
+    val newUserRow = UserRow(useAutoIncrementId, user.personId, user.email, user.firstName, user.lastName, user.gender,
+      new java.sql.Date(user.birthDate.getTime), user.personId, user.nationality, user.educationLevel, user.educationCountry)
+    val y = (Tables.User returning Tables.User) += newUserRow
+    y.run
+  }
 }
 
 object HakuperusteetDatabase extends LazyLogging {
@@ -41,6 +48,7 @@ object HakuperusteetDatabase extends LazyLogging {
       flyway.setDataSource(url, user, password)
       flyway.setSchemas("hakuperusteet")
       flyway.setValidateOnMigrate(false)
+      flyway.clean // removeMe
       flyway.migrate
     } catch {
       case e: Exception => logger.error("Migration failure", e)

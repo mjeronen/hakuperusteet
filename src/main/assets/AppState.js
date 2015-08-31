@@ -74,13 +74,16 @@ function checkSession(sessionUrl) {
 
 function submitUserDataToServer(state) {
   const userData = {
+    email: state.user.email,
+    idpentityid: state.user.idpentityid,
     firstName: state.firstName,
     lastName: state.lastName,
     birthDate: state.birthDate,
-    finnishSSN: state.finnishSSN,
+    personId: state.personId,
+    gender: state.gender,
     nationality: state.nationality,
     educationLevel: state.educationLevel,
-    country: state.country
+    educationCountry: state.educationCountry
   }
   return Bacon.fromPromise(HttpUtil.post(state.properties.userDataUrl, userData))
 }

@@ -4,8 +4,11 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.auth.AuthenticationSupport
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
+import fi.vm.sade.hakuperusteet.db.generated.Tables.UserRow
+import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
@@ -13,13 +16,12 @@ import org.scalatra.ScalatraServlet
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
-import fi.vm.sade.hakuperusteet.GoogleVerifier._
+import GoogleVerifier._
 import java.lang.RuntimeException
 
 import org.slf4j.LoggerFactory
 
-class SessionServlet(config: Config, db: HakuperusteetDatabase) extends ScalatraServlet with AuthenticationSupport {
-  val logger = LoggerFactory.getLogger(this.getClass)
+class SessionServlet(config: Config, db: HakuperusteetDatabase) extends ScalatraServlet with AuthenticationSupport with LazyLogging {
   override def realm: String = "hakuperusteet"
 
   before() {
@@ -51,17 +53,14 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Scalatra
   }
 
   post("/userData") {
-    //failUnlessAuthenticated
-    val json = parse(request.body)
-
-    println(json)
+    val user = parse(request.body).extract[User]
+    val userWithId = db.insertUser(user)
+    //todo: create henkilo to henkilopalvelu
+    println(userWithId)
 
     val response = Map(
       "field" -> "henkiloOid",
-      "value" -> "1.1.1.1")
-
-    //todo: store data to local db
-    //todo: create henkilo to henkilopalvelu
+      "value" -> user.personOid.getOrElse(""))
     compact(render(response))
   }
 }

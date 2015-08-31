@@ -9,6 +9,8 @@ import org.json4s.JsonAST.{JInt, JValue, JString, JNull}
 import org.json4s.native.Serialization
 
 package object hakuperusteet {
+  type Oid = String
+
   case object DateSerializer extends CustomSerializer[Date](format => (
     {
       case JString(s) => new Date(s.toLong)
@@ -21,6 +23,7 @@ package object hakuperusteet {
     )
   )
 
-  implicit val formats = Serialization.formats(org.json4s.NoTypeHints) + DateSerializer
-  type Oid = String
+  val formatsHenkilo = Serialization.formats(org.json4s.NoTypeHints) + DateSerializer
+
+  implicit val formats = org.json4s.DefaultFormats
 }
