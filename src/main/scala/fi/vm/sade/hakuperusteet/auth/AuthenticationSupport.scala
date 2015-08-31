@@ -3,8 +3,8 @@ package fi.vm.sade.hakuperusteet.auth
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 
 import com.typesafe.config.Config
+import fi.vm.sade.hakuperusteet.google.GoogleVerifier._
 import fi.vm.sade.hakuperusteet.{Configuration, User}
-import fi.vm.sade.hakuperusteet.google.GoogleBackendAuthentication
 import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryAuthStore.CookieAuthStore
 import org.scalatra.auth.{Scentry, ScentryStrategy, ScentrySupport, ScentryConfig}
@@ -53,7 +53,7 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
   val token = (json \ "token").extract[String]
 
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = {
-    if(GoogleBackendAuthentication.authenticate(config, email, token)) Some(User.empty(email))
+    if (verify(token)) Some(User.empty(email))
     else None
   }
 }

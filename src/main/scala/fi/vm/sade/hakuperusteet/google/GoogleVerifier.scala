@@ -1,11 +1,13 @@
-package fi.vm.sade.hakuperusteet
+package fi.vm.sade.hakuperusteet.google
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.typesafe.scalalogging.slf4j.LazyLogging
+import fi.vm.sade.hakuperusteet.Configuration
+
 import scala.collection.JavaConversions._
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload
 
 object GoogleVerifier extends LazyLogging {
 
@@ -19,7 +21,7 @@ object GoogleVerifier extends LazyLogging {
 
   def verify(token: String): Boolean = Option(verifier.verify(token)).map(_.getPayload)
     .map(logAndReturnIdentity)
-    //.exists(p => p.getHostedDomain == hostedDomain && p.getAuthorizedParty == clientId) // todo: fixme 
+    //.exists(p => p.getHostedDomain == hostedDomain && p.getAuthorizedParty == clientId) // todo: fixme
     .exists(p => p.getAuthorizedParty == clientId)
 
   private def logAndReturnIdentity(p: Payload) = {
