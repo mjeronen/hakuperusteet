@@ -8,7 +8,7 @@ import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.domain.Payment
 import org.apache.commons.codec.digest.DigestUtils
 
-case class VetumaUrl(host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
+case class Vetuma(host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
                      errorUrl: String, appName: String, amount: String, ref: String, orderNumber: String,
                      msgBuyer: String, msgSeller: String, msgForm: String) {
 
@@ -46,8 +46,8 @@ object Vetuma {
 
   def generateOrderNumber = random.nextInt(10000000).toString
 
-  def apply(config: Config, payment: Payment, language: String) = {
-    VetumaUrl(
+  def apply(config: Config, payment: Payment, language: String): Vetuma = {
+    Vetuma(
       config.getString("vetuma.host"),
       payment.timestamp,
       language,

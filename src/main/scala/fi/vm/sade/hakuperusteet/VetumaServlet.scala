@@ -4,11 +4,9 @@ import java.util.Date
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.{PaymentStatus, Payment}
-import fi.vm.sade.hakuperusteet.vetuma.{Vetuma, VetumaUrl}
-import org.joda.time.DateTime
+import fi.vm.sade.hakuperusteet.vetuma.Vetuma
 
 class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
 
