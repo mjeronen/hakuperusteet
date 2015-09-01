@@ -28,9 +28,25 @@ CREATE TABLE "user"
   education_level character varying(255) NOT NULL,
   education_country character varying(255) NOT NULL,
 
-  CONSTRAINT user_email UNIQUE (email)
+  CONSTRAINT user_email UNIQUE (email),
+  CONSTRAINT henkilo_oid UNIQUE (henkilo_oid)
 )
 WITH (
   OIDS=FALSE
 );
 ALTER TABLE "user" OWNER TO oph;
+CREATE INDEX ON "user"(email);
+
+CREATE TABLE "payment"
+(
+  id serial PRIMARY KEY,
+  henkilo_oid character varying(255) REFERENCES "user"(henkilo_oid),
+  reference character varying(255) NOT NULL,
+  order_number character varying(255) NOT NULL,
+  status character varying(255) NOT NULL
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE "payment" OWNER TO oph;
+CREATE INDEX ON "payment"(henkilo_oid);

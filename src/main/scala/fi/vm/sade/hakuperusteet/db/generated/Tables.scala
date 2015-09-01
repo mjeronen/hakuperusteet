@@ -14,9 +14,44 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = SchemaVersion.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Payment.schema ++ SchemaVersion.schema ++ User.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
+
+  /** Entity class storing rows of table Payment
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None)
+   *  @param reference Database column reference SqlType(varchar), Length(255,true)
+   *  @param orderNumber Database column order_number SqlType(varchar), Length(255,true)
+   *  @param status Database column status SqlType(varchar), Length(255,true) */
+  case class PaymentRow(id: Int, henkiloOid: Option[String] = None, reference: String, orderNumber: String, status: String)
+  /** GetResult implicit for fetching PaymentRow objects using plain SQL queries */
+  implicit def GetResultPaymentRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[String]): GR[PaymentRow] = GR{
+    prs => import prs._
+    PaymentRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String]))
+  }
+  /** Table description of table payment. Objects of this class serve as prototypes for rows in queries. */
+  class Payment(_tableTag: Tag) extends Table[PaymentRow](_tableTag, Some("hakuperusteet"), "payment") {
+    def * = (id, henkiloOid, reference, orderNumber, status) <> (PaymentRow.tupled, PaymentRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), henkiloOid, Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None) */
+    val henkiloOid: Rep[Option[String]] = column[Option[String]]("henkilo_oid", O.Length(255,varying=true), O.Default(None))
+    /** Database column reference SqlType(varchar), Length(255,true) */
+    val reference: Rep[String] = column[String]("reference", O.Length(255,varying=true))
+    /** Database column order_number SqlType(varchar), Length(255,true) */
+    val orderNumber: Rep[String] = column[String]("order_number", O.Length(255,varying=true))
+    /** Database column status SqlType(varchar), Length(255,true) */
+    val status: Rep[String] = column[String]("status", O.Length(255,varying=true))
+
+    /** Foreign key referencing User (database name payment_henkilo_oid_fkey) */
+    lazy val userFk = foreignKey("payment_henkilo_oid_fkey", henkiloOid, User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+  }
+  /** Collection-like TableQuery object for table Payment */
+  lazy val Payment = new TableQuery(tag => new Payment(tag))
 
   /** Entity class storing rows of table SchemaVersion
    *  @param versionRank Database column version_rank SqlType(int4)
@@ -127,8 +162,12 @@ trait Tables {
     /** Database column education_country SqlType(varchar), Length(255,true) */
     val educationCountry: Rep[String] = column[String]("education_country", O.Length(255,varying=true))
 
+    /** Uniqueness Index over (henkiloOid) (database name henkilo_oid) */
+    val index1 = index("henkilo_oid", henkiloOid, unique=true)
     /** Uniqueness Index over (email) (database name user_email) */
-    val index1 = index("user_email", email, unique=true)
+    val index2 = index("user_email", email, unique=true)
+    /** Index over (email) (database name user_email_idx) */
+    val index3 = index("user_email_idx", email)
   }
   /** Collection-like TableQuery object for table User */
   lazy val User = new TableQuery(tag => new User(tag))

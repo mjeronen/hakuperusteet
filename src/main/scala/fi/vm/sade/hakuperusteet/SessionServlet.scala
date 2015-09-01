@@ -25,10 +25,12 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Scalatra
     val json = parse(request.body)
     val email = (json \ "email").extract[String]
     db.findUser(email) match {
-      case Some(user: User) => write(user)
-      case None =>
-        val sessionData = Map("email"-> email)
-        compact(render(sessionData))
+      case Some(user) =>
+        db.findPayment(user) match {
+          case Some(payment) => write(SessionData(user, Some(payment)))
+          case None => write(SessionData(user, None))
+        }
+      case None => halt(404, "User not found")
     }
   }
 

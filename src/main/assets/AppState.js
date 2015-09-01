@@ -60,12 +60,8 @@ export function initAppState(props) {
   }
 
   function onSessionFromServer(state, sessionData) {
-    if (_.isUndefined(sessionData.email)) {
-      delete state['sessionData']
-      return state
-    } else {
-      return {...state, sessionData}
-    }
+    console.log(sessionData)
+    return {...state, sessionData}
   }
 }
 
@@ -79,7 +75,7 @@ function submitUserDataToServer(state) {
     idpentityid: state.user.idpentityid,
     firstName: state.firstName,
     lastName: state.lastName,
-    birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("DD-MM-YYYY") + "T00:00:00Z",
+    birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD") + "T00:00:00Z",
     personId: state.personId,
     gender: state.gender,
     nationality: state.nationality,

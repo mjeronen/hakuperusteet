@@ -1,10 +1,8 @@
 package fi.vm.sade.hakuperusteet.db
 
-import java.util.Date
-
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.User
+import fi.vm.sade.hakuperusteet.{Payment, User}
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
 import fi.vm.sade.hakuperusteet.db.generated.Tables.UserRow
@@ -31,6 +29,9 @@ case class HakuperusteetDatabase(db: DB) {
     val y = (Tables.User returning Tables.User) += newUserRow
     y.run
   }
+
+  def findPayment(user: User): Option[Payment] =
+    Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(r.henkiloOid.get, r.reference, r.orderNumber, r.status))
 }
 
 object HakuperusteetDatabase extends LazyLogging {

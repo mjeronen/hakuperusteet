@@ -16,11 +16,11 @@ export default class HakuperusteetPage extends React.Component {
       <Header />
       <div>Hakuperusteet main page</div>
       <GoogleAuthentication state={state} />
-      { _.isUndefined(state.sessionData)
+      { !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
         ? <UserDataForm state={state} controller={controller}/>
         : null
       }
-      { (!_.isUndefined(state.henkiloOid) && _.isUndefined(state.paymentDone))
+      { !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.payment)
         ? <VetumaStart state={state} />
         : null
       }
