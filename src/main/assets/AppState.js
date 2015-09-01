@@ -28,7 +28,7 @@ export function initAppState(props) {
     .map(HttpUtil.get)
     .flatMapLatest(Bacon.fromPromise)
     .mapError(function(_) { return [] })
-  const sessionS = userS.flatMap(checkSession(sessionUrl))
+  const sessionS = userS.filter(function(x) { return !_.isEmpty(x) }).flatMap(checkSession(sessionUrl))
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
 
