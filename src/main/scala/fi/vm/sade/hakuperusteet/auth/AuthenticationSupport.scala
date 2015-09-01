@@ -4,9 +4,10 @@ import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
+import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.User
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier._
-import fi.vm.sade.hakuperusteet.Configuration
+import fi.vm.sade.hakuperusteet.{HakuperusteetServlet, Configuration}
 import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryAuthStore.CookieAuthStore
 import org.scalatra.auth.{Scentry, ScentryStrategy, ScentrySupport, ScentryConfig}
@@ -18,11 +19,9 @@ import org.json4s.JsonDSL._
 
 
 trait AuthenticationSupport extends ScentrySupport[User] with BasicAuthSupport[User] {
-  self: ScalatraBase =>
+  self: HakuperusteetServlet =>
 
-  val configuration = Configuration.props
-
-  protected def fromSession = { case id: String => User.empty(id)  }
+  protected def fromSession = { case email: String => db.findUser(email).get  }
   protected def toSession   = { case usr: User => usr.email }
 
   protected val scentryConfig = (new ScentryConfig {}).asInstanceOf[ScentryConfiguration]
@@ -40,13 +39,13 @@ trait AuthenticationSupport extends ScentrySupport[User] with BasicAuthSupport[U
     }
   }
   override protected def registerAuthStrategies = {
-    scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration))
+    scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration, db))
   }
 
   def failUnlessAuthenticated = if (!isAuthenticated) halt(401)
 }
 
-class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config) extends ScentryStrategy[User] with LazyLogging {
+class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase) extends ScentryStrategy[User] with LazyLogging {
   import fi.vm.sade.hakuperusteet._
 
   private def request = app.enrichRequest(app.request)
@@ -56,11 +55,20 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
 
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = {
     if (verify(token)) {
-      logger.info("authenticate: authorized user {}", email)
-      Some(User.empty(email))
+      authenticateFromDatabase
     } else {
-      logger.error("authenticate: unauthorized user {}", email)
+      logger.error("authenticate: invalid token for email {}", email)
       None
+    }
+  }
+
+  def authenticateFromDatabase: Option[User] = {
+    db.findUser(email) match {
+      case Some(user) =>
+        logger.info("authenticated user {}", email)
+        Some(User.empty(email))
+      case None =>
+        None
     }
   }
 }

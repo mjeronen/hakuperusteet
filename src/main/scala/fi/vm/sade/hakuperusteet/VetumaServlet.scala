@@ -1,13 +1,21 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.slf4j.LazyLogging
+import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.vetuma.{Vetuma, VetumaUrl}
 import org.joda.time.DateTime
 import org.scalatra.ScalatraServlet
 
-class VetumaServlet(config: Config) extends ScalatraServlet {
+class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) with LazyLogging {
+
+  before() {
+    contentType = "application/json"
+  }
 
   get("/openvetuma") {
+    failUnlessAuthenticated
+
     val language = "fi"
     val ref = "1234561"
     val orderNro = Vetuma.generateOrderNumber

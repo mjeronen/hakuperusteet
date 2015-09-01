@@ -11,7 +11,7 @@ class ScalatraBootstrap extends LifeCycle with GlobalExecutionContext {
   override def init(context: ServletContext) {
     context mount(new StatusServlet, "/api/v1/status")
     context mount(new TestServlet(config), "/api/v1/test")
-    context mount(new VetumaServlet(config), "/api/v1/vetuma")
+    context mount(new VetumaServlet(config, database), "/api/v1/vetuma")
     context mount(new PropertiesServlet(config), "/api/v1/properties")
     context mount(new SessionServlet(config, database), "/api/v1/session")
   }

@@ -11,8 +11,7 @@ import org.json4s.JsonDSL._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
 
-class SessionServlet(config: Config, db: HakuperusteetDatabase) extends ScalatraServlet with AuthenticationSupport with LazyLogging {
-  override def realm: String = "hakuperusteet"
+class SessionServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) with LazyLogging {
 
   before() {
     contentType = "application/json"
@@ -35,6 +34,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Scalatra
   }
 
   post("/userData") {
+    failUnlessAuthenticated
+
     val user = parse(request.body).extract[User]
     val userWithId = db.insertUser(user)
     //todo: create henkilo to henkilopalvelu
