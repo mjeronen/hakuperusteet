@@ -1,19 +1,15 @@
-package fi.vm.sade.hakuperusteet
+package fi.vm.sade.hakuperusteet.henkilo
 
 import java.net.URLEncoder
 
 import fi.vm.sade.hakuperusteet.domain.User
-import org.http4s.headers.{`Set-Cookie`, Location}
-import org.scalatest.{Matchers, FlatSpec}
-import org.http4s.Uri
-import org.http4s._
 import org.http4s.client.Client
 import org.http4s.dsl._
+import org.http4s.headers.{Location, `Set-Cookie`}
+import org.http4s.{Uri, _}
+import org.scalatest.{FlatSpec, Matchers}
 
 import scalaz.concurrent.Task
-import org.json4s._
-import org.json4s.native.JsonMethods._
-import org.json4s.native.Serialization.{read, write}
 
 class HenkiloClientSpec extends FlatSpec with Matchers {
   val virkailijaUri: Uri = Uri(path = "https://localhost")

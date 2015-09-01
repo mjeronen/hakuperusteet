@@ -1,33 +1,25 @@
-package fi.vm.sade.hakuperusteet
+package fi.vm.sade.hakuperusteet.henkilo
 
 import java.net.URLEncoder
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.CasClient.JSessionId
 import fi.vm.sade.hakuperusteet.domain.User
+import fi.vm.sade.hakuperusteet.henkilo.CasClient.JSessionId
 import org.http4s.Uri._
-import org.http4s.headers.{`Set-Cookie`, `Content-Type`, Location}
+import org.http4s._
+import org.http4s.client.Client
+import org.http4s.headers.{Location, `Content-Type`, `Set-Cookie`}
 import org.http4s.util.CaseInsensitiveString
 import org.json4s.Formats
-import scodec.bits.ByteVector
-import org.http4s._
-import org.http4s.client.Client
-import org.http4s.headers.Location
-import org.json4s.native.Serialization.write
-import scala.util.matching.Regex
-import scalaz.concurrent.{Future, Task}
-import scalaz.stream._
-import org.http4s.headers.{Location, `Set-Cookie`, `Content-Type`}
-import org.http4s._
-import org.http4s.client.Client
-import scodec.bits.ByteVector
-import Uri._
-import org.json4s._
-import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization.{read, write}
+import scodec.bits.ByteVector
+
+import scala.util.matching.Regex
 import scalaz.\/._
 import scalaz.concurrent.{Future, Task}
-import scalaz.stream.{Process, async, channel, Channel}
+import scalaz.stream.{Channel, Process, async, channel}
+
+import fi.vm.sade.hakuperusteet.formats
 
 class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {
   def this(henkiloServerUrl: String, client: Client) = this(new Task(
