@@ -26,22 +26,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
     val payment = Payment(user.personOid.get, new Date(), ref, orderNro, PaymentStatus.started)
     db.insertPayment(user, payment)
 
-    val v = VetumaUrl(
-      config.getString("vetuma.host"),
-      payment.timestamp,
-      language,
-      config.getString("vetuma.success.url"),
-      config.getString("vetuma.cancel.url"),
-      config.getString("vetuma.error.url"),
-      config.getString("vetuma.app.name"),
-      config.getString("vetuma.amount"),
-      payment.reference,
-      payment.orderNumber,
-      config.getString("vetuma.msg.buyer"),
-      config.getString("vetuma.msg.seller"),
-      config.getString("vetuma.msg.form")
-    )
-    v.toUrl
+    Vetuma(config, payment, language).toUrl
   }
 
   post("/return/ok") {

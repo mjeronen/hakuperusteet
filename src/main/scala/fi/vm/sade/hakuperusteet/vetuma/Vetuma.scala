@@ -4,6 +4,8 @@ import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
 
+import com.typesafe.config.Config
+import fi.vm.sade.hakuperusteet.domain.Payment
 import org.apache.commons.codec.digest.DigestUtils
 
 case class VetumaUrl(host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
@@ -43,4 +45,22 @@ object Vetuma {
   val random = new java.util.Random
 
   def generateOrderNumber = random.nextInt(10000000).toString
+
+  def apply(config: Config, payment: Payment, language: String) = {
+    VetumaUrl(
+      config.getString("vetuma.host"),
+      payment.timestamp,
+      language,
+      config.getString("vetuma.success.url"),
+      config.getString("vetuma.cancel.url"),
+      config.getString("vetuma.error.url"),
+      config.getString("vetuma.app.name"),
+      config.getString("vetuma.amount"),
+      payment.reference,
+      payment.orderNumber,
+      config.getString("vetuma.msg.buyer"),
+      config.getString("vetuma.msg.seller"),
+      config.getString("vetuma.msg.form")
+    )
+  }
 }
