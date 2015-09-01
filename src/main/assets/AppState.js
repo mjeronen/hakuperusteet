@@ -60,13 +60,12 @@ export function initAppState(props) {
   }
 
   function onSessionFromServer(state, sessionData) {
-    console.log(sessionData)
     return {...state, sessionData}
   }
 }
 
 function checkSession(sessionUrl) {
-  return (user) => (_.isUndefined(user.email)) ? Bacon.once({}) : Bacon.fromPromise(HttpUtil.post(sessionUrl, user))
+  return (user) => Bacon.fromPromise(HttpUtil.post(sessionUrl, user))
 }
 
 function submitUserDataToServer(state) {
