@@ -4,6 +4,7 @@ import java.net.URLEncoder
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.CasClient.JSessionId
+import fi.vm.sade.hakuperusteet.domain.User
 import org.http4s.Uri._
 import org.http4s.headers.{`Set-Cookie`, `Content-Type`, Location}
 import org.http4s.util.CaseInsensitiveString

@@ -4,8 +4,9 @@ import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
+import fi.vm.sade.hakuperusteet.domain.User
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier._
-import fi.vm.sade.hakuperusteet.{Configuration, User}
+import fi.vm.sade.hakuperusteet.Configuration
 import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryAuthStore.CookieAuthStore
 import org.scalatra.auth.{Scentry, ScentryStrategy, ScentrySupport, ScentryConfig}

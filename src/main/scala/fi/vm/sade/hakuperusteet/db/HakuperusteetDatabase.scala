@@ -2,10 +2,10 @@ package fi.vm.sade.hakuperusteet.db
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.{Payment, User}
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
 import fi.vm.sade.hakuperusteet.db.generated.Tables.UserRow
+import fi.vm.sade.hakuperusteet.domain.{Payment, User}
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
 import slick.util.AsyncExecutor

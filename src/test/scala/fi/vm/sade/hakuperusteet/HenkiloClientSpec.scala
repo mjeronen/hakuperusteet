@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import java.net.URLEncoder
 
+import fi.vm.sade.hakuperusteet.domain.User
 import org.http4s.headers.{`Set-Cookie`, Location}
 import org.scalatest.{Matchers, FlatSpec}
 import org.http4s.Uri
