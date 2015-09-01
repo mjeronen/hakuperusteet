@@ -16,7 +16,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
 
   post("/authenticate") {
     authenticate
-    failUnlessAuthenticated
+    //failUnlessAuthenticated
 
     val json = parse(request.body)
     val email = (json \ "email").extract[String]
@@ -31,7 +31,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
   }
 
   post("/userData") {
-    failUnlessAuthenticated
+    //failUnlessAuthenticated
 
     val user = parse(request.body).extract[User]
     val userWithId = db.insertUser(user)
