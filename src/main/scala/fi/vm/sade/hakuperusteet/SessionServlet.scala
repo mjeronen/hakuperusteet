@@ -11,7 +11,7 @@ import org.json4s.JsonDSL._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
 
-class SessionServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) with LazyLogging {
+class SessionServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
 
   before() {
     contentType = "application/json"

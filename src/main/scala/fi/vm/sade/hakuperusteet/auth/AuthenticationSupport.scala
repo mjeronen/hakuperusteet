@@ -18,31 +18,14 @@ import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
 
 
-trait AuthenticationSupport extends ScentrySupport[User] with BasicAuthSupport[User] {
-  self: HakuperusteetServlet =>
+trait AuthenticationSupport extends ScentrySupport[User] with BasicAuthSupport[User] { self: HakuperusteetServlet =>
+  override abstract def initialize(config: ConfigT) = super.initialize(config)
+  protected val scentryConfig = (new ScentryConfig {}).asInstanceOf[ScentryConfiguration]
 
   protected def fromSession = { case email: String => db.findUser(email).get  }
   protected def toSession   = { case usr: User => usr.email }
 
-  protected val scentryConfig = (new ScentryConfig {}).asInstanceOf[ScentryConfiguration]
-
-  override protected def configureScentry = {
-    val authCookieOptions = cookieOptions.copy(domain = configuration.getString("cookie.domain"), secure = true, httpOnly = true)
-    scentry.store = new CookieAuthStore(self)(authCookieOptions) {
-      override def invalidate()(implicit request: HttpServletRequest, response: HttpServletResponse) {
-        cookies.update(Scentry.scentryAuthKey, "")(authCookieOptions.copy(maxAge = 0))
-      }
-    }
-
-    scentry.unauthenticated {
-      scentry.strategies("Google").unauthenticated()
-    }
-  }
-  override protected def registerAuthStrategies = {
-    scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration, db))
-  }
-
-  def failUnlessAuthenticated = if (!isAuthenticated) halt(401)
+  override protected def registerAuthStrategies = scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration, db))
 }
 
 class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase) extends ScentryStrategy[User] with LazyLogging {
@@ -66,7 +49,7 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
     db.findUser(email) match {
       case Some(user) =>
         logger.info("authenticated user {}", email)
-        Some(User.empty(email))
+        Some(user)
       case None =>
         None
     }

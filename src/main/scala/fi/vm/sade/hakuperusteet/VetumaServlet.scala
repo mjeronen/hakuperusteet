@@ -7,7 +7,7 @@ import fi.vm.sade.hakuperusteet.vetuma.{Vetuma, VetumaUrl}
 import org.joda.time.DateTime
 import org.scalatra.ScalatraServlet
 
-class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) with LazyLogging {
+class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
 
   before() {
     contentType = "application/json"
