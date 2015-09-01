@@ -33,11 +33,11 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
 
   private def request = app.enrichRequest(app.request)
   val json = parse(request.body)
-  val email = (json \ "email").extract[String]
-  val token = (json \ "token").extract[String]
+  val email = (json \ "email").extract[Option[String]]
+  val token = (json \ "token").extract[Option[String]]
 
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = {
-    if (verify(token)) {
+    if (verify(token.getOrElse(""))) {
       authenticateFromDatabase
     } else {
       logger.error("authenticate: invalid token for email {}", email)
@@ -46,7 +46,7 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
   }
 
   def authenticateFromDatabase: Option[User] = {
-    db.findUser(email) match {
+    db.findUser(email.getOrElse("")) match {
       case Some(user) =>
         logger.info("authenticated user {}", email)
         Some(user)

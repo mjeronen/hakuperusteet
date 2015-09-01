@@ -1,3 +1,12 @@
 package fi.vm.sade.hakuperusteet.domain
 
-case class Payment(personOid: String, reference: String, orderNumber: String, status: String)
+import java.util.Date
+
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
+
+case class Payment(personOid: String, timestamp: Date, reference: String, orderNumber: String, status: PaymentStatus)
+
+object PaymentStatus extends Enumeration {
+  type PaymentStatus = Value
+  val started, ok, error = Value
+}

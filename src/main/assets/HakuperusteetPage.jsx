@@ -20,7 +20,7 @@ export default class HakuperusteetPage extends React.Component {
         ? <UserDataForm state={state} controller={controller}/>
         : null
       }
-      { !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.payment)
+      { !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user)
         ? <VetumaStart state={state} />
         : null
       }

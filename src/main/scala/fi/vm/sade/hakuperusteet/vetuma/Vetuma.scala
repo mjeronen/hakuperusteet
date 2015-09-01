@@ -1,16 +1,16 @@
 package fi.vm.sade.hakuperusteet.vetuma
 
 import java.net.URLEncoder
+import java.text.SimpleDateFormat
+import java.util.Date
 
 import org.apache.commons.codec.digest.DigestUtils
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
 
-case class VetumaUrl(host: String, timestamp: DateTime, language: String, returnUrl: String, cancelUrl: String,
+case class VetumaUrl(host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
                      errorUrl: String, appName: String, amount: String, ref: String, orderNumber: String,
                      msgBuyer: String, msgSeller: String, msgForm: String) {
 
-  val dtf = DateTimeFormat.forPattern("yyyyMMddHHmmssSSS")
+  val dtf = new SimpleDateFormat("yyyyMMddHHmmssSSS")
 
   val sharedSecret = "TESTIASIAKAS11-873C992B8C4C01EC8355500CAA709B37EA43BC2E591ABF29FEE5EAFE4DCBFA35"
   val rcvid = "TESTIASIAKAS11"
@@ -21,7 +21,7 @@ case class VetumaUrl(host: String, timestamp: DateTime, language: String, return
   val au = "PAY"
   val ap = "TESTIASIAKAS1"
 
-  private def formatTime = dtf.print(timestamp)
+  private def formatTime = dtf.format(timestamp)
 
   private def plainText =
     s"$rcvid&$appid&$formatTime&$so&$solist&${`type`}&$au&$language&$returnUrl&$cancelUrl&$errorUrl&" +

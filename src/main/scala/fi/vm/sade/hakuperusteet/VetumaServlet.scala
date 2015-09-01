@@ -1,11 +1,12 @@
 package fi.vm.sade.hakuperusteet
 
+import java.util.Date
+
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
+import fi.vm.sade.hakuperusteet.domain.{PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.vetuma.{Vetuma, VetumaUrl}
 import org.joda.time.DateTime
-import org.scalatra.ScalatraServlet
 
 class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
 
@@ -20,17 +21,20 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
     val ref = "1234561"
     val orderNro = Vetuma.generateOrderNumber
 
+    val payment = Payment(user.personOid.get, new Date(), ref, orderNro, PaymentStatus.started)
+    db.insertPayment(user, payment)
+
     val v = VetumaUrl(
       config.getString("vetuma.host"),
-      DateTime.now,
+      payment.timestamp,
       language,
       config.getString("vetuma.success.url"),
       config.getString("vetuma.cancel.url"),
       config.getString("vetuma.error.url"),
       config.getString("vetuma.app.name"),
       config.getString("vetuma.amount"),
-      ref,
-      orderNro,
+      payment.reference,
+      payment.orderNumber,
       config.getString("vetuma.msg.buyer"),
       config.getString("vetuma.msg.seller"),
       config.getString("vetuma.msg.form")

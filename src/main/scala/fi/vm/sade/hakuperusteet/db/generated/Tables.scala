@@ -21,25 +21,28 @@ trait Tables {
   /** Entity class storing rows of table Payment
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None)
+   *  @param tstamp Database column tstamp SqlType(timestamptz)
    *  @param reference Database column reference SqlType(varchar), Length(255,true)
    *  @param orderNumber Database column order_number SqlType(varchar), Length(255,true)
    *  @param status Database column status SqlType(varchar), Length(255,true) */
-  case class PaymentRow(id: Int, henkiloOid: Option[String] = None, reference: String, orderNumber: String, status: String)
+  case class PaymentRow(id: Int, henkiloOid: Option[String] = None, tstamp: java.sql.Timestamp, reference: String, orderNumber: String, status: String)
   /** GetResult implicit for fetching PaymentRow objects using plain SQL queries */
-  implicit def GetResultPaymentRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[String]): GR[PaymentRow] = GR{
+  implicit def GetResultPaymentRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[java.sql.Timestamp], e3: GR[String]): GR[PaymentRow] = GR{
     prs => import prs._
-    PaymentRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String]))
+    PaymentRow.tupled((<<[Int], <<?[String], <<[java.sql.Timestamp], <<[String], <<[String], <<[String]))
   }
   /** Table description of table payment. Objects of this class serve as prototypes for rows in queries. */
   class Payment(_tableTag: Tag) extends Table[PaymentRow](_tableTag, Some("hakuperusteet"), "payment") {
-    def * = (id, henkiloOid, reference, orderNumber, status) <> (PaymentRow.tupled, PaymentRow.unapply)
+    def * = (id, henkiloOid, tstamp, reference, orderNumber, status) <> (PaymentRow.tupled, PaymentRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), henkiloOid, Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), henkiloOid, Rep.Some(tstamp), Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None) */
     val henkiloOid: Rep[Option[String]] = column[Option[String]]("henkilo_oid", O.Length(255,varying=true), O.Default(None))
+    /** Database column tstamp SqlType(timestamptz) */
+    val tstamp: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("tstamp")
     /** Database column reference SqlType(varchar), Length(255,true) */
     val reference: Rep[String] = column[String]("reference", O.Length(255,varying=true))
     /** Database column order_number SqlType(varchar), Length(255,true) */

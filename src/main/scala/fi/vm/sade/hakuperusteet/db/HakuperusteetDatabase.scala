@@ -1,11 +1,14 @@
 package fi.vm.sade.hakuperusteet.db
 
+import java.sql.Timestamp
+import java.util.Date
+
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
-import fi.vm.sade.hakuperusteet.db.generated.Tables.UserRow
-import fi.vm.sade.hakuperusteet.domain.{Payment, User}
+import fi.vm.sade.hakuperusteet.db.generated.Tables.{PaymentRow, UserRow}
+import fi.vm.sade.hakuperusteet.domain.{PaymentStatus, Payment, User}
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
 import slick.util.AsyncExecutor
@@ -18,12 +21,12 @@ case class HakuperusteetDatabase(db: DB) {
   implicit class RunAndAwait[R](r: slick.dbio.DBIOAction[R, slick.dbio.NoStream, Nothing]) {
     def run: R = Await.result(db.run(r), Duration.Inf)
   }
+  val useAutoIncrementId = 0
 
   def findUser(email: String): Option[User] =
     Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentity, u.gender, u.nationality, u.educationLevel, u.educationCountry))
 
   def insertUser(user: User) = {
-    val useAutoIncrementId = 0
     val newUserRow = UserRow(useAutoIncrementId, user.personId, user.email, user.idpentityid, user.firstName, user.lastName, user.gender,
       new java.sql.Date(user.birthDate.getTime), user.personId, user.nationality, user.educationLevel, user.educationCountry)
     val y = (Tables.User returning Tables.User) += newUserRow
@@ -31,7 +34,13 @@ case class HakuperusteetDatabase(db: DB) {
   }
 
   def findPayment(user: User): Option[Payment] =
-    Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(r.henkiloOid.get, r.reference, r.orderNumber, r.status))
+    Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(r.henkiloOid.get, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status)))
+
+  def insertPayment(user: User, payment: Payment) = {
+    val newPaymentRow = PaymentRow(useAutoIncrementId, user.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
+    val y = (Tables.Payment returning Tables.Payment) += newPaymentRow
+    y.run
+  }
 }
 
 object HakuperusteetDatabase extends LazyLogging {

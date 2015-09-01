@@ -1,15 +1,12 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.auth.AuthenticationSupport
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{SessionData, User}
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
 import org.json4s.native.Serialization._
-import org.scalatra.ScalatraServlet
 
 class SessionServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
 

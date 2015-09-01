@@ -41,6 +41,7 @@ CREATE TABLE "payment"
 (
   id serial PRIMARY KEY,
   henkilo_oid character varying(255) REFERENCES "user"(henkilo_oid),
+  tstamp timestamp with time zone NOT NULL,
   reference character varying(255) NOT NULL,
   order_number character varying(255) NOT NULL,
   status character varying(255) NOT NULL
@@ -50,3 +51,4 @@ WITH (
 );
 ALTER TABLE "payment" OWNER TO oph;
 CREATE INDEX ON "payment"(henkilo_oid);
+CREATE INDEX ON "payment"(reference);
