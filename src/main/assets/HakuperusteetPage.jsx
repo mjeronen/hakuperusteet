@@ -7,6 +7,7 @@ import Footer from './Footer.jsx'
 import GoogleAuthentication from './GoogleAuthentication.jsx'
 import UserDataForm from './UserDataForm.jsx'
 import VetumaStart from './VetumaStart.jsx'
+import HakuList from './HakuList.jsx'
 
 export default class HakuperusteetPage extends React.Component {
   render() {
@@ -22,6 +23,10 @@ export default class HakuperusteetPage extends React.Component {
       }
       { !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.payment)
         ? <VetumaStart state={state} />
+        : null
+      }
+      { !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.payment)
+        ? <HakuList state={state} />
         : null
       }
       <Footer />
