@@ -6,7 +6,7 @@ export default class UserBirthDateInput extends React.Component {
     const controller = this.props.controller
     const state = this.props.state
     return <div>
-        <label htmlFor="birthDate">Birth Date</label>
+        <label htmlFor="birthDate">Birth Date (ddmmyyyy)</label>
         <input type="text" id="birthDate" name="birthDate" onChange={controller.valueChanges}/>
         <br />
         <input type="checkbox" name="hasPersonId" id="hasPersonId" onChange={controller.checkedChanges} />

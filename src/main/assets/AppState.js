@@ -1,4 +1,5 @@
 import Bacon from 'baconjs'
+import moment from 'moment-timezone'
 
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
@@ -78,7 +79,7 @@ function submitUserDataToServer(state) {
     idpentityid: state.user.idpentityid,
     firstName: state.firstName,
     lastName: state.lastName,
-    birthDate: state.birthDate,
+    birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("DD-MM-YYYY") + "T00:00:00Z",
     personId: state.personId,
     gender: state.gender,
     nationality: state.nationality,
