@@ -4,6 +4,8 @@ import java.util.Date
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.{PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.vetuma.{Vetuma, VetumaUrl}
 import org.joda.time.DateTime
@@ -44,16 +46,28 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
 
   post("/return/ok") {
     val url = config.getString("host.url.base") + "?result=ok"
-    halt(status = 303, headers = Map("Location" -> url.toString))
+    handleReturn(url, PaymentStatus.ok)
   }
 
   post("/return/cancel") {
     val url = config.getString("host.url.base") + "?result=cancel"
-    halt(status = 303, headers = Map("Location" -> url))
+    handleReturn(url, PaymentStatus.cancel)
   }
 
   post("/return/error") {
     val url = config.getString("host.url.base") + "?result=error"
-    halt(status = 303, headers = Map("Location" -> url))
+    handleReturn(url, PaymentStatus.error)
+  }
+
+  private def handleReturn(url: Oid, status: PaymentStatus) {
+    db.findPayment(user) match {
+      case Some(p) =>
+        val paymentOk = p.copy(status = status)
+        db.updatePayment(paymentOk)
+        halt(status = 303, headers = Map("Location" -> url.toString))
+      case None =>
+        // todo: handle this
+        halt(status = 303, headers = Map("Location" -> url.toString))
+    }
   }
 }

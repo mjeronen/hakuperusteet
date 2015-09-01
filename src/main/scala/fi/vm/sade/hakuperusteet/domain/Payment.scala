@@ -8,5 +8,5 @@ case class Payment(personOid: String, timestamp: Date, reference: String, orderN
 
 object PaymentStatus extends Enumeration {
   type PaymentStatus = Value
-  val started, ok, error = Value
+  val started, ok, cancel, error = Value
 }

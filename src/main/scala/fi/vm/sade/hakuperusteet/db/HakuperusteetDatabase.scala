@@ -37,9 +37,15 @@ case class HakuperusteetDatabase(db: DB) {
     Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(r.henkiloOid.get, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status)))
 
   def insertPayment(user: User, payment: Payment) = {
-    val newPaymentRow = PaymentRow(useAutoIncrementId, user.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
-    val y = (Tables.Payment returning Tables.Payment) += newPaymentRow
+    val y = (Tables.Payment returning Tables.Payment) += paymentToPaymentRow(user.personOid, payment)
     y.run
+  }
+
+  private def paymentToPaymentRow(personOid: Option[String], payment: Payment) =
+    PaymentRow(useAutoIncrementId, personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
+
+  def updatePayment(payment: Payment) = {
+    Tables.Payment.update(paymentToPaymentRow(Some(payment.personOid), payment)).run
   }
 }
 
