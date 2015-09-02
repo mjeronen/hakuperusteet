@@ -27,7 +27,7 @@ case class HakuperusteetDatabase(db: DB) {
     Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentity, u.gender, u.nationality, u.educationLevel, u.educationCountry))
 
   def insertUser(user: User) = {
-    val newUserRow = UserRow(useAutoIncrementId, user.personId, user.email, user.idpentityid, user.firstName, user.lastName, user.gender,
+    val newUserRow = UserRow(useAutoIncrementId, user.personOid, user.email, user.idpentityid, user.firstName, user.lastName, user.gender,
       new java.sql.Date(user.birthDate.getTime), user.personId, user.nationality, user.educationLevel, user.educationCountry)
     val y = (Tables.User returning Tables.User) += newUserRow
     y.run
