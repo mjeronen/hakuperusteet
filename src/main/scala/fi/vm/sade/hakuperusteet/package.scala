@@ -1,5 +1,8 @@
 package fi.vm.sade
 
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import org.json4s.DefaultJsonFormats._
 
 import org.json4s.CustomSerializer
@@ -25,5 +28,11 @@ package object hakuperusteet {
 
   val formatsHenkilo = Serialization.formats(org.json4s.NoTypeHints) + DateSerializer
 
-  implicit val formats = org.json4s.DefaultFormats
+
+  case object PaymentStatusSerializer extends CustomSerializer[PaymentStatus](format => (
+    { case JString(s) => PaymentStatus.withName(s) },
+    { case x: PaymentStatus => JString(x.toString) })
+  )
+
+  implicit val formats = org.json4s.DefaultFormats + PaymentStatusSerializer
 }
