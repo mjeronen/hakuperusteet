@@ -20,9 +20,8 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
     val userData = userDataFromSession
 
     val payment = Payment(None, userData.personOid.get, new Date(), ref, orderNro, PaymentStatus.started)
-    db.insertPayment(userData, payment)
-
-    Vetuma(config, payment, language).toUrl
+    val paymentWithId = db.upsertPayment(payment).getOrElse(halt(500))
+    Vetuma(config, paymentWithId, language).toUrl
   }
 
   post("/return/ok") {
@@ -48,7 +47,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
     db.findPayment(userDataFromSession) match {
       case Some(p) =>
         val paymentOk = p.copy(status = status)
-        db.updatePayment(paymentOk)
+        db.upsertPayment(paymentOk)
         halt(status = 303, headers = Map("Location" -> url.toString))
       case None =>
         // todo: handle this

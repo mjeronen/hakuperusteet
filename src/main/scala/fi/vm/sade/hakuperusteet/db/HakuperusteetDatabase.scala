@@ -1,5 +1,6 @@
 package fi.vm.sade.hakuperusteet.db
 
+import java.sql
 import java.sql.Timestamp
 import java.util.Date
 
@@ -32,32 +33,34 @@ case class HakuperusteetDatabase(db: DB) {
   def findUser(email: String): Option[User] =
     Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(Some(u.id), u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentityid, u.gender, u.nationality, u.educationLevel, u.educationCountry))
 
-  def insertUser(user: User) = {
-    val newUserRow = UserRow(useAutoIncrementId, user.personOid, user.email, user.idpentityid, user.firstName, user.lastName, user.gender,
-      new java.sql.Date(user.birthDate.getTime), user.personId, user.nationality, user.educationLevel, user.educationCountry)
-    val y = (Tables.User returning Tables.User) += newUserRow
-    y.run
-  }
+  def upsertUser(user: User): Option[User] =
+    (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
 
   def findPayment(user: User): Option[Payment] =
     Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(Some(r.id), r.henkiloOid.get, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status)))
 
-  def insertPayment(user: User, payment: Payment) = {
-    val y = (Tables.Payment returning Tables.Payment) += paymentToPaymentRow(user.personOid, payment)
-    y.run
-  }
+  def upsertPayment(payment: Payment): Option[Payment] =
+    (Tables.Payment returning Tables.Payment).insertOrUpdate(paymentToPaymentRow(payment)).run.map(paymentRowToPayment)
 
-  def updatePayment(payment: Payment) = {
-    Tables.Payment.update(paymentToPaymentRow(Some(payment.personOid), payment)).run
-  }
+  private def paymentToPaymentRow(payment: Payment) =
+    PaymentRow(payment.id.getOrElse(useAutoIncrementId), Some(payment.personOid), new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
 
-  private def paymentToPaymentRow(personOid: Option[String], payment: Payment) =
-    PaymentRow(payment.id.getOrElse(useAutoIncrementId), personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
+  private def paymentRowToPayment(r: PaymentRow) =
+    Payment(Some(r.id), r.henkiloOid.get, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status))
 
   private def sessionToSessionRow(session: Session): Tables.SessionRow =
     SessionRow(session.id.getOrElse(useAutoIncrementId), session.email, session.token, session.idpentityid)
 
   private def sessionRowToSession(r: Tables.SessionRow): Session = Session(Some(r.id), r.email, r.token, r.idpentityid)
+
+  private def userToUserRow(u: User): Tables.UserRow =
+    UserRow(u.id.getOrElse(useAutoIncrementId), u.personOid, u.email, u.idpentityid, u.firstName,
+      u.lastName, u.gender, new sql.Date(u.birthDate.getTime), u.personId, u.nationality, u.educationLevel,
+      u.educationCountry)
+
+  private def userRowToUser(r: UserRow) =
+    User(Some(r.id), r.henkiloOid, r.email, r.firstname, r.lastname, r.birthdate, r.personid, r.idpentityid, r.gender,
+    r.nationality, r.educationLevel, r.educationCountry)
 }
 
 object HakuperusteetDatabase extends LazyLogging {

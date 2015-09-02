@@ -31,7 +31,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
     failUnlessAuthenticated
 
     val user = parse(request.body).extract[User]
-    System.err.println(write(user))
+    logger.info(s"Updating userData: $user")
+
     val newUser = Try(HenkiloClient.upsertHenkilo(user)) match {
       case Success(u) =>
         user.copy(personOid = Some(u.personOid))
@@ -39,11 +40,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
         logger.error("Unable to get henkilö", t)
         halt(500, "Unable to get henkilö")
     }
-    val userWithId = db.insertUser(newUser)
-
-    val response = Map(
-      "field" -> "henkiloOid",
-      "value" -> newUser.personOid.getOrElse(""))
-    compact(render(response))
+    val userWithId = db.upsertUser(newUser)
+    write(SessionData(userWithId, None))
   }
 }
