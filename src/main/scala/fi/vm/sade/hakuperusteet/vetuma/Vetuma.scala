@@ -8,13 +8,11 @@ import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.domain.Payment
 import org.apache.commons.codec.digest.DigestUtils
 
-case class Vetuma(host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
+case class Vetuma(sharedSecret: String, host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
                      errorUrl: String, appName: String, amount: String, ref: String, orderNumber: String,
                      msgBuyer: String, msgSeller: String, msgForm: String) {
 
   val dtf = new SimpleDateFormat("yyyyMMddHHmmssSSS")
-
-  val sharedSecret = "TESTIASIAKAS11-873C992B8C4C01EC8355500CAA709B37EA43BC2E591ABF29FEE5EAFE4DCBFA35"
   val rcvid = "TESTIASIAKAS11"
   val appid = "PAYMENT-APP2"
   val so = ""
@@ -48,6 +46,7 @@ object Vetuma {
 
   def apply(config: Config, payment: Payment, language: String): Vetuma = {
     Vetuma(
+      config.getString("vetuma.shared.secret"),
       config.getString("vetuma.host"),
       payment.timestamp,
       language,
