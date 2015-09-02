@@ -24,18 +24,10 @@ case class HakuperusteetDatabase(db: DB) {
   val useAutoIncrementId = 0
 
   def findSession(email: String): Option[Session] =
-    Tables.Session.filter(_.email === email).result.headOption.run.map((s) => Session(Some(s.id), s.email, s.token, s.idpentityid))
+    Tables.Session.filter(_.email === email).result.headOption.run.map(sessionRowToSession)
 
-  def insertSession(session: Session) = {
-    val y = (Tables.Session returning Tables.Session) += sessionToSessionRow(session)
-    y.run
-  }
-
-  def updateSession(session: Session) = {
-    Tables.Session.update(sessionToSessionRow(session)).run
-  }
-
-  def upsertSession(session: Session) = Tables.Session.insertOrUpdate(sessionToSessionRow(session)).run
+  def upsertSession(session: Session): Option[Session] =
+    (Tables.Session returning Tables.Session).insertOrUpdate(sessionToSessionRow(session)).run.map(sessionRowToSession)
 
   def findUser(email: String): Option[User] =
     Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(Some(u.id), u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentityid, u.gender, u.nationality, u.educationLevel, u.educationCountry))
@@ -64,6 +56,8 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def sessionToSessionRow(session: Session): Tables.SessionRow =
     SessionRow(session.id.getOrElse(useAutoIncrementId), session.email, session.token, session.idpentityid)
+
+  private def sessionRowToSession(r: Tables.SessionRow): Session = Session(Some(r.id), r.email, r.token, r.idpentityid)
 }
 
 object HakuperusteetDatabase extends LazyLogging {
