@@ -3,6 +3,7 @@ package fi.vm.sade.hakuperusteet.henkilo
 import java.net.URLEncoder
 
 import fi.vm.sade.hakuperusteet.domain.User
+import fi.vm.sade.hakuperusteet.domain.Henkilo
 import org.http4s.client.Client
 import org.http4s.dsl._
 import org.http4s.headers.{Location, `Set-Cookie`}
@@ -14,6 +15,8 @@ import scalaz.concurrent.Task
 class HenkiloClientSpec extends FlatSpec with Matchers {
   val virkailijaUri: Uri = Uri(path = "https://localhost")
 
+
+
   behavior of "HenkiloClient"
 
   it should "send and receive json with CAS headers in place" in {
@@ -24,7 +27,7 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
       override def prepare(req: Request): Task[Response] = req match {
         case req@ POST -> Root / "authentication-service" / "resources" / "s2s" / "hakuperusteet" =>
           casMock.addStep("valid session")
-          Ok("""{"personOid":"1.2.3.4","email":"","firstName":"","lastName":"","birthDate":1440742941926,"gender":"","nationality":"FI","idpentityid":""}""")
+          Ok("""{"personOid":"1.2.3.4","email":"","firstName":"","lastName":"","birthDate":1440742941926,"gender":null,"nationality":"FI","idpentityid":"","educationLevel":""}""")
         case _ =>
           casMock.addStep("invalid request")
           NotFound()
@@ -34,11 +37,9 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
       CasParams("/authentication-service", "foo", "bar"), mock)
     val henkiloClient = new HenkiloClient(virkailijaUri, client)
 
-    val henkilo:User = henkiloClient .haeHenkilo(User.empty("")).run
+    val henkilo:Henkilo = henkiloClient .haeHenkilo(User.empty("")).run
 
-    henkilo.personOid.get shouldEqual "1.2.3.4"
-    henkilo.personId shouldEqual None
-    henkilo.birthDate shouldEqual new java.util.Date(1440742941926L)
+    henkilo.personOid shouldEqual "1.2.3.4"
 
     casMock.steps should be (List(
       "created TGT-123",

@@ -4,6 +4,7 @@ import java.net.URLEncoder
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.domain.User
+import fi.vm.sade.hakuperusteet.domain.Henkilo
 import fi.vm.sade.hakuperusteet.henkilo.CasClient.JSessionId
 import org.http4s.Uri._
 import org.http4s._
@@ -19,22 +20,36 @@ import scalaz.\/._
 import scalaz.concurrent.{Future, Task}
 import scalaz.stream.{Channel, Process, async, channel}
 
-import fi.vm.sade.hakuperusteet.formats
+import fi.vm.sade.hakuperusteet.{Configuration, formats}
+
+object HenkiloClient {
+  val henkilopalveluHost = Configuration.props.getString("henkilopalvelu.host")
+  val username = Configuration.props.getString("henkilopalvelu.username")
+  val password = Configuration.props.getString("henkilopalvelu.password")
+
+  val casClient = new CasClient(henkilopalveluHost)
+  val casParams = CasParams("/authentication-service", username, password)
+  val henkiloClient = new HenkiloClient(henkilopalveluHost, new CasAbleClient(casClient, casParams))
+
+  def upsertHenkilo(user: User) = henkiloClient.haeHenkilo(user).run
+}
 
 class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {
+  implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
+
   def this(henkiloServerUrl: String, client: Client) = this(new Task(
     Future.now(
       Uri.fromString(henkiloServerUrl).
         leftMap((fail: ParseFailure) => new IllegalArgumentException(fail.sanitized))
     )).run, client)
 
-  def haeHenkilo(user: User): Task[User] = client.prepAs[User](req(user))(json4sOf[User]).
+  def haeHenkilo(user: User): Task[Henkilo] = client.prepAs[Henkilo](req(user))(json4sOf[Henkilo]).
     handle {
     case e: ParseException =>
-      println(s"parse error details: ${e.failure.details}")
+      logger.error(s"parse error details: ${e.failure.details}")
       throw e
     case e =>
-      println(s"error: $e")
+      logger.error(s"error: $e")
       throw e
   }
 
@@ -43,12 +58,12 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
   private def req(user: User) = Request(
     method = Method.POST,
     uri = resolve(henkiloServerUrl, Uri(path = "/authentication-service/resources/s2s/hakuperusteet")),
-    headers = reqHeaders
-  ).withBody(user)(json4sEncoderOf)
+    headers = reqHeaders //reqHeaders
+  ).withBody(user)(json4sEncoderOf[User])
 
   def parseJson4s[A] (json:String)(implicit formats: Formats, mf: Manifest[A]) = scala.util.Try(read[A](json)).map(right).recover{
     case t =>
-      logger.error("json decodign failed", t)
+      logger.error("json decoding failed {}!",json, t)
       left(ParseFailure("json decoding failed", t.getMessage))
   }.get
 
@@ -75,7 +90,7 @@ class CasAbleClient(casClient: CasClient, casParams: CasParams, client: Client =
   private val sessionRefreshProcess = paramSource through casClient.sessionRefreshChannel
 
   private val requestChannel = channel.lift[Task, Request, Response]((req: Request) => client.prepare(req)).contramap[(Request, JSessionId)]{
-    case (req:Request, session: JSessionId) => req.withHeaders(headers.Cookie(Cookie("JSESSIONID", session)))
+    case (req:Request, session: JSessionId) => req.putHeaders(headers.Cookie(Cookie("JSESSIONID", session)))
   }
 
   private def sessionExpired(resp: Response): Boolean =
