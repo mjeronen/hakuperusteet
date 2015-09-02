@@ -51,8 +51,8 @@ export function initAppState(props) {
     return {...state, properties, countries}
   }
 
-  function onLoginLogout(state, user) {
-    return {...state, user}
+  function onLoginLogout(state, session) {
+    return {...state, session}
   }
 
   function onUpdateField(state, {field, value}) {
@@ -70,8 +70,8 @@ function checkSession(sessionUrl) {
 
 function submitUserDataToServer(state) {
   const userData = {
-    email: state.user.email,
-    idpentityid: state.user.idpentityid,
+    email: state.session.email,
+    idpentityid: state.session.idpentityid,
     firstName: state.firstName,
     lastName: state.lastName,
     birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD") + "T00:00:00Z",
