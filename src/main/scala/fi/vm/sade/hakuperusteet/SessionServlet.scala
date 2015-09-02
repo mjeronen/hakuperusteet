@@ -12,6 +12,7 @@ import org.json4s.native.Serialization._
 import scala.util.{Failure, Success, Try}
 
 class SessionServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
+  case class UserDataResponse(field: String, value: SessionData)
 
   post("/authenticate") {
     authenticate
@@ -41,6 +42,6 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
         halt(500, "Unable to get henkilö")
     }
     val userWithId = db.upsertUser(newUser)
-    write(SessionData(userWithId, None))
+    write(UserDataResponse("sessionData", SessionData(userWithId, None)))
   }
 }
