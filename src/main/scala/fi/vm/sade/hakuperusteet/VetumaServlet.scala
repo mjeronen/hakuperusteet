@@ -25,17 +25,17 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
   }
 
   post("/return/ok") {
-    val url = config.getString("host.url.base") + "?result=ok"
+    val url = config.getString("host.url.base") + "#VetumaResultOk"
     handleReturn(url, PaymentStatus.ok)
   }
 
   post("/return/cancel") {
-    val url = config.getString("host.url.base") + "?result=cancel"
+    val url = config.getString("host.url.base") + "#VetumaResultCancel"
     handleReturn(url, PaymentStatus.cancel)
   }
 
   post("/return/error") {
-    val url = config.getString("host.url.base") + "?result=error"
+    val url = config.getString("host.url.base") + "#VetumaResultError"
     handleReturn(url, PaymentStatus.error)
   }
 
