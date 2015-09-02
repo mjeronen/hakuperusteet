@@ -43,6 +43,10 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
   }
 
   private def handleReturn(url: Oid, status: PaymentStatus) {
+    val macParams = createMacParams
+    val expectedMac = params.getOrElse("MAC", "")
+    if (!Vetuma.verifyReturnMac(config.getString("vetuma.shared.secret"), macParams, expectedMac)) halt(409)
+
     db.findPayment(user) match {
       case Some(p) =>
         val paymentOk = p.copy(status = status)
@@ -52,5 +56,10 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
         // todo: handle this
         halt(status = 303, headers = Map("Location" -> url.toString))
     }
+  }
+
+  private def createMacParams = {
+    def p(name: String) = params.getOrElse(name, "")
+    List(p("RCVID"), p("TIMESTMP"), p("SO"), p("LG"), p("RETURL"), p("CANURL"), p("ERRURL"), p("PAYID"), p("REF"), p("ORDNR"), p("PAID"), p("STATUS"))
   }
 }

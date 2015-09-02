@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.domain.Payment
 import org.apache.commons.codec.digest.DigestUtils
 
@@ -39,7 +40,7 @@ case class Vetuma(sharedSecret: String, host: String, timestamp: Date, language:
   def toUrl = s"$host?$query&MAC=$mac"
 }
 
-object Vetuma {
+object Vetuma extends LazyLogging {
   val random = new java.util.Random
 
   def generateOrderNumber = random.nextInt(10000000).toString
@@ -61,5 +62,15 @@ object Vetuma {
       config.getString("vetuma.msg.seller"),
       config.getString("vetuma.msg.form")
     )
+  }
+
+  def verifyReturnMac(sharedSecret: String, orderedParams: List[String], expectedMac: String) = {
+    val plainText = (orderedParams ++ List(sharedSecret, "")).mkString("&")
+    val calculatedMac = DigestUtils.sha256Hex(plainText).toUpperCase
+    val ok = calculatedMac == expectedMac
+    if (!ok) {
+      logger.warn(s"Invalid Vetuma return mac $calculatedMac - expected mac $expectedMac")
+    }
+    ok
   }
 }
