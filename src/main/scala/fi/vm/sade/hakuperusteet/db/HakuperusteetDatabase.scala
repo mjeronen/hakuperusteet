@@ -80,7 +80,7 @@ object HakuperusteetDatabase extends LazyLogging {
       flyway.setDataSource(url, user, password)
       flyway.setSchemas("hakuperusteet")
       flyway.setValidateOnMigrate(false)
-      flyway.clean // removeMe
+      //flyway.clean // removeMe
       flyway.migrate
     } catch {
       case e: Exception => logger.error("Migration failure", e)
