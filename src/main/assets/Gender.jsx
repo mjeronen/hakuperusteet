@@ -11,9 +11,9 @@ export default class Gender extends React.Component {
       <label>Gender</label>
       &nbsp;&nbsp;
       <label htmlFor="gender-male">Male</label>
-      <input type="radio" id="gender-male" name={name} value="0" onChange={controller.radioChanges}/>
+      <input type="radio" id="gender-male" name={name} value="1" onChange={controller.radioChanges}/>
       <label htmlFor="gender-female">Female</label>
-      <input type="radio" id="gender-female" name={name} value="1" onChange={controller.radioChanges}/>
+      <input type="radio" id="gender-female" name={name} value="2" onChange={controller.radioChanges}/>
     </div>
   }
 }
