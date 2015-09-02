@@ -10,4 +10,8 @@ class HakuperusteetServlet(val configuration: Config, val db: HakuperusteetDatab
   override def realm: String = "hakuperusteet"
 
   def failUnlessAuthenticated = if (!isAuthenticated) halt(401)
+
+  before() {
+    contentType = "application/json"
+  }
 }

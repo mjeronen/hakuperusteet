@@ -13,10 +13,6 @@ import scala.util.{Failure, Success, Try}
 
 class SessionServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
 
-  before() {
-    contentType = "application/json"
-  }
-
   post("/authenticate") {
     authenticate
     //failUnlessAuthenticated

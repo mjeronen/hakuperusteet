@@ -10,10 +10,6 @@ import fi.vm.sade.hakuperusteet.vetuma.Vetuma
 
 class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
 
-  before() {
-    contentType = "application/json"
-  }
-
   get("/openvetuma") {
     failUnlessAuthenticated
 
