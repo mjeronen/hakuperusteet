@@ -5,7 +5,7 @@ import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.User
+import fi.vm.sade.hakuperusteet.domain.{Session, User}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier._
 import fi.vm.sade.hakuperusteet.{HakuperusteetServlet, Configuration}
 import org.scalatra.ScalatraBase
@@ -18,47 +18,50 @@ import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
 
 
-trait AuthenticationSupport extends ScentrySupport[User] with BasicAuthSupport[User] { self: HakuperusteetServlet =>
+trait AuthenticationSupport extends ScentrySupport[Session] with BasicAuthSupport[Session] { self: HakuperusteetServlet =>
   override abstract def initialize(config: ConfigT) = super.initialize(config)
   protected val scentryConfig = (new ScentryConfig {}).asInstanceOf[ScentryConfiguration]
 
-  protected def fromSession = { case email: String => db.findUser(email).get  }
-  protected def toSession   = { case usr: User => usr.email }
+  protected def fromSession = { case email: String => db.findSession(email).get  }
+  protected def toSession   = { case usr: Session => usr.email }
 
   override protected def registerAuthStrategies = scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration, db))
 }
 
-class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase) extends ScentryStrategy[User] with LazyLogging {
+class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase) extends ScentryStrategy[Session] with LazyLogging {
   import fi.vm.sade.hakuperusteet._
 
   private def request = app.enrichRequest(app.request)
+
   val json = parse(request.body)
   val email = (json \ "email").extract[Option[String]]
-  val token = (json \ "token").extract[Option[String]]
+  val token = (json \ "token").extract[Option[String]] // todo: currently real token
+  val idpentityid = (json \ "idpentityid").extract[Option[String]] // todo: currently google
 
-  def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] =
-    token match {
-      case Some(t) =>
-        if (verify(t)) {
-          authenticateFromDatabase
-        } else {
-          logger.error("authenticate: invalid token for email {}", email)
-          None
+  def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[Session] = {
+    (email, token, idpentityid) match {
+      case (Some(emailFromRequest), Some(tokenFromRequest), Some(idpentityidFromSession)) =>
+        db.findSession(emailFromRequest) match {
+          case s @ Some(session) if session.token == tokenFromRequest => s
+          case Some(session) =>
+            logger.info(s"Updating session token for $emailFromRequest")
+            verifyAndCreateSession(session.copy(token = tokenFromRequest))
+          case _ =>
+            logger.info(s"Creating new session for $emailFromRequest")
+            val newSession = Session(None, emailFromRequest, tokenFromRequest, idpentityidFromSession)
+            verifyAndCreateSession(newSession)
         }
-      case None => None
+      case _ => None
     }
+  }
 
-
-  def authenticateFromDatabase: Option[User] =
-    email match {
-      case Some(e) =>
-        db.findUser(e) match {
-          case Some(user) =>
-            logger.info("authenticated user {}", email)
-            Some(user)
-          case None =>
-            None
-        }
-      case None => None
+  private def verifyAndCreateSession(session: Session): Option[Session] = {
+    if (verify(session.token)) {
+      db.upsertSession(session)
+      Some(session)
+    } else {
+      logger.warn(s"Session verify failed for user ${session.email} with token ${session.token}")
+      None
     }
+  }
 }

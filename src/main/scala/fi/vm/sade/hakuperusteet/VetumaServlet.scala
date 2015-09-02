@@ -17,8 +17,10 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
     val ref = "1234561"
     val orderNro = Vetuma.generateOrderNumber
 
-    val payment = Payment(user.personOid.get, new Date(), ref, orderNro, PaymentStatus.started)
-    db.insertPayment(user, payment)
+    val userData = userDataFromSession
+
+    val payment = Payment(None, userData.personOid.get, new Date(), ref, orderNro, PaymentStatus.started)
+    db.insertPayment(userData, payment)
 
     Vetuma(config, payment, language).toUrl
   }
@@ -43,7 +45,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
     val expectedMac = params.getOrElse("MAC", "")
     if (!Vetuma.verifyReturnMac(config.getString("vetuma.shared.secret"), macParams, expectedMac)) halt(409)
 
-    db.findPayment(user) match {
+    db.findPayment(userDataFromSession) match {
       case Some(p) =>
         val paymentOk = p.copy(status = status)
         db.updatePayment(paymentOk)

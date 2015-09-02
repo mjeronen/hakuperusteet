@@ -15,22 +15,20 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
 
   post("/authenticate") {
     authenticate
-    //failUnlessAuthenticated
+    failUnlessAuthenticated
 
-    val json = parse(request.body)
-    val email = (json \ "email").extract[String]
-    db.findUser(email) match {
+    db.findUser(user.email) match {
       case Some(user) =>
         db.findPayment(user) match {
-          case Some(payment) => write(SessionData(user, Some(payment)))
-          case None => write(SessionData(user, None))
+          case Some(payment) => write(SessionData(Some(user), Some(payment)))
+          case None => write(SessionData(Some(user), None))
         }
-      case None => halt(404, "User not found")
+      case None => write(SessionData(None, None))
     }
   }
 
   post("/userData") {
-    //failUnlessAuthenticated
+    failUnlessAuthenticated
 
     val user = parse(request.body).extract[User]
     System.err.println(write(user))
@@ -48,6 +46,4 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
       "value" -> newUser.personOid.getOrElse(""))
     compact(render(response))
   }
-
-
 }

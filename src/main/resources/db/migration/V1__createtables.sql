@@ -13,12 +13,27 @@ GRANT ALL ON SCHEMA public TO public;
 SET default_tablespace = '';
 SET default_with_oids = false;
 
+CREATE TABLE "session"
+(
+  id serial PRIMARY KEY,
+  email character varying(255) NOT NULL,
+  token text NOT NULL,
+  idpentityid character varying(255) NOT NULL,
+
+  CONSTRAINT session_email UNIQUE (email)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE "session" OWNER TO oph;
+CREATE INDEX ON "session"(email);
+
 CREATE TABLE "user"
 (
   id serial PRIMARY KEY,
   henkilo_oid character varying(255),
   email character varying(255) NOT NULL,
-  idpentity character varying(255) NOT NULL,
+  idpentityid character varying(255) NOT NULL,
   firstname character varying(255) NOT NULL,
   lastname character varying(255) NOT NULL,
   gender character varying(255) NOT NULL,

@@ -11,6 +11,8 @@ class HakuperusteetServlet(val configuration: Config, val db: HakuperusteetDatab
 
   def failUnlessAuthenticated = if (!isAuthenticated) halt(401)
 
+  def userDataFromSession = db.findUser(user.email).getOrElse(halt(500))
+
   before() {
     contentType = "application/json"
   }

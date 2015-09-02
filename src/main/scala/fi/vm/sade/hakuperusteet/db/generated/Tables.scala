@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Payment.schema ++ SchemaVersion.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Payment.schema ++ SchemaVersion.schema ++ Session.schema ++ User.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -52,6 +52,9 @@ trait Tables {
 
     /** Foreign key referencing User (database name payment_henkilo_oid_fkey) */
     lazy val userFk = foreignKey("payment_henkilo_oid_fkey", henkiloOid, User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+
+    /** Index over (reference) (database name payment_reference_idx) */
+    val index1 = index("payment_reference_idx", reference)
   }
   /** Collection-like TableQuery object for table Payment */
   lazy val Payment = new TableQuery(tag => new Payment(tag))
@@ -115,11 +118,45 @@ trait Tables {
   /** Collection-like TableQuery object for table SchemaVersion */
   lazy val SchemaVersion = new TableQuery(tag => new SchemaVersion(tag))
 
+  /** Entity class storing rows of table Session
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param email Database column email SqlType(varchar), Length(255,true)
+   *  @param token Database column token SqlType(varchar), Length(255,true)
+   *  @param idpentityid Database column idpentityid SqlType(varchar), Length(255,true) */
+  case class SessionRow(id: Int, email: String, token: String, idpentityid: String)
+  /** GetResult implicit for fetching SessionRow objects using plain SQL queries */
+  implicit def GetResultSessionRow(implicit e0: GR[Int], e1: GR[String]): GR[SessionRow] = GR{
+    prs => import prs._
+    SessionRow.tupled((<<[Int], <<[String], <<[String], <<[String]))
+  }
+  /** Table description of table session. Objects of this class serve as prototypes for rows in queries. */
+  class Session(_tableTag: Tag) extends Table[SessionRow](_tableTag, Some("hakuperusteet"), "session") {
+    def * = (id, email, token, idpentityid) <> (SessionRow.tupled, SessionRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), Rep.Some(email), Rep.Some(token), Rep.Some(idpentityid)).shaped.<>({r=>import r._; _1.map(_=> SessionRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column email SqlType(varchar), Length(255,true) */
+    val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
+    /** Database column token SqlType(varchar), Length(255,true) */
+    val token: Rep[String] = column[String]("token", O.Length(255,varying=true))
+    /** Database column idpentityid SqlType(varchar), Length(255,true) */
+    val idpentityid: Rep[String] = column[String]("idpentityid", O.Length(255,varying=true))
+
+    /** Uniqueness Index over (email) (database name session_email) */
+    val index1 = index("session_email", email, unique=true)
+    /** Index over (email) (database name session_email_idx) */
+    val index2 = index("session_email_idx", email)
+  }
+  /** Collection-like TableQuery object for table Session */
+  lazy val Session = new TableQuery(tag => new Session(tag))
+
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None)
    *  @param email Database column email SqlType(varchar), Length(255,true)
-   *  @param idpentity Database column idpentity SqlType(varchar), Length(255,true)
+   *  @param idpentityid Database column idpentityid SqlType(varchar), Length(255,true)
    *  @param firstname Database column firstname SqlType(varchar), Length(255,true)
    *  @param lastname Database column lastname SqlType(varchar), Length(255,true)
    *  @param gender Database column gender SqlType(varchar), Length(255,true)
@@ -128,7 +165,7 @@ trait Tables {
    *  @param nationality Database column nationality SqlType(varchar), Length(255,true)
    *  @param educationLevel Database column education_level SqlType(varchar), Length(255,true)
    *  @param educationCountry Database column education_country SqlType(varchar), Length(255,true) */
-  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentity: String, firstname: String, lastname: String, gender: String, birthdate: java.sql.Date, personid: Option[String] = None, nationality: String, educationLevel: String, educationCountry: String)
+  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentityid: String, firstname: String, lastname: String, gender: String, birthdate: java.sql.Date, personid: Option[String] = None, nationality: String, educationLevel: String, educationCountry: String)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
   implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[String], e3: GR[java.sql.Date]): GR[UserRow] = GR{
     prs => import prs._
@@ -136,9 +173,9 @@ trait Tables {
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, Some("hakuperusteet"), "user") {
-    def * = (id, henkiloOid, email, idpentity, firstname, lastname, gender, birthdate, personid, nationality, educationLevel, educationCountry) <> (UserRow.tupled, UserRow.unapply)
+    def * = (id, henkiloOid, email, idpentityid, firstname, lastname, gender, birthdate, personid, nationality, educationLevel, educationCountry) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentity), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nationality), Rep.Some(educationLevel), Rep.Some(educationCountry)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11.get, _12.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nationality), Rep.Some(educationLevel), Rep.Some(educationCountry)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11.get, _12.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -146,8 +183,8 @@ trait Tables {
     val henkiloOid: Rep[Option[String]] = column[Option[String]]("henkilo_oid", O.Length(255,varying=true), O.Default(None))
     /** Database column email SqlType(varchar), Length(255,true) */
     val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
-    /** Database column idpentity SqlType(varchar), Length(255,true) */
-    val idpentity: Rep[String] = column[String]("idpentity", O.Length(255,varying=true))
+    /** Database column idpentityid SqlType(varchar), Length(255,true) */
+    val idpentityid: Rep[String] = column[String]("idpentityid", O.Length(255,varying=true))
     /** Database column firstname SqlType(varchar), Length(255,true) */
     val firstname: Rep[String] = column[String]("firstname", O.Length(255,varying=true))
     /** Database column lastname SqlType(varchar), Length(255,true) */
