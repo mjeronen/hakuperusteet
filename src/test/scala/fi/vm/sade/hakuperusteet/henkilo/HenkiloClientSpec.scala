@@ -1,6 +1,7 @@
 package fi.vm.sade.hakuperusteet.henkilo
 
 import java.net.URLEncoder
+import java.util.Date
 
 import fi.vm.sade.hakuperusteet.domain.User
 import fi.vm.sade.hakuperusteet.domain.Henkilo
@@ -15,8 +16,6 @@ import scalaz.concurrent.{Future, Task}
 
 class HenkiloClientSpec extends FlatSpec with Matchers {
   val virkailijaUri: Uri = Uri(path = "https://localhost")
-
-
 
   behavior of "HenkiloClient"
 
@@ -38,7 +37,8 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
       CasParams("/authentication-service", "foo", "bar"), mock)
     val henkiloClient = new HenkiloClient(virkailijaUri, client)
 
-    val henkilo:Henkilo = henkiloClient .haeHenkilo(User.empty("")).run
+    val emptyUser = User(None, None,"", "", "", new Date(), None, "", "", "", "", "")
+    val henkilo:Henkilo = henkiloClient.haeHenkilo(emptyUser).run
 
     henkilo.personOid shouldEqual "1.2.3.4"
 
@@ -50,8 +50,6 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
     ))
   }
 }
-
-
 
 class CasMock(var ticket: String = "123",
               virkailijaUrl: Uri = Uri(path = "https://localhost"),
@@ -89,5 +87,4 @@ class CasMock(var ticket: String = "123",
         Unauthorized(Challenge("", ""))
     }
   }
-
 }
