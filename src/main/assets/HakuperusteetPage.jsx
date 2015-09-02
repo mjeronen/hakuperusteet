@@ -3,6 +3,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import Header from './Header.jsx'
+import ProgramInfo from './ProgramInfo.jsx'
 import Footer from './Footer.jsx'
 import GoogleAuthentication from './GoogleAuthentication.jsx'
 import UserDataForm from './UserDataForm.jsx'
@@ -16,6 +17,7 @@ export default class HakuperusteetPage extends React.Component {
     return <div>
       <Header />
       <GoogleAuthentication state={state} />
+      <ProgramInfo state={state} />
       { !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
         ? <UserDataForm state={state} controller={controller}/>
         : null
