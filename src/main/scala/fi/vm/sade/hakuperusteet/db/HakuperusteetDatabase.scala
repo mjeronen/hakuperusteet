@@ -37,16 +37,16 @@ case class HakuperusteetDatabase(db: DB) {
     (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
 
   def findPayment(user: User): Option[Payment] =
-    Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(Some(r.id), r.henkiloOid.get, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status)))
+    Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(Some(r.id), r.henkiloOid, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status)))
 
   def upsertPayment(payment: Payment): Option[Payment] =
     (Tables.Payment returning Tables.Payment).insertOrUpdate(paymentToPaymentRow(payment)).run.map(paymentRowToPayment)
 
   private def paymentToPaymentRow(payment: Payment) =
-    PaymentRow(payment.id.getOrElse(useAutoIncrementId), Some(payment.personOid), new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
+    PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
 
   private def paymentRowToPayment(r: PaymentRow) =
-    Payment(Some(r.id), r.henkiloOid.get, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status))
+    Payment(Some(r.id), r.henkiloOid, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status))
 
   private def sessionToSessionRow(session: Session): Tables.SessionRow =
     SessionRow(session.id.getOrElse(useAutoIncrementId), session.email, session.token, session.idpentityid)
@@ -80,7 +80,7 @@ object HakuperusteetDatabase extends LazyLogging {
       flyway.setDataSource(url, user, password)
       flyway.setSchemas("hakuperusteet")
       flyway.setValidateOnMigrate(false)
-      //flyway.clean // removeMe
+      flyway.clean // removeMe
       flyway.migrate
     } catch {
       case e: Exception => logger.error("Migration failure", e)

@@ -20,27 +20,27 @@ trait Tables {
 
   /** Entity class storing rows of table Payment
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
-   *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None)
+   *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true)
    *  @param tstamp Database column tstamp SqlType(timestamptz)
    *  @param reference Database column reference SqlType(varchar), Length(255,true)
    *  @param orderNumber Database column order_number SqlType(varchar), Length(255,true)
    *  @param status Database column status SqlType(varchar), Length(255,true) */
-  case class PaymentRow(id: Int, henkiloOid: Option[String] = None, tstamp: java.sql.Timestamp, reference: String, orderNumber: String, status: String)
+  case class PaymentRow(id: Int, henkiloOid: String, tstamp: java.sql.Timestamp, reference: String, orderNumber: String, status: String)
   /** GetResult implicit for fetching PaymentRow objects using plain SQL queries */
-  implicit def GetResultPaymentRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[java.sql.Timestamp], e3: GR[String]): GR[PaymentRow] = GR{
+  implicit def GetResultPaymentRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Timestamp]): GR[PaymentRow] = GR{
     prs => import prs._
-    PaymentRow.tupled((<<[Int], <<?[String], <<[java.sql.Timestamp], <<[String], <<[String], <<[String]))
+    PaymentRow.tupled((<<[Int], <<[String], <<[java.sql.Timestamp], <<[String], <<[String], <<[String]))
   }
   /** Table description of table payment. Objects of this class serve as prototypes for rows in queries. */
   class Payment(_tableTag: Tag) extends Table[PaymentRow](_tableTag, Some("hakuperusteet"), "payment") {
     def * = (id, henkiloOid, tstamp, reference, orderNumber, status) <> (PaymentRow.tupled, PaymentRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), henkiloOid, Rep.Some(tstamp), Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(henkiloOid), Rep.Some(tstamp), Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
-    /** Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None) */
-    val henkiloOid: Rep[Option[String]] = column[Option[String]]("henkilo_oid", O.Length(255,varying=true), O.Default(None))
+    /** Database column henkilo_oid SqlType(varchar), Length(255,true) */
+    val henkiloOid: Rep[String] = column[String]("henkilo_oid", O.Length(255,varying=true))
     /** Database column tstamp SqlType(timestamptz) */
     val tstamp: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("tstamp")
     /** Database column reference SqlType(varchar), Length(255,true) */
@@ -51,7 +51,7 @@ trait Tables {
     val status: Rep[String] = column[String]("status", O.Length(255,varying=true))
 
     /** Foreign key referencing User (database name payment_henkilo_oid_fkey) */
-    lazy val userFk = foreignKey("payment_henkilo_oid_fkey", henkiloOid, User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    lazy val userFk = foreignKey("payment_henkilo_oid_fkey", Rep.Some(henkiloOid), User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
 
     /** Index over (reference) (database name payment_reference_idx) */
     val index1 = index("payment_reference_idx", reference)
@@ -121,7 +121,7 @@ trait Tables {
   /** Entity class storing rows of table Session
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param email Database column email SqlType(varchar), Length(255,true)
-   *  @param token Database column token SqlType(varchar), Length(255,true)
+   *  @param token Database column token SqlType(text)
    *  @param idpentityid Database column idpentityid SqlType(varchar), Length(255,true) */
   case class SessionRow(id: Int, email: String, token: String, idpentityid: String)
   /** GetResult implicit for fetching SessionRow objects using plain SQL queries */
@@ -139,8 +139,8 @@ trait Tables {
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column email SqlType(varchar), Length(255,true) */
     val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
-    /** Database column token SqlType(varchar), Length(255,true) */
-    val token: Rep[String] = column[String]("token", O.Length(255,varying=true))
+    /** Database column token SqlType(text) */
+    val token: Rep[String] = column[String]("token")
     /** Database column idpentityid SqlType(varchar), Length(255,true) */
     val idpentityid: Rep[String] = column[String]("idpentityid", O.Length(255,varying=true))
 
