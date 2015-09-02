@@ -32,6 +32,7 @@ object HenkiloClient {
   val henkiloClient = new HenkiloClient(henkilopalveluHost, new CasAbleClient(casClient, casParams))
 
   def upsertHenkilo(user: User) = henkiloClient.haeHenkilo(user).run
+
 }
 
 class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {

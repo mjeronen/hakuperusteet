@@ -40,3 +40,7 @@ MacOS users install docker with command `rew cask install dockertoolbox`.
 6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
 7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
 8. Create Slick-db-classes `./sbt "run-main fi.vm.sade.hakuperusteet.db.CodeGenerator"` 
+
+## Run using mock configuration
+
+`sbt run -J-Dmock=true` starts server using mock configuration
