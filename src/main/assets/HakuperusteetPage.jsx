@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import style from './css/hakuperusteet.less'
 
+import {showUserDataForm, showVetumaStart, showHakuList} from './AppLogic.js'
 import Header from './Header.jsx'
 import ProgramInfo from './ProgramInfo.jsx'
 import Footer from './Footer.jsx'
@@ -22,18 +23,9 @@ export default class HakuperusteetPage extends React.Component {
       <GoogleAuthentication state={state} />
       <ProgramInfo state={state} />
       <VetumaResultWrapper state={state}/>
-      { !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
-        ? <UserDataForm state={state} controller={controller}/>
-        : null
-      }
-      { !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user) && (_.isUndefined(state.sessionData.payment) || (state.sessionData.payment.status != "ok"))
-        ? <VetumaStart state={state} />
-        : null
-      }
-      { !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user) && !_.isUndefined(state.sessionData.payment) && (state.sessionData.payment.status == "ok")
-        ? <HakuList state={state} />
-        : null
-      }
+      { showUserDataForm(state) ? <UserDataForm state={state} controller={controller}/> : null}
+      { showVetumaStart(state) ? <VetumaStart state={state} /> : null}
+      { showHakuList(state) ? <HakuList state={state} /> : null}
       <Footer />
     </div>
   }
