@@ -21,6 +21,7 @@ export function initAppState(props) {
   const initialState = {}
 
   const serverUpdatesBus = new Bacon.Bus()
+  const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const userS = propertiesS.flatMap(initAuthentication)
   const countriesS = propertiesS
@@ -28,14 +29,15 @@ export function initAppState(props) {
     .map(HttpUtil.get)
     .flatMapLatest(Bacon.fromPromise)
     .mapError(function(_) { return [] })
-  const hashS = userS.flatMap(locationHash).filter(isNotEmpty)
   const sessionS = userS.filter(isNotEmpty).flatMap(checkSession(sessionUrl))
+  const hashS = userS.flatMap(locationHash).filter(isNotEmpty)
+  cssEffectsBus.plug(hashS)
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
 
   const stateP = Bacon.update(initialState,
     [propertiesS, countriesS], onStateInit,
-    [hashS], onHashValue,
+    [cssEffectsBus], onCssEffectValue,
     [userS], onLoginLogout,
     [sessionS], onSessionFromServer,
     [updateFieldS], onUpdateField)
@@ -53,8 +55,11 @@ export function initAppState(props) {
     return {...state, properties, countries}
   }
 
-  function onHashValue(state, hash) {
-    return {...state, hash}
+  function onCssEffectValue(state, effect) {
+    if (effect !== "") {
+      Bacon.once("").take(1).delay(3000).onValue(function(x) {  cssEffectsBus.push(x) })
+    }
+    return {...state, effect}
   }
 
   function onLoginLogout(state, session) {

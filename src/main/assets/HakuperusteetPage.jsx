@@ -21,7 +21,7 @@ export default class HakuperusteetPage extends React.Component {
       <Header />
       <GoogleAuthentication state={state} />
       <ProgramInfo state={state} />
-      { !_.isUndefined(state.hash) && state.hash == "#VetumaResultOk"
+      { !_.isUndefined(state.effect) && state.effect == "#VetumaResultOk"
         ? <VetumaResultOk state={state} controller={controller}/>
         : null
       }
