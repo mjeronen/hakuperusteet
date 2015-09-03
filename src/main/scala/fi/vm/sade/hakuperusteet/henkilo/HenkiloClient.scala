@@ -23,13 +23,13 @@ import scalaz.stream.{Channel, Process, async, channel}
 import fi.vm.sade.hakuperusteet.{Configuration, formats}
 
 object HenkiloClient {
-  val henkilopalveluHost = Configuration.props.getString("henkilopalvelu.host")
-  val username = Configuration.props.getString("henkilopalvelu.username")
-  val password = Configuration.props.getString("henkilopalvelu.password")
+  private val host = Configuration.props.getString("hakuperusteet.cas.url")
+  private val username = Configuration.props.getString("henkilopalvelu.username")
+  private val password = Configuration.props.getString("henkilopalvelu.password")
 
-  val casClient = new CasClient(henkilopalveluHost)
+  val casClient = new CasClient(host)
   val casParams = CasParams("/authentication-service", username, password)
-  val henkiloClient = new HenkiloClient(henkilopalveluHost, new CasAbleClient(casClient, casParams))
+  val henkiloClient = new HenkiloClient(host, new CasAbleClient(casClient, casParams))
 
   def upsertHenkilo(user: User) = henkiloClient.haeHenkilo(user).run
 
