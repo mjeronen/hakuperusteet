@@ -19,7 +19,7 @@ export default class VetumaResultWrapper extends React.Component {
   }
   render() {
     const state = this.props.state
-    return <ReactTransitionGroup transitionName="example" transitionAppear={true}>
+    return <ReactTransitionGroup transitionName="vetuma-result" transitionAppear={true}>
       {this.selectMessage(state)}
     </ReactTransitionGroup>
   }
