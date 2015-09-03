@@ -24,8 +24,8 @@ import fi.vm.sade.hakuperusteet.{Configuration, formats}
 
 object HenkiloClient {
   private val host = Configuration.props.getString("hakuperusteet.cas.url")
-  private val username = Configuration.props.getString("henkilopalvelu.username")
-  private val password = Configuration.props.getString("henkilopalvelu.password")
+  private val username = Configuration.props.getString("hakuperusteet.user")
+  private val password = Configuration.props.getString("hakuperusteet.password")
 
   val casClient = new CasClient(host)
   val casParams = CasParams("/authentication-service", username, password)

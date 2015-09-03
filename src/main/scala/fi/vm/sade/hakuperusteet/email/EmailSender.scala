@@ -13,6 +13,26 @@ import org.json4s.native.Serialization.{read, write}
 import scalaz.\/._
 import scalaz.concurrent.{Future, Task}
 
+object EmailSender extends LazyLogging {
+  implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
+  private val host = Configuration.props.getString("hakuperusteet.cas.url")
+  private val username = Configuration.props.getString("hakuperusteet.user")
+  private val password = Configuration.props.getString("hakuperusteet.password")
+
+  private val casClient = new CasClient(host)
+  private val casParams = CasParams("/ryhmasahkoposti-service", username, password)
+  private val emailClient = new EmailClient(host, new CasAbleClient(casClient, casParams))
+
+  def send(from: String, to: String, subject: String, body: String): Boolean = {
+    val email = EmailMessage(from, subject, body, true)
+    val recipients = List(EmailRecipient(to))
+    val data = EmailData(email, recipients)
+    logger.info("Trying to send email")
+    Status.Ok.equals(emailClient.send(data).run.status)
+  }
+
+}
+
 case class EmailRecipient(email: String) {
 
 }
@@ -64,25 +84,3 @@ class EmailClient(emailServerUrl: Uri, client: Client = org.http4s.client.blaze.
   }
 }
 
-object EmailSender extends LazyLogging {
-  implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
-  private val host = Configuration.props.getString("hakuperusteet.cas.url")
-  private val username = Configuration.props.getString("henkilopalvelu.username")
-  private val password = Configuration.props.getString("henkilopalvelu.password")
-
-  private val casClient = new CasClient(host)
-  private val casParams = CasParams("/ryhmasahkoposti-service", username, password)
-  private val emailClient = new EmailClient(host, new CasAbleClient(casClient, casParams))
-
-  def send(from: String, to: String, subject: String, body: String): Boolean = {
-    val email = EmailMessage(from, subject, body, true)
-    val recipients = List(EmailRecipient(to))
-    val data = EmailData(email, recipients)
-    logger.info("Trying to send email")
-    Status.Ok.equals(emailClient.send(data).run.status)
-  }
-
-  def main(args: Array[String]) {
-    System.out.println(send("joku@com.com", "jussi.jartamo@gofore.com", "Jee", "<p>Jee</p>"))
-  }
-}
