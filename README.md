@@ -44,3 +44,10 @@ MacOS users install docker with command `rew cask install dockertoolbox`.
 ## Run using mock configuration
 
 `sbt run -J-Dmock=true` starts server using mock configuration
+
+## Start mock server
+
+`cd mockserver`
+`npm install`
+`node server.js`
+
