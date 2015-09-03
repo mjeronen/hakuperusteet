@@ -9,19 +9,18 @@ import VetumaResultCancel from './VetumaResultCancel.jsx'
 import VetumaResultError from './VetumaResultError.jsx'
 
 export default class VetumaResultWrapper extends React.Component {
+  selectMessage(state) {
+    if (!_.isUndefined(state.effect) && state.effect == "#VetumaResultOk") return <VetumaResultOk state={state} />
+    if (!_.isUndefined(state.effect) && state.effect == "#VetumaResultCancel") return <VetumaResultCancel state={state} />
+    if (!_.isUndefined(state.effect) && state.effect == "#VetumaResultError") return  <VetumaResultError state={state} />
+    return null
+  }
+
   render() {
     const state = this.props.state
-    const showOk = !_.isUndefined(state.effect) && state.effect == "#VetumaResultOk"
-    const showCancel = !_.isUndefined(state.effect) && state.effect == "#VetumaResultCancel"
-    const showError = !_.isUndefined(state.effect) && state.effect == "#VetumaResultError"
-
-    var result = null
-    if (showOk) result = <VetumaResultOk state={state} />
-    if (showCancel) result = <VetumaResultCancel state={state} />
-    if (showError) result = <VetumaResultError state={state} />
 
     return <ReactTransitionGroup transitionName="example" transitionAppear={true}>
-      {result}
+      {this.selectMessage(state)}
     </ReactTransitionGroup>
   }
 }
