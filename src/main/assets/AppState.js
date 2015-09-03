@@ -28,7 +28,7 @@ export function initAppState(props) {
     .map(HttpUtil.get)
     .flatMapLatest(Bacon.fromPromise)
     .mapError(function(_) { return [] })
-  const hashS = userS.flatMap(Bacon.once(location.hash).filter(isNotEmpty))
+  const hashS = userS.flatMap(locationHash).filter(isNotEmpty)
   const sessionS = userS.filter(isNotEmpty).flatMap(checkSession(sessionUrl))
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
@@ -67,6 +67,12 @@ export function initAppState(props) {
 
   function onSessionFromServer(state, sessionData) {
     return {...state, sessionData}
+  }
+
+  function locationHash() {
+    var currentHash = location.hash
+    //location.hash = ""
+    return Bacon.once(currentHash)
   }
 
   function isNotEmpty(x) { return !_.isEmpty(x) }
