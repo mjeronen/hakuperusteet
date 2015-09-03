@@ -2,10 +2,13 @@ import React from 'react'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
+import style from './css/hakuperusteet.less'
+
 import Header from './Header.jsx'
 import ProgramInfo from './ProgramInfo.jsx'
 import Footer from './Footer.jsx'
 import GoogleAuthentication from './GoogleAuthentication.jsx'
+import VetumaResultOk from './VetumaResultOk.jsx'
 import UserDataForm from './UserDataForm.jsx'
 import VetumaStart from './VetumaStart.jsx'
 import HakuList from './HakuList.jsx'
@@ -18,6 +21,10 @@ export default class HakuperusteetPage extends React.Component {
       <Header />
       <GoogleAuthentication state={state} />
       <ProgramInfo state={state} />
+      { !_.isUndefined(state.hash) && state.hash == "#VetumaResultOk"
+        ? <VetumaResultOk state={state} controller={controller}/>
+        : null
+      }
       { !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
         ? <UserDataForm state={state} controller={controller}/>
         : null
