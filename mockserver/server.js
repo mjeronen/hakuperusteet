@@ -21,9 +21,12 @@ app.post('/authentication-service/resources/s2s/hakuperusteet', function(req, re
   res.send({ "personOid": "1.2.246.562.24.11523238937" });
 });
 
-var callback = function(url) {
+var callback = function(url, params) {
     console.log("Sending POST request to " + url);
-    requestify.post(url, {})
+    requestify.request(url, {
+      method: 'POST',
+      params: params
+    })
     .then(function(response) {
         console.log(response)
     });
@@ -44,9 +47,24 @@ app.post('/VETUMAPayment', function(req, res){
   var sha256 = crypto.createHash('sha256');
   sha256.update(v)
   var mac = sha256.digest('hex').toUpperCase()
-  callback(p["RETURL"] + "?" + op.join('&') + "&MAC=" + mac)
+  callback(p["RETURL"], {
+    "RCVID": p["RCVID"],
+    "TIMESTMP" : TIMESTAMP,
+    "SO": SO,
+    "LG": p["LG"],
+    "RETURL": p["RETURL"],
+    "CANURL": p["CANURL"],
+    "ERRURL": p["ERRURL"],
+    "PAYID": PAYID,
+    "REF": p["REF"],
+    "ORDNR" : p["ORDNR"],
+    "PAID": PAID,
+    "STATUS" : STATUS,
+    "MAC" : mac
+  });
+  console.log("MAC " + mac);
   res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write("<form action=\"" + "https://localhost:18080/hakuperusteet/?result=ok" +"\"><input type=\"submit\" value=\"Palaa myyjän palveluun\"></form>");
+  res.write("<form action=\"" + "https://localhost:18080/hakuperusteet/?result=ok" +"\"><input type=\"submit\" value=\"Palaa myyj&auml;n palveluun\"></form>");
   res.end();
 });
 
