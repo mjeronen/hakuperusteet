@@ -84,7 +84,7 @@ export function initAppState(props) {
 }
 
 function checkSession(sessionUrl) {
-  return (user) => Bacon.fromPromise(HttpUtil.post(sessionUrl, user)).mapError(function(_) { return {}})
+  return (user) => Bacon.fromPromise(HttpUtil.post(sessionUrl, user)).skipErrors()
 }
 
 function submitUserDataToServer(state) {
