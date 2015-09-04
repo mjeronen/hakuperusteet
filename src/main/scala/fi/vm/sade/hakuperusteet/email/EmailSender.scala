@@ -23,8 +23,8 @@ object EmailSender extends LazyLogging {
   private val casParams = CasParams("/ryhmasahkoposti-service", username, password)
   private val emailClient = new EmailClient(host, new CasAbleClient(casClient, casParams))
 
-  def send(from: String, to: String, subject: String, body: String): Boolean = {
-    val email = EmailMessage(from, subject, body, isHtml = true)
+  def send(to: String, subject: String, body: String): Boolean = {
+    val email = EmailMessage("no-reply@opintopolku.fi", subject, body, true)
     val recipients = List(EmailRecipient(to))
     val data = EmailData(email, recipients)
     logger.info(s"Sending email ($subject) to $to")
@@ -33,7 +33,7 @@ object EmailSender extends LazyLogging {
 }
 
 case class EmailRecipient(email: String)
-case class EmailMessage(from: String, subject: String, body: String, isHtml: Boolean)
+case class EmailMessage(from: String , subject: String, body: String, isHtml: Boolean)
 case class EmailData(email: EmailMessage, recipient: List[EmailRecipient])
 
 class EmailClient(emailServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {
