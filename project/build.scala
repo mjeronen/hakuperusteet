@@ -28,7 +28,7 @@ object HakuperusteetBuild extends Build {
       resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
       resolvers += Classpaths.typesafeReleases,
       libraryDependencies ++= Seq(
-        //"org.http4s" %% "http4s-blaze-server" % http4sVersion,
+        "com.github.spullara.mustache.java" % "compiler" % "0.9.1",
         "org.http4s" %% "http4s-dsl"         % http4sVersion,
         "org.http4s" %% "http4s-argonaut"    % http4sVersion,
         "org.http4s" %% "http4s-blaze-client" % http4sVersion,
