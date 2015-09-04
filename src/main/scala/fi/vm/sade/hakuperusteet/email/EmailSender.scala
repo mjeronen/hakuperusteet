@@ -27,7 +27,7 @@ object EmailSender extends LazyLogging {
     val email = EmailMessage(from, subject, body, isHtml = true)
     val recipients = List(EmailRecipient(to))
     val data = EmailData(email, recipients)
-    logger.info("Trying to send email")
+    logger.info(s"Sending email ($subject) to $to")
     Status.Ok.equals(emailClient.send(data).run.status)
   }
 }
@@ -48,10 +48,10 @@ class EmailClient(emailServerUrl: Uri, client: Client = org.http4s.client.blaze.
   def send(email: EmailData): Task[Response] = client.prepare(req(email)).
     handle {
     case e: ParseException =>
-      logger.error(s"parse error details: ${e.failure.details}")
+      logger.error(s"emailclient parse error details: ${e.failure.details}", e)
       throw e
     case e =>
-      logger.error(s"error: $e")
+      logger.error("emailclient error", e)
       throw e
   }
 
@@ -65,7 +65,7 @@ class EmailClient(emailServerUrl: Uri, client: Client = org.http4s.client.blaze.
 
   def parseJson4s[A] (json:String)(implicit formats: Formats, mf: Manifest[A]) = scala.util.Try(read[A](json)).map(right).recover{
     case t =>
-      logger.error("json decoding failed {}!",json, t)
+      logger.error("json decoding failed " + json, t)
       left(ParseFailure("json decoding failed", t.getMessage))
   }.get
 
