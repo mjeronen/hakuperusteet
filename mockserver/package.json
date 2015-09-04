@@ -9,6 +9,7 @@
   },
   "dependencies" : {
     "express" : "4.11.0",
-    "requestify": "0.1.17"
+    "requestify": "0.1.17",
+    "body-parser": "1.13.3"
   }
 }

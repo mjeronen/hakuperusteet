@@ -1,20 +1,23 @@
-var express = require('express');
-var requestify = require('requestify');
+var express = require('express')
+var requestify = require('requestify')
 var crypto = require('crypto')
+var bodyParser = require('body-parser')
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 var app = express();
-
-//var ciphers = crypto.getCiphers();
-//console.log(ciphers);
-
+// Body parser
+app.use(bodyParser.json())
 // Default Content-Type to Application/Json
 app.use(function(req, res, next) { res.setHeader("Content-Type", "application/json"); return next(); });
 
 // Koodisto-Service
 app.use(express.static(__dirname + '/static'));
 
-
+// Ryhmasahkoposti-Service
+app.post('/ryhmasahkoposti-service/email', function(req, res){
+  console.log("Sending email: " + JSON.stringify(req.body))
+  res.send({});
+});
 
 // Authentication-Service
 app.post('/authentication-service/resources/s2s/hakuperusteet', function(req, res){
@@ -81,5 +84,8 @@ app.get('/authentication-service/j_spring_cas_security_check', function(req, res
   res.append('Set-Cookie', 'JSESSIONID=foobar-123');
   res.send({});
 });
-
+app.get('/ryhmasahkoposti-service/j_spring_cas_security_check', function(req, res){
+  res.append('Set-Cookie', 'JSESSIONID=foobar-123');
+  res.send({});
+});
 app.listen(process.env.PORT || 3000);
