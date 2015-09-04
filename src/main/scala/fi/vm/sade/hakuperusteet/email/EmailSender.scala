@@ -24,24 +24,17 @@ object EmailSender extends LazyLogging {
   private val emailClient = new EmailClient(host, new CasAbleClient(casClient, casParams))
 
   def send(from: String, to: String, subject: String, body: String): Boolean = {
-    val email = EmailMessage(from, subject, body, true)
+    val email = EmailMessage(from, subject, body, isHtml = true)
     val recipients = List(EmailRecipient(to))
     val data = EmailData(email, recipients)
     logger.info("Trying to send email")
     Status.Ok.equals(emailClient.send(data).run.status)
   }
-
 }
 
-case class EmailRecipient(email: String) {
-
-}
-case class EmailMessage(from: String, subject: String, body: String, isHtml: Boolean) {
-
-}
-case class EmailData(email: EmailMessage, recipient: List[EmailRecipient]) {
-
-}
+case class EmailRecipient(email: String)
+case class EmailMessage(from: String, subject: String, body: String, isHtml: Boolean)
+case class EmailData(email: EmailMessage, recipient: List[EmailRecipient])
 
 class EmailClient(emailServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {
   implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
