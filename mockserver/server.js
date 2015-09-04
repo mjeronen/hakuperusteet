@@ -45,27 +45,14 @@ app.post('/VETUMAPayment', function(req, res){
   var SHARED_SECRET = "TESTIASIAKAS11-873C992B8C4C01EC8355500CAA709B37EA43BC2E591ABF29FEE5EAFE4DCBFA35"
   var TIMESTAMP = "20150903102417186"
   var op = [p["RCVID"], TIMESTAMP, SO, p["LG"], p["RETURL"], p["CANURL"], p["ERRURL"], PAYID, p["REF"], p["ORDNR"], PAID, STATUS]
-  var v = op.join('&') + "&" + SHARED_SECRET + "&"
-  console.log(v);
   var sha256 = crypto.createHash('sha256');
-  sha256.update(v)
+  sha256.update(op.join('&') + "&" + SHARED_SECRET + "&")
   var mac = sha256.digest('hex').toUpperCase()
   callback(p["RETURL"], {
-    "RCVID": p["RCVID"],
-    "TIMESTMP" : TIMESTAMP,
-    "SO": SO,
-    "LG": p["LG"],
-    "RETURL": p["RETURL"],
-    "CANURL": p["CANURL"],
-    "ERRURL": p["ERRURL"],
-    "PAYID": PAYID,
-    "REF": p["REF"],
-    "ORDNR" : p["ORDNR"],
-    "PAID": PAID,
-    "STATUS" : STATUS,
-    "MAC" : mac
+    "RCVID": p["RCVID"], "TIMESTMP" : TIMESTAMP, "SO": SO, "LG": p["LG"], "RETURL": p["RETURL"], "CANURL": p["CANURL"],
+    "ERRURL": p["ERRURL"], "PAYID": PAYID, "REF": p["REF"], "ORDNR" : p["ORDNR"], "PAID": PAID, "STATUS" : STATUS, "MAC" : mac
   });
-  console.log("MAC " + mac);
+  console.log("Responding from Vetuma with MAC = " + mac);
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.write("<form action=\"" + "https://localhost:18080/hakuperusteet/?result=ok" +"\"><input type=\"submit\" value=\"Palaa myyj&auml;n palveluun\"></form>");
   res.end();
