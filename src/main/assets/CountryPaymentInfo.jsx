@@ -6,7 +6,7 @@ export default class CountryPaymentInfo extends React.Component {
     const state = this.props.state
     const eeaCountries = state.properties.eeaCountries
     const country = state.educationCountry
-    const isEeaCountry = eeaCountries.indexOf(country) === -1
+    const isEeaCountry = eeaCountries.indexOf(country) !== -1
 
     const paymentRequired = !_.isUndefined(country) && !isEeaCountry
     const noPaymentRequired = !_.isUndefined(country) && isEeaCountry
