@@ -4,12 +4,9 @@ import java.io.{StringWriter, StringReader}
 import com.github.mustachejava.DefaultMustacheFactory
 
 object EmailTemplate {
-
   private val templateUrl = "/email/email.mustache"
-  private val templateString =
-    io.Source.fromInputStream(getClass.getResourceAsStream(templateUrl)).mkString
-  private val mustache =
-    new DefaultMustacheFactory().compile(new StringReader(templateString), templateUrl)
+  private val templateString = io.Source.fromInputStream(getClass.getResourceAsStream(templateUrl)).mkString
+  private val mustache = new DefaultMustacheFactory().compile(new StringReader(templateString), templateUrl)
 
   case class TemplateValues(validForallSimilarApplicationsUntil: String)
 
@@ -18,5 +15,4 @@ object EmailTemplate {
     mustache.execute(sw, TemplateValues(validForallSimilarApplicationsUntil))
     sw.toString
   }
-
 }
