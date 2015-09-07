@@ -44,7 +44,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
     val expectedMac = params.getOrElse("MAC", "")
     if (!Vetuma.verifyReturnMac(config.getString("vetuma.shared.secret"), macParams, expectedMac)) halt(409)
 
-    db.findPayment(userDataFromSession) match {
+    db.findPaymentByOrderNumber(userDataFromSession, params.getOrElse("ORDNR", "")) match {
       case Some(p) =>
         val paymentOk = p.copy(status = status)
         db.upsertPayment(paymentOk)

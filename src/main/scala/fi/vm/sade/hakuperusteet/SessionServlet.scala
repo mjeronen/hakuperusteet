@@ -19,12 +19,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
     failUnlessAuthenticated
 
     db.findUser(user.email) match {
-      case Some(user) =>
-        db.findPayment(user) match {
-          case Some(payment) => write(SessionData(Some(user), Some(payment)))
-          case None => write(SessionData(Some(user), None))
-        }
-      case None => write(SessionData(None, None))
+      case Some(u) => write(SessionData(Some(u), db.findPayments(u).toList))
+      case None => write(SessionData(None, List.empty))
     }
   }
 
@@ -42,6 +38,6 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
         halt(500, "Unable to get henkilö")
     }
     val userWithId = db.upsertUser(newUser)
-    write(UserDataResponse("sessionData", SessionData(userWithId, None)))
+    write(UserDataResponse("sessionData", SessionData(userWithId, List.empty)))
   }
 }

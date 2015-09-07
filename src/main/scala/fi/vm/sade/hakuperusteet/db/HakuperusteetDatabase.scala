@@ -36,8 +36,11 @@ case class HakuperusteetDatabase(db: DB) {
   def upsertUser(user: User): Option[User] =
     (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
 
-  def findPayment(user: User): Option[Payment] =
-    Tables.Payment.filter(_.henkiloOid === user.personOid).result.headOption.run.map((r) => Payment(Some(r.id), r.henkiloOid, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status)))
+  def findPaymentByOrderNumber(user: User, orderNumber: String): Option[Payment] =
+    Tables.Payment.filter(_.henkiloOid === user.personOid).filter(_.orderNumber === orderNumber).sortBy(_.tstamp.desc).result.headOption.run.map(paymentRowToPayment)
+
+  def findPayments(user: User): Seq[Payment] =
+    Tables.Payment.filter(_.henkiloOid === user.personOid).sortBy(_.tstamp.desc).result.run.map(paymentRowToPayment)
 
   def upsertPayment(payment: Payment): Option[Payment] =
     (Tables.Payment returning Tables.Payment).insertOrUpdate(paymentToPaymentRow(payment)).run.map(paymentRowToPayment)

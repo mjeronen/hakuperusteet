@@ -3,11 +3,17 @@ export function showUserDataForm(state) {
 }
 
 export function showVetumaStart(state) {
-  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user) && (_.isUndefined(state.sessionData.payment) || (state.sessionData.payment.status != "ok"))
+  function hasNoValidPayment() {
+    return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
+  }
+  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user) && hasNoValidPayment()
 }
 
 export function showHakuList(state) {
-  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user) && !_.isUndefined(state.sessionData.payment) && (state.sessionData.payment.status == "ok")
+  function hasValidPayment() {
+    return _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
+  }
+  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user) && hasValidPayment()
 }
 
 export function showVetumaResultOk(state) {
