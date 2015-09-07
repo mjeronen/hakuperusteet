@@ -76,7 +76,7 @@ export function initAppState(props) {
 
   function locationHash() {
     var currentHash = location.hash
-    //location.hash = ""
+    location.hash = ""
     return Bacon.once(currentHash)
   }
 
