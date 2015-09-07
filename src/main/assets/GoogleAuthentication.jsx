@@ -9,14 +9,12 @@ export default class GoogleAuthentication extends React.Component {
       'width': 250,
       'height': 50,
       'longtitle': true,
-      'theme': 'dark',
+      'theme': 'light',
       'onfailure': googleAuthenticationRenderFailure
     })
   }
 
   render() {
-    return <div>
-      <div id="googleAuthentication" />
-    </div>
+    return <div id="googleAuthentication" />
   }
 }
