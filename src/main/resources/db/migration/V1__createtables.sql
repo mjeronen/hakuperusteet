@@ -67,3 +67,4 @@ WITH (
 ALTER TABLE "payment" OWNER TO oph;
 CREATE INDEX ON "payment"(henkilo_oid);
 CREATE INDEX ON "payment"(reference);
+CREATE INDEX ON "payment"(henkilo_oid,order_number);
