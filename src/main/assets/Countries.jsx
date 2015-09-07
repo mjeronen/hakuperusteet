@@ -20,9 +20,9 @@ export default class Countries extends React.Component {
     var formatted = countries.map(parseValues).filter(function(c) { return !_.isUndefined(c.id)} )
 
     var sortWith = function(n) { return n.name }
-    var toOptions = function (country) { return <option value={country.id}>{country.name}</option> }
+    var toOptions = function (country) { return <option value={country.id} key={country.id}>{country.name}</option> }
     const result = _.sortBy(formatted, sortWith).map(toOptions)
-    result.unshift(<option value="">Choose..</option>)
+    result.unshift(<option value="" key="-">Choose..</option>)
 
     return <select id={field} onChange={controller.valueChanges}>
         {result}
