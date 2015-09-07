@@ -4,7 +4,7 @@ import _ from 'lodash'
 export default class CountryPaymentInfo extends React.Component {
   render() {
     const state = this.props.state
-    const eeaCountries = state.properties.eeaCountries
+    const eeaCountries = state.eeaCountries
     const country = state.educationCountry
     const isEeaCountry = eeaCountries.indexOf(country) !== -1
 

@@ -21,9 +21,9 @@ class PropertiesServlet(config: Config) extends ScalatraServlet {
       "vetumaStartUrl" -> "/hakuperusteet/api/v1/vetuma/openvetuma",
       "formRedirectUrl" -> "/hakuperusteet/api/v1/form/redirect",
       "koodistoCountriesUrl" -> config.getString("koodisto.countries.url"),
+      "koodistoEeaCountriesUrl" -> config.getString("koodisto.eea.countries.url"),
       "googleAuthenticationClientId" -> config.getString("google.authentication.client.id"),
-      "googleAuthenticationHostedDomain" -> config.getString("google.authentication.hosted.domain"),
-      "eeaCountries" -> write(config.getStringList("eea.countries"))
+      "googleAuthenticationHostedDomain" -> config.getString("google.authentication.hosted.domain")
     )
     compact(render(properties))
   }
