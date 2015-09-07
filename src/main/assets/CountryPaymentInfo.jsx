@@ -8,8 +8,8 @@ export default class CountryPaymentInfo extends React.Component {
     const country = state.educationCountry
     const isEeaCountry = eeaCountries.indexOf(country) !== -1
 
-    const paymentRequired = !_.isUndefined(country) && !isEeaCountry
-    const noPaymentRequired = !_.isUndefined(country) && isEeaCountry
+    const paymentRequired = country && !isEeaCountry
+    const noPaymentRequired = country && isEeaCountry
     return <div>
       { paymentRequired
         ? <p>This Master's Program has applying charge of 100 €.</p>
