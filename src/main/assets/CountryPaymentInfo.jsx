@@ -3,9 +3,13 @@ import _ from 'lodash'
 
 export default class CountryPaymentInfo extends React.Component {
   render() {
-    const country = this.props.country
-    const paymentRequired = !_.isUndefined(country) && country !== "Finland" && country !== "Choose.."
-    const noPaymentRequired = !_.isUndefined(country) && country === "Finland"
+    const state = this.props.state
+    const eeaCountries = state.properties.eeaCountries
+    const country = state.educationCountry
+    const isEeaCountry = eeaCountries.indexOf(country) === -1
+
+    const paymentRequired = !_.isUndefined(country) && !isEeaCountry
+    const noPaymentRequired = !_.isUndefined(country) && isEeaCountry
     return <div>
       { paymentRequired
         ? <p>This Master's Program has applying charge of 100 €.</p>
