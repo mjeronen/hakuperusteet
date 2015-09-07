@@ -1,16 +1,8 @@
 import React from 'react'
 
-export default class Header extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
+export default class Footer extends React.Component {
   render() {
-    return <section id="bottombar">
-      <hr/>
-      <div id="bottom-container">
-        <img id="logo" src="img/logo.png"/>
-      </div>
+    return <section id="footer">
     </section>
   }
 }

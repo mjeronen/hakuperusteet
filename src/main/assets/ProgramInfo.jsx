@@ -10,12 +10,8 @@ export default class ProgramInfo extends React.Component {
         1 October - 5 December 2014. The application documents are returned to the School of Science.
       </p>
       <p>
-        Admission is primarily based on the student’s previous academic record.
+        Admission is primarily based on the student’s previous academic record. More information on the programme website.
       </p>
-      <p>
-        More information on the programme website.
-      </p>
-      <hr/>
     </section>
   }
 }
