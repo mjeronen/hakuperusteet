@@ -19,10 +19,9 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, signer: RSA
 
     val host = config.getString("form.redirect.base")
     val userData = userDataFromSession
-    val payment = db.findPayments(userData)
+    val payments = db.findPayments(userData)
     val shouldPay = userData.educationCountry != "Finland"
-    val hasPaid = payment.contains((p: Payment) => p.status.equals(PaymentStatus.ok))
-
+    val hasPaid = payments.exists((p: Payment) => p.status.equals(PaymentStatus.ok))
     compact(render(Map("url" -> generateUrl(host, userData, shouldPay, hasPaid))))
   }
 
