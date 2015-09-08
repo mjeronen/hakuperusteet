@@ -5,7 +5,7 @@ export default class EducationLevel extends React.Component {
   render() {
     const field = "educationLevel"
     const controller = this.props.controller
-    return <div>
+    return <div className="userdataFormFow">
       <label htmlFor={field}>Base education level</label>
       <select id={field} onChange={controller.valueChanges}>
         <option name="">Choose...</option>

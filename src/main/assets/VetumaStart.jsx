@@ -3,9 +3,6 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import HttpUtil from './util/HttpUtil'
-import UserDataInput from './UserDataInput.jsx'
-import UserBirthDateInput from './UserBirthDateInput.jsx'
-import BaseEducation from './BaseEducation.jsx'
 
 export default class VetumaStart extends React.Component {
   onSubmitRedirect(state) {

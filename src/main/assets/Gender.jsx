@@ -7,7 +7,7 @@ export default class Gender extends React.Component {
     const state = this.props.state
     const controller = this.props.controller
     const name = "gender"
-    return <div>
+    return <div className="userdataFormFow">
       <label>Gender</label>
       <input type="radio" id="gender-male" name={name} value="1" onChange={controller.radioChanges}/>
       <label htmlFor="gender-male" className="genderLabel">Male</label>

@@ -10,7 +10,7 @@ export default class CountryPaymentInfo extends React.Component {
 
     const paymentRequired = country && !isEeaCountry
     const noPaymentRequired = country && isEeaCountry
-    return <div>
+    return <div className="userdataFormFow">
       { paymentRequired
         ? <p>This Master's Program has applying charge of 100 €.</p>
         : null
