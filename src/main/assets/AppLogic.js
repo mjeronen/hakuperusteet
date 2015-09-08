@@ -1,3 +1,7 @@
+export function showLoginInfo(state) {
+  return _.isUndefined(state.session) || _.isUndefined(state.session.email)
+}
+
 export function showUserDataForm(state) {
   return !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
 }
