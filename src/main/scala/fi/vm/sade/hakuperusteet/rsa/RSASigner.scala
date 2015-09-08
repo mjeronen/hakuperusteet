@@ -25,16 +25,16 @@ class RSASigner(config: Config) extends LazyLogging {
 
   private def sourceToBytes(is: InputStream) =
     Stream.continually(is.read).takeWhile(_ != -1).map(_.toByte).toArray
-    //source.map(_.toByte).toArray
+
   private def bytesFromUrl(url: String): Array[Byte] = {
     Try(sourceToBytes(new FileInputStream(url))) match {
       case Success(v) => v
       case Failure(e) =>
-        logger.error("Failed to read RSA key from url '{}'", url)
+        logger.error(s"Failed to read RSA key from $url")
         Try(sourceToBytes(getClass.getResourceAsStream(url))) match {
           case Success(v) => v
           case Failure(e) =>
-            logger.error("Failed to read RSA key from classpath url '{}'", url, e)
+            logger.error(s"Failed to read RSA key from classpath url $url")
             throw e
         }
     }
