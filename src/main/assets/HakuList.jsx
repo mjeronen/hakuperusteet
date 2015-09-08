@@ -16,8 +16,11 @@ export default class HakuList extends React.Component {
 
   render() {
     const state = this.props.state
-    return <form id="redirectToForm" onSubmit={this.onSubmitRedirect(state)} method="GET">
-        <input type="submit" name="redirectToForm" value="Proceed to application form" />
-      </form>
+    return <div className="hakuList">
+        <p>Continue to application form with following link.</p>
+        <form id="redirectToForm" onSubmit={this.onSubmitRedirect(state)} method="GET">
+          <input type="submit" name="redirectToForm" value="Proceed to application form" />
+        </form>
+      </div>
   }
 }

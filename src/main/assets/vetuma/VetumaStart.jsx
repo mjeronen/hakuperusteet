@@ -18,8 +18,8 @@ export default class VetumaStart extends React.Component {
 
   render() {
     const state = this.props.state
-    return <div>
-      <p>You are required to pay application fee of 100€ before continuing to the application form. Please proceed to payment.</p>
+    return <div className="vetumaStart">
+      <p>You are required to pay application fee of 100€ before continuing to the application form.</p>
       <form id="vetumaStart" onSubmit={this.onSubmitRedirect(state)} method="POST">
         <input type="submit" name="submitVetuma" value="Continue to payment" />
       </form>
