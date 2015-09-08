@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 var ReactTransitionGroup = React.addons.CSSTransitionGroup
 
-import {showVetumaResultOk, showVetumaResultCancel, showVetumaResultError} from './AppLogic.js'
+import {showVetumaResultOk, showVetumaResultCancel, showVetumaResultError} from '../AppLogic.js'
 
 import VetumaResultOk from './VetumaResultOk.jsx'
 import VetumaResultCancel from './VetumaResultCancel.jsx'

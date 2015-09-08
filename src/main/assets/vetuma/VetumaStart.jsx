@@ -2,7 +2,7 @@ import React from 'react'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
-import HttpUtil from './util/HttpUtil'
+import HttpUtil from '../util/HttpUtil'
 
 export default class VetumaStart extends React.Component {
   onSubmitRedirect(state) {
