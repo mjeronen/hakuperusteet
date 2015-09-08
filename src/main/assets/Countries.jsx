@@ -24,7 +24,7 @@ export default class Countries extends React.Component {
     const result = _.sortBy(formatted, sortWith).map(toOptions)
     result.unshift(<option value="" key="-">Choose..</option>)
 
-    return <div className="userdataFormFow">
+    return <div className="userDataFormRow">
         <label htmlFor={field}>Base education country</label>
         <select id={field} onChange={controller.valueChanges}>
           {result}
