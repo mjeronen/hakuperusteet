@@ -1,6 +1,6 @@
 package fi.vm.sade.hakuperusteet.rsa
 
-import java.io.{File, ByteArrayOutputStream}
+import java.io.{FileInputStream, InputStream, File, ByteArrayOutputStream}
 import java.security.{Signature, KeyFactory}
 import java.security.interfaces.RSAPrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
@@ -10,6 +10,8 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.domain.User
 import org.apache.commons.io.FileUtils
+
+import scala.util.{Failure, Success, Try}
 
 class RSASigner(config: Config) extends LazyLogging {
   val key = readPrivateKey()
@@ -21,12 +23,25 @@ class RSASigner(config: Config) extends LazyLogging {
     Base64.getEncoder.encodeToString(signature.sign())
   }
 
+  private def sourceToBytes(is: InputStream) =
+    Stream.continually(is.read).takeWhile(_ != -1).map(_.toByte).toArray
+    //source.map(_.toByte).toArray
+  private def bytesFromUrl(url: String): Array[Byte] = {
+    Try(sourceToBytes(new FileInputStream(url))) match {
+      case Success(v) => v
+      case Failure(e) =>
+        logger.error("Failed to read RSA key from url '{}'", url)
+        Try(sourceToBytes(getClass.getResourceAsStream(url))) match {
+          case Success(v) => v
+          case Failure(e) =>
+            logger.error("Failed to read RSA key from classpath url '{}'", url, e)
+            throw e
+        }
+    }
+  }
   private def readPrivateKey(): RSAPrivateKey = {
     val keyPath = config.getString("rsa.sign.key")
-    val uri = this.getClass.getClassLoader.getResource(keyPath).toURI
-    logger.info(s"Initializing sign key $uri")
-    val f = new File(uri)
-    val bs = FileUtils.readFileToByteArray(f)
+    val bs = bytesFromUrl(keyPath)
     KeyFactory.getInstance("RSA")
       .generatePrivate(new PKCS8EncodedKeySpec(bs))
       .asInstanceOf[RSAPrivateKey]
