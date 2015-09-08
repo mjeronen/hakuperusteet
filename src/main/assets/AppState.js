@@ -24,17 +24,6 @@ export function initAppState(props) {
   const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const userS = propertiesS.flatMap(initAuthentication)
-  const countriesS = propertiesS
-    .map('.koodistoCountriesUrl')
-    .map(HttpUtil.get)
-    .flatMapLatest(Bacon.fromPromise)
-    .mapError(function(_) { return [] })
-  const eeaCountriesS = propertiesS
-      .map('.koodistoEeaCountriesUrl')
-      .map(HttpUtil.get)
-      .flatMapLatest(Bacon.fromPromise)
-      .map(function(v) {return _.map(v.withinCodeElements, function(e) {return e.codeElementValue})})
-      .mapError(function(_) { return [] })
 
   const sessionS = userS.filter(isNotEmpty).flatMap(checkSession(sessionUrl))
   const hashS = userS.flatMap(locationHash).filter(isNotEmpty)
@@ -43,7 +32,7 @@ export function initAppState(props) {
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
 
   const stateP = Bacon.update(initialState,
-    [propertiesS, countriesS, eeaCountriesS], onStateInit,
+    [propertiesS], onStateInit,
     [cssEffectsBus], onCssEffectValue,
     [userS], onLoginLogout,
     [sessionS], onSessionFromServer,
@@ -58,8 +47,8 @@ export function initAppState(props) {
 
   return stateP
 
-  function onStateInit(state, properties, countries, eeaCountries) {
-    return {...state, properties, countries, eeaCountries}
+  function onStateInit(state, properties) {
+    return {...state, properties}
   }
 
   function onCssEffectValue(state, effect) {

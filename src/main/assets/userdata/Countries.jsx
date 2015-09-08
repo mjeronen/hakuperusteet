@@ -10,7 +10,7 @@ export default class Countries extends React.Component {
     const controller = this.props.controller
     const lang = this.props.lang.toUpperCase()
     const emptyCountries = [{ id: "", name: "Choose.."}]
-    const countries =  _.isUndefined(this.props.countries) ? emptyCountries : this.props.countries
+    const countries = this.props.countries ? JSON.parse(this.props.countries) : emptyCountries
 
     var parseValues = function (country) {
       if (_.isUndefined(country.metadata)) return { }
