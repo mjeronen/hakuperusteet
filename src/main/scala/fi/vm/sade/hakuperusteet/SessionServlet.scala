@@ -4,6 +4,7 @@ import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{SessionData, User}
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
+import fi.vm.sade.hakuperusteet.koodisto.Countries
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
@@ -11,7 +12,7 @@ import org.json4s.native.Serialization._
 
 import scala.util.{Failure, Success, Try}
 
-class SessionServlet(config: Config, db: HakuperusteetDatabase) extends HakuperusteetServlet(config, db) {
+class SessionServlet(config: Config, db: HakuperusteetDatabase, countries: Countries) extends HakuperusteetServlet(config, db) {
   case class UserDataResponse(field: String, value: SessionData)
 
   post("/authenticate") {
@@ -19,8 +20,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
     failUnlessAuthenticated
 
     db.findUser(user.email) match {
-      case Some(u) => write(SessionData(Some(u), db.findPayments(u).toList))
-      case None => write(SessionData(None, List.empty))
+      case Some(u) => write(SessionData(Some(u), Some(countries.shouldPay(u.educationCountry)), db.findPayments(u).toList))
+      case None => write(SessionData(None, None, List.empty))
     }
   }
 
@@ -38,6 +39,6 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperu
         halt(500, "Unable to get henkilö")
     }
     val userWithId = db.upsertUser(newUser)
-    write(UserDataResponse("sessionData", SessionData(userWithId, List.empty)))
+    write(UserDataResponse("sessionData", SessionData(userWithId, Some(countries.shouldPay(newUser.educationCountry)), List.empty)))
   }
 }

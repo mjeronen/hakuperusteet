@@ -9,7 +9,9 @@ import org.json4s.native.Serialization._
 import org.json4s.{NoTypeHints, DefaultFormats, Formats}
 import org.json4s.native.Serialization.{read, write}
 
-case class Countries(countries: List[Country], eeaCountries: List[String])
+case class Countries(countries: List[Country], eeaCountries: List[String]) {
+  def shouldPay(educationCountry: String) = !eeaCountries.contains(educationCountry)
+}
 
 object Countries {
 
