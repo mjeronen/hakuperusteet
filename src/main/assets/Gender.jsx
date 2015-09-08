@@ -9,11 +9,10 @@ export default class Gender extends React.Component {
     const name = "gender"
     return <div>
       <label>Gender</label>
-      &nbsp;&nbsp;
-      <label htmlFor="gender-male">Male</label>
       <input type="radio" id="gender-male" name={name} value="1" onChange={controller.radioChanges}/>
-      <label htmlFor="gender-female">Female</label>
+      <label htmlFor="gender-male" className="genderLabel">Male</label>
       <input type="radio" id="gender-female" name={name} value="2" onChange={controller.radioChanges}/>
+      <label htmlFor="gender-female" className="genderLabel">Female</label>
     </div>
   }
 }

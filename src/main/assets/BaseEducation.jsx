@@ -12,9 +12,7 @@ export default class BaseEducation extends React.Component {
     const controller = this.props.controller
     const lang = "en"
     return <div>
-      <p>Please select your base education level.</p>
       <EducationLevel educationLevel={state.educationLevel} controller={controller} />
-      <p>Please select your base education country.</p>
       <Countries countries={state.countries} controller={controller} lang={lang} />
       <CountryPaymentInfo state={state} />
     </div>
