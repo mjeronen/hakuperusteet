@@ -14,7 +14,7 @@ object HakuperusteetServer {
 
   def main(args: Array[String]) {
     val portHttp = props.getInt("hakuperusteet.port.http")
-    val portHttps = props.getInt("hakuperusteet.port.https")
+    val portHttps = Option(props.getInt("hakuperusteet.port.https")).find(_ != -1)
 
     val server = new Server()
     server.setHandler(createContext)
@@ -24,9 +24,9 @@ object HakuperusteetServer {
     server.join
     logger.info(s"Hakuperusteet-server started on ports $portHttp and $portHttps")
   }
-  private def createConnectors(portHttp: Int, portHttps: Int, server: Server): Array[Connector] = {
+  private def createConnectors(portHttp: Int, portHttps: Option[Int], server: Server): Array[Connector] = {
     Array(createHttpConnector(portHttp, server)) ++
-      Option(portHttps).map(p => Array(createSSLConnector(p,server))).getOrElse(Array())
+      portHttps.map(p => Array(createSSLConnector(p,server))).getOrElse(Array())
   }
 
   private def createHttpConnector(portHttp: Int, server: Server): Connector = {
