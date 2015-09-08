@@ -1,6 +1,6 @@
 package fi.vm.sade.hakuperusteet.rsa
 
-import java.io.{FileInputStream, InputStream, File, ByteArrayOutputStream}
+import java.io.{FileInputStream, InputStream}
 import java.security.{Signature, KeyFactory}
 import java.security.interfaces.RSAPrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
@@ -8,8 +8,6 @@ import java.util.Base64
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.domain.User
-import org.apache.commons.io.FileUtils
 
 import scala.util.{Failure, Success, Try}
 
