@@ -24,7 +24,9 @@ export default class UserDataForm extends React.Component {
         <EducationLevel educationLevel={state.educationLevel} controller={controller} />
         <Countries countries={state.countries} controller={controller} lang="en" />
         <CountryPaymentInfo state={state} />
-        <input type="submit" name="submit" value="Submit" />
+        <div className="userDataFormRow">
+          <input type="submit" name="submit" value="Submit" />
+        </div>
       </form>
   }
 }

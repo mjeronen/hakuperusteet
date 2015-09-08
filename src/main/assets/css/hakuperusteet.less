@@ -1,5 +1,9 @@
 @import "fonts";
 
+@formLeftColumnWidth: 200px;
+@formLabelWidth: 175px;
+@formLabelPadding: 25px;
+
 body {
   margin: 0;
   background-color: #fafafa;
@@ -34,12 +38,25 @@ p {
 
 .userDataFormRow {
   height: 50px;
+  p {
+    margin-left: @formLeftColumnWidth;
+  }
+  input[type=submit] {
+    margin-left: @formLeftColumnWidth;
+  }
+  input[type=checkbox] {
+    display: inline-block;
+    margin-left: @formLeftColumnWidth;
+    width: 17px;
+    height: 17px;
+    border: 1px solid #999290;
+  }
 }
 
 label {
   .Font(14px);
-  width: 150px;
-  padding-right: 25px;
+  width: @formLabelWidth;
+  padding-right: @formLabelPadding;
   text-align: right;
   display: inline-block;
 }
@@ -60,14 +77,6 @@ label {
   width: 260px;
   text-align: left;
   padding-right: 0;
-}
-
-#hasPersonId {
-  display: inline-block;
-  margin-left: 175px;
-  width: 17px;
-  height: 17px;
-  border: 1px solid #999290;
 }
 
 #personId {
