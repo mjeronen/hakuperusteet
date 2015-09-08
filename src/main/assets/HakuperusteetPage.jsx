@@ -21,13 +21,13 @@ export default class HakuperusteetPage extends React.Component {
     const controller = this.props.controller
     return <div>
       <Header />
-      <GoogleAuthentication state={state} />
+      <ProgramInfo state={state} />
       { showLoginInfo(state) ? <LoginInfo state={state} controller={controller}/> : null}
+      <GoogleAuthentication state={state} />
       { showUserDataForm(state) ? <UserDataForm state={state} controller={controller}/> : null}
       { showVetumaStart(state) ? <VetumaStart state={state} /> : null}
       { showHakuList(state) ? <HakuList state={state} /> : null}
       <VetumaResultWrapper state={state}/>
-      <ProgramInfo state={state} />
       <Footer />
     </div>
   }
