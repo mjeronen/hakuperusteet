@@ -14,6 +14,7 @@ export default class UserDataForm extends React.Component {
     const state = this.props.state
     const controller = this.props.controller
     return <form id="userDataForm" onSubmit={controller.formSubmits}>
+        <h1>Step 2. Fill in user information</h1>
         <p>Please enter the following information.</p>
         <UserDataInput name="firstName" title="First name" state={state} controller={controller} />
         <UserDataInput name="lastName" title="Last name" state={state} controller={controller} />
