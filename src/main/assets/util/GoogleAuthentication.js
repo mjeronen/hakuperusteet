@@ -10,19 +10,25 @@ export function initAuthentication(properties) {
       const auth2 = gapi.auth2.init(proprs)
       auth2.currentUser.listen(currentUser => {
         if (currentUser.isSignedIn()) {
+          document.getElementById('googleAuthenticationStatus').src = "/hakuperusteet/img/button_google_signedin.png"
           const email = currentUser.getBasicProfile().getEmail()
           const token = currentUser.getAuthResponse().id_token
           const idpentityid = "google"
           sink({email, token, idpentityid})
         } else {
+          document.getElementById('googleAuthenticationStatus').src = "/hakuperusteet/img/button_google_signin.png"
           sink({})
         }
       })
     })
   })
 }
-export function googleAuthenticationRenderFailure(x) {
-  console.log("Google auth render error")
-  console.log(x)
-}
 
+export function authenticationClick(_) {
+  const auth = gapi.auth2.getAuthInstance()
+  if (auth.isSignedIn.get()) {
+    auth.signOut()
+  } else {
+    auth.signIn()
+  }
+}
