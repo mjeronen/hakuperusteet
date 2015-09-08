@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import UserDataInput from './UserDataInput.jsx'
 import UserBirthDateInput from './UserBirthDateInput.jsx'
+import UserSSNInput from './UserSSNInput.jsx'
 import Gender from './Gender.jsx'
 import EducationLevel from './EducationLevel.jsx'
 import Countries from './Countries.jsx'
@@ -17,6 +18,7 @@ export default class UserDataForm extends React.Component {
         <UserDataInput name="firstName" title="First name" state={state} controller={controller} />
         <UserDataInput name="lastName" title="Last name" state={state} controller={controller} />
         <UserBirthDateInput state={state} controller={controller} />
+        <UserSSNInput state={state} controller={controller} />
         <Gender state={state} controller={controller} />
         <UserDataInput name="nationality" title="Nationality" state={state} controller={controller} />
         <EducationLevel educationLevel={state.educationLevel} controller={controller} />

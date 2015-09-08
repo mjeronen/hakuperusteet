@@ -9,10 +9,6 @@ export default class UserBirthDateInput extends React.Component {
         <label htmlFor="birthDate">Birth Date</label>
         <input type="text" id="birthDate" name="birthDate" onChange={controller.valueChanges}/>
         <span className="birtDateFormatInfo">ddmmyyyy</span>
-        <br />
-        <input type="checkbox" name="hasPersonId" id="hasPersonId" onChange={controller.checkedChanges} />
-        <label htmlFor="personId" className="ssnLabel">I have Finnish social security number</label>
-        <input type="text" id="personId" name="personId" onChange={controller.valueChanges}/>
       </div>
   }
 }
