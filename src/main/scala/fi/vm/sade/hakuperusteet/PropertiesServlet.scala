@@ -1,7 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
-import fi.vm.sade.hakuperusteet.koodisto.{Languages, Countries}
+import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import org.scalatra.ScalatraServlet
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
@@ -9,7 +9,7 @@ import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
 
-class PropertiesServlet(config: Config, countries: Countries, languages: Languages) extends ScalatraServlet {
+class PropertiesServlet(config: Config, countries: Countries, languages: Languages, educations: Educations) extends ScalatraServlet {
   implicit val formats = Serialization.formats(NoTypeHints)
 
   before() {
@@ -24,6 +24,7 @@ class PropertiesServlet(config: Config, countries: Countries, languages: Languag
       "countries" -> write(countries.countries),
       "eeaCountries" -> write(countries.eeaCountries),
       "languages" -> write(languages.languages),
+      "baseEducation" -> write(educations.educations),
       "googleAuthenticationClientId" -> config.getString("google.authentication.client.id"),
       "googleAuthenticationHostedDomain" -> config.getString("google.authentication.hosted.domain")
     )

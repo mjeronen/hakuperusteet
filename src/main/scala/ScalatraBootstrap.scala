@@ -12,12 +12,13 @@ class ScalatraBootstrap extends LifeCycle with GlobalExecutionContext {
   val signer = RSASigner.init(config)
   val countries = Koodisto.initCountries(config)
   val languages = Koodisto.initLanguages(config)
+  val educations = Koodisto.initBaseEducation(config)
 
   override def init(context: ServletContext) {
     context mount(new StatusServlet, "/api/v1/status")
     context mount(new TestServlet(config), "/api/v1/test")
     context mount(new VetumaServlet(config, database), "/api/v1/vetuma")
-    context mount(new PropertiesServlet(config, countries, languages), "/api/v1/properties")
+    context mount(new PropertiesServlet(config, countries, languages, educations), "/api/v1/properties")
     context mount(new SessionServlet(config, database, countries), "/api/v1/session")
     context mount(new FormRedirectServlet(config, database, signer, countries), "/api/v1/form")
   }
