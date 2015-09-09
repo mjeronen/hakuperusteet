@@ -53,8 +53,10 @@ trait Tables {
     /** Foreign key referencing User (database name payment_henkilo_oid_fkey) */
     lazy val userFk = foreignKey("payment_henkilo_oid_fkey", Rep.Some(henkiloOid), User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
 
+    /** Index over (henkiloOid,orderNumber) (database name payment_henkilo_oid_order_number_idx) */
+    val index1 = index("payment_henkilo_oid_order_number_idx", (henkiloOid, orderNumber))
     /** Index over (reference) (database name payment_reference_idx) */
-    val index1 = index("payment_reference_idx", reference)
+    val index2 = index("payment_reference_idx", reference)
   }
   /** Collection-like TableQuery object for table Payment */
   lazy val Payment = new TableQuery(tag => new Payment(tag))
@@ -162,20 +164,21 @@ trait Tables {
    *  @param gender Database column gender SqlType(varchar), Length(255,true)
    *  @param birthdate Database column birthdate SqlType(date)
    *  @param personid Database column personid SqlType(varchar), Length(255,true), Default(None)
+   *  @param nativeLanguage Database column native_language SqlType(varchar), Length(255,true)
    *  @param nationality Database column nationality SqlType(varchar), Length(255,true)
    *  @param educationLevel Database column education_level SqlType(varchar), Length(255,true)
    *  @param educationCountry Database column education_country SqlType(varchar), Length(255,true) */
-  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentityid: String, firstname: String, lastname: String, gender: String, birthdate: java.sql.Date, personid: Option[String] = None, nationality: String, educationLevel: String, educationCountry: String)
+  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentityid: String, firstname: String, lastname: String, gender: String, birthdate: java.sql.Date, personid: Option[String] = None, nativeLanguage: String, nationality: String, educationLevel: String, educationCountry: String)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
   implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[String], e3: GR[java.sql.Date]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<?[String], <<[String], <<[String], <<[String]))
+    UserRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<?[String], <<[String], <<[String], <<[String], <<[String]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, Some("hakuperusteet"), "user") {
-    def * = (id, henkiloOid, email, idpentityid, firstname, lastname, gender, birthdate, personid, nationality, educationLevel, educationCountry) <> (UserRow.tupled, UserRow.unapply)
+    def * = (id, henkiloOid, email, idpentityid, firstname, lastname, gender, birthdate, personid, nativeLanguage, nationality, educationLevel, educationCountry) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nationality), Rep.Some(educationLevel), Rep.Some(educationCountry)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11.get, _12.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nativeLanguage), Rep.Some(nationality), Rep.Some(educationLevel), Rep.Some(educationCountry)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11.get, _12.get, _13.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -195,6 +198,8 @@ trait Tables {
     val birthdate: Rep[java.sql.Date] = column[java.sql.Date]("birthdate")
     /** Database column personid SqlType(varchar), Length(255,true), Default(None) */
     val personid: Rep[Option[String]] = column[Option[String]]("personid", O.Length(255,varying=true), O.Default(None))
+    /** Database column native_language SqlType(varchar), Length(255,true) */
+    val nativeLanguage: Rep[String] = column[String]("native_language", O.Length(255,varying=true))
     /** Database column nationality SqlType(varchar), Length(255,true) */
     val nationality: Rep[String] = column[String]("nationality", O.Length(255,varying=true))
     /** Database column education_level SqlType(varchar), Length(255,true) */

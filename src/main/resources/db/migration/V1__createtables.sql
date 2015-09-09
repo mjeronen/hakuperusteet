@@ -39,6 +39,7 @@ CREATE TABLE "user"
   gender character varying(255) NOT NULL,
   birthdate date NOT NULL,
   personid character varying(255),
+  native_language character varying(255) NOT NULL,
   nationality character varying(255) NOT NULL,
   education_level character varying(255) NOT NULL,
   education_country character varying(255) NOT NULL,

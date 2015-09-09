@@ -31,7 +31,7 @@ case class HakuperusteetDatabase(db: DB) {
     (Tables.Session returning Tables.Session).insertOrUpdate(sessionToSessionRow(session)).run.map(sessionRowToSession)
 
   def findUser(email: String): Option[User] =
-    Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(Some(u.id), u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentityid, u.gender, "", u.nationality, u.educationLevel, u.educationCountry))
+    Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(Some(u.id), u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentityid, u.gender, u.nativeLanguage, u.nationality, u.educationLevel, u.educationCountry))
 
   def upsertUser(user: User): Option[User] =
     (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
@@ -58,7 +58,7 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def userToUserRow(u: User): Tables.UserRow =
     UserRow(u.id.getOrElse(useAutoIncrementId), u.personOid, u.email, u.idpentityid, u.firstName,
-      u.lastName, u.gender, new sql.Date(u.birthDate.getTime), u.personId, u.nationality, u.educationLevel,
+      u.lastName, u.gender, new sql.Date(u.birthDate.getTime), u.personId, u.nativeLanguage, u.nationality, u.educationLevel,
       u.educationCountry)
 
   private def userRowToUser(r: UserRow) =
