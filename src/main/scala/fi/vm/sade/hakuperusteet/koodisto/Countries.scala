@@ -9,6 +9,8 @@ import org.json4s.native.Serialization._
 import org.json4s.{NoTypeHints, DefaultFormats, Formats}
 import org.json4s.native.Serialization.{read, write}
 
+case class SimplifiedCountry(id: String, name: String)
+
 case class Countries(countries: List[SimplifiedCountry], eeaCountries: List[String]) {
   def shouldPay(educationCountry: String) = !eeaCountries.contains(educationCountry)
 }
@@ -30,9 +32,8 @@ object Countries {
 
 }
 
-case class Metadata(nimi: String, kieli: String)
-case class Country(koodiArvo: String, metadata: List[Metadata])
-case class SimplifiedCountry(id: String, name: String)
+private case class Metadata(nimi: String, kieli: String)
+private case class Country(koodiArvo: String, metadata: List[Metadata])
 
 private case class Element(codeElementValue: String)
 private case class Valtioryhma(withinCodeElements: List[Element])

@@ -101,6 +101,7 @@ function submitUserDataToServer(state) {
     birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD") + "T00:00:00Z",
     personId: state.personId,
     gender: state.gender,
+    nativeLanguage: state.nativeLanguage,
     nationality: state.nationality,
     educationLevel: state.educationLevel,
     educationCountry: state.educationCountry
