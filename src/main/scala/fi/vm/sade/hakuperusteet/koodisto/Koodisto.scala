@@ -27,7 +27,7 @@ object Koodisto {
 
   private def educations(p: Config) = read[List[Koodi]](urlToString("koodisto.base.education.url",p))
     .filter(l => l.metadata.exists(_.kieli.equals("EN")))
-    .map(c => SimplifiedCode(c.koodiArvo,c.metadata.find(_.kieli.equals("EN")).get.nimi))
+    .map(c => SimplifiedCode(c.koodiUri,c.metadata.find(_.kieli.equals("EN")).get.nimi))
     .sortWith((c0,c1) => c0.name.compareTo(c1.name) < 0)
 
   private def languages(p: Config) = read[List[Koodi]](urlToString("koodisto.languages.url",p))
@@ -45,8 +45,9 @@ object Koodisto {
     props.getString(url)).openStream()).mkString
 
 }
+
 private case class Metadata(nimi: String, kieli: String)
-private case class Koodi(koodiArvo: String, metadata: List[Metadata])
+private case class Koodi(koodiUri: String, koodiArvo: String, metadata: List[Metadata])
 
 private case class Element(codeElementValue: String)
 private case class Valtioryhma(withinCodeElements: List[Element])
