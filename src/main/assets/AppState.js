@@ -74,7 +74,9 @@ export function initAppState(props) {
   }
 
   function onFieldValidation(state, validation) {
-    return state
+    const currentValidationErrors = state.validationErrors || {}
+    const newValidationErrors = {...currentValidationErrors, [validation.field]: validation.validationErrors }
+    return {...state, ['validationErrors']: newValidationErrors}
   }
 
   function locationHash() {
