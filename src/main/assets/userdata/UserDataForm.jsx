@@ -5,6 +5,7 @@ import UserDataInput from './UserDataInput.jsx'
 import UserBirthDateInput from './UserBirthDateInput.jsx'
 import UserSSNInput from './UserSSNInput.jsx'
 import Gender from './Gender.jsx'
+import Nationality from './Nationality.jsx'
 import EducationLevel from './EducationLevel.jsx'
 import Countries from './Countries.jsx'
 import CountryPaymentInfo from './CountryPaymentInfo.jsx'
@@ -20,7 +21,7 @@ export default class UserDataForm extends React.Component {
         <UserBirthDateInput state={state} controller={controller} />
         <UserSSNInput state={state} controller={controller} />
         <Gender state={state} controller={controller} />
-        <UserDataInput name="nationality" title="Nationality" state={state} controller={controller} />
+        <Nationality countries={state.properties.countries} controller={controller} />
         <EducationLevel educationLevel={state.educationLevel} controller={controller} />
         <Countries countries={state.properties.countries} controller={controller} lang="en" />
         <CountryPaymentInfo state={state} />
