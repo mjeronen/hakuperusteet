@@ -13,7 +13,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase) extends Hakuperus
   get("/openvetuma") {
     failUnlessAuthenticated
 
-    val language = "fi"
+    val language = "en"
     val ref = "1234561"
     val orderNro = Vetuma.generateOrderNumber
 
