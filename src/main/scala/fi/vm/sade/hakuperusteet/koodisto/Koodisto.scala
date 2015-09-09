@@ -3,11 +3,9 @@ package fi.vm.sade.hakuperusteet.koodisto
 import java.net.URL
 
 import com.typesafe.config.Config
-import fi.vm.sade.hakuperusteet.Configuration
+import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization._
-import org.json4s.{NoTypeHints, DefaultFormats, Formats}
-import org.json4s.native.Serialization.{read, write}
 
 case class SimplifiedCountry(id: String, name: String)
 
@@ -15,13 +13,23 @@ case class Countries(countries: List[SimplifiedCountry], eeaCountries: List[Stri
   def shouldPay(educationCountry: String) = !eeaCountries.contains(educationCountry)
 }
 
-object Countries {
+case class SimplifiedLanguage(id: String, name: String)
 
-  def init(props: Config) = Countries(countries(props),eeaCountries(props).withinCodeElements.map(_.codeElementValue))
+case class Languages(languages: List[SimplifiedLanguage])
 
+object Koodisto {
   implicit val formats = Serialization.formats(NoTypeHints)
 
-  private def countries(p: Config) = read[List[Country]](urlToString("koodisto.countries.url",p))
+  def initCountries(props: Config) = Countries(countries(props),eeaCountries(props).withinCodeElements.map(_.codeElementValue))
+
+  def initLanguages(props: Config) = Languages(languages(props))
+
+  private def languages(p: Config) = read[List[Koodi]](urlToString("koodisto.languages.url",p))
+    .filter(l => l.metadata.exists(_.kieli.equals("EN")))
+    .map(c => SimplifiedLanguage(c.koodiArvo,c.metadata.find(_.kieli.equals("EN")).get.nimi))
+    .sortWith((c0,c1) => c0.name.compareTo(c1.name) < 0)
+
+  private def countries(p: Config) = read[List[Koodi]](urlToString("koodisto.countries.url",p))
     .map(c => SimplifiedCountry(c.koodiArvo,c.metadata.find(_.kieli.equals("EN")).get.nimi))
     .sortWith((c0,c1) => c0.name.compareTo(c1.name) < 0)
 
@@ -31,9 +39,8 @@ object Countries {
     props.getString(url)).openStream()).mkString
 
 }
-
 private case class Metadata(nimi: String, kieli: String)
-private case class Country(koodiArvo: String, metadata: List[Metadata])
+private case class Koodi(koodiArvo: String, metadata: List[Metadata])
 
 private case class Element(codeElementValue: String)
 private case class Valtioryhma(withinCodeElements: List[Element])
