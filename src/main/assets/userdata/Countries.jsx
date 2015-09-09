@@ -2,8 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 
 export default class Countries extends React.Component {
-  constructor(props) {
-    super(props)
+  componentDidMount() {
+    this.props.controller.initFieldValidation("educationCountry", "Choose...")
   }
   render() {
     const field = "educationCountry"

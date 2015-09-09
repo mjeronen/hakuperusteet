@@ -9,7 +9,8 @@ import {initChangeListeners} from './util/ChangeListeners'
 const dispatcher = new Dispatcher()
 const events = {
   updateField: 'updateField',
-  submitForm: 'submitForm'
+  submitForm: 'submitForm',
+  fieldValidation: 'fieldValidation'
 }
 
 export function changeListeners() {
@@ -30,13 +31,15 @@ export function initAppState(props) {
   cssEffectsBus.plug(hashS)
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
+  const fieldValidationS = dispatcher.stream(events.fieldValidation)
 
   const stateP = Bacon.update(initialState,
     [propertiesS], onStateInit,
     [cssEffectsBus], onCssEffectValue,
     [userS], onLoginLogout,
     [sessionS], onSessionFromServer,
-    [updateFieldS], onUpdateField)
+    [updateFieldS], onUpdateField,
+    [fieldValidationS], onFieldValidation)
 
   const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
 
@@ -68,6 +71,10 @@ export function initAppState(props) {
 
   function onSessionFromServer(state, sessionData) {
     return {...state, sessionData}
+  }
+
+  function onFieldValidation(state, validation) {
+    return state
   }
 
   function locationHash() {

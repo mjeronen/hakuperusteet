@@ -2,6 +2,10 @@ import React from 'react'
 import _ from 'lodash'
 
 export default class UserBirthDateInput extends React.Component {
+  componentDidMount() {
+    this.props.controller.initFieldValidation("personId", "")
+  }
+
   render() {
     const controller = this.props.controller
     const state = this.props.state

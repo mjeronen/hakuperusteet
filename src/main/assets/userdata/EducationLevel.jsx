@@ -2,6 +2,10 @@ import React from 'react'
 import _ from 'lodash'
 
 export default class EducationLevel extends React.Component {
+  componentDidMount() {
+    this.props.controller.initFieldValidation("educationLevel", "Choose...")
+  }
+
   render() {
     const field = "educationLevel"
     const controller = this.props.controller

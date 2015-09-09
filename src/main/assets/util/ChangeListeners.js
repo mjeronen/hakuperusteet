@@ -1,16 +1,22 @@
+import {validateField} from './FieldValidator.js'
 
 export function initChangeListeners(dispatcher, events) {
-
   function valueChanges(e) {
-    dispatcher.push(events.updateField, { field: e.target.id, value: e.target.value })
+    const field = e.target.id
+    const value = e.target.value
+    pushChangeAndValidation(field, value)
   }
 
   function checkedChanges(e) {
-    dispatcher.push(events.updateField, { field: e.target.id, value: e.target.checked })
+    const field = e.target.id
+    const value = e.target.checked
+    pushChangeAndValidation(field, value)
   }
 
   function radioChanges(e) {
-    dispatcher.push(events.updateField, { field: e.target.name, value: e.target.value })
+    const field = e.target.name
+    const value = e.target.value
+    pushChangeAndValidation(field, value)
   }
 
   function formSubmits(e) {
@@ -18,6 +24,16 @@ export function initChangeListeners(dispatcher, events) {
     dispatcher.push(events.submitForm, e.target.id)
   }
 
-  return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits }
+  function initFieldValidation(field, value) {
+    dispatcher.push(events.fieldValidation, {field: field, validationErrors: validateField(field, value)})
+  }
+
+  function pushChangeAndValidation(field, value) {
+    dispatcher.push(events.updateField, {field: field, value: value})
+    dispatcher.push(events.fieldValidation, {field: field, validationErrors: validateField(field, value)})
+  }
+
+  return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits,
+    initFieldValidation: initFieldValidation }
 }
 

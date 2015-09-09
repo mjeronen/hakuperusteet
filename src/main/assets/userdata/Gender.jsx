@@ -3,6 +3,10 @@ import _ from 'lodash'
 
 
 export default class Gender extends React.Component {
+  componentDidMount() {
+    this.props.controller.initFieldValidation("gender", "")
+  }
+
   render() {
     const state = this.props.state
     const controller = this.props.controller

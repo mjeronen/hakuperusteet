@@ -1,6 +1,10 @@
 import React from 'react'
 
 export default class UserDataInput extends React.Component {
+  componentDidMount() {
+    this.props.controller.initFieldValidation(this.props.name, "")
+  }
+
   render() {
     const controller = this.props.controller
     const title = this.props.title
