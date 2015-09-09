@@ -31,7 +31,7 @@ case class HakuperusteetDatabase(db: DB) {
     (Tables.Session returning Tables.Session).insertOrUpdate(sessionToSessionRow(session)).run.map(sessionRowToSession)
 
   def findUser(email: String): Option[User] =
-    Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(Some(u.id), u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentityid, u.gender, u.nationality, u.educationLevel, u.educationCountry))
+    Tables.User.filter(_.email === email).result.headOption.run.map((u) => User(Some(u.id), u.henkiloOid, u.email, u.firstname, u.lastname, u.birthdate, u.personid, u.idpentityid, u.gender, "", u.nationality, u.educationLevel, u.educationCountry))
 
   def upsertUser(user: User): Option[User] =
     (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
@@ -63,6 +63,7 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def userRowToUser(r: UserRow) =
     User(Some(r.id), r.henkiloOid, r.email, r.firstname, r.lastname, r.birthdate, r.personid, r.idpentityid, r.gender,
+    "",
     r.nationality, r.educationLevel, r.educationCountry)
 }
 
