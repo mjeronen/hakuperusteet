@@ -1,9 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
 
+import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
+
 export default class EducationLevel extends React.Component {
   componentDidMount() {
-    this.props.controller.initFieldValidation("educationLevel", "Choose...")
+    this.props.controller.initFieldValidation("educationLevel", emptySelectValue())
   }
 
   render() {
