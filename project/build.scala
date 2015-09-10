@@ -34,6 +34,7 @@ object HakuperusteetBuild extends Build {
         "org.http4s" %% "http4s-blaze-client" % http4sVersion,
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-auth" % ScalatraVersion,
+        "org.scalatra" %% "scalatra-json" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
         "ch.qos.logback" % "logback-classic" % "1.1.2" % "runtime",
         "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",

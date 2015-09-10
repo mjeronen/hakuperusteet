@@ -9,17 +9,18 @@ import org.json4s.native.Serialization._
 
 case class ApplicationObject(name: String, providerName: String, baseEducations: List[String], description: String)
 
-object Tarjonta {
+case class Tarjonta(tarjontaBaseUrl: String) {
   implicit val formats = Serialization.formats(NoTypeHints)
 
-  def init(p: Config) = Option(read[Result](urlToString("tarjonta.application.object.1.2.246.562.20.69046715533",p)))
+  def getApplicationObject(hakukohdeOid: String) = Option(read[Result](urlToString(tarjontaBaseUrl + "/" + hakukohdeOid)))
     .map(r => r.result)
     .map(r => ApplicationObject(r.hakukohteenNimet.kieli_en, r.tarjoajaNimet.en, r.hakukelpoisuusvaatimusUris, r.lisatiedot.kieli_en)).get
 
+  private def urlToString(url: String) = io.Source.fromInputStream(new URL(url).openStream()).mkString
+}
 
-  private def urlToString(url: String, props: Config) = io.Source.fromInputStream(new URL(
-    props.getString(url)).openStream()).mkString
-
+object Tarjonta {
+  def init(p: Config) = Tarjonta(p.getString("tarjonta.application.object.url"))
 }
 
 private case class Result(result: Hakukohde)
