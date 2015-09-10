@@ -9,7 +9,6 @@ export default class Countries extends React.Component {
   render() {
     const field = "educationCountry"
     const controller = this.props.controller
-    const emptyCountries = [{ id: "", name: emptyValue}]
     const result = createSelectOptions(this.props.countries)
 
     return <div className="userDataFormRow">

@@ -8,7 +8,6 @@ export default class UserBirthDateInput extends React.Component {
 
   render() {
     const controller = this.props.controller
-    const state = this.props.state
     return <div className="userDataFormRow">
         <label htmlFor="birthDate">Birth Date</label>
         <input type="text" id="birthDate" name="birthDate" onChange={controller.valueChanges}/>
