@@ -5,6 +5,7 @@ import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
 import {initAuthentication} from './util/GoogleAuthentication'
 import {initChangeListeners} from './util/ChangeListeners'
+import {validateField} from './util/FieldValidator.js'
 
 const dispatcher = new Dispatcher()
 const events = {
@@ -74,9 +75,9 @@ export function initAppState(props) {
     return {...state, sessionData}
   }
 
-  function onFieldValidation(state, validation) {
+  function onFieldValidation(state, {field, value}) {
     const currentValidationErrors = state.validationErrors || {}
-    const newValidationErrors = {...currentValidationErrors, [validation.field]: validation.validationErrors }
+    const newValidationErrors = {...currentValidationErrors, [field]: validateField(state, field, value) }
     return {...state, ['validationErrors']: newValidationErrors}
   }
 

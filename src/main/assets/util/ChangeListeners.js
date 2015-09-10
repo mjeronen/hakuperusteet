@@ -1,5 +1,3 @@
-import {validateField} from './FieldValidator.js'
-
 export function initChangeListeners(dispatcher, events) {
   function valueChanges(e) {
     const field = e.target.id
@@ -26,7 +24,7 @@ export function initChangeListeners(dispatcher, events) {
 
   function pushChangeAndValidation(field, value) {
     dispatcher.push(events.updateField, {field: field, value: value})
-    dispatcher.push(events.fieldValidation, {field: field, validationErrors: validateField(field, value)})
+    dispatcher.push(events.fieldValidation, {field: field, value: value})
   }
 
   return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits }
