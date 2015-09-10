@@ -9,21 +9,21 @@ testkey-resource-path="testkey.der"
 rsa.sign.key="/testkey.der"
 
 hakuperusteet.cas.url={{host_cas}}
-hakuperusteet.user={{hakuperusteet.cas.user}}
-hakuperusteet.password={{hakuperusteet.cas.password}}
+hakuperusteet.user={{hakuperusteet_cas_user}}
+hakuperusteet.password={{hakuperusteet_cas_password}}
 
-hakuperusteet.db.host={{hakuperusteet.db.host}}
-hakuperusteet.db.port={{hakuperusteet.db.port}}
-hakuperusteet.db.name={{hakuperusteet.db.name}}
-hakuperusteet.db.username={{hakuperusteet.db.username}}
-hakuperusteet.db.password={{hakuperusteet.db.password}}
+hakuperusteet.db.host={{hakuperusteet_db_host}}
+hakuperusteet.db.port={{hakuperusteet_db_port}}
+hakuperusteet.db.name={{hakuperusteet_db_name}}
+hakuperusteet.db.username={{hakuperusteet_db_username}}
+hakuperusteet.db.password={{hakuperusteet_db_password}}
 hakuperusteet.db.url="jdbc:postgresql://"${hakuperusteet.db.host}":"${hakuperusteet.db.port}"/"${hakuperusteet.db.name}
 
-vetuma.host={{hakuperusteet.vetuma.host}}
+vetuma.host={{hakuperusteet_vetuma_host}}
 vetuma.success.url=${host.url.base}"api/v1/vetuma/return/ok"
 vetuma.cancel.url=${host.url.base}"api/v1/vetuma/return/cancel"
 vetuma.error.url=${host.url.base}"api/v1/vetuma/return/error"
-vetuma.shared.secret={{hakuperusteet.vetuma.shared.secret}}
+vetuma.shared.secret={{hakuperusteet_vetuma_shared_secret}}
 vetuma.app.name="Hakumaksu Syksy 2015"
 vetuma.amount="100,00"
 vetuma.msg.buyer = "Hakumaksu Syksy 2015"
@@ -34,7 +34,7 @@ cookie.domain="{{host_oppija}}"
 
 koodisto.countries.url = "https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/maatjavaltiot2/1"
 koodisto.eea.countries.url = "https://{{host_virkailija}}/koodisto-service/rest/codeelement/valtioryhmat_2/1"
-google.authentication.client.id = {{hakuperusteet.google.authentication.client.id}}
+google.authentication.client.id = {{hakuperusteet_google_authentication_client_id}}
 google.authentication.hosted.domain = "https://{{host_oppija}}"
 
 form.redirect.base = "https://{{host_oppija}}/hakuperusteet/test_index.html"
