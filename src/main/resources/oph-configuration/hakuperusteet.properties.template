@@ -12,17 +12,14 @@ hakuperusteet.cas.url={{host_cas}}
 hakuperusteet.user={{hakuperusteet_cas_user}}
 hakuperusteet.password={{hakuperusteet_cas_password}}
 
-hakuperusteet.db.host={{hakuperusteet_db_host}}
-hakuperusteet.db.port={{hakuperusteet_db_port}}
-hakuperusteet.db.name={{hakuperusteet_db_name}}
 hakuperusteet.db.username={{hakuperusteet_db_username}}
 hakuperusteet.db.password={{hakuperusteet_db_password}}
-hakuperusteet.db.url="jdbc:postgresql://"${hakuperusteet.db.host}":"${hakuperusteet.db.port}"/"${hakuperusteet.db.name}
+hakuperusteet.db.url="jdbc:postgresql://"{{hakuperusteet_db_host}}":"{{hakuperusteet_db_port}}"/"{{hakuperusteet_db_name}}
 
 vetuma.host={{hakuperusteet_vetuma_host}}
-vetuma.success.url=${host.url.base}"api/v1/vetuma/return/ok"
-vetuma.cancel.url=${host.url.base}"api/v1/vetuma/return/cancel"
-vetuma.error.url=${host.url.base}"api/v1/vetuma/return/error"
+vetuma.success.url="https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/ok"
+vetuma.cancel.url="https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/cancel"
+vetuma.error.url="https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/error"
 vetuma.shared.secret={{hakuperusteet_vetuma_shared_secret}}
 vetuma.app.name="Hakumaksu Syksy 2015"
 vetuma.amount="100,00"
