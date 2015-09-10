@@ -1,5 +1,12 @@
-export function validateField(field, value) {
-  var validationErrors = []
+import _ from 'lodash'
 
-  return validationErrors
+export function validateField(state, field, value) {
+  if (field == "firstName") return validateNonEmptyTextField(value)
+  if (field == "lastName") return validateNonEmptyTextField(value)
+  return []
+}
+
+function validateNonEmptyTextField(value) {
+  if (_.isEmpty(value)) return ["required"]
+  return []
 }
