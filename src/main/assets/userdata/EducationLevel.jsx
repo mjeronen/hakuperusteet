@@ -10,15 +10,17 @@ export default class EducationLevel extends React.Component {
 
   render() {
     const field = "educationLevel"
+    const baseEducations = this.props.state.tarjonta.baseEducations
+    const result = createSelectOptions(this.props.state.properties.baseEducation,function(b) {
+      return baseEducations.indexOf(b.id) !== -1
+    })
     const controller = this.props.controller
     return <div className="userDataFormRow">
       <label htmlFor={field}>Base education level</label>
       <select id={field} onChange={controller.valueChanges}>
-        <option name="">Choose...</option>
-        <option name="bachelor">Bachelor's Degree</option>
-        <option name="master">Master's Degree</option>
-        <option name="other">Other</option>
+        {result}
       </select>
       </div>
   }
+
 }

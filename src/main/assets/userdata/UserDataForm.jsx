@@ -24,7 +24,7 @@ export default class UserDataForm extends React.Component {
         <Gender state={state} controller={controller} />
         <NativeLanguage languages={state.properties.languages} controller={controller} />
         <Nationality countries={state.properties.countries} controller={controller} />
-        <EducationLevel educationLevel={state.educationLevel} controller={controller} />
+        <EducationLevel state={state} controller={controller} />
         <Countries countries={state.properties.countries} controller={controller} lang="en" />
         <CountryPaymentInfo state={state} />
         <div className="userDataFormRow">
