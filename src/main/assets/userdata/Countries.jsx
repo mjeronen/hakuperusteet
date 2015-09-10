@@ -3,17 +3,22 @@ import React from 'react'
 import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
 
 export default class Countries extends React.Component {
-  componentDidMount() {
-    this.props.controller.initFieldValidation("educationCountry", emptySelectValue())
+  constructor(props) {
+    super()
+    this.id = "educationCountry"
   }
+
+  componentDidMount() {
+    this.props.controller.valueChanges({ target: { id: this.id, value: emptySelectValue() }})
+  }
+
   render() {
-    const field = "educationCountry"
     const controller = this.props.controller
     const result = createSelectOptions(this.props.countries)
 
     return <div className="userDataFormRow">
-        <label htmlFor={field}>Base education country</label>
-        <select id={field} onChange={controller.valueChanges}>
+        <label htmlFor={this.id}>Base education country</label>
+        <select id={this.id} onChange={controller.valueChanges}>
           {result}
         </select>
       </div>

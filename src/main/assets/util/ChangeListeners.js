@@ -24,16 +24,11 @@ export function initChangeListeners(dispatcher, events) {
     dispatcher.push(events.submitForm, e.target.id)
   }
 
-  function initFieldValidation(field, value) {
-    dispatcher.push(events.fieldValidation, {field: field, validationErrors: validateField(field, value)})
-  }
-
   function pushChangeAndValidation(field, value) {
     dispatcher.push(events.updateField, {field: field, value: value})
     dispatcher.push(events.fieldValidation, {field: field, validationErrors: validateField(field, value)})
   }
 
-  return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits,
-    initFieldValidation: initFieldValidation }
+  return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits }
 }
 
