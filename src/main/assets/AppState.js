@@ -18,12 +18,13 @@ export function changeListeners() {
 }
 
 export function initAppState(props) {
-  const {propertiesUrl, sessionUrl} = props
+  const {tarjontaUrl, propertiesUrl, sessionUrl} = props
   const initialState = {}
 
   const serverUpdatesBus = new Bacon.Bus()
   const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
+  const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
   const userS = propertiesS.flatMap(initAuthentication)
 
   const sessionS = userS.filter(isNotEmpty).flatMap(checkSession(sessionUrl))
@@ -34,7 +35,7 @@ export function initAppState(props) {
   const fieldValidationS = dispatcher.stream(events.fieldValidation)
 
   const stateP = Bacon.update(initialState,
-    [propertiesS], onStateInit,
+    [propertiesS, tarjontaS], onStateInit,
     [cssEffectsBus], onCssEffectValue,
     [userS], onLoginLogout,
     [sessionS], onSessionFromServer,
@@ -50,8 +51,8 @@ export function initAppState(props) {
 
   return stateP
 
-  function onStateInit(state, properties) {
-    return {...state, properties}
+  function onStateInit(state, properties, tarjonta) {
+    return {...state, properties, tarjonta}
   }
 
   function onCssEffectValue(state, effect) {

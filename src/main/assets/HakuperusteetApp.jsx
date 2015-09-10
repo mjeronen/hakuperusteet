@@ -6,6 +6,7 @@ import {initAppState, changeListeners} from './AppState.js'
 import HakuperusteetPage from './HakuperusteetPage.jsx'
 
 const appState = initAppState({
+  tarjontaUrl: "/hakuperusteet/api/v1/tarjonta/1.2.246.562.20.69046715533",
   propertiesUrl: "/hakuperusteet/api/v1/properties",
   sessionUrl: "/hakuperusteet/api/v1/session/authenticate"
 })
