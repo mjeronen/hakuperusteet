@@ -19,6 +19,9 @@ export function initChangeListeners(dispatcher, events) {
 
   function formSubmits(e) {
     e.preventDefault()
+    const form = document.getElementById(e.target.id)
+    form.querySelector("input[type=submit]").setAttribute("disabled", "disabled");
+    form.querySelector(".ajax-loader").className = "ajax-loader"
     dispatcher.push(events.submitForm, e.target.id)
   }
 

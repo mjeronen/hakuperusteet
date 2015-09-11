@@ -32,6 +32,7 @@ export default class UserDataForm extends React.Component {
         <CountryPaymentInfo state={state} />
         <div className="userDataFormRow">
           <input type="submit" name="submit" value="Submit" disabled={disabled} />
+          <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
         </div>
       </form>
   }
