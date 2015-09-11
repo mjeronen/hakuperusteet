@@ -1,11 +1,19 @@
 import _ from 'lodash'
 
+import {emptySelectValue} from './HtmlUtils.js'
+
+const selectFields = ["educationCountry", "educationLevel", "nationality", "nativeLanguage"]
+
 export function validateField(state, field, value) {
   if (field == "firstName") return validateNonEmptyTextField(value)
   if (field == "lastName") return validateNonEmptyTextField(value)
   if (field == "birthDate") return validateBirthDate(value)
   if (field == "personId") return validatePersonId(value)
   if (field == "gender") return validateGender(value)
+  if (_.contains(selectFields, field)) {
+    return validateSelect(value)
+  }
+
   return []
 }
 
@@ -28,4 +36,8 @@ function validatePersonId(value) {
 
 function validateGender(value) {
   return (value.length == 0) ? ["required"] : []
+}
+
+function validateSelect(value) {
+  return (value == emptySelectValue()) ? ["required"] : []
 }
