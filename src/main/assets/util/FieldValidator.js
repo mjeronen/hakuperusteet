@@ -5,6 +5,7 @@ export function validateField(state, field, value) {
   if (field == "lastName") return validateNonEmptyTextField(value)
   if (field == "birthDate") return validateBirthDate(value)
   if (field == "personId") return validatePersonId(value)
+  if (field == "gender") return validateGender(value)
   return []
 }
 
@@ -23,4 +24,8 @@ function validateBirthDate(value) {
 
 function validatePersonId(value) {
   return (value.length == 5) ? [] : ["required"]
+}
+
+function validateGender(value) {
+  return (value.length == 0) ? ["required"] : []
 }
