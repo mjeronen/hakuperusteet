@@ -14,7 +14,7 @@ export default class UserDataInput extends React.Component {
   render() {
     return <div className="userDataFormRow">
         <label htmlFor={this.name}>{this.title}</label>
-        <input type="text" id={this.name} name={this.name} onChange={this.props.controller.valueChanges}/>
+        <input type="text" id={this.name} name={this.name} onChange={this.props.controller.valueChanges} maxLength="255" />
       </div>
   }
 }

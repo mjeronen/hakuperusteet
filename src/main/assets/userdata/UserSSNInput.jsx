@@ -16,7 +16,7 @@ export default class UserBirthDateInput extends React.Component {
     return <div className="userDataFormRow">
         <input type="checkbox" name="hasPersonId" id="hasPersonId" onChange={controller.checkedChanges} />
         <label htmlFor="personId" className="ssnLabel">I have Finnish social security number</label>
-        <input type="text" id={this.id} name="personId" onChange={controller.valueChanges}/>
+        <input type="text" id={this.id} name="personId" onChange={controller.valueChanges} maxLength="4" />
       </div>
   }
 }

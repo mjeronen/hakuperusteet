@@ -15,7 +15,7 @@ export default class UserBirthDateInput extends React.Component {
     const controller = this.props.controller
     return <div className="userDataFormRow">
         <label htmlFor="birthDate">Birth Date</label>
-        <input type="text" id={this.id} name="birthDate" onChange={controller.valueChanges}/>
+        <input type="text" id={this.id} name="birthDate" onChange={controller.valueChanges} maxLength="8" />
         <span className="birtDateFormatInfo">ddmmyyyy</span>
       </div>
   }
