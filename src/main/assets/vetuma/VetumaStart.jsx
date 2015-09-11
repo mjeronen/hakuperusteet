@@ -3,14 +3,14 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import HttpUtil from '../util/HttpUtil'
+import {disableSubmitAndShowBusy} from '../util/HtmlUtils.js'
 
 export default class VetumaStart extends React.Component {
   onSubmitRedirect(state) {
     return (e) => {
       e.preventDefault()
       const form = e.target
-      form.querySelector("input[type=submit]").setAttribute("disabled", "disabled")
-      form.querySelector(".ajax-loader").className = "ajax-loader"
+      disableSubmitAndShowBusy(form)
       Bacon.fromPromise(HttpUtil.get(state.properties.vetumaStartUrl)).onValue((result) => {
         form.action = result
         form.submit()

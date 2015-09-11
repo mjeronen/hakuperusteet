@@ -13,3 +13,8 @@ export function createSelectOptions(data, optionalFilter) {
   result.unshift(<option value="" key="-">{emptySelectValue()}</option>)
   return result
 }
+
+export function disableSubmitAndShowBusy(form) {
+  form.querySelector("input[type=submit]").setAttribute("disabled", "disabled");
+  form.querySelector(".ajax-loader").className = "ajax-loader"
+}
