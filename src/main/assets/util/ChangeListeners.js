@@ -1,3 +1,5 @@
+import {disableSubmitAndShowBusy} from './HtmlUtils.js'
+
 export function initChangeListeners(dispatcher, events) {
   function valueChanges(e) {
     const field = e.target.id
@@ -20,8 +22,7 @@ export function initChangeListeners(dispatcher, events) {
   function formSubmits(e) {
     e.preventDefault()
     const form = document.getElementById(e.target.id)
-    form.querySelector("input[type=submit]").setAttribute("disabled", "disabled")
-    form.querySelector(".ajax-loader").className = "ajax-loader"
+    disableSubmitAndShowBusy(form)
     dispatcher.push(events.submitForm, e.target.id)
   }
 
