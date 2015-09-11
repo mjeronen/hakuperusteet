@@ -4,6 +4,8 @@ import org.scalatra.sbt._
 import sbtassembly.AssemblyKeys._
 import sbtassembly.{PathList, MergeStrategy}
 import com.earldouglas.xwp.XwpPlugin._
+import java.text.SimpleDateFormat
+import java.util.Date
 
 object HakuperusteetBuild extends Build {
   val Organization = "fi.vm.sade"
@@ -14,6 +16,21 @@ object HakuperusteetBuild extends Build {
   val http4sVersion = "0.9.1"
   val artifactory = "https://artifactory.oph.ware.fi/artifactory/"
 
+  lazy val buildversion = taskKey[Unit]("start buildversion.txt generator")
+
+  val buildversionTask = buildversion <<= version map {
+    (ver: String) =>
+      val now: String = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date())
+      val buildversionTxt: String = "artifactId=hakuperusteet\nversion=" + ver +
+        "\nbuildNumber=" + sys.props.getOrElse("buildNumber", "N/A") +
+        "\nbranchName=" + sys.props.getOrElse("branchName", "N/A") +
+        "\nvcsRevision=" + sys.props.getOrElse("revisionNumber", "N/A") +
+        "\nbuildTtime=" + now
+      println("writing buildversion.txt:\n" + buildversionTxt)
+
+      val f: File = file("src/main/resources/webapp/buildversion.txt")
+      IO.write(f, buildversionTxt)
+  }
 
   lazy val project = Project (
     "hakuperusteet",
@@ -71,6 +88,7 @@ object HakuperusteetBuild extends Build {
         case x => (assemblyMergeStrategy in assembly).value(x)
       },
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+      buildversionTask,
       publishTo := {
         if (Version.trim.endsWith("SNAPSHOT"))
           Some("snapshots" at artifactory + "/oph-sade-snapshot-local;build.timestamp=" + new java.util.Date().getTime)

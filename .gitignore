@@ -1,6 +1,8 @@
 *.class
 *.log
 
+src/main/resources/webapp/buildversion.txt
+
 # sbt specific
 .cache
 .history
