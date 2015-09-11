@@ -14,6 +14,13 @@ export function parseNewValidationErrors(state, field, value) {
   }
 }
 
+export function validateUserDataForm(state) {
+  const allV = state.validationErrors || {}
+  const userV = [allV.firstName, allV.lastName, allV.birthDate, allV.personId, allV.gender, allV.nativeLanguage,
+    allV.nationality, allV.educationLevel, allV.educationCountry].filter(function(x) {return !_.isEmpty(x) })
+  return _.all(userV, function(v) { return v.length == 0})
+}
+
 function validatePersonId(hasPersonId, value) {
   if (hasPersonId == true) {
     return (value.length == 5) ? [] : ["required"]

@@ -11,10 +11,13 @@ import EducationLevel from './EducationLevel.jsx'
 import Countries from './Countries.jsx'
 import CountryPaymentInfo from './CountryPaymentInfo.jsx'
 
+import {validateUserDataForm} from './../util/FieldValidator.js'
+
 export default class UserDataForm extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
+    const disabled = (validateUserDataForm(state)) ? "" : "disabled"
     return <form id="userDataForm" onSubmit={controller.formSubmits}>
         <p>Please enter the following information.</p>
         <UserDataInput name="firstName" title="First name" state={state} controller={controller} />
@@ -28,7 +31,7 @@ export default class UserDataForm extends React.Component {
         <Countries countries={state.properties.countries} controller={controller} lang="en" />
         <CountryPaymentInfo state={state} />
         <div className="userDataFormRow">
-          <input type="submit" name="submit" value="Submit" />
+          <input type="submit" name="submit" value="Submit" disabled={disabled} />
         </div>
       </form>
   }
