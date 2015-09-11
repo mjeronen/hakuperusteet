@@ -1,7 +1,7 @@
 hakuperusteet.port.http={{palvelu_portti}}
 hakuperusteet.port.https={{palvelu_portti_https}}
 
-host.url.base="https://{{host_oppija}}/hakuperusteet/"
+host.url.base=https://{{host_oppija}}/hakuperusteet/
 
 hakuperusteet.port.http={{palvelu_portti}}
 hakuperusteet.port.https={{palvelu_portti_https}}
@@ -17,21 +17,21 @@ hakuperusteet.db.password={{hakuperusteet_db_password}}
 hakuperusteet.db.url=jdbc:postgresql://{{hakuperusteet_db_host}}:{{hakuperusteet_db_port}}/{{hakuperusteet_db_name}}
 
 vetuma.host={{hakuperusteet_vetuma_host}}
-vetuma.success.url="https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/ok"
-vetuma.cancel.url="https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/cancel"
-vetuma.error.url="https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/error"
+vetuma.success.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/ok
+vetuma.cancel.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/cancel
+vetuma.error.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/error
 vetuma.shared.secret={{hakuperusteet_vetuma_shared_secret}}
-vetuma.app.name="Hakumaksu Syksy 2015"
-vetuma.amount="100,00"
-vetuma.msg.buyer = "Hakumaksu Syksy 2015"
-vetuma.msg.seller = "Hakumaksu Syksy 2015"
-vetuma.msg.form = "Hakumaksu Syksy 2015"
+vetuma.app.name=Hakumaksu Syksy 2015
+vetuma.amount=100,00
+vetuma.msg.buyer=Hakumaksu Syksy 2015
+vetuma.msg.seller=Hakumaksu Syksy 2015
+vetuma.msg.form=Hakumaksu Syksy 2015
 
-cookie.domain="{{host_oppija}}"
+cookie.domain={ {host_oppija}}
 
-koodisto.countries.url = "https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/maatjavaltiot2/1"
-koodisto.eea.countries.url = "https://{{host_virkailija}}/koodisto-service/rest/codeelement/valtioryhmat_2/1"
-google.authentication.client.id = {{hakuperusteet_google_authentication_client_id}}
-google.authentication.hosted.domain = "https://{{host_oppija}}"
+koodisto.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/maatjavaltiot2/1
+koodisto.eea.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/valtioryhmat_2/1
+google.authentication.client.id={{hakuperusteet_google_authentication_client_id}}
+google.authentication.hosted.domain=https://{{host_oppija}}
 
-form.redirect.base = "https://{{host_oppija}}/hakuperusteet/test_index.html"
+form.redirect.base=https://{{host_oppija}}/hakuperusteet/test_index.html
