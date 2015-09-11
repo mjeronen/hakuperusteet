@@ -9,12 +9,10 @@ export function validateField(state, field, value) {
 }
 
 function validateNonEmptyTextField(value) {
-  if (_.isEmpty(value)) return ["required"]
-  return []
+  return (_.isEmpty(value)) ? ["required"] : []
 }
 
 function validateBirthDate(value) {
-  if (_.isEmpty(value)) return ["required"]
   const eightNumbersPattern = /^([0-9]{8})$/;
   if (eightNumbersPattern.test(value)) {
     return []
