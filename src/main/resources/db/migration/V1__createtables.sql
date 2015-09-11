@@ -1,3 +1,4 @@
+/*
 DROP SCHEMA public CASCADE;
 
 DROP ROLE IF EXISTS oph;
@@ -12,6 +13,7 @@ GRANT ALL ON SCHEMA public TO public;
 
 SET default_tablespace = '';
 SET default_with_oids = false;
+*/
 
 CREATE TABLE "session"
 (
