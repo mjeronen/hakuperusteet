@@ -2,9 +2,27 @@ import _ from 'lodash'
 
 import {emptySelectValue} from './HtmlUtils.js'
 
+const personIdFields = ["personId", "hasPersonId"]
 const selectFields = ["educationCountry", "educationLevel", "nationality", "nativeLanguage"]
 
-export function validateField(state, field, value) {
+export function parseNewValidationErrors(state, field, value) {
+  const currentValidationErrors = state.validationErrors || {}
+  if (_.contains(personIdFields, field)) {
+    return {...currentValidationErrors, ["personId"]: validatePersonId(state.hasPersonId, value) }
+  } else {
+    return {...currentValidationErrors, [field]: validateField(field, value) }
+  }
+}
+
+function validatePersonId(hasPersonId, value) {
+  if (hasPersonId == true) {
+    return (value.length == 5) ? [] : ["required"]
+  } else {
+    return []
+  }
+}
+
+function validateField(field, value) {
   if (field == "firstName") return validateNonEmptyTextField(value)
   if (field == "lastName") return validateNonEmptyTextField(value)
   if (field == "birthDate") return validateBirthDate(value)
@@ -29,11 +47,6 @@ function validateBirthDate(value) {
     return ["invalid"]
   }
 }
-
-function validatePersonId(value) {
-  return (value.length == 5) ? [] : ["required"]
-}
-
 function validateGender(value) {
   return (value.length == 0) ? ["required"] : []
 }
