@@ -3,7 +3,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import HttpUtil from './util/HttpUtil'
-import {disableSubmitAndShowBusy} from './util/HtmlUtils.js'
+import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from './util/HtmlUtils.js'
 
 export default class HakuList extends React.Component {
   onSubmitRedirect(state) {
@@ -11,9 +11,9 @@ export default class HakuList extends React.Component {
       e.preventDefault()
       const form = e.target
       disableSubmitAndShowBusy(form)
-      Bacon.fromPromise(HttpUtil.get(state.properties.formRedirectUrl)).onValue((result) => {
-        window.location = result.url
-      })
+      const promise = Bacon.fromPromise(HttpUtil.get(state.properties.formRedirectUrl))
+      promise.onValue((result) => { window.location = result.url })
+      promise.onError((_) => { enableSubmitAndHideBusyAndShowError(form) })
     }
   }
 
@@ -24,6 +24,7 @@ export default class HakuList extends React.Component {
         <form id="redirectToForm" onSubmit={this.onSubmitRedirect(state)} method="GET">
           <input type="submit" name="redirectToForm" value="Proceed to application form" />
           <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
+          <span className="serverError hide">Unexpected server error. Please try again later.</span>
         </form>
       </div>
   }

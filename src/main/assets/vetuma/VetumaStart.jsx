@@ -11,7 +11,7 @@ export default class VetumaStart extends React.Component {
       e.preventDefault()
       const form = e.target
       disableSubmitAndShowBusy(form)
-      var promise = Bacon.fromPromise(HttpUtil.get(state.properties.vetumaStartUrl))
+      const promise = Bacon.fromPromise(HttpUtil.get(state.properties.vetumaStartUrl))
       promise.onValue((result) => {
         form.action = result
         form.submit()
