@@ -1,7 +1,7 @@
 {
   "name": "hakuperusteet_mockserver",
   "version": "1.0.0",
-  "description": "OPH Hakuperusteet",
+  "description": "OPH Hakuperusteet Mock Server",
   "license": "EUPL-1.1",
   "repository": {
     "type": "git",
