@@ -5,9 +5,9 @@
 As default, the application runs in the port `8080`. This can be changed by
 setting the environment variable `PORT`.
 
-## Standalone JAR
-
-`sbt assembly` builds a standalone jar.
+## Standalone JAR building
+1. `npm install` (first time)
+2. `sbt assembly`
 
 ## Test API
 
