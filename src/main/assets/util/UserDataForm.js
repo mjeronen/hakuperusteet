@@ -2,7 +2,7 @@ import Bacon from 'baconjs'
 import moment from 'moment-timezone'
 
 import HttpUtil from './HttpUtil.js'
-import {enableSubmitAndHideBusyAndShowError} from './HtmlUtils.js'
+import {enableSubmitAndHideBusy} from './HtmlUtils.js'
 
 export function submitUserDataToServer(state) {
   const userData = {
@@ -17,9 +17,14 @@ export function submitUserDataToServer(state) {
     educationCountry: state.educationCountry
   }
   const promise = Bacon.fromPromise(HttpUtil.post(state.properties.userDataUrl, userData))
-  promise.onError((_) => {
+  promise.onError((error) => {
     const form = document.getElementById('userDataForm')
-    enableSubmitAndHideBusyAndShowError(form)
+    enableSubmitAndHideBusy(form)
+    if (error.status == 409) {
+      form.querySelector("span.invalid").classList.remove("hide")
+    } else {
+      form.querySelector("span.general").classList.remove("hide")
+    }
   })
   return promise
 }
