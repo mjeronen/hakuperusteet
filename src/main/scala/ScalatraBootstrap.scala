@@ -21,7 +21,7 @@ class ScalatraBootstrap extends LifeCycle with GlobalExecutionContext {
     context mount(new VetumaServlet(config, database), "/api/v1/vetuma")
     context mount(new TarjontaServlet(tarjonta), "/api/v1/tarjonta")
     context mount(new PropertiesServlet(config, countries, languages, educations), "/api/v1/properties")
-    context mount(new SessionServlet(config, database, countries), "/api/v1/session")
+    context mount(new SessionServlet(config, database, countries, languages, educations), "/api/v1/session")
     context mount(new FormRedirectServlet(config, database, signer, countries), "/api/v1/form")
   }
 }

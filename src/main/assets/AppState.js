@@ -95,11 +95,9 @@ function checkSession(sessionUrl) {
 
 function submitUserDataToServer(state) {
   const userData = {
-    email: state.session.email,
-    idpentityid: state.session.idpentityid,
     firstName: state.firstName,
     lastName: state.lastName,
-    birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD") + "T00:00:00Z",
+    birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD"),
     personId: state.personId,
     gender: state.gender,
     nativeLanguage: state.nativeLanguage,
