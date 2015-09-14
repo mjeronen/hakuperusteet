@@ -17,4 +17,11 @@ export function createSelectOptions(data, optionalFilter) {
 export function disableSubmitAndShowBusy(form) {
   form.querySelector("input[type=submit]").setAttribute("disabled", "disabled");
   form.querySelector(".ajax-loader").className = "ajax-loader"
+  form.querySelector(".serverError").className = "serverError hide"
+}
+
+export function enableSubmitAndHideBusyAndShowError(form) {
+  form.querySelector("input[type=submit]").removeAttribute("disabled");
+  form.querySelector(".ajax-loader").className = "ajax-loader hide"
+  form.querySelector(".serverError").className = "serverError"
 }

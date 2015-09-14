@@ -3,7 +3,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import HttpUtil from '../util/HttpUtil'
-import {disableSubmitAndShowBusy} from '../util/HtmlUtils.js'
+import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from '../util/HtmlUtils.js'
 
 export default class VetumaStart extends React.Component {
   onSubmitRedirect(state) {
@@ -11,10 +11,12 @@ export default class VetumaStart extends React.Component {
       e.preventDefault()
       const form = e.target
       disableSubmitAndShowBusy(form)
-      Bacon.fromPromise(HttpUtil.get(state.properties.vetumaStartUrl)).onValue((result) => {
+      var promise = Bacon.fromPromise(HttpUtil.get(state.properties.vetumaStartUrl))
+      promise.onValue((result) => {
         form.action = result
         form.submit()
       })
+      promise.onError((_) => { enableSubmitAndHideBusyAndShowError(form) })
     }
   }
 
@@ -25,6 +27,7 @@ export default class VetumaStart extends React.Component {
       <form id="vetumaStart" onSubmit={this.onSubmitRedirect(state)} method="POST">
         <input type="submit" name="submitVetuma" value="Continue to payment" />
         <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
+        <span className="serverError hide">Unexpected server error. Please try again later.</span>
       </form>
     </div>
   }
