@@ -25,20 +25,30 @@ export function initAuthentication(properties) {
 }
 
 function updateToLoggedInGoogle() {
-  document.getElementById('googleAuthenticationStatus').src = "/hakuperusteet/img/button_google_signedin.png"
+  updateAuthenticatioStatusImage("/hakuperusteet/img/button_google_signedin.png")
   const logoutLink = document.createElement("a")
   logoutLink.appendChild(document.createTextNode("Log out"))
   logoutLink.id = "logout"
   logoutLink.href = "#"
   logoutLink.onclick = logOut
-  document.getElementById('googleAuthentication').appendChild(logoutLink)
+  var authElem = document.getElementById('googleAuthentication')
+  if (authElem != undefined) {
+    authElem.appendChild(logoutLink)
+  }
 }
 
 function updateToLoggedOutGoogle() {
-  document.getElementById('googleAuthenticationStatus').src = "/hakuperusteet/img/button_google_signin.png"
+  updateAuthenticatioStatusImage("/hakuperusteet/img/button_google_signin.png")
   const logoutLink = document.getElementById('logout')
   if (logoutLink != undefined) {
     document.getElementById('googleAuthentication').removeChild(logoutLink)
+  }
+}
+
+function updateAuthenticatioStatusImage(src) {
+  var signInButton = document.getElementById('googleAuthenticationStatus')
+  if (signInButton != undefined) {
+    signInButton.src = src
   }
 }
 
