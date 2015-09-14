@@ -1,11 +1,11 @@
 import Bacon from 'baconjs'
-import moment from 'moment-timezone'
 
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
 import {initAuthentication} from './util/GoogleAuthentication'
 import {initChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from './util/FieldValidator.js'
+import {submitUserDataToServer} from './util/UserDataForm.js'
 
 const dispatcher = new Dispatcher()
 const events = {
@@ -91,19 +91,4 @@ export function initAppState(props) {
 
 function checkSession(sessionUrl) {
   return (user) => Bacon.fromPromise(HttpUtil.post(sessionUrl, user)).skipErrors()
-}
-
-function submitUserDataToServer(state) {
-  const userData = {
-    firstName: state.firstName,
-    lastName: state.lastName,
-    birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD"),
-    personId: state.personId,
-    gender: state.gender,
-    nativeLanguage: state.nativeLanguage,
-    nationality: state.nationality,
-    educationLevel: state.educationLevel,
-    educationCountry: state.educationCountry
-  }
-  return Bacon.fromPromise(HttpUtil.post(state.properties.userDataUrl, userData))
 }

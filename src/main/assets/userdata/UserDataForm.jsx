@@ -33,6 +33,7 @@ export default class UserDataForm extends React.Component {
         <div className="userDataFormRow">
           <input type="submit" name="submit" value="Submit" disabled={disabled} />
           <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
+          <span className="serverError hide">Unexpected server error. Please try again later.</span>
         </div>
       </form>
   }
