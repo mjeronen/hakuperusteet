@@ -8,7 +8,7 @@ hakuperusteet.port.https={{palvelu_portti_https}}
 testkey-resource-path={{hakuperusteet_rsa_sign_key}}
 rsa.sign.key={{hakuperusteet_rsa_sign_key}}
 
-hakuperusteet.cas.url={{host_cas}}
+hakuperusteet.cas.url=https://{{host_cas}}
 hakuperusteet.user={{hakuperusteet_cas_user}}
 hakuperusteet.password={{hakuperusteet_cas_password}}
 
