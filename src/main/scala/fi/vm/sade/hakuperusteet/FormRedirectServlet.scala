@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.Date
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
@@ -37,5 +38,6 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, signer: RSA
     Seq(("personOid", u.personOid.getOrElse(halt(500))), ("email", u.email), ("firstName", u.firstName), ("lastName", u.lastName),
       ("birthDate", new SimpleDateFormat("ddMMyyyy").format(u.birthDate)), ("personId", u.personId.getOrElse("")),
       ("gender", u.gender), ("nationality", u.nationality), ("educationLevel", u.educationLevel),
-      ("educationCountry", u.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString))
+      ("educationCountry", u.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString),
+      ("created", new Date().toInstant.getEpochSecond.toString))
 }
