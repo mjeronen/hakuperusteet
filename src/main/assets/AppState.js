@@ -20,7 +20,7 @@ export function changeListeners() {
 }
 
 export function initAppState(props) {
-  const {tarjontaUrl, propertiesUrl, authenticationUrl} = props
+  const {tarjontaUrl, propertiesUrl, sessionDataUrl, authenticationUrl} = props
   const initialState = {}
 
   const serverUpdatesBus = new Bacon.Bus()
@@ -31,7 +31,11 @@ export function initAppState(props) {
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
   const googleUserS = propertiesS.flatMap(initGoogleAuthentication).toProperty("")
   const emailUserS = hashS.flatMap(initEmailAuthentication).toProperty("")
-  const userS = googleUserS.combine(emailUserS, selectAuthenticationData).toEventStream()
+  const sessionDataS = propertiesS.flatMap(sessionData(sessionDataUrl))
+  const userS = googleUserS
+    .combine(emailUserS, selectAuthenticationData)
+    .combine(sessionDataS, selectAuthenticationData)
+    .toEventStream()
   const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
   cssEffectsBus.plug(hashS)
 
@@ -89,9 +93,9 @@ export function initAppState(props) {
     return Bacon.once(currentHash)
   }
 
-  function selectAuthenticationData(gs, es) {
-    if (gs.token != undefined)  return gs
-    if (es.token != undefined)  return es
+  function selectAuthenticationData(left, right) {
+    if (left.token != undefined) return left
+    if (right.token != undefined) return right
     return {}
   }
   function isNotEmpty(x) { return !_.isEmpty(x) }
@@ -99,4 +103,8 @@ export function initAppState(props) {
 
 function authenticate(authenticationUrl) {
   return (user) => Bacon.fromPromise(HttpUtil.post(authenticationUrl, user)).skipErrors()
+}
+
+function sessionData(sessionDataUrl) {
+  return (user) => Bacon.fromPromise(HttpUtil.get(sessionDataUrl, user)).skipErrors()
 }

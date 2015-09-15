@@ -30,6 +30,11 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     }
   }
 
+  get("/sessionData") {
+    failUnlessAuthenticated
+    write(user)
+  }
+
   post("/userData") {
     failUnlessAuthenticated
     val params = parse(request.body).extract[Params]
