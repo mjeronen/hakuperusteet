@@ -1,5 +1,5 @@
 export function showLoginInfo(state) {
-  return _.isUndefined(state.session) || _.isUndefined(state.session.email)
+  return _.isUndefined(state.session) || (_.isUndefined(state.session.email) || _.isUndefined(state.session.token))
 }
 
 export function showUserDataForm(state) {

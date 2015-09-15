@@ -20,8 +20,8 @@ export default class HakuperusteetPage extends React.Component {
     return <div>
       <Header />
       <ProgramInfo state={state} />
-      <Session state={state} />
-      { showUserDataForm(state) ? <UserDataForm state={state} controller={controller}/> : null}
+      <Session state={state} controller={controller} />
+      { showUserDataForm(state) ? <UserDataForm state={state} controller={controller} /> : null}
       { showVetumaStart(state) ? <VetumaStart state={state} /> : null}
       { showHakuList(state) ? <HakuList state={state} /> : null}
       <VetumaResultWrapper state={state}/>

@@ -46,6 +46,12 @@ body {
 
 #emailAuthentication {
   margin-left: @marginLeft;
+  label {
+    padding-right: 10px;
+  }
+  input[type=submit] {
+    margin-left: 10px;
+  }
 }
 
 #googleAuthentication {
@@ -104,13 +110,15 @@ p {
     height: 17px;
     border: 1px solid #999290;
   }
+  label {
+    width: @formLabelWidth;
+    text-align: right;
+  }
 }
 
 label {
   .Font(14px);
-  width: @formLabelWidth;
   padding-right: @formLabelPadding;
-  text-align: right;
   display: inline-block;
 }
 

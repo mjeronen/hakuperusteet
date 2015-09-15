@@ -3,8 +3,10 @@ import _ from 'lodash'
 
 import {showLoginInfo} from '../AppLogic.js'
 import LoginInfo from './LoginInfo.jsx'
-import GoogleAuthentication from './GoogleAuthentication.jsx'
-import EmailAuthentication from './EmailAuthentication.jsx'
+import GoogleLogIn from './GoogleLogIn.jsx'
+import GoogleLogOut from './GoogleLogOut.jsx'
+import EmailLogIn from './EmailLogIn.jsx'
+import EmailLogOut from './EmailLogOut.jsx'
 
 export default class Session extends React.Component {
   render() {
@@ -12,8 +14,8 @@ export default class Session extends React.Component {
     const controller = this.props.controller
     return <div>
       { showLoginInfo(state) ? <LoginInfo state={state} /> : null}
-      <GoogleAuthentication state={state} />
-      <EmailAuthentication state={state} />
+      { showLoginInfo(state) ? <GoogleLogIn state={state} controller={controller} /> : null}
+      { showLoginInfo(state) ? <EmailLogIn state={state} controller={controller} /> : null}
     </div>
   }
 }
