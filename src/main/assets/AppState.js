@@ -2,7 +2,7 @@ import Bacon from 'baconjs'
 
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
-import {initAuthentication} from './session/GoogleAuthentication'
+import {initGoogleAuthentication} from './session/GoogleAuthentication'
 import {initEmailAuthentication} from './session/EmailAuthentication'
 import {initChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from './util/FieldValidator.js'
@@ -29,7 +29,7 @@ export function initAppState(props) {
   const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
-  const googleUserS = propertiesS.flatMap(initAuthentication).toProperty("")
+  const googleUserS = propertiesS.flatMap(initGoogleAuthentication).toProperty("")
   const emailUserS = hashS.flatMap(initEmailAuthentication).toProperty("")
   const userS = googleUserS.combine(emailUserS, selectAuthenticationData).toEventStream()
   const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))

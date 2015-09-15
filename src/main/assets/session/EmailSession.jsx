@@ -4,7 +4,7 @@ import _ from 'lodash'
 export default class EmailSession extends React.Component {
   render() {
     return <div id="emailAuthentication">
-      You are logged in as
+      <p>You are logged in as</p>
     </div>
   }
 }

@@ -1,6 +1,6 @@
 import Bacon from 'baconjs'
 
-export function initAuthentication(properties) {
+export function initGoogleAuthentication(properties) {
   return Bacon.fromBinder(sink => {
     gapi.load('auth2', () => {
       var proprs = {
