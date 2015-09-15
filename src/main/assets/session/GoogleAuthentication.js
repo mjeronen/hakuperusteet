@@ -1,5 +1,7 @@
 import Bacon from 'baconjs'
 
+import HttpUtil from '../util/HttpUtil.js'
+
 export function initGoogleAuthentication(properties) {
   return Bacon.fromBinder(sink => {
     gapi.load('auth2', () => {
@@ -22,8 +24,14 @@ export function initGoogleAuthentication(properties) {
   })
 }
 
-export function logOut(_) {
-  gapi.auth2.getAuthInstance().signOut()
+export function logOut(state, controller) {
+  return (e) => {
+    const promise = Bacon.fromPromise(HttpUtil.post(state.properties.logOutUrl))
+    promise.onValue((_) => { controller.logOut() })
+    promise.onError((_) => { console.log("logout error") })
+    const auth = gapi.auth2.getAuthInstance()
+    if (auth.isSignedIn.get()) auth.signOut()
+  }
 }
 
 export function authenticationClick(_) {
