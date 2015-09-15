@@ -3,6 +3,7 @@ import Bacon from 'baconjs'
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
 import {initAuthentication} from './util/GoogleAuthentication'
+import {initEmailAuthentication} from './util/EmailAuthentication'
 import {initChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from './util/FieldValidator.js'
 import {submitUserDataToServer} from './util/UserDataForm.js'
@@ -26,10 +27,12 @@ export function initAppState(props) {
   const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
-  const userS = propertiesS.flatMap(initAuthentication)
 
-  const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
-  const hashS = userS.flatMap(locationHash).filter(isNotEmpty)
+  const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
+  const googleUserS = propertiesS.flatMap(initAuthentication).toProperty("")
+  const emailUserS = hashS.flatMap(initEmailAuthentication).toProperty("")
+  const userS = googleUserS.combine(emailUserS, selectAuthenticationData).filter(isNotEmpty).toEventStream()
+  const sessionS = userS.flatMap(authenticate(authenticationUrl))
   cssEffectsBus.plug(hashS)
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
@@ -86,6 +89,11 @@ export function initAppState(props) {
     return Bacon.once(currentHash)
   }
 
+  function selectAuthenticationData(gs, es) {
+    if (gs.token != undefined)  return gs
+    if (es.token != undefined)  return es
+    return {}
+  }
   function isNotEmpty(x) { return !_.isEmpty(x) }
 }
 
