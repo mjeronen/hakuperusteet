@@ -2,14 +2,14 @@ import React from 'react'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
+import HttpUtil from '../util/HttpUtil.js'
+
 export default class EmailSession extends React.Component {
   logOut(state, controller) {
     return (e) => {
       e.preventDefault()
-      const promise = Bacon.fromPromise(HttpUtil.get(state.properties.logOutUrl))
-      promise.onValue((result) => {
-        controller.logOut()
-      })
+      const promise = Bacon.fromPromise(HttpUtil.post(state.properties.logOutUrl))
+      promise.onValue((_) => { controller.logOut() })
       promise.onError((_) => { console.log("logout error") })
     }
   }
