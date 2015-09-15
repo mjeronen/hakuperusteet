@@ -18,6 +18,8 @@ export default class UserDataForm extends React.Component {
     const state = this.props.state
     const controller = this.props.controller
     const disabled = (validateUserDataForm(state)) ? "" : "disabled"
+    const languages = _.isUndefined(state.properties) ? [] : state.properties.languages
+    const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     return <form id="userDataForm" onSubmit={controller.formSubmits}>
         <p>Please enter the following information.</p>
         <UserDataInput name="firstName" title="First name" state={state} controller={controller} />
@@ -25,10 +27,10 @@ export default class UserDataForm extends React.Component {
         <UserBirthDateInput state={state} controller={controller} />
         <UserSSNInput state={state} controller={controller} />
         <Gender state={state} controller={controller} />
-        <NativeLanguage languages={state.properties.languages} controller={controller} />
-        <Nationality countries={state.properties.countries} controller={controller} />
+        <NativeLanguage languages={languages} controller={controller} />
+        <Nationality countries={countries} controller={controller} />
         <EducationLevel state={state} controller={controller} />
-        <Countries countries={state.properties.countries} controller={controller} lang="en" />
+        <Countries countries={countries} controller={controller} lang="en" />
         <CountryPaymentInfo state={state} />
         <div className="userDataFormRow">
           <input type="submit" name="submit" value="Submit" disabled={disabled} />
