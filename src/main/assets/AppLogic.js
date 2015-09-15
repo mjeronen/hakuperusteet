@@ -11,7 +11,7 @@ export function hasEmailSession(state) {
 }
 
 export function showUserDataForm(state) {
-  return !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
+  return !_.isEmpty(state.session) && !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
 }
 
 export function showVetumaStart(state) {
