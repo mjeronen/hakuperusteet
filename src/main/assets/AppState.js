@@ -19,7 +19,7 @@ export function changeListeners() {
 }
 
 export function initAppState(props) {
-  const {tarjontaUrl, propertiesUrl, sessionUrl} = props
+  const {tarjontaUrl, propertiesUrl, authenticationUrl} = props
   const initialState = {}
 
   const serverUpdatesBus = new Bacon.Bus()
@@ -28,7 +28,7 @@ export function initAppState(props) {
   const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
   const userS = propertiesS.flatMap(initAuthentication)
 
-  const sessionS = userS.filter(isNotEmpty).flatMap(checkSession(sessionUrl))
+  const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
   const hashS = userS.flatMap(locationHash).filter(isNotEmpty)
   cssEffectsBus.plug(hashS)
 
@@ -89,6 +89,6 @@ export function initAppState(props) {
   function isNotEmpty(x) { return !_.isEmpty(x) }
 }
 
-function checkSession(sessionUrl) {
-  return (user) => Bacon.fromPromise(HttpUtil.post(sessionUrl, user)).skipErrors()
+function authenticate(authenticationUrl) {
+  return (user) => Bacon.fromPromise(HttpUtil.post(authenticationUrl, user)).skipErrors()
 }
