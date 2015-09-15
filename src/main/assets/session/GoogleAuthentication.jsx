@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import {authenticationClick} from '../util/GoogleAuthentication'
+import {authenticationClick} from './GoogleAuthentication'
 
 export default class GoogleAuthentication extends React.Component {
   render() {
