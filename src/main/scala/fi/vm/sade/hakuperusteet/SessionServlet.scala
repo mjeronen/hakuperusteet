@@ -5,6 +5,7 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{SessionData, User}
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
+import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.ValidationUtil
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -16,7 +17,7 @@ import scalaz._
 import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
 
-class SessionServlet(config: Config, db: HakuperusteetDatabase, countries: Countries, languages: Languages, educations: Educations) extends HakuperusteetServlet(config, db) with ValidationUtil {
+class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, countries: Countries, languages: Languages, educations: Educations) extends HakuperusteetServlet(config, db, oppijanTunnistus) with ValidationUtil {
   case class UserDataResponse(field: String, value: SessionData)
 
   post("/authenticate") {

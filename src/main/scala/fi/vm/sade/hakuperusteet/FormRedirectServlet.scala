@@ -8,13 +8,14 @@ import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.koodisto.Countries
+import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.rsa.RSASigner
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
 
 
-class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, signer: RSASigner, countries: Countries) extends HakuperusteetServlet(config, db) {
+class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, signer: RSASigner, countries: Countries) extends HakuperusteetServlet(config, db, oppijanTunnistus) {
 
   get("/redirect") {
     failUnlessAuthenticated

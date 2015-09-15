@@ -27,6 +27,9 @@ case class HakuperusteetDatabase(db: DB) {
   def findSession(email: String): Option[Session] =
     Tables.Session.filter(_.email === email).result.headOption.run.map(sessionRowToSession)
 
+  def findSessionByToken(token: String): Option[Session] =
+    Tables.Session.filter(_.token === token).result.headOption.run.map(sessionRowToSession)
+
   def upsertSession(session: Session): Option[Session] =
     (Tables.Session returning Tables.Session).insertOrUpdate(sessionToSessionRow(session)).run.map(sessionRowToSession)
 

@@ -7,7 +7,6 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.Session
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
-import fi.vm.sade.hakuperusteet.google.GoogleVerifier._
 import org.json4s.native.JsonMethods._
 import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryStrategy
