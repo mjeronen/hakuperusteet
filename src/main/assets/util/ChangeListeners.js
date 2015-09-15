@@ -31,6 +31,9 @@ export function initChangeListeners(dispatcher, events) {
     dispatcher.push(events.fieldValidation, {field: field, value: value})
   }
 
-  return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits }
+  function logOut() {
+    dispatcher.push(events.logOut, {})
+  }
+  return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits, logOut: logOut }
 }
 

@@ -12,7 +12,8 @@ const dispatcher = new Dispatcher()
 const events = {
   updateField: 'updateField',
   submitForm: 'submitForm',
-  fieldValidation: 'fieldValidation'
+  fieldValidation: 'fieldValidation',
+  logOut: 'logOut'
 }
 
 export function changeListeners() {

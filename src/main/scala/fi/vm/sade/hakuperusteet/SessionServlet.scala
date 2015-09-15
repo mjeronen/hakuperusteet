@@ -35,6 +35,11 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     write(user)
   }
 
+  post("/logout") {
+    logOut()
+    "{}"
+  }
+
   post("/userData") {
     failUnlessAuthenticated
     val params = parse(request.body).extract[Params]
