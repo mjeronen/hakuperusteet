@@ -6,6 +6,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.Session
+import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier._
 import org.json4s.native.JsonMethods._
 import org.scalatra.ScalatraBase
@@ -15,6 +16,8 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
   import fi.vm.sade.hakuperusteet._
 
   private def request = app.enrichRequest(app.request)
+
+  val verifier = GoogleVerifier.init(config)
 
   val json = parse(request.body)
   val email = (json \ "email").extract[Option[String]]
@@ -39,7 +42,7 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
   }
 
   private def verifyAndCreateSession(session: Session): Option[Session] = {
-    if (verify(session.token)) {
+    if (verifier.verify(session.token)) {
       db.upsertSession(session)
     } else {
       logger.warn(s"Session verify failed for user ${session.email} with token ${session.token}")
