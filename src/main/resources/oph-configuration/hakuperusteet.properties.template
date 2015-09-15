@@ -5,7 +5,6 @@ host.url.base=https://{{host_oppija}}/hakuperusteet/
 
 hakuperusteet.port.http={{palvelu_portti}}
 hakuperusteet.port.https={{palvelu_portti_https}}
-testkey-resource-path={{hakuperusteet_rsa_sign_key}}
 rsa.sign.key={{hakuperusteet_rsa_sign_key}}
 
 hakuperusteet.cas.url=https://{{host_cas}}
