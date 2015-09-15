@@ -2,6 +2,14 @@ export function showLoginInfo(state) {
   return _.isUndefined(state.session) || (_.isUndefined(state.session.email) || _.isUndefined(state.session.token))
 }
 
+export function hasGoogleSession(state) {
+  return !_.isUndefined(state.session)  && !_.isUndefined(state.session.email) && state.session.idpentityid == "google"
+}
+
+export function hasEmailSession(state) {
+  return !_.isUndefined(state.session)  && !_.isUndefined(state.session.token) && state.session.idpentityid == "email"
+}
+
 export function showUserDataForm(state) {
   return !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
 }

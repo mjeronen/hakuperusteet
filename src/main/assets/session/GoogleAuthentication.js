@@ -22,7 +22,7 @@ export function initAuthentication(properties) {
   })
 }
 
-function logOut() {
+export function logOut(_) {
   gapi.auth2.getAuthInstance().signOut()
 }
 
