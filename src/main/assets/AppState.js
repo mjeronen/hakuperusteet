@@ -31,8 +31,8 @@ export function initAppState(props) {
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
   const googleUserS = propertiesS.flatMap(initAuthentication).toProperty("")
   const emailUserS = hashS.flatMap(initEmailAuthentication).toProperty("")
-  const userS = googleUserS.combine(emailUserS, selectAuthenticationData).filter(isNotEmpty).toEventStream()
-  const sessionS = userS.flatMap(authenticate(authenticationUrl))
+  const userS = googleUserS.combine(emailUserS, selectAuthenticationData).toEventStream()
+  const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
   cssEffectsBus.plug(hashS)
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
