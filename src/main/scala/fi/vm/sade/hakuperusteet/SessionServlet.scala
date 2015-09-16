@@ -2,7 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{SessionData, User}
+import fi.vm.sade.hakuperusteet.domain.{Session, SessionData, User}
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
@@ -25,8 +25,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     failUnlessAuthenticated
 
     db.findUser(user.email) match {
-      case Some(u) => write(SessionData(user.email, Some(u), Some(countries.shouldPay(u.educationCountry)), db.findPayments(u).toList))
-      case None => write(SessionData(user.email, None, None, List.empty))
+      case Some(u) => write(SessionData(user, Some(u), Some(countries.shouldPay(u.educationCountry)), db.findPayments(u).toList))
+      case None => write(SessionData(user, None, None, List.empty))
     }
   }
 
@@ -45,16 +45,16 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     val params = parse(request.body).extract[Params]
     parseUserData(user.email, user.idpentityid, params).bitraverse(
       errors => renderConflictWithErrors(errors),
-      userData => createNewUser(userData))
+      userData => createNewUser(user, userData))
   }
 
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 
-  def createNewUser(userData: User) = {
+  def createNewUser(session: Session, userData: User) = {
     logger.info(s"Updating userData: $userData")
     val newUser = upsertUserToHenkilo(userData)
     val userWithId = db.upsertUser(newUser)
-    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(userData.email, userWithId, Some(countries.shouldPay(newUser.educationCountry)), List.empty))))
+    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, Some(countries.shouldPay(newUser.educationCountry)), List.empty))))
   }
 
   def upsertUserToHenkilo(userData: User): User = {

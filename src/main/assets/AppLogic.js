@@ -1,17 +1,17 @@
 export function showLoginInfo(state) {
-  return _.isUndefined(state.sessionData) || _.isUndefined(state.sessionData.email)
+  return _.isUndefined(state.sessionData) || _.isUndefined(state.sessionData.session) || _.isUndefined(state.sessionData.session.email)
 }
 
 export function hasGoogleSession(state) {
-  return !_.isUndefined(state.session)  && !_.isUndefined(state.session.email) && state.session.idpentityid == "google"
+  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && !_.isUndefined(state.sessionData.session.email) && state.sessionData.session.idpentityid == "google"
 }
 
 export function hasEmailSession(state) {
-  return !_.isUndefined(state.session)  && !_.isUndefined(state.session.token) && state.session.idpentityid == "email"
+  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && !_.isUndefined(state.sessionData.session.email) && state.sessionData.session.idpentityid == "email"
 }
 
 export function showUserDataForm(state) {
-  return !_.isEmpty(state.session) && !_.isUndefined(state.sessionData) && _.isUndefined(state.sessionData.user)
+  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && _.isUndefined(state.sessionData.user)
 }
 
 export function showVetumaStart(state) {

@@ -30,17 +30,17 @@ export function initAppState(props) {
   const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
-  const sessionDataS = propertiesS.flatMap(sessionData(sessionDataUrl))
+  const sessionS = propertiesS.flatMap(sessionData(sessionDataUrl))
   const emailUserS = hashS.filter(isLoginToken).flatMap(initEmailAuthentication)
   const googleUserS = propertiesS.flatMap(initGoogleAuthentication)
 
-  const userS = Bacon.update({},
-    [sessionDataS], handleSessionUserEvent,
+  const credentialsS = Bacon.update({},
+    [sessionS], handleSessionUserEvent,
     [emailUserS], handleEmailUserEvent,
     [googleUserS], handleGoogleUserEvent
   ).skipDuplicates().toEventStream()
 
-  const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
+  const sessionDataS = credentialsS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
   cssEffectsBus.plug(hashS.filter(isCssEffect).flatMap(toCssEffect))
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
@@ -50,8 +50,8 @@ export function initAppState(props) {
   const stateP = Bacon.update(initialState,
     [propertiesS, tarjontaS], onStateInit,
     [cssEffectsBus], onCssEffectValue,
-    [userS], onLoginLogout,
-    [sessionS], onSessionFromServer,
+    [credentialsS], onCredentialsChange,
+    [sessionDataS], onSessionFromServer,
     [updateFieldS], onUpdateField,
     [logOutS], onLogOut,
     [fieldValidationS], onFieldValidation)
@@ -93,8 +93,8 @@ export function initAppState(props) {
     return {...state, effect}
   }
 
-  function onLoginLogout(state, session) {
-    return {...state, session}
+  function onCredentialsChange(state, credentials) {
+    return {...state, credentials}
   }
 
   function onUpdateField(state, {field, value}) {
@@ -102,7 +102,7 @@ export function initAppState(props) {
   }
 
   function onLogOut(state, _) {
-    return {...state, ['session']: {}, ['sessionData']: {}}
+    return {...state, ['credentials']: {}, ['sessionData']: {}}
   }
 
   function onSessionFromServer(state, sessionData) {
