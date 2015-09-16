@@ -15,7 +15,7 @@ export default class EducationLevel extends React.Component {
 
   render() {
     const state = this.props.state
-    const allBaseEducations = _.isEmpty(state.properties) ? {} : JSON.parse(state.properties.baseEducation)
+    const allBaseEducations = (_.isEmpty(state.properties) || _.isEmpty(state.properties.baseEducation)) ? [] : JSON.parse(state.properties.baseEducation)
     const baseEducationsForCurrent = _.isEmpty(state.tarjonta) ? [] : state.tarjonta.baseEducations
     const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
     const result = createSelectOptions(baseEducationOptions)
