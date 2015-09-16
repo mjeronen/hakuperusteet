@@ -7,18 +7,20 @@ import org.apache.http.HttpVersion
 import org.apache.http.client.fluent.Request
 import org.apache.http.entity.ContentType
 import org.json4s.native.JsonMethods._
+import org.json4s._
+import org.json4s.JsonDSL._
 
 case class OppijanTunnistus(c: Config) extends LazyLogging {
   import fi.vm.sade.hakuperusteet._
 
   def createToken(email: String) = {
     val siteUrlBase = c.getString("host.url.base") + "#/token/"
-    val body = """{"email":"""" + email + """", "url":"""" + siteUrlBase + """"}"""
+    val data = Map("email" -> email, "url" -> siteUrlBase)
 
     Request.Post(c.getString("oppijantunnistus.create.url"))
       .useExpectContinue()
       .version(HttpVersion.HTTP_1_1)
-      .bodyString(body, ContentType.APPLICATION_JSON)
+      .bodyString(compact(render(data)), ContentType.APPLICATION_JSON)
       .execute().returnContent().asString()
   }
 
