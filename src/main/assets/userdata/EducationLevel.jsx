@@ -14,8 +14,11 @@ export default class EducationLevel extends React.Component {
   }
 
   render() {
-    const baseEducations = _.isEmpty(this.props.tarjonta) ? [] : this.props.state.tarjonta.baseEducations
-    const result = createSelectOptions(baseEducations, function(b) { return baseEducations.indexOf(b.id) !== -1 })
+    const state = this.props.state
+    const allBaseEducations = _.isEmpty(state.properties) ? {} : JSON.parse(state.properties.baseEducation)
+    const baseEducationsForCurrent = _.isEmpty(state.tarjonta) ? [] : state.tarjonta.baseEducations
+    const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
+    const result = createSelectOptions(baseEducationOptions)
     const controller = this.props.controller
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>Base education level</label>

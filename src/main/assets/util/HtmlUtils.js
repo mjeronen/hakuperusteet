@@ -5,12 +5,11 @@ export function emptySelectValue() {
   return "Choose..."
 }
 
-export function createSelectOptions(data, optionalFilter) {
-  const filter = optionalFilter ? optionalFilter : function() {return true}
+export function createSelectOptions(data) {
   const emptyOptions = [{ id: "", name: emptySelectValue()}]
-  const dataJson = _.isEmpty(data) ? emptyOptions : JSON.parse(data)
+  const dataJson = _.isEmpty(data) ? emptyOptions : data
   var toOptions = function (item) { return <option value={item.id} key={item.id}>{item.name}</option> }
-  const result = dataJson.filter(filter).map(toOptions)
+  const result = dataJson.map(toOptions)
   result.unshift(<option value="" key="-">{emptySelectValue()}</option>)
   return result
 }

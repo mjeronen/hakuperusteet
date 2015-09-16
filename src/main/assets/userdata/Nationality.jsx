@@ -14,7 +14,8 @@ export default class Nationality extends React.Component {
 
   render() {
     const controller = this.props.controller
-    const result = createSelectOptions(this.props.countries)
+    const countries = _.isEmpty(this.props.countries) ? {} : JSON.parse(this.props.countries)
+    const result = createSelectOptions(countries)
 
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>Nationality</label>
