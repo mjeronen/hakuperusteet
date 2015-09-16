@@ -24,6 +24,38 @@ app.post('/authentication-service/resources/s2s/hakuperusteet', function(req, re
   res.send({ "personOid": "1.2.246.562.24.11523238937" });
 });
 
+var callback_get = function(url) {
+  console.log("Sending GET request to " + url);
+  requestify.request(url, {
+    method: 'GET'
+  }).then(function(response) {
+    console.log(response)
+  });
+}
+
+// Oppijan-tunnistus
+var oppijanTunnistusEmails = {}
+app.post('/oppijan-tunnistus/api/v1/verify', function(req, res){
+  var sha256 = crypto.createHash('sha256');
+  sha256.update(req.body.email + Date.now())
+  var token = sha256.digest('hex');
+  console.log("Sending verification email: " + JSON.stringify(req.body) + " with token " + token)
+  var callback_url = req.body.url + token;
+  console.log("Callback URL is ");
+  console.log(callback_url);
+  oppijanTunnistusEmails[token] = req.body.email;
+  res.send({});
+});
+app.get('/oppijan-tunnistus/api/v1/verify/:token', function(req, res){
+  console.log("Verifying token " + req.params.token)
+  var email = oppijanTunnistusEmails[req.params.token]
+  if(email) {
+    res.send({ "valid" : true, "email" : email});
+  } else {
+    res.send({ "valid" : false });
+  }
+});
+
 var callback = function(url, params) {
     console.log("Sending POST request to " + url);
     requestify.request(url, {
