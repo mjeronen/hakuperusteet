@@ -30,7 +30,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     }
   }
 
-  get("/sessionData") {
+  get("/session") {
     failUnlessAuthenticated
     write(user)
   }

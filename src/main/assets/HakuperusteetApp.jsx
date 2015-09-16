@@ -8,7 +8,7 @@ import HakuperusteetPage from './HakuperusteetPage.jsx'
 const appState = initAppState({
   tarjontaUrl: "/hakuperusteet/api/v1/tarjonta/1.2.246.562.20.69046715533",
   propertiesUrl: "/hakuperusteet/api/v1/properties",
-  sessionDataUrl: "/hakuperusteet/api/v1/session/sessionData",
+  sessionUrl: "/hakuperusteet/api/v1/session/session",
   authenticationUrl: "/hakuperusteet/api/v1/session/authenticate"
 })
 

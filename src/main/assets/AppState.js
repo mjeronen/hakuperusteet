@@ -21,7 +21,7 @@ export function changeListeners() {
 }
 
 export function initAppState(props) {
-  const {tarjontaUrl, propertiesUrl, sessionDataUrl, authenticationUrl} = props
+  const {tarjontaUrl, propertiesUrl, sessionUrl, authenticationUrl} = props
   const initialState = {}
 
   const serverUpdatesBus = new Bacon.Bus()
@@ -30,7 +30,7 @@ export function initAppState(props) {
   const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
-  const sessionS = propertiesS.flatMap(sessionData(sessionDataUrl))
+  const sessionS = propertiesS.flatMap(sessionFromServer(sessionUrl))
   const emailUserS = hashS.filter(isLoginToken).flatMap(initEmailAuthentication)
   const googleUserS = propertiesS.flatMap(initGoogleAuthentication)
 
@@ -51,7 +51,7 @@ export function initAppState(props) {
     [propertiesS, tarjontaS], onStateInit,
     [cssEffectsBus], onCssEffectValue,
     [credentialsS], onCredentialsChange,
-    [sessionDataS], onSessionFromServer,
+    [sessionDataS], onSessionDataFromServer,
     [updateFieldS], onUpdateField,
     [logOutS], onLogOut,
     [fieldValidationS], onFieldValidation)
@@ -105,7 +105,7 @@ export function initAppState(props) {
     return {...state, ['credentials']: {}, ['sessionData']: {}}
   }
 
-  function onSessionFromServer(state, sessionData) {
+  function onSessionDataFromServer(state, sessionData) {
     return {...state, sessionData}
   }
 
@@ -128,6 +128,6 @@ function authenticate(authenticationUrl) {
   return (user) => Bacon.fromPromise(HttpUtil.post(authenticationUrl, user)).skipErrors()
 }
 
-function sessionData(sessionDataUrl) {
-  return (user) => Bacon.fromPromise(HttpUtil.get(sessionDataUrl, user)).skipErrors()
+function sessionFromServer(sessionUrl) {
+  return (user) => Bacon.fromPromise(HttpUtil.get(sessionUrl, user)).skipErrors()
 }
