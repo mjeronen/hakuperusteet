@@ -43,6 +43,7 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
   private def verifyAndCreateSession(session: Session): Option[Session] = {
     if (verifier.verify(session.token)) {
       db.upsertSession(session)
+      Some(session)
     } else {
       logger.warn(s"Session verify failed for user ${session.email} with token ${session.token}")
       None
