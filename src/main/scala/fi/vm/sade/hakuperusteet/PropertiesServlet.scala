@@ -21,6 +21,7 @@ class PropertiesServlet(config: Config, countries: Countries, languages: Languag
     val properties = Map(
       "userDataUrl" -> "/hakuperusteet/api/v1/session/userData",
       "logOutUrl" -> "/hakuperusteet/api/v1/session/logout",
+      "emailTokenUrl" -> "/hakuperusteet/api/v1/session/emailToken",
       "vetumaStartUrl" -> "/hakuperusteet/api/v1/vetuma/openvetuma",
       "formRedirectUrl" -> "/hakuperusteet/api/v1/form/redirect",
       "countries" -> write(countries.countries),
