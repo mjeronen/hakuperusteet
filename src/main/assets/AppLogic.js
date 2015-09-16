@@ -7,7 +7,7 @@ export function hasGoogleSession(state) {
 }
 
 export function hasEmailSession(state) {
-  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && !_.isUndefined(state.sessionData.session.email) && state.sessionData.session.idpentityid == "email"
+  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && !_.isUndefined(state.sessionData.session.email) && state.sessionData.session.idpentityid == "oppijaToken"
 }
 
 export function showUserDataForm(state) {

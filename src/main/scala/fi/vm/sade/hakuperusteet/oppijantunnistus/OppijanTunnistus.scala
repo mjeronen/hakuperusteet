@@ -38,7 +38,7 @@ case class OppijanTunnistus(c: Config) extends LazyLogging {
     val email = (json \ "email").extract[Option[String]]
 
     (valid, email) match {
-      case (Some(true), Some(emailFromResponse)) => Some(Session(None, emailFromResponse, token, "email"))
+      case (Some(true), Some(emailFromResponse)) => Some(Session(None, emailFromResponse, token, "oppijaToken"))
       case _ => None
     }
   }

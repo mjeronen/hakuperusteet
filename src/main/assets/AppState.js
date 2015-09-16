@@ -78,7 +78,7 @@ export function initAppState(props) {
 
   function handleEmailUserEvent(currentUser, newEmailUser) {
     if(_.isEmpty(currentUser)) return newEmailUser
-    if(currentUser.idpentityid === "email") return newEmailUser
+    if(currentUser.idpentityid === "oppijaToken") return newEmailUser
     return currentUser
   }
 

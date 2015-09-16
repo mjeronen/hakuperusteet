@@ -22,7 +22,7 @@ class TokenAuthStrategy (protected override val app: ScalatraBase, config: Confi
 
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[Session] = {
     (token, idpentityid) match {
-      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == "email" =>
+      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == "oppijaToken" =>
         db.findSessionByToken(tokenFromRequest) match {
           case s @ Some(session) if session.token == tokenFromRequest => s
           case _ => validateTokenAndCreateSession(tokenFromRequest)
