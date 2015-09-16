@@ -68,7 +68,8 @@ object HakuperusteetBuild extends Build {
         "com.typesafe.slick" %% "slick" % "3.1.0-M2",
         "com.typesafe.slick" %% "slick-codegen" % "3.1.0-M2",
         "org.flywaydb" % "flyway-core" % "3.2.1",
-        "com.google.api-client" % "google-api-client" % "1.20.0"
+        "com.google.api-client" % "google-api-client" % "1.20.0",
+        "org.apache.httpcomponents" % "fluent-hc" % "4.5"
       ),
       libraryDependencies ++= Seq(
         "org.scalatest" % "scalatest_2.11" % "2.2.4",

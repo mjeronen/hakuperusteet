@@ -40,6 +40,13 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     "{}"
   }
 
+  post("/emailToken") {
+    val json = parse(request.body)
+    val email = (json \ "email").extract[Option[String]].getOrElse(halt(409))
+    val token = oppijanTunnistus.createToken(email)
+    compact(render(Map("token" -> token)))
+  }
+
   post("/userData") {
     failUnlessAuthenticated
     val params = parse(request.body).extract[Params]

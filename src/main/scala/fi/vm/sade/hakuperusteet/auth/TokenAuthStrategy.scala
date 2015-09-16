@@ -25,14 +25,14 @@ class TokenAuthStrategy (protected override val app: ScalatraBase, config: Confi
       case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == "email" =>
         db.findSessionByToken(tokenFromRequest) match {
           case s @ Some(session) if session.token == tokenFromRequest => s
-          case _ => validateTokenAndCreateSession(tokenFromRequest, idpentityidFromSession)
+          case _ => validateTokenAndCreateSession(tokenFromRequest)
         }
       case _ => None
     }
   }
 
-  def validateTokenAndCreateSession(tokenFromRequest: String, idpentityidFromSession: String): Option[Session] = {
-    oppijanTunnistus.validateToken(tokenFromRequest, idpentityidFromSession) match {
+  def validateTokenAndCreateSession(tokenFromRequest: String): Option[Session] = {
+    oppijanTunnistus.validateToken(tokenFromRequest) match {
       case Some(session) =>
         logger.info(s"Creating new email session for $session")
         db.upsertSession(session)
