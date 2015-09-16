@@ -25,8 +25,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     failUnlessAuthenticated
 
     db.findUser(user.email) match {
-      case Some(u) => write(SessionData(Some(u), Some(countries.shouldPay(u.educationCountry)), db.findPayments(u).toList))
-      case None => write(SessionData(None, None, List.empty))
+      case Some(u) => write(SessionData(user.email, Some(u), Some(countries.shouldPay(u.educationCountry)), db.findPayments(u).toList))
+      case None => write(SessionData(user.email, None, None, List.empty))
     }
   }
 
@@ -54,7 +54,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     logger.info(s"Updating userData: $userData")
     val newUser = upsertUserToHenkilo(userData)
     val userWithId = db.upsertUser(newUser)
-    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(userWithId, Some(countries.shouldPay(newUser.educationCountry)), List.empty))))
+    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(userData.email, userWithId, Some(countries.shouldPay(newUser.educationCountry)), List.empty))))
   }
 
   def upsertUserToHenkilo(userData: User): User = {
