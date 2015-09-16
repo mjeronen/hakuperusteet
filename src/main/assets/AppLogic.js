@@ -35,14 +35,14 @@ export function showHakuList(state) {
 }
 
 export function showVetumaResultOk(state) {
-  return !_.isUndefined(state.effect) && state.effect == "#VetumaResultOk"
+  return !_.isUndefined(state.effect) && state.effect == "VetumaResultOk"
 }
 
 export function showVetumaResultCancel(state) {
-  return !_.isUndefined(state.effect) && state.effect == "#VetumaResultCancel"
+  return !_.isUndefined(state.effect) && state.effect == "VetumaResultCancel"
 }
 export function showVetumaResultError(state) {
-  return !_.isUndefined(state.effect) && state.effect == "#VetumaResultError"
+  return !_.isUndefined(state.effect) && state.effect == "VetumaResultError"
 }
 
 function hasUserData(state) {

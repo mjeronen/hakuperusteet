@@ -3,7 +3,7 @@ import Bacon from 'baconjs'
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
 import {initGoogleAuthentication} from './session/GoogleAuthentication'
-import {initEmailAuthentication} from './session/EmailAuthentication'
+import {isLoginToken, initEmailAuthentication} from './session/EmailAuthentication'
 import {initChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from './util/FieldValidator.js'
 import {submitUserDataToServer} from './util/UserDataForm.js'
@@ -31,7 +31,7 @@ export function initAppState(props) {
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
   const sessionDataS = propertiesS.flatMap(sessionData(sessionDataUrl))
-  const emailUserS = hashS.flatMap(initEmailAuthentication)
+  const emailUserS = hashS.filter(isLoginToken).flatMap(initEmailAuthentication)
   const googleUserS = propertiesS.flatMap(initGoogleAuthentication)
 
   const userS = Bacon.update({},
@@ -41,7 +41,7 @@ export function initAppState(props) {
   ).skipDuplicates().toEventStream()
 
   const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
-  cssEffectsBus.plug(hashS)
+  cssEffectsBus.plug(hashS.filter(isCssEffect).flatMap(toCssEffect))
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
   const fieldValidationS = dispatcher.stream(events.fieldValidation)
@@ -120,6 +120,8 @@ export function initAppState(props) {
     return Bacon.once(currentHash)
   }
   function isNotEmpty(x) { return !_.isEmpty(x) }
+  function isCssEffect(x) { return x.startsWith("#/effect/") }
+  function toCssEffect(x) { return x.replace("#/effect/", "") }
 }
 
 function authenticate(authenticationUrl) {

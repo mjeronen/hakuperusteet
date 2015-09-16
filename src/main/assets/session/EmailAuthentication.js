@@ -1,3 +1,7 @@
+export function isLoginToken(hash) {
+  return hash.startsWith("#/token/")
+}
+
 export function initEmailAuthentication(hash) {
   const tokenPattern = /^#\/token\/(.*)$/;
   const token = hash.match(tokenPattern)

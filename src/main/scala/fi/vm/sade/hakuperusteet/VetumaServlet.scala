@@ -26,17 +26,17 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
   }
 
   post("/return/ok") {
-    val url = config.getString("host.url.base") + "#VetumaResultOk"
+    val url = config.getString("host.url.base") + "#/effect/VetumaResultOk"
     handleReturn(url, PaymentStatus.ok)
   }
 
   post("/return/cancel") {
-    val url = config.getString("host.url.base") + "#VetumaResultCancel"
+    val url = config.getString("host.url.base") + "#/effect/VetumaResultCancel"
     handleReturn(url, PaymentStatus.cancel)
   }
 
   post("/return/error") {
-    val url = config.getString("host.url.base") + "#VetumaResultError"
+    val url = config.getString("host.url.base") + "#/effect/VetumaResultError"
     handleReturn(url, PaymentStatus.error)
   }
 
