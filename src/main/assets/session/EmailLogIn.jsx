@@ -6,7 +6,7 @@ export default class EmailLogIn extends React.Component {
     const controller = this.props.controller
 
     return <div id="emailAuthentication">
-      <p>Order login link to you email here.</p>
+      <p>Order login link to your email.</p>
       <form>
         <label htmlFor="emailToken">Email address</label>
         <input type="text" id="emailToken" name="emailToken" onChange={controller.valueChanges}/>
