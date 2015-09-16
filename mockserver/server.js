@@ -35,7 +35,7 @@ var callback_get = function(url) {
 
 // Oppijan-tunnistus
 var oppijanTunnistusEmails = {}
-app.post('/oppijan-tunnistus/api/v1/verify', function(req, res){
+app.post('/oppijan-tunnistus/api/v1/token', function(req, res){
   var sha256 = crypto.createHash('sha256');
   sha256.update(req.body.email + Date.now())
   var token = sha256.digest('hex');
@@ -46,7 +46,7 @@ app.post('/oppijan-tunnistus/api/v1/verify', function(req, res){
   oppijanTunnistusEmails[token] = req.body.email;
   res.send({});
 });
-app.get('/oppijan-tunnistus/api/v1/verify/:token', function(req, res){
+app.get('/oppijan-tunnistus/api/v1/token/:token', function(req, res){
   console.log("Verifying token " + req.params.token)
   var email = oppijanTunnistusEmails[req.params.token]
   if(email) {
