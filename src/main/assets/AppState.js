@@ -30,18 +30,22 @@ export function initAppState(props) {
   const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
-  const googleUserS = propertiesS.flatMap(initGoogleAuthentication).toProperty("")
-  const emailUserS = hashS.flatMap(initEmailAuthentication).toProperty("")
   const sessionDataS = propertiesS.flatMap(sessionData(sessionDataUrl))
-  const userS = googleUserS
-    .combine(emailUserS, selectAuthenticationData)
-    .combine(sessionDataS, selectAuthenticationData)
-    .toEventStream()
+  const emailUserS = hashS.flatMap(initEmailAuthentication)
+  const googleUserS = propertiesS.flatMap(initGoogleAuthentication)
+
+  const userS = Bacon.update({},
+    [sessionDataS], handleSessionUserEvent,
+    [emailUserS], handleEmailUserEvent,
+    [googleUserS], handleGoogleUserEvent
+  ).skipDuplicates().toEventStream()
+
   const sessionS = userS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
   cssEffectsBus.plug(hashS)
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
   const fieldValidationS = dispatcher.stream(events.fieldValidation)
+  const logOutS = dispatcher.stream(events.logOut)
 
   const stateP = Bacon.update(initialState,
     [propertiesS, tarjontaS], onStateInit,
@@ -49,6 +53,7 @@ export function initAppState(props) {
     [userS], onLoginLogout,
     [sessionS], onSessionFromServer,
     [updateFieldS], onUpdateField,
+    [logOutS], onLogOut,
     [fieldValidationS], onFieldValidation)
 
   const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
@@ -59,6 +64,23 @@ export function initAppState(props) {
   serverUpdatesBus.plug(userDataFormSubmittedP)
 
   return stateP
+
+  function handleSessionUserEvent(_, newSessionUser) {
+    return newSessionUser
+  }
+
+  function handleGoogleUserEvent(currentUser, newGoogleUser) {
+    if(_.isEmpty(currentUser)) return newGoogleUser
+    if(currentUser.idpentityid === "google" && currentUser.token === newGoogleUser.token) return currentUser
+    if(currentUser.idpentityid === "google") return newGoogleUser
+    return currentUser
+  }
+
+  function handleEmailUserEvent(currentUser, newEmailUser) {
+    if(_.isEmpty(currentUser)) return newEmailUser
+    if(currentUser.idpentityid === "email") return newEmailUser
+    return currentUser
+  }
 
   function onStateInit(state, properties, tarjonta) {
     return {...state, properties, tarjonta}
@@ -79,6 +101,10 @@ export function initAppState(props) {
     return {...state, [field]: value}
   }
 
+  function onLogOut(state, _) {
+    return {...state, ['session']: {}, ['sessionData']: {}}
+  }
+
   function onSessionFromServer(state, sessionData) {
     return {...state, sessionData}
   }
@@ -92,12 +118,6 @@ export function initAppState(props) {
     var currentHash = location.hash
     location.hash = ""
     return Bacon.once(currentHash)
-  }
-
-  function selectAuthenticationData(left, right) {
-    if (left.token != undefined) return left
-    if (right.token != undefined) return right
-    return {}
   }
   function isNotEmpty(x) { return !_.isEmpty(x) }
 }
