@@ -28,8 +28,13 @@ vetuma.msg.form=Hakumaksu Syksy 2015
 
 cookie.domain={{host_oppija}}
 
-koodisto.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/maatjavaltiot2/1
-koodisto.eea.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/valtioryhmat_2/1
+koodisto.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/maatjavaltiot2/1?onlyValidKoodis=false
+koodisto.eea.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/valtioryhmat_2/1?onlyValidKoodis=false
+koodisto.languages.url=https://{{host_virkailija}}/koodisto-service/rest/json/kieli/koodi?onlyValidKoodis=false
+koodisto.base.education.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/pohjakoulutusvaatimuskorkeakoulut/1?onlyValidKoodis=false
+
+tarjonta.application.object.url=https://{{host_virkailija}}/tarjonta-service/rest/v1/hakukohde
+
 google.authentication.client.id={{hakuperusteet_google_authentication_client_id}}
 google.authentication.hosted.domain=https://{{host_oppija}}
 
