@@ -84,6 +84,7 @@ object HakuperusteetBuild extends Build {
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       assemblyMergeStrategy in assembly := {
         case PathList("logback.xml") => MergeStrategy.discard
+        case PathList("reference.conf") => MergeStrategy.discard
         case PathList("mockReference.conf") => MergeStrategy.discard
         case x => (assemblyMergeStrategy in assembly).value(x)
       },
