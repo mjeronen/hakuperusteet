@@ -15,6 +15,8 @@ object HakuperusteetBuild extends Build {
   val ScalatraVersion = "2.3.1"
   val http4sVersion = "0.10.0"
   val jettyVersion = "9.3.0.v20150612"
+  val slickVersion = "3.1.0-RC1"
+
   val artifactory = "https://artifactory.oph.ware.fi/artifactory/"
 
   lazy val buildversion = taskKey[Unit]("start buildversion.txt generator")
@@ -67,8 +69,8 @@ object HakuperusteetBuild extends Build {
         "com.netaporter" %% "scala-uri" % "0.4.7",
         "commons-codec" % "commons-codec" % "1.6",
         "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
-        "com.typesafe.slick" %% "slick" % "3.1.0-M2",
-        "com.typesafe.slick" %% "slick-codegen" % "3.1.0-M2",
+        "com.typesafe.slick" %% "slick" % slickVersion,
+        "com.typesafe.slick" %% "slick-codegen" % slickVersion,
         "org.flywaydb" % "flyway-core" % "3.2.1",
         "com.google.api-client" % "google-api-client" % "1.20.0",
         "org.apache.httpcomponents" % "fluent-hc" % "4.5",
