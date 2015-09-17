@@ -1,5 +1,6 @@
 package fi.vm.sade.hakuperusteet
 
+import java.time.LocalDate
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{Session, SessionData, User}
@@ -85,7 +86,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
       |@| parseExists("educationLevel")(params).flatMap(validateEducationLevel)
       |@| parseExists("educationCountry")(params).flatMap(validateCountry)
     ) { (firstName, lastName, birthDate, personId, gender, nativeLanguage, nationality, educationLevel, educationCountry) =>
-      User(None, None, email, firstName, lastName, java.sql.Date.valueOf(birthDate), personId, idpentityid, gender, nativeLanguage, nationality, educationLevel, educationCountry)
+      User(None, None, email, firstName, lastName, java.sql.Date.valueOf(birthDate), createPersonalId(birthDate, personId),
+        idpentityid, gender, nativeLanguage, nationality, educationLevel, educationCountry)
     }
   }
 
@@ -104,4 +106,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   private def validateEducationLevel(educationLevel: String): ValidationResult[String] =
     if (educations.educations.map(_.id).contains(educationLevel)) educationLevel.successNel
     else s"unknown educationLevel $educationLevel".failureNel
+
+  private def createPersonalId(birthDate: LocalDate, personId: Option[String]) =
+    personId.map { (pid) => birthDate.format(personIdDateFormatter) + pid }
 }

@@ -1,5 +1,7 @@
 package fi.vm.sade
 
+import java.time.format.DateTimeFormatter
+
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
@@ -35,4 +37,6 @@ package object hakuperusteet {
   )
 
   implicit val formats = org.json4s.DefaultFormats + PaymentStatusSerializer
+
+  val personIdDateFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 }
