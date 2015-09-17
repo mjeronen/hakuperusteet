@@ -61,7 +61,7 @@ object HakuperusteetBuild extends Build {
         "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
         "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "container;compile",
         "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "container",
-        "org.eclipse.jetty" % "jetty-jmx" % jettyVersion % "container",
+        "org.eclipse.jetty" % "jetty-jmx" % jettyVersion % "container;compile",
         "javax.servlet" % "javax.servlet-api" % "3.1.0",
         "com.typesafe" % "config" % "1.3.0",
         "org.json4s" %% "json4s-native" % "3.2.11",
@@ -97,7 +97,7 @@ object HakuperusteetBuild extends Build {
       },
       assemblyExcludedJars in assembly := {
         val cp = (fullClasspath in assembly).value
-        cp filter {_.data.getName != "guava-jdk5-13.0.jar"}
+        cp filter {_.data.getName == "guava-jdk5-13.0.jar"}
       },
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
       buildversionTask,
