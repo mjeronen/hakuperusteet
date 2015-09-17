@@ -1,5 +1,6 @@
 package fi.vm.sade.hakuperusteet
 
+import fi.vm.sade.hakuperusteet.util.Jmx
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.util.ssl.SslContextFactory
@@ -22,6 +23,7 @@ object HakuperusteetServer {
 
     server.start
     server.join
+    Jmx.init(props)
     logger.info(s"Hakuperusteet-server started on ports $portHttp and $portHttps")
   }
   private def createConnectors(portHttp: Int, portHttps: Option[Int], server: Server): Array[Connector] = {

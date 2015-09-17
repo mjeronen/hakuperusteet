@@ -14,6 +14,7 @@ object HakuperusteetBuild extends Build {
   val ScalaVersion = "2.11.7"
   val ScalatraVersion = "2.3.1"
   val http4sVersion = "0.9.1"
+  val jettyVersion = "9.3.0.v20150612"
   val artifactory = "https://artifactory.oph.ware.fi/artifactory/"
 
   lazy val buildversion = taskKey[Unit]("start buildversion.txt generator")
@@ -56,8 +57,9 @@ object HakuperusteetBuild extends Build {
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
         "ch.qos.logback" % "logback-classic" % "1.1.2" % "runtime",
         "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
-        "org.eclipse.jetty" % "jetty-webapp" % "9.3.0.v20150612" % "container;compile",
-        "org.eclipse.jetty" % "jetty-plus" % "9.3.0.v20150612" % "container",
+        "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "container;compile",
+        "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "container",
+        "org.eclipse.jetty" % "jetty-jmx" % jettyVersion,
         "javax.servlet" % "javax.servlet-api" % "3.1.0",
         "com.typesafe" % "config" % "1.3.0",
         "org.json4s" %% "json4s-native" % "3.2.11",
