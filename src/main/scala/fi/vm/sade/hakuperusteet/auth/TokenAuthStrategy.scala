@@ -26,32 +26,38 @@ class TokenAuthStrategy (protected override val app: ScalatraBase, config: Confi
     (token, idpentityid) match {
       case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName =>
         db.findSessionByToken(tokenFromRequest) match {
-          case s @ Some(session) if session.token == tokenFromRequest => s
-          case Some(session) => validateNewTokenAndUpdateSession(session.copy(token = tokenFromRequest))
-          case _ => validateTokenAndCreateSession(tokenFromRequest)
+          case s @ Some(session) => s
+          case _ => handleNewSessionOrUpdatedTokenCase(tokenFromRequest)
         }
       case _ => None
     }
   }
 
-  def validateNewTokenAndUpdateSession(sessionWithNewToken: Session) = {
-    oppijanTunnistus.validateToken(sessionWithNewToken.token) match {
+  def handleNewSessionOrUpdatedTokenCase(tokenFromRequest: String) = {
+    oppijanTunnistus.validateToken(tokenFromRequest) match {
       case Some(email) =>
-        logger.info(s"Updating $tokenName session for $email")
-        db.upsertSession(sessionWithNewToken)
-        Some(sessionWithNewToken)
+        db.findSession(email) match {
+          case Some(session) => updateExistingSessionWithNewToken(tokenFromRequest, email, session)
+          case None => createNewSession(tokenFromRequest, email)
+        }
       case _ => None
     }
   }
 
-  def validateTokenAndCreateSession(tokenFromRequest: String) = {
-    oppijanTunnistus.validateToken(tokenFromRequest) match {
-      case Some(email) =>
-        val newSession = Session(None, email, tokenFromRequest, tokenName)
-        logger.info(s"Creating new $tokenName session for $email")
-        db.upsertSession(newSession)
-        Some(newSession)
-      case _ => None
-    }
+  def createNewSession(tokenFromRequest: String, email: String) = {
+    logger.info(s"Creating new $tokenName session for $email")
+    val newSession = Session(None, email, tokenFromRequest, tokenName)
+    upsertAndReturn(newSession)
+  }
+
+  def updateExistingSessionWithNewToken(tokenFromRequest: String, email: String, session: Session) = {
+    logger.info(s"Updating $tokenName session for $email")
+    val sessionWithNewToken = session.copy(token = tokenFromRequest)
+    upsertAndReturn(sessionWithNewToken)
+  }
+
+  def upsertAndReturn(session: Session) = {
+    db.upsertSession(session)
+    Some(session)
   }
 }
