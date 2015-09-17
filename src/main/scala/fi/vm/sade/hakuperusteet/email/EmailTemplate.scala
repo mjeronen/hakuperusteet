@@ -15,4 +15,9 @@ object EmailTemplate {
     mustache.execute(sw, TemplateValues(validForallSimilarApplicationsUntil))
     sw.toString
   }
+
+
+  def main(args: Array[String]) {
+    EmailSender.send("jussi.jartamo@gofore.com", "Payment", render("22.11.2015"))
+  }
 }

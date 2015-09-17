@@ -43,6 +43,7 @@ object HakuperusteetBuild extends Build {
       version := Version,
       scalaVersion := ScalaVersion,
       resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
+      resolvers += "OPH snapshots" at "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local",
       resolvers += Classpaths.typesafeReleases,
       libraryDependencies ++= Seq(
         "com.github.spullara.mustache.java" % "compiler" % "0.9.1",
@@ -69,7 +70,8 @@ object HakuperusteetBuild extends Build {
         "com.typesafe.slick" %% "slick-codegen" % "3.1.0-M2",
         "org.flywaydb" % "flyway-core" % "3.2.1",
         "com.google.api-client" % "google-api-client" % "1.20.0",
-        "org.apache.httpcomponents" % "fluent-hc" % "4.5"
+        "org.apache.httpcomponents" % "fluent-hc" % "4.5",
+        "fi.vm.sade" %% "scala-utils" % "0.2.0-SNAPSHOT"
       ),
       libraryDependencies ++= Seq(
         "org.scalatest" % "scalatest_2.11" % "2.2.4",

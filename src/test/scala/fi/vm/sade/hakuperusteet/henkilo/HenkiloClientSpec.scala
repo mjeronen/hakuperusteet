@@ -12,6 +12,7 @@ import org.http4s.headers.{Location, `Set-Cookie`}
 import org.http4s.{Uri, _}
 import org.scalatest.{FlatSpec, Matchers}
 
+import fi.vm.sade.utils.cas.{CasClient, CasAbleClient, CasParams}
 import scalaz.concurrent.{Future, Task}
 
 class HenkiloClientSpec extends FlatSpec with Matchers {
@@ -61,7 +62,7 @@ class CasMock(var ticket: String = "123",
 
   override def prepare(req: Request): Task[Response] = req match {
     case req@ POST -> Root / "cas" / "v1" / "tickets" => req.decode[String] {
-      case body if body == s"username=${params.username}&password=${params.password}" =>
+      case body if body == s"username=${params.user.username}&password=${params.user.password}" =>
         addStep(s"created TGT-$ticket")
         Created().withHeaders(Location(Uri(path = s"${virkailijaUrl.toString()}/cas/v1/tickets/TGT-$ticket")))
       case _ =>
@@ -70,15 +71,15 @@ class CasMock(var ticket: String = "123",
     }
 
     case req@ POST -> Root / "cas" / "v1" / "tickets" / tgt if tgt == s"TGT-$ticket" => req.decode[String] {
-      case service if service == s"service=${URLEncoder.encode(s"${virkailijaUrl.toString()}${params.service}/j_spring_cas_security_check", "UTF8")}" =>
+      case service if service == s"service=${URLEncoder.encode(s"${params.service.securityUri.path}", "UTF8")}" =>
         addStep(s"created ST-$ticket")
         Ok(s"ST-$ticket")
-      case _ =>
+      case invurl =>
         addStep("invalid TGT url")
         BadRequest()
     }
 
-    case req@ GET -> Root / service / "j_spring_cas_security_check" if params.service.indexOf(service) > -1 => req.queryString match {
+    case req@ GET -> Root / service / "j_spring_cas_security_check" if params.service.securityUri.renderString.indexOf(service) > -1 => req.queryString match {
       case s if s == s"ticket=ST-$ticket" =>
         addStep(s"created session foobar-$ticket")
         Ok().withHeaders(`Set-Cookie`(Cookie(name = "JSESSIONID", content = s"foobar-$ticket")))

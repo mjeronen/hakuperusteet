@@ -2,7 +2,8 @@ package fi.vm.sade.hakuperusteet.email
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.Configuration
-import fi.vm.sade.hakuperusteet.henkilo.{CasAbleClient, CasParams, CasClient, ActingSystem}
+import fi.vm.sade.hakuperusteet.henkilo.ActingSystem
+import fi.vm.sade.utils.cas.{CasClient, CasAbleClient, CasParams}
 import org.http4s.Uri._
 import org.http4s._
 import org.http4s.client.Client
@@ -19,9 +20,9 @@ object EmailSender extends LazyLogging {
   private val username = Configuration.props.getString("hakuperusteet.user")
   private val password = Configuration.props.getString("hakuperusteet.password")
 
-  private val casClient = new CasClient(host)
+  private val casClient = new CasClient(host, org.http4s.client.blaze.defaultClient)
   private val casParams = CasParams("/ryhmasahkoposti-service", username, password)
-  private val emailClient = new EmailClient(host, new CasAbleClient(casClient, casParams))
+  private val emailClient = new EmailClient(host, new CasAbleClient(casClient, casParams, org.http4s.client.blaze.defaultClient))
 
   def send(to: String, subject: String, body: String): Boolean = {
     val email = EmailMessage("no-reply@opintopolku.fi", subject, body, isHtml = true)
