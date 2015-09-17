@@ -86,6 +86,7 @@ object HakuperusteetBuild extends Build {
       npmBuildTask := { "npm run build" !},
 
       mainClass in assembly := Some("fi.vm.sade.hakuperusteet.HakuperusteetServer"),
+      test in assembly := {},
       assemblyJarName in assembly := Name.toLowerCase + "-" + Version + "-assembly.jar",
       assemblyMergeStrategy in assembly := {
         case PathList("logback.xml") => MergeStrategy.discard
