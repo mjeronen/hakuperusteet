@@ -54,12 +54,9 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
       throw e
   }
 
-  private def reqHeaders: Headers = Headers(ActingSystem("hakuperusteet.hakuperusteet.backend"))
-
   private def req(user: User) = Request(
     method = Method.POST,
-    uri = resolve(henkiloServerUrl, Uri(path = "/authentication-service/resources/s2s/hakuperusteet")),
-    headers = reqHeaders //reqHeaders
+    uri = resolve(henkiloServerUrl, Uri(path = "/authentication-service/resources/s2s/hakuperusteet"))
   ).withBody(user)(json4sEncoderOf[User])
 
   def parseJson4s[A] (json:String)(implicit formats: Formats, mf: Manifest[A]) = scala.util.Try(read[A](json)).map(right).recover{
@@ -74,37 +71,4 @@ class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.bl
   def json4sOf[A](implicit formats: Formats, mf: Manifest[A]): EntityDecoder[A] = EntityDecoder.decodeBy[A](MediaType.`application/json`){(msg) =>
     DecodeResult(EntityDecoder.decodeString(msg)(Charset.`UTF-8`).map(parseJson4s[A]))
   }
-}
-
-object ActingSystem extends PatternedHeader {
-  val headerName = CaseInsensitiveString("Caller-Id")
-  override type HeaderT = ActingSystem
-  override val pattern: Regex = "([^.]+\\.[^.]+\\.[^.]+)".r
-
-  override def headerForCaptureGroup(group: String): ActingSystem = ActingSystem(group)
-}
-
-case class ActingSystem(val id:String) extends Header.Parsed {
-  import ActingSystem._
-
-  assert(pattern.pattern.matcher(id).matches())
-
-  override def key: HeaderKey = ActingSystem
-
-  override def renderValue(writer: util.Writer): writer.type = writer << id
-}
-trait PatternedHeader extends HeaderKey.Singleton {
-
-  val pattern: Regex
-
-  val headerName: CaseInsensitiveString
-
-  def headerForCaptureGroup(group:String):HeaderT
-
-  override def matchHeader(header: Header): Option[HeaderT] = header match {
-    case Header(`headerName`, pattern(id)) => Some(headerForCaptureGroup(id))
-    case default => None
-  }
-
-  override def name: CaseInsensitiveString = headerName
 }

@@ -2,7 +2,6 @@ package fi.vm.sade.hakuperusteet.email
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import fi.vm.sade.hakuperusteet.Configuration
-import fi.vm.sade.hakuperusteet.henkilo.ActingSystem
 import fi.vm.sade.utils.cas.{CasClient, CasAbleClient, CasParams}
 import org.http4s.Uri._
 import org.http4s._
@@ -56,12 +55,9 @@ class EmailClient(emailServerUrl: Uri, client: Client = org.http4s.client.blaze.
       throw e
   }
 
-  private def reqHeaders: Headers = Headers(ActingSystem("hakuperusteet.hakuperusteet.backend"))
-
   private def req(email: EmailData) = Request(
     method = Method.POST,
-    uri = resolve(emailServerUrl, Uri(path = "/ryhmasahkoposti-service/email")),
-    headers = reqHeaders
+    uri = resolve(emailServerUrl, Uri(path = "/ryhmasahkoposti-service/email"))
   ).withBody(email)(json4sEncoderOf[EmailData])
 
   def parseJson4s[A] (json:String)(implicit formats: Formats, mf: Manifest[A]) = scala.util.Try(read[A](json)).map(right).recover{
