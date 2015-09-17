@@ -35,6 +35,9 @@ koodisto.base.education.url=https://{{host_virkailija}}/koodisto-service/rest/co
 
 tarjonta.application.object.url=https://{{host_virkailija}}/tarjonta-service/rest/v1/hakukohde
 
+oppijantunnistus.create.url=https://{{host_virkailija}}/oppijan-tunnistus/api/v1/token
+oppijantunnistus.verify.url=https://{{host_virkailija}}/oppijan-tunnistus/api/v1/token
+
 google.authentication.client.id={{hakuperusteet_google_authentication_client_id}}
 google.authentication.hosted.domain=https://{{host_oppija}}
 
