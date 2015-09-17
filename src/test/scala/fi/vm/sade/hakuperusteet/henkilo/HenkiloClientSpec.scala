@@ -12,7 +12,7 @@ import org.http4s.headers.{Location, `Set-Cookie`}
 import org.http4s.{Uri, _}
 import org.scalatest.{FlatSpec, Matchers}
 
-import fi.vm.sade.utils.cas.{CasClient, CasAbleClient, CasParams}
+import fi.vm.sade.utils.cas.{CasClient, CasAuthenticatingClient, CasParams}
 import scalaz.concurrent.{Future, Task}
 
 class HenkiloClientSpec extends FlatSpec with Matchers {
@@ -34,7 +34,7 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
           NotFound()
       }
     }
-    val client = new CasAbleClient(new CasClient(virkailijaUri, casMock),
+    val client = new CasAuthenticatingClient(new CasClient(virkailijaUri, casMock),
       CasParams("/authentication-service", "foo", "bar"), mock)
     val henkiloClient = new HenkiloClient(virkailijaUri, client)
 

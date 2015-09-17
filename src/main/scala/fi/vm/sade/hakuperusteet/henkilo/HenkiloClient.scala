@@ -1,26 +1,18 @@
 package fi.vm.sade.hakuperusteet.henkilo
 
-import java.net.URLEncoder
-
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.domain.User
-import fi.vm.sade.hakuperusteet.domain.Henkilo
+import fi.vm.sade.hakuperusteet.Configuration
+import fi.vm.sade.hakuperusteet.domain.{Henkilo, User}
+import fi.vm.sade.utils.cas.{CasAuthenticatingClient, CasClient, CasParams}
 import org.http4s.Uri._
 import org.http4s._
 import org.http4s.client.Client
-import org.http4s.headers.{Location, `Content-Type`, `Set-Cookie`}
-import org.http4s.util.CaseInsensitiveString
+import org.http4s.headers.`Content-Type`
 import org.json4s.Formats
 import org.json4s.native.Serialization.{read, write}
-import scodec.bits.ByteVector
-import fi.vm.sade.utils.cas.{CasClient, CasAbleClient, CasParams}
 
-import scala.util.matching.Regex
 import scalaz.\/._
 import scalaz.concurrent.{Future, Task}
-import scalaz.stream.{Channel, Process, async, channel}
-
-import fi.vm.sade.hakuperusteet.{Configuration, formats}
 
 object HenkiloClient {
   private val host = Configuration.props.getString("hakuperusteet.cas.url")
@@ -29,7 +21,7 @@ object HenkiloClient {
 
   val casClient = new CasClient(host, org.http4s.client.blaze.defaultClient)
   val casParams = CasParams("/authentication-service", username, password)
-  val henkiloClient = new HenkiloClient(host, new CasAbleClient(casClient, casParams, org.http4s.client.blaze.defaultClient))
+  val henkiloClient = new HenkiloClient(host, new CasAuthenticatingClient(casClient, casParams, org.http4s.client.blaze.defaultClient))
 
   def upsertHenkilo(user: User) = henkiloClient.haeHenkilo(user).run
 
