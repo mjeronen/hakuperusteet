@@ -29,7 +29,7 @@ class HakuperusteetDatabaseSpec extends FlatSpec with Matchers with BeforeAndAft
     flyway.migrate
   }
 
-  it should "should create new session in" in {
+  it should "should create new session" in {
     val user = new User(None, Some("personOid.1.1.1"), "", "", "", new Date(), None, "", "", "", "", "", "")
     db.upsertUser(user)
 
