@@ -1,7 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.auth.AuthenticationSupport
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus

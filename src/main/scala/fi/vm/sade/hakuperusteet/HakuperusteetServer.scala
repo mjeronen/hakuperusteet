@@ -1,14 +1,14 @@
 package fi.vm.sade.hakuperusteet
 
+import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.util.Jmx
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.webapp.WebAppContext
 import org.scalatra.servlet.ScalatraListener
-import org.slf4j.LoggerFactory
 import Configuration._
-
+import org.slf4j.LoggerFactory
 
 object HakuperusteetServer {
   val logger = LoggerFactory.getLogger(this.getClass)
@@ -20,12 +20,20 @@ object HakuperusteetServer {
     val server = new Server()
     server.setHandler(createContext)
     server.setConnectors(createConnectors(portHttp, portHttps, server))
-
+    initJmx(server)
     server.start
     server.join
-    Jmx.init(props)
     logger.info(s"Hakuperusteet-server started on ports $portHttp and $portHttps")
   }
+
+  private def initJmx(server: Server): Boolean = {
+    val jmxPort = System.getProperty("com.sun.management.jmxremote.port", "12345").toInt
+    logger.info(s"Starting jmx on $jmxPort")
+    val jmx = Jmx.init(jmxPort)
+    server.addEventListener(jmx.mBean)
+    server.addBean(jmx.mBean)
+  }
+
   private def createConnectors(portHttp: Int, portHttps: Option[Int], server: Server): Array[Connector] = {
     Array(createHttpConnector(portHttp, server)) ++
       portHttps.map(p => Array(createSSLConnector(p,server))).getOrElse(Array())

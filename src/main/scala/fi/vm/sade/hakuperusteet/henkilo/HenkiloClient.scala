@@ -1,6 +1,6 @@
 package fi.vm.sade.hakuperusteet.henkilo
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.Configuration
 import fi.vm.sade.hakuperusteet.domain.{Henkilo, User}
 import fi.vm.sade.utils.cas.{CasAuthenticatingClient, CasClient, CasParams}

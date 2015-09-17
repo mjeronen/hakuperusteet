@@ -7,7 +7,7 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.util.Base64
 
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.util.{Failure, Success, Try}
 

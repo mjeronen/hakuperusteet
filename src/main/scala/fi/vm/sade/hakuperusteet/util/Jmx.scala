@@ -4,7 +4,7 @@ import java.lang.management.ManagementFactory
 import java.rmi.registry.LocateRegistry
 import javax.management.remote.{JMXConnectorServerFactory, JMXServiceURL}
 
-import com.typesafe.config.Config
+import org.eclipse.jetty.jmx.MBeanContainer
 
 import scala.collection.JavaConversions._
 
@@ -16,8 +16,10 @@ class Jmx(port: Int) {
     env,
     ManagementFactory.getPlatformMBeanServer)
   s.start()
+
+  val mBean = new MBeanContainer(s.getMBeanServer)
 }
 
 object Jmx {
-  def init(c: Config) = new Jmx(c.getInt("jmx.port"))
+  def init(port: Int) = new Jmx(port)
 }

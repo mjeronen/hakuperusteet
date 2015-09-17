@@ -1,6 +1,6 @@
 package fi.vm.sade.hakuperusteet.email
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.Configuration
 import fi.vm.sade.utils.cas.{CasAuthenticatingClient, CasClient, CasParams}
 import org.http4s.Uri._

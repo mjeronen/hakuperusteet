@@ -3,7 +3,7 @@ package fi.vm.sade.hakuperusteet
 import java.io.File
 
 import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.util.Try
 import com.typesafe.config._
@@ -21,5 +21,4 @@ object Configuration extends LazyLogging {
     .withFallback(if(isMockConfig) ConfigFactory.parseResources("mockReference.conf") else ConfigFactory.empty())
     .withFallback(ConfigFactory.parseResources("reference.conf"))
     .resolve
-
 }

@@ -1,21 +1,9 @@
 package fi.vm.sade.hakuperusteet.auth
 
-import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
-
-import com.typesafe.config.Config
-import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{Session, User}
-import fi.vm.sade.hakuperusteet.google.GoogleVerifier._
-import fi.vm.sade.hakuperusteet.{HakuperusteetServlet, Configuration}
-import org.scalatra.ScalatraBase
-import org.scalatra.auth.ScentryAuthStore.CookieAuthStore
-import org.scalatra.auth.{Scentry, ScentryStrategy, ScentrySupport, ScentryConfig}
+import fi.vm.sade.hakuperusteet.HakuperusteetServlet
+import fi.vm.sade.hakuperusteet.domain.Session
 import org.scalatra.auth.strategy.BasicAuthSupport
-
-import org.json4s._
-import org.json4s.native.JsonMethods._
-import org.json4s.JsonDSL._
+import org.scalatra.auth.{ScentryConfig, ScentrySupport}
 
 
 trait AuthenticationSupport extends ScentrySupport[Session] with BasicAuthSupport[Session] { self: HakuperusteetServlet =>

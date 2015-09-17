@@ -5,8 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.slf4j.LazyLogging
-import fi.vm.sade.hakuperusteet.Configuration
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.collection.JavaConversions._
 
