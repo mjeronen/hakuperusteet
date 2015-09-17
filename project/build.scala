@@ -13,7 +13,7 @@ object HakuperusteetBuild extends Build {
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.11.7"
   val ScalatraVersion = "2.3.1"
-  val http4sVersion = "0.9.1"
+  val http4sVersion = "0.10.0"
   val jettyVersion = "9.3.0.v20150612"
   val artifactory = "https://artifactory.oph.ware.fi/artifactory/"
 
