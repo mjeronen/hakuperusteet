@@ -44,7 +44,7 @@ app.post('/oppijan-tunnistus/api/v1/token', function(req, res){
   console.log("Callback URL is ");
   console.log(callback_url);
   oppijanTunnistusEmails[token] = req.body.email;
-  res.send({});
+  res.send(callback_url);
 });
 app.get('/oppijan-tunnistus/api/v1/token/:token', function(req, res){
   console.log("Verifying token " + req.params.token)
