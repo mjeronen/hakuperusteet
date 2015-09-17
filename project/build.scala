@@ -95,6 +95,10 @@ object HakuperusteetBuild extends Build {
         case PathList("mockReference.conf") => MergeStrategy.discard
         case x => (assemblyMergeStrategy in assembly).value(x)
       },
+      assemblyExcludedJars in assembly := {
+        val cp = (fullClasspath in assembly).value
+        cp filter {_.data.getName != "guava-jdk5-13.0.jar"}
+      },
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
       buildversionTask,
       publishTo := {
