@@ -14,13 +14,12 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
   get("/openvetuma") {
     failUnlessAuthenticated
 
+    val userData = userDataFromSession
     val language = "en"
-    val ref = "1234561"
+    val referenceNumber = referenceNumberFromPersonOid(userData.personOid.getOrElse(halt(500)))
     val orderNro = Vetuma.generateOrderNumber
 
-    val userData = userDataFromSession
-
-    val payment = Payment(None, userData.personOid.get, new Date(), ref, orderNro, PaymentStatus.started)
+    val payment = Payment(None, userData.personOid.get, new Date(), referenceNumber, orderNro, PaymentStatus.started)
     val paymentWithId = db.upsertPayment(payment).getOrElse(halt(500))
     Vetuma(config, paymentWithId, language).toUrl
   }
@@ -39,6 +38,8 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val url = config.getString("host.url.base") + "#/effect/VetumaResultError"
     handleReturn(url, PaymentStatus.error)
   }
+
+  def referenceNumberFromPersonOid(personOid: String) = personOid.split("\\.").toList.last
 
   private def handleReturn(url: Oid, status: PaymentStatus) {
     val macParams = createMacParams
