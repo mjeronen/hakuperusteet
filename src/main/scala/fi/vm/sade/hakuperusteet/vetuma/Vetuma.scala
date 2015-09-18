@@ -41,9 +41,6 @@ case class Vetuma(sharedSecret: String, host: String, timestamp: Date, language:
 }
 
 object Vetuma extends LazyLogging {
-  val random = new java.util.Random
-
-  def generateOrderNumber = random.nextInt(10000000).toString
 
   def apply(config: Config, payment: Payment, language: String): Vetuma = {
     Vetuma(

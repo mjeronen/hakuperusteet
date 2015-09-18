@@ -1,0 +1,2 @@
+CREATE SEQUENCE ordernumber START 1000001;
+ALTER TABLE "ordernumber" OWNER TO oph;

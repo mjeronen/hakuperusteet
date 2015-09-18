@@ -23,7 +23,7 @@ class HakuperusteetDatabaseSpec extends FlatSpec with Matchers with BeforeAndAft
     val password = config.getString("hakuperusteet.db.password")
     val flyway = new Flyway
     flyway.setDataSource(url, user, password)
-    flyway.setSchemas("hakuperusteet")
+    flyway.setSchemas(HakuperusteetDatabase.schemaName)
     flyway.setValidateOnMigrate(false)
     flyway.clean
     flyway.migrate

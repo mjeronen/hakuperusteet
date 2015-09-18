@@ -19,6 +19,8 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
 case class HakuperusteetDatabase(db: DB) {
+  import HakuperusteetDatabase._
+
   implicit class RunAndAwait[R](r: slick.dbio.DBIOAction[R, slick.dbio.NoStream, Nothing]) {
     def run: R = Await.result(db.run(r), Duration.Inf)
   }
@@ -48,6 +50,8 @@ case class HakuperusteetDatabase(db: DB) {
   def upsertPayment(payment: Payment): Option[Payment] =
     (Tables.Payment returning Tables.Payment).insertOrUpdate(paymentToPaymentRow(payment)).run.map(paymentRowToPayment)
 
+  def nextOrderNumber() = sql"select nextval('#$schemaName.ordernumber');".as[Int].run.head
+
   private def paymentToPaymentRow(payment: Payment) =
     PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
 
@@ -72,6 +76,7 @@ case class HakuperusteetDatabase(db: DB) {
 
 object HakuperusteetDatabase extends LazyLogging {
   type DB = PostgresDriver.backend.DatabaseDef
+  val schemaName = "hakuperusteet"
 
   def init(config: Config)(implicit executor: AsyncExecutor): HakuperusteetDatabase = {
     val url = config.getString("hakuperusteet.db.url")
@@ -85,7 +90,7 @@ object HakuperusteetDatabase extends LazyLogging {
     try {
       val flyway = new Flyway
       flyway.setDataSource(url, user, password)
-      flyway.setSchemas("hakuperusteet")
+      flyway.setSchemas(schemaName)
       flyway.setValidateOnMigrate(false)
       //flyway.clean // removeMe
       flyway.migrate
