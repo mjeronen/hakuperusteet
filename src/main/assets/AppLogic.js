@@ -1,5 +1,9 @@
+export function sessionInit(state) {
+  return !_.isUndefined(state.sessionInit) && state.sessionInit == true
+}
+
 export function showLoginInfo(state) {
-  return _.isUndefined(state.sessionData) || _.isUndefined(state.sessionData.session) || _.isUndefined(state.sessionData.session.email)
+  return sessionInit(state) && (_.isUndefined(state.sessionData) || _.isUndefined(state.sessionData.session) || _.isUndefined(state.sessionData.session.email))
 }
 
 export function hasGoogleSession(state) {

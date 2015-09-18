@@ -40,7 +40,7 @@ export function initAppState(props) {
     [googleUserS], handleGoogleUserEvent
   ).skipDuplicates().toEventStream()
 
-  const sessionDataS = credentialsS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
+  const sessionDataS = credentialsS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl)).doAction(sessionInit)
   cssEffectsBus.plug(hashS.filter(isCssEffect).flatMap(toCssEffect))
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
@@ -122,6 +122,7 @@ export function initAppState(props) {
   function isNotEmpty(x) { return !_.isEmpty(x) }
   function isCssEffect(x) { return x.startsWith("#/effect/") }
   function toCssEffect(x) { return x.replace("#/effect/", "") }
+
 }
 
 function authenticate(authenticationUrl) {
@@ -129,5 +130,9 @@ function authenticate(authenticationUrl) {
 }
 
 function sessionFromServer(sessionUrl) {
-  return (user) => Bacon.fromPromise(HttpUtil.get(sessionUrl, user)).skipErrors()
+  return (user) => Bacon.fromPromise(HttpUtil.get(sessionUrl, user)).doError(sessionInit).skipErrors()
+}
+
+function sessionInit() {
+  dispatcher.push(events.updateField, {field: 'sessionInit', value: true})
 }
