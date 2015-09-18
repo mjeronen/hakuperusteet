@@ -40,55 +40,53 @@ body {
   }
 }
 
-#login-info {
+#session {
   margin-left: @marginLeft;
-}
 
-#emailAuthentication {
-  margin-left: @marginLeft;
-  label {
-    width: 120px;
-    padding-right: 0;
+  #emailAuthentication {
+    label {
+      width: 120px;
+      padding-right: 0;
+    }
+    input[type=submit] {
+      margin: 15px 15px 15px 120px;
+      display: block;
+    }
   }
-  input[type=submit] {
-    margin: 15px 15px 15px 120px;
-    display: block;
-  }
-}
 
-#googleAuthentication {
-  margin-left: @marginLeft;
-  padding: 20px 0 20px 0;
+  #googleAuthentication {
+    padding: 20px 0 20px 0;
+    #logout {
+      display: inline-block;
+      vertical-align: top;
+      padding-top: 23px;
+    }
+  }
+
+  #emailAuthentication {
+    p {
+      display: inline-block;
+    }
+    #logout {
+      margin-left: 10px;
+    }
+    img {
+      margin-left: 120px;
+    }
+    .serverError {
+      margin-left: 120px;
+    }
+    .success {
+      margin-left: 120px;
+    }
+  }
   #logout {
     display: inline-block;
-    vertical-align: top;
-    padding-top: 23px;
+    text-decoration: none;
+    color: #149ECB;
   }
 }
 
-#emailAuthentication {
-  p {
-    display: inline-block;
-  }
-  #logout {
-    margin-left: 10px;
-  }
-  img {
-    margin-left: 120px;
-  }
-  .serverError {
-    margin-left: 120px;
-  }
-  .success {
-    margin-left: 120px;
-  }
-}
-
-#logout {
-  display: inline-block;
-  text-decoration: none;
-  color: #149ECB;
-}
 
 h1 {
   .FontBold(20px);
