@@ -13,6 +13,7 @@ export default class EmailLogIn extends React.Component {
       <form onSubmit={orderEmailLoginLink(state)} method="POST">
         <label htmlFor="emailToken">Email address</label>
         <input type="text" id="emailToken" name="emailToken" onChange={controller.valueChanges}/>
+        <br/>
         <input type="submit" name="submit" value="Order email login token" />
         <AjaxLoader hide={true} />
         <span className="serverError hide">Unexpected server error. Please try again later.</span>
