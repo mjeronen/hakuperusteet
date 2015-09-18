@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import {orderEmailLoginLink} from './EmailAuthentication.js'
+import AjaxLoader from '../util/AjaxLoader.jsx'
 
 export default class EmailLogIn extends React.Component {
   render() {
@@ -13,7 +14,7 @@ export default class EmailLogIn extends React.Component {
         <label htmlFor="emailToken">Email address</label>
         <input type="text" id="emailToken" name="emailToken" onChange={controller.valueChanges}/>
         <input type="submit" name="submit" value="Order email login token" />
-        <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
+        <AjaxLoader hide={true} />
         <span className="serverError hide">Unexpected server error. Please try again later.</span>
         <span className="success hide">Login link sent to your email.</span>
       </form>

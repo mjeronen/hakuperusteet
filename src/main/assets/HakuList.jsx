@@ -3,6 +3,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import HttpUtil from './util/HttpUtil'
+import AjaxLoader from './util/AjaxLoader.jsx'
 import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from './util/HtmlUtils.js'
 
 export default class HakuList extends React.Component {
@@ -23,7 +24,7 @@ export default class HakuList extends React.Component {
         <p>Continue to application form with following link.</p>
         <form id="redirectToForm" onSubmit={this.onSubmitRedirect(state)} method="GET">
           <input type="submit" name="redirectToForm" value="Proceed to application form" />
-          <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
+          <AjaxLoader hide={true} />
           <span className="serverError hide">Unexpected server error. Please try again later.</span>
         </form>
       </div>

@@ -10,6 +10,7 @@ import NativeLanguage from './NativeLanguage.jsx'
 import EducationLevel from './EducationLevel.jsx'
 import Countries from './Countries.jsx'
 import CountryPaymentInfo from './CountryPaymentInfo.jsx'
+import AjaxLoader from '../util/AjaxLoader.jsx'
 
 import {validateUserDataForm} from './../util/FieldValidator.js'
 
@@ -34,7 +35,7 @@ export default class UserDataForm extends React.Component {
         <CountryPaymentInfo state={state} />
         <div className="userDataFormRow">
           <input type="submit" name="submit" value="Submit" disabled={disabled} />
-          <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
+          <AjaxLoader hide={true} />
           <span className="serverError invalid hide">Invalid userdata. Please check form values and try again.</span>
           <span className="serverError general hide">Unexpected server error. Please try again later.</span>
         </div>

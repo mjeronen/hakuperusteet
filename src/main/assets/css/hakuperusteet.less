@@ -42,18 +42,6 @@ body {
 
 #session {
   margin-left: @marginLeft;
-
-  #emailAuthentication {
-    label {
-      width: 120px;
-      padding-right: 0;
-    }
-    input[type=submit] {
-      margin: 15px 15px 15px 120px;
-      display: block;
-    }
-  }
-
   #googleAuthentication {
     padding: 20px 0 20px 0;
     #logout {
@@ -62,16 +50,23 @@ body {
       padding-top: 23px;
     }
   }
-
   #emailAuthentication {
+    label {
+      width: 120px;
+      padding-right: 0;
+    }
+    input[type=submit] {
+      margin: 15px 5px 15px 120px;
+      display: inline-block;
+    }
     p {
       display: inline-block;
     }
     #logout {
       margin-left: 10px;
     }
-    img {
-      margin-left: 120px;
+    .ajax-loader {
+      margin-top: 18px;
     }
     .serverError {
       margin-left: 120px;

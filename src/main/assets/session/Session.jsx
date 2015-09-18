@@ -7,13 +7,14 @@ import GoogleLogIn from './GoogleLogIn.jsx'
 import GoogleSession from './GoogleSession.jsx'
 import EmailLogIn from './EmailLogIn.jsx'
 import EmailSession from './EmailSession.jsx'
+import AjaxLoader from '../util/AjaxLoader.jsx'
 
 export default class Session extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
     return <section id="session">
-      { !sessionInit(state) ? <img className="ajax-loader" src="/hakuperusteet/img/ajax-loader.gif" /> : null}
+      { !sessionInit(state) ? <AjaxLoader hide={false} /> : null}
       { showLoginInfo(state) ? <LoginInfo state={state} /> : null}
       { showLoginInfo(state) ? <GoogleLogIn state={state} controller={controller} /> : null}
       { showLoginInfo(state) ? <EmailLogIn state={state} controller={controller} /> : null}

@@ -3,6 +3,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import HttpUtil from '../util/HttpUtil'
+import AjaxLoader from '../util/AjaxLoader.jsx'
 import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from '../util/HtmlUtils.js'
 
 export default class VetumaStart extends React.Component {
@@ -26,7 +27,7 @@ export default class VetumaStart extends React.Component {
       <p>You are required to pay application fee of 100€ before continuing to the application form.</p>
       <form id="vetumaStart" onSubmit={this.onSubmitRedirect(state)} method="POST">
         <input type="submit" name="submitVetuma" value="Continue to payment" />
-        <img className="ajax-loader hide" src="/hakuperusteet/img/ajax-loader.gif" />
+        <AjaxLoader hide={true} />
         <span className="serverError hide">Unexpected server error. Please try again later.</span>
       </form>
     </div>
