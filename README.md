@@ -39,7 +39,14 @@ MacOS users install docker with command `rew cask install dockertoolbox`.
 5. `docker run -p 5432:5432 postgres`
 6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
 7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
-8. Create Slick-db-classes `./sbt "run-main fi.vm.sade.hakuperusteet.db.CodeGenerator"` 
+
+### Create slick-classes
+
+During development, after schema changes you must regenerate db-classes with command:
+
+`./sbt "run-main fi.vm.sade.hakuperusteet.db.CodeGenerator"`
+
+Currently we store generated code in git, and hence it is not necessary to run this normally.
 
 ## Run using mock configuration
 
