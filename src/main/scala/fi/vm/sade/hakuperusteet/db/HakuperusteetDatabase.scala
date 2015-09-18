@@ -53,10 +53,10 @@ case class HakuperusteetDatabase(db: DB) {
   def nextOrderNumber() = sql"select nextval('#$schemaName.ordernumber');".as[Int].run.head
 
   private def paymentToPaymentRow(payment: Payment) =
-    PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString)
+    PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString, payment.paymCallId)
 
   private def paymentRowToPayment(r: PaymentRow) =
-    Payment(Some(r.id), r.henkiloOid, r.tstamp, r.reference, r.orderNumber, PaymentStatus.withName(r.status))
+    Payment(Some(r.id), r.henkiloOid, r.tstamp, r.reference, r.orderNumber, r.paymCallId, PaymentStatus.withName(r.status))
 
   private def sessionToSessionRow(session: Session): Tables.SessionRow =
     SessionRow(session.id.getOrElse(useAutoIncrementId), session.email, session.token, session.idpentityid)

@@ -11,7 +11,7 @@ import org.apache.commons.codec.digest.DigestUtils
 
 case class Vetuma(sharedSecret: String, host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
                      errorUrl: String, appName: String, amount: String, ref: String, orderNumber: String,
-                     msgBuyer: String, msgSeller: String, msgForm: String) {
+                     msgBuyer: String, msgSeller: String, msgForm: String, paymCallId: String) {
 
   val dtf = new SimpleDateFormat("yyyyMMddHHmmssSSS")
   val rcvid = "TESTIASIAKAS11"
@@ -26,14 +26,15 @@ case class Vetuma(sharedSecret: String, host: String, timestamp: Date, language:
 
   private def plainText =
     s"$rcvid&$appid&$formatTime&$so&$solist&${`type`}&$au&$language&$returnUrl&$cancelUrl&$errorUrl&" +
-    s"$ap&$appName&$amount&$ref&$orderNumber&$msgBuyer&$msgSeller&$msgForm&$sharedSecret&"
+    s"$ap&$appName&$amount&$ref&$orderNumber&$msgBuyer&$msgSeller&$msgForm&$paymCallId&$sharedSecret&"
 
   private def mac = DigestUtils.sha256Hex(plainText).toUpperCase
 
   private def query =
     s"RCVID=$rcvid&APPID=$appid&TIMESTMP=$formatTime&SO=$so&SOLIST=$solist&TYPE=${`type`}&AU=$au&LG=$language&" +
     s"RETURL=$returnUrl&CANURL=$cancelUrl&ERRURL=$errorUrl&AP=$ap&APPNAME=${enc(appName)}&AM=$amount&REF=$ref&" +
-    s"ORDNR=$orderNumber&MSGBUYER=${enc(msgBuyer)}&MSGSELLER=${enc(msgSeller)}&MSGFORM=${enc(msgForm)}"
+    s"ORDNR=$orderNumber&MSGBUYER=${enc(msgBuyer)}&MSGSELLER=${enc(msgSeller)}&MSGFORM=${enc(msgForm)}&" +
+    s"PAYM_CALL_ID=$paymCallId"
 
   private def enc(value: String) = URLEncoder.encode(value, "UTF-8")
 
@@ -57,7 +58,8 @@ object Vetuma extends LazyLogging {
       payment.orderNumber,
       config.getString("vetuma.msg.buyer"),
       config.getString("vetuma.msg.seller"),
-      config.getString("vetuma.msg.form")
+      config.getString("vetuma.msg.form"),
+      payment.paymCallId
     )
   }
 

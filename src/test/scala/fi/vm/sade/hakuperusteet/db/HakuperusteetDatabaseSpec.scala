@@ -34,7 +34,7 @@ class HakuperusteetDatabaseSpec extends FlatSpec with Matchers with BeforeAndAft
     db.upsertUser(user)
 
     db.findPayments(user).length shouldEqual 0
-    val p = Payment(None, "personOid.1.1.1", new Date(), "refNo", "orderNo", PaymentStatus.ok)
+    val p = Payment(None, "personOid.1.1.1", new Date(), "refNo", "orderNo", "paymCallId", PaymentStatus.ok)
     db.upsertPayment(p)
     db.findPayments(user).length shouldEqual 1
   }

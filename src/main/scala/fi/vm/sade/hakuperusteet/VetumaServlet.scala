@@ -18,7 +18,8 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val language = "en"
     val referenceNumber = referenceNumberFromPersonOid(userData.personOid.getOrElse(halt(500)))
     val orderNro = referenceNumber + db.nextOrderNumber()
-    val payment = Payment(None, userData.personOid.get, new Date(), referenceNumber, orderNro, PaymentStatus.started)
+    val paymCallId = "PCID" + orderNro
+    val payment = Payment(None, userData.personOid.get, new Date(), referenceNumber, orderNro, paymCallId, PaymentStatus.started)
     val paymentWithId = db.upsertPayment(payment).getOrElse(halt(500))
     Vetuma(config, paymentWithId, language).toUrl
   }

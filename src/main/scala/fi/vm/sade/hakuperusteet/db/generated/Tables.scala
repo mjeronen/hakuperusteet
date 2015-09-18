@@ -24,18 +24,19 @@ trait Tables {
    *  @param tstamp Database column tstamp SqlType(timestamptz)
    *  @param reference Database column reference SqlType(varchar), Length(255,true)
    *  @param orderNumber Database column order_number SqlType(varchar), Length(255,true)
-   *  @param status Database column status SqlType(varchar), Length(255,true) */
-  case class PaymentRow(id: Int, henkiloOid: String, tstamp: java.sql.Timestamp, reference: String, orderNumber: String, status: String)
+   *  @param status Database column status SqlType(varchar), Length(255,true)
+   *  @param paymCallId Database column paym_call_id SqlType(varchar), Length(255,true) */
+  case class PaymentRow(id: Int, henkiloOid: String, tstamp: java.sql.Timestamp, reference: String, orderNumber: String, status: String, paymCallId: String)
   /** GetResult implicit for fetching PaymentRow objects using plain SQL queries */
   implicit def GetResultPaymentRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Timestamp]): GR[PaymentRow] = GR{
     prs => import prs._
-    PaymentRow.tupled((<<[Int], <<[String], <<[java.sql.Timestamp], <<[String], <<[String], <<[String]))
+    PaymentRow.tupled((<<[Int], <<[String], <<[java.sql.Timestamp], <<[String], <<[String], <<[String], <<[String]))
   }
   /** Table description of table payment. Objects of this class serve as prototypes for rows in queries. */
   class Payment(_tableTag: Tag) extends Table[PaymentRow](_tableTag, Some("hakuperusteet"), "payment") {
-    def * = (id, henkiloOid, tstamp, reference, orderNumber, status) <> (PaymentRow.tupled, PaymentRow.unapply)
+    def * = (id, henkiloOid, tstamp, reference, orderNumber, status, paymCallId) <> (PaymentRow.tupled, PaymentRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(henkiloOid), Rep.Some(tstamp), Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(henkiloOid), Rep.Some(tstamp), Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status), Rep.Some(paymCallId)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -49,6 +50,8 @@ trait Tables {
     val orderNumber: Rep[String] = column[String]("order_number", O.Length(255,varying=true))
     /** Database column status SqlType(varchar), Length(255,true) */
     val status: Rep[String] = column[String]("status", O.Length(255,varying=true))
+    /** Database column paym_call_id SqlType(varchar), Length(255,true) */
+    val paymCallId: Rep[String] = column[String]("paym_call_id", O.Length(255,varying=true))
 
     /** Foreign key referencing User (database name payment_henkilo_oid_fkey) */
     lazy val userFk = foreignKey("payment_henkilo_oid_fkey", Rep.Some(henkiloOid), User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
