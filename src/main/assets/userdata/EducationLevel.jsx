@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
+import {translation} from '../translations/translations.js'
 
 export default class EducationLevel extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export default class EducationLevel extends React.Component {
     const result = createSelectOptions(baseEducationOptions)
     const controller = this.props.controller
     return <div className="userDataFormRow">
-      <label htmlFor={this.id}>Base education level</label>
+      <label htmlFor={this.id}>{translation("title.education.level")}</label>
       <select id={this.id} onChange={controller.valueChanges}>
         {result}
       </select>

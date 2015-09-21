@@ -13,6 +13,7 @@ import CountryPaymentInfo from './CountryPaymentInfo.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 
 import {validateUserDataForm} from './../util/FieldValidator.js'
+import {translation} from '../translations/translations.js'
 
 export default class UserDataForm extends React.Component {
   render() {
@@ -22,9 +23,9 @@ export default class UserDataForm extends React.Component {
     const languages = _.isUndefined(state.properties) ? [] : state.properties.languages
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     return <form id="userDataForm" onSubmit={controller.formSubmits}>
-        <p>Please enter the following information.</p>
-        <UserDataInput name="firstName" title="First name" state={state} controller={controller} />
-        <UserDataInput name="lastName" title="Last name" state={state} controller={controller} />
+        <p>{translation("userdataform.info")}</p>
+        <UserDataInput name="firstName" title={translation("title.first.name")} state={state} controller={controller} />
+        <UserDataInput name="lastName" title={translation("title.last.name")} state={state} controller={controller} />
         <UserBirthDateInput state={state} controller={controller} />
         <UserSSNInput state={state} controller={controller} />
         <Gender state={state} controller={controller} />
@@ -34,10 +35,10 @@ export default class UserDataForm extends React.Component {
         <Countries countries={countries} controller={controller} lang="en" />
         <CountryPaymentInfo state={state} />
         <div className="userDataFormRow">
-          <input type="submit" name="submit" value="Submit" disabled={disabled} />
+          <input type="submit" name="submit" value={translation("userdataform.submit")} disabled={disabled} />
           <AjaxLoader hide={true} />
-          <span className="serverError invalid hide">Invalid userdata. Please check form values and try again.</span>
-          <span className="serverError general hide">Unexpected server error. Please try again later.</span>
+          <span className="serverError invalid hide">{translation("errors.server.invalid.userdata")}</span>
+          <span className="serverError general hide">{translation("errors.server.unexpected")}</span>
         </div>
       </form>
   }

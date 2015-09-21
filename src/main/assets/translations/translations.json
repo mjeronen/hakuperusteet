@@ -28,6 +28,11 @@
     "server": {
       "unexpected": {
         "en": "Unexpected server error. Please try again later."
+      },
+      "invalid": {
+        "userdata": {
+          "en": "Invalid userdata. Please check form values and try again."
+        }
       }
     }
   },
@@ -39,8 +44,71 @@
     }
   },
   "title": {
+    "first": {
+      "name": {
+        "en": "First name"
+      }
+    },
+    "last": {
+      "name": {
+        "en": "Last name"
+      }
+    },
     "email": {
       "en": "Email address"
+    },
+    "education": {
+      "country": {
+        "en": "Base education country"
+      },
+      "level": {
+        "en": "Base education level"
+      }
+    },
+    "gender": {
+      "general": {
+        "en": "Gender"
+      },
+      "male": {
+        "en": "Male"
+      },
+      "female": {
+        "en": "Female"
+      }
+    },
+    "nationality": {
+      "en": "Nationality"
+    },
+    "native": {
+      "language": {
+        "en": "Native language"
+      }
+    },
+    "birth": {
+      "date": {
+        "en": "Birth Date"
+      }
+    }
+  },
+  "apply": {
+    "payment": {
+      "required": {
+        "en": "This Master's Program has applying charge of 100 €."
+      },
+      "notRequired": {
+        "en": "With EEA-based education you don't need to pay applying charge."
+      }
+    }
+  },
+  "userdataform": {
+    "info": {
+      "en": "Please enter the following information."
+    },
+    "personalId": {
+      "en": "I have Finnish social security number"
+    },
+    "submit": {
+      "en": "Submit"
     }
   }
 }

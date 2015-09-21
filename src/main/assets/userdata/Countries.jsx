@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
+import {translation} from '../translations/translations.js'
 
 export default class Countries extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ export default class Countries extends React.Component {
     const result = createSelectOptions(countries)
 
     return <div className="userDataFormRow">
-        <label htmlFor={this.id}>Base education country</label>
+        <label htmlFor={this.id}>{translation("title.education.country")}</label>
         <select id={this.id} onChange={controller.valueChanges}>
           {result}
         </select>

@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import {translation} from '../translations/translations.js'
 
 export default class CountryPaymentInfo extends React.Component {
   render() {
@@ -13,11 +14,11 @@ export default class CountryPaymentInfo extends React.Component {
     const noPaymentRequired = country && isEeaCountry
     return <div className="userDataFormRow">
       { paymentRequired
-        ? <p>This Master's Program has applying charge of 100 €.</p>
+        ? <p>{translation("apply.payment.required")}</p>
         : null
       }
       { noPaymentRequired
-        ? <p>With EEA-based education you don't need to pay applying charge.</p>
+        ? <p>{translation("apply.payment.notRequired")}</p>
         : null
       }
       </div>

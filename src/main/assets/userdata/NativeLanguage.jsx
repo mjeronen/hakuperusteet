@@ -1,6 +1,7 @@
 import React from 'react'
 
 import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
+import {translation} from '../translations/translations.js'
 
 export default class NativeLanguage extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ export default class NativeLanguage extends React.Component {
     const result = createSelectOptions(languages)
 
     return <div className="userDataFormRow">
-      <label htmlFor={this.id}>Native language</label>
+      <label htmlFor={this.id}>{translation("title.native.language")}</label>
       <select id={this.id} onChange={controller.valueChanges}>
         {result}
       </select>

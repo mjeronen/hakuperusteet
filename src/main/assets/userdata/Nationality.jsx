@@ -1,6 +1,7 @@
 import React from 'react'
 
 import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
+import {translation} from '../translations/translations.js'
 
 export default class Nationality extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ export default class Nationality extends React.Component {
     const result = createSelectOptions(countries)
 
     return <div className="userDataFormRow">
-      <label htmlFor={this.id}>Nationality</label>
+      <label htmlFor={this.id}>{translation("title.nationality")}</label>
       <select id={this.id} onChange={controller.valueChanges}>
         {result}
       </select>
