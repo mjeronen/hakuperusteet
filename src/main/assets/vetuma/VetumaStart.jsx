@@ -5,6 +5,7 @@ import _ from 'lodash'
 import HttpUtil from '../util/HttpUtil'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from '../util/HtmlUtils.js'
+import {translation} from '../translations/translations.js'
 
 export default class VetumaStart extends React.Component {
   onSubmitRedirect(state) {
@@ -24,11 +25,11 @@ export default class VetumaStart extends React.Component {
   render() {
     const state = this.props.state
     return <div className="vetumaStart">
-      <p>You are required to pay application fee of 100€ before continuing to the application form.</p>
+      <p>{translation("vetuma.start.info")}</p>
       <form id="vetumaStart" onSubmit={this.onSubmitRedirect(state)} method="POST">
-        <input type="submit" name="submitVetuma" value="Continue to payment" />
+        <input type="submit" name="submitVetuma" value={translation("vetuma.start.submit")} />
         <AjaxLoader hide={true} />
-        <span className="serverError hide">Unexpected server error. Please try again later.</span>
+        <span className="serverError hide">{translation("errors.server.unexpected")}</span>
       </form>
     </div>
   }

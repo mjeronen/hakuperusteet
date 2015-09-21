@@ -110,5 +110,26 @@
     "submit": {
       "en": "Submit"
     }
+  },
+  "vetuma": {
+    "start": {
+      "info": {
+        "en": "You are required to pay application fee of 100€ before continuing to the application form."
+      },
+      "submit": {
+        "en": "Continue to payment"
+      }
+    },
+    "result": {
+      "cancel": {
+        "en": "Payment canceled."
+      },
+      "error": {
+        "en": "Payment error."
+      },
+      "ok": {
+        "en": "Payment successful."
+      }
+    }
   }
 }
