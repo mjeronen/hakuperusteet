@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import {logOut} from './GoogleAuthentication'
+import LocalizedText from '../translations/LocalizedText.jsx'
 
 export default class GoogleSession extends React.Component {
   render() {
@@ -10,7 +11,7 @@ export default class GoogleSession extends React.Component {
 
     return <div id="googleAuthentication">
       <img id="googleAuthenticationStatus" src="/hakuperusteet/img/button_google_signedin.png" />
-      <a id="logout" href="#" onClick={logOut(state, controller)}>Log out</a>
+      <a id="logout" href="#" onClick={logOut(state, controller)}><LocalizedText translationKey="logout" /></a>
     </div>
   }
 }
