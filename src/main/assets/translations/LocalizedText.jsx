@@ -6,13 +6,21 @@ import * as translations from './translations.json'
 const flatTrans = Flatten(translations)
 
 export default class LocalizedText extends React.Component {
+  trans(fullKey) {
+    if(_.isEmpty(flatTrans[fullKey])) {
+      console.log("Missing key " + fullKey)
+      return fullKey
+    } else {
+      return flatTrans[fullKey]
+    }
+  }
+
   render() {
     const lang = "en"
     const translationKey = this.props.translationKey
     const fullKey = translationKey + "." + lang
-    const value = _.isEmpty(flatTrans[fullKey]) ? fullKey : flatTrans[fullKey]
     return <span>
-      {value}
+      {this.trans(fullKey)}
     </span>
   }
 }
