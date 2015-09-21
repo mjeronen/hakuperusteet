@@ -5,6 +5,7 @@ import _ from 'lodash'
 import HttpUtil from './util/HttpUtil'
 import AjaxLoader from './util/AjaxLoader.jsx'
 import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from './util/HtmlUtils.js'
+import {translation} from './translations/translations.js'
 
 export default class HakuList extends React.Component {
   onSubmitRedirect(state) {
@@ -21,11 +22,11 @@ export default class HakuList extends React.Component {
   render() {
     const state = this.props.state
     return <div className="hakuList">
-        <p>Continue to application form with following link.</p>
+        <p>{translation("hakulist.info")}</p>
         <form id="redirectToForm" onSubmit={this.onSubmitRedirect(state)} method="GET">
-          <input type="submit" name="redirectToForm" value="Proceed to application form" />
+          <input type="submit" name="redirectToForm" value={translation("hakulist.submit")} />
           <AjaxLoader hide={true} />
-          <span className="serverError hide">Unexpected server error. Please try again later.</span>
+          <span className="serverError hide">{translation("errors.server.unexpected")}</span>
         </form>
       </div>
   }
