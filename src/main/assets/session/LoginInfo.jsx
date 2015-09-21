@@ -1,9 +1,11 @@
 import React from 'react'
 
+import LocalizedText from '../translations/LocalizedText.jsx'
+
 export default class LoginInfo extends React.Component {
   render() {
     return <div className="login-info">
-      <p>To get started, please sign in with your google account or with email token.</p>
+      <p><LocalizedText translationKey="login.info.p" /></p>
     </div>
   }
 }
