@@ -4,9 +4,43 @@
       "p": {
         "en": "To get started, please sign in with your google account or with email token."
       }
+    },
+    "order": {
+      "link": {
+        "en": "Order login link to your email."
+      },
+      "button": {
+        "en": "Order email login token"
+      }
+    },
+    "logged": {
+      "in": {
+        "as": {
+          "en": "You are logged in as "
+        }
+      }
     }
   },
   "logout": {
     "en": "Log out"
+  },
+  "errors": {
+    "server": {
+      "unexpected": {
+        "en": "Unexpected server error. Please try again later."
+      }
+    }
+  },
+  "success": {
+    "login": {
+      "link": {
+        "en": "Login link sent to your email."
+      }
+    }
+  },
+  "title": {
+    "email": {
+      "en": "Email address"
+    }
   }
 }

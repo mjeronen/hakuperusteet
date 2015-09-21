@@ -3,6 +3,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import {logOut} from './GoogleAuthentication'
+import {translation} from '../translations/translations.js'
 
 export default class EmailSession extends React.Component {
   render() {
@@ -10,8 +11,8 @@ export default class EmailSession extends React.Component {
     const controller = this.props.controller
     const email = _.isUndefined(state.sessionData) ? "" : state.sessionData.session.email
     return <div id="emailAuthentication">
-      <p>You are logged in as {email}.</p>
-      <a id="logout" href="#" onClick={logOut(state, controller)}>Log out</a>
+      <p>{translation("login.logged.in.as") + email}.</p>
+      <a id="logout" href="#" onClick={logOut(state, controller)}>{translation("logout")}</a>
     </div>
   }
 }

@@ -1,11 +1,11 @@
 import React from 'react'
 
-import LocalizedText from '../translations/LocalizedText.jsx'
+import {translation} from '../translations/translations.js'
 
 export default class LoginInfo extends React.Component {
   render() {
     return <div className="login-info">
-      <p><LocalizedText translationKey="login.info.p" /></p>
+      <p>{translation("login.info.p")}</p>
     </div>
   }
 }
