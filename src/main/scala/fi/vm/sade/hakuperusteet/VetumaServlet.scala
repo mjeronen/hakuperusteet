@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
-import fi.vm.sade.hakuperusteet.email.{EmailTemplate, EmailSender}
+import fi.vm.sade.hakuperusteet.email.{ReceiptValues, EmailTemplate, EmailSender}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.vetuma.Vetuma
 
@@ -53,7 +53,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
         val paymentOk = p.copy(status = status)
         db.upsertPayment(paymentOk)
         if (status == PaymentStatus.ok) {
-          sendReceipt(userData)
+          sendReceipt(userData, paymentOk)
         }
         halt(status = 303, headers = Map("Location" -> url.toString))
       case None =>
@@ -67,7 +67,8 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     List(p("RCVID"), p("TIMESTMP"), p("SO"), p("LG"), p("RETURL"), p("CANURL"), p("ERRURL"), p("PAYID"), p("REF"), p("ORDNR"), p("PAID"), p("STATUS"))
   }
 
-  private def sendReceipt(userData: User): Unit = {
-    emailSender.send(userData.email, "Payment receipt", EmailTemplate.render("12.12.2015"))
+  private def sendReceipt(userData: User, payment: Payment): Unit = {
+    val p = ReceiptValues("12.12.2015", "100", payment.reference)
+    emailSender.send(userData.email, "Payment receipt", EmailTemplate.renderReceipt(p))
   }
 }
