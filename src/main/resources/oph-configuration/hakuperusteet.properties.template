@@ -26,6 +26,8 @@ vetuma.msg.buyer=Hakumaksu Syksy 2015
 vetuma.msg.seller=Hakumaksu Syksy 2015
 vetuma.msg.form=Hakumaksu Syksy 2015
 
+hakumaksu.valid.until=31.12.2015
+
 cookie.domain={{host_oppija}}
 
 koodisto.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/maatjavaltiot2/1?onlyValidKoodis=false

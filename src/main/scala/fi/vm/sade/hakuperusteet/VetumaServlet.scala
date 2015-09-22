@@ -68,7 +68,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
   }
 
   private def sendReceipt(userData: User, payment: Payment): Unit = {
-    val p = ReceiptValues("12.12.2015", "100", payment.reference)
+    val p = ReceiptValues(config.getString("hakumaksu.valid.until"), config.getString("vetuma.amount"), payment.reference)
     emailSender.send(userData.email, "Payment receipt", EmailTemplate.renderReceipt(p))
   }
 }
