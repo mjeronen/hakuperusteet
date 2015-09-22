@@ -4,7 +4,7 @@ import java.io.{StringWriter, StringReader}
 import com.github.mustachejava.DefaultMustacheFactory
 
 object EmailTemplate {
-  private val templateUrl = "/email/email.mustache"
+  private val templateUrl = "/email/payment-receipt.mustache"
   private val templateString = io.Source.fromInputStream(getClass.getResourceAsStream(templateUrl)).mkString
   private val mustache = new DefaultMustacheFactory().compile(new StringReader(templateString), templateUrl)
 
