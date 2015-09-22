@@ -16,7 +16,8 @@ import fi.vm.sade.utils.cas.{CasClient, CasAuthenticatingClient, CasParams}
 import scalaz.concurrent.{Future, Task}
 
 class HenkiloClientSpec extends FlatSpec with Matchers {
-  val virkailijaUri: Uri = Uri(path = "https://localhost")
+  val virkailijaUrl = "https://localhost"
+  val virkailijaUri: Uri = Uri(path = virkailijaUrl)
 
   behavior of "HenkiloClient"
 
@@ -36,7 +37,7 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
     }
     val client = new CasAuthenticatingClient(new CasClient(virkailijaUri, casMock),
       CasParams("/authentication-service", "foo", "bar"), mock)
-    val henkiloClient = new HenkiloClient(virkailijaUri, client)
+    val henkiloClient = new HenkiloClient(virkailijaUrl, client)
 
     val emptyUser = User(None, None,"", "", "", new Date(), None, "", "", "", "", "", "")
     val henkilo:Henkilo = henkiloClient.haeHenkilo(emptyUser).run
