@@ -1,16 +1,10 @@
 package fi.vm.sade.hakuperusteet
 
-import fi.vm.sade.hakuperusteet.koodisto.Koodisto
 import org.scalatest.FunSuite
 import org.scalatra.test.scalatest.ScalatraSuite
 import org.json4s.native.JsonMethods._
 
-class PropertiesServletSpec extends FunSuite with ScalatraSuite {
-  val config = Configuration.props
-  val countries = Koodisto.initCountries(config)
-  val languages = Koodisto.initLanguages(config)
-  val educations = Koodisto.initBaseEducation(config)
-
+class PropertiesServletSpec extends FunSuite with ScalatraSuite with ServletTestDependencies {
   val s = new PropertiesServlet(config, countries, languages, educations)
   addServlet(s, "/*")
 

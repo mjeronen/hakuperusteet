@@ -1,22 +1,10 @@
 package fi.vm.sade.hakuperusteet
 
-import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
-import fi.vm.sade.hakuperusteet.email.EmailSender
-import fi.vm.sade.hakuperusteet.koodisto.Koodisto
-import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.json4s.native.JsonMethods._
 import org.scalatest.FunSuite
 import org.scalatra.test.scalatest.ScalatraSuite
 
-class SessionServletSpec extends FunSuite with ScalatraSuite with GlobalExecutionContext {
-  val config = Configuration.props
-  val database = HakuperusteetDatabase.init(config)
-  val countries = Koodisto.initCountries(config)
-  val languages = Koodisto.initLanguages(config)
-  val educations = Koodisto.initBaseEducation(config)
-  val oppijanTunnistus = OppijanTunnistus.init(config)
-  val emailSender = EmailSender.init(config)
-
+class SessionServletSpec extends FunSuite with ScalatraSuite with ServletTestDependencies {
   override val port = 8081
 
   val s = new SessionServlet(config, database, oppijanTunnistus, countries, languages, educations, emailSender)
