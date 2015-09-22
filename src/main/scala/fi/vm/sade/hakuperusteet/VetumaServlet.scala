@@ -5,11 +5,12 @@ import java.util.Date
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
-import fi.vm.sade.hakuperusteet.domain.{PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.email.{EmailTemplate, EmailSender}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.vetuma.Vetuma
 
-class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends HakuperusteetServlet(config, db, oppijanTunnistus) {
+class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus) {
 
   get("/openvetuma") {
     failUnlessAuthenticated
@@ -46,10 +47,14 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val expectedMac = params.getOrElse("MAC", "")
     if (!Vetuma.verifyReturnMac(config.getString("vetuma.shared.secret"), macParams, expectedMac)) halt(409)
 
-    db.findPaymentByOrderNumber(userDataFromSession, params.getOrElse("ORDNR", "")) match {
+    val userData = userDataFromSession
+    db.findPaymentByOrderNumber(userData, params.getOrElse("ORDNR", "")) match {
       case Some(p) =>
         val paymentOk = p.copy(status = status)
         db.upsertPayment(paymentOk)
+        if (status == PaymentStatus.ok) {
+          sendReceipt(userData)
+        }
         halt(status = 303, headers = Map("Location" -> url.toString))
       case None =>
         // todo: handle this
@@ -60,5 +65,9 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
   private def createMacParams = {
     def p(name: String) = params.getOrElse(name, "")
     List(p("RCVID"), p("TIMESTMP"), p("SO"), p("LG"), p("RETURL"), p("CANURL"), p("ERRURL"), p("PAYID"), p("REF"), p("ORDNR"), p("PAID"), p("STATUS"))
+  }
+
+  private def sendReceipt(userData: User): Unit = {
+    emailSender.send(userData.email, "Payment receipt", EmailTemplate.render("12.12.2015"))
   }
 }
