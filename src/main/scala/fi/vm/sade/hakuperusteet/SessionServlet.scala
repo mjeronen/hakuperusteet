@@ -21,6 +21,7 @@ import scalaz.syntax.validation._
 class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, countries: Countries, languages: Languages, educations: Educations) extends HakuperusteetServlet(config, db, oppijanTunnistus) with ValidationUtil {
   case class UserDataResponse(field: String, value: SessionData)
 
+  val henkiloClient = HenkiloClient.init(config)
   post("/authenticate") {
     authenticate
     failUnlessAuthenticated
@@ -66,7 +67,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   }
 
   def upsertUserToHenkilo(userData: User): User = {
-    val newUser = Try(HenkiloClient.upsertHenkilo(userData)) match {
+    val newUser = Try(henkiloClient.upsertHenkilo(userData)) match {
       case Success(u) => userData.copy(personOid = Some(u.personOid))
       case Failure(t) =>
         logger.error("Unable to get henkilö", t)
