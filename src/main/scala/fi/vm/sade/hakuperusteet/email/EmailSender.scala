@@ -36,7 +36,7 @@ case class EmailRecipient(email: String)
 case class EmailMessage(from: String, subject: String, body: String, isHtml: Boolean)
 case class EmailData(email: EmailMessage, recipient: List[EmailRecipient])
 
-class EmailClient(emailServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {
+class EmailClient(emailServerUrl: Uri, client: Client) extends LazyLogging {
   implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
 
   def this(emailServerUrl: String, client: Client) = this(new Task(

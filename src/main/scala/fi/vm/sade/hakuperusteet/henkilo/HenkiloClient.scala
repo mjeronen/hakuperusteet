@@ -27,7 +27,7 @@ object HenkiloClient {
 
 }
 
-class HenkiloClient(henkiloServerUrl: Uri, client: Client = org.http4s.client.blaze.defaultClient) extends LazyLogging {
+class HenkiloClient(henkiloServerUrl: Uri, client: Client) extends LazyLogging {
   implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
 
   def this(henkiloServerUrl: String, client: Client) = this(new Task(
