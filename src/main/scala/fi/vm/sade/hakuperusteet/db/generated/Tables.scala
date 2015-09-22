@@ -33,7 +33,7 @@ trait Tables {
     PaymentRow.tupled((<<[Int], <<[String], <<[java.sql.Timestamp], <<[String], <<[String], <<[String], <<[String]))
   }
   /** Table description of table payment. Objects of this class serve as prototypes for rows in queries. */
-  class Payment(_tableTag: Tag) extends Table[PaymentRow](_tableTag, Some("hakuperusteet"), "payment") {
+  class Payment(_tableTag: Tag) extends Table[PaymentRow](_tableTag, "payment") {
     def * = (id, henkiloOid, tstamp, reference, orderNumber, status, paymCallId) <> (PaymentRow.tupled, PaymentRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
     def ? = (Rep.Some(id), Rep.Some(henkiloOid), Rep.Some(tstamp), Rep.Some(reference), Rep.Some(orderNumber), Rep.Some(status), Rep.Some(paymCallId)).shaped.<>({r=>import r._; _1.map(_=> PaymentRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
@@ -84,7 +84,7 @@ trait Tables {
   }
   /** Table description of table schema_version. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
-  class SchemaVersion(_tableTag: Tag) extends Table[SchemaVersionRow](_tableTag, Some("hakuperusteet"), "schema_version") {
+  class SchemaVersion(_tableTag: Tag) extends Table[SchemaVersionRow](_tableTag, "schema_version") {
     def * = (versionRank, installedRank, version, description, `type`, script, checksum, installedBy, installedOn, executionTime, success) <> (SchemaVersionRow.tupled, SchemaVersionRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
     def ? = (Rep.Some(versionRank), Rep.Some(installedRank), Rep.Some(version), Rep.Some(description), Rep.Some(`type`), Rep.Some(script), checksum, Rep.Some(installedBy), Rep.Some(installedOn), Rep.Some(executionTime), Rep.Some(success)).shaped.<>({r=>import r._; _1.map(_=> SchemaVersionRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7, _8.get, _9.get, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
@@ -135,7 +135,7 @@ trait Tables {
     SessionRow.tupled((<<[Int], <<[String], <<[String], <<[String]))
   }
   /** Table description of table session. Objects of this class serve as prototypes for rows in queries. */
-  class Session(_tableTag: Tag) extends Table[SessionRow](_tableTag, Some("hakuperusteet"), "session") {
+  class Session(_tableTag: Tag) extends Table[SessionRow](_tableTag, "session") {
     def * = (id, email, token, idpentityid) <> (SessionRow.tupled, SessionRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
     def ? = (Rep.Some(id), Rep.Some(email), Rep.Some(token), Rep.Some(idpentityid)).shaped.<>({r=>import r._; _1.map(_=> SessionRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
@@ -178,7 +178,7 @@ trait Tables {
     UserRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<?[String], <<[String], <<[String], <<[String], <<[String]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
-  class User(_tableTag: Tag) extends Table[UserRow](_tableTag, Some("hakuperusteet"), "user") {
+  class User(_tableTag: Tag) extends Table[UserRow](_tableTag, "user") {
     def * = (id, henkiloOid, email, idpentityid, firstname, lastname, gender, birthdate, personid, nativeLanguage, nationality, educationLevel, educationCountry) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
     def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nativeLanguage), Rep.Some(nationality), Rep.Some(educationLevel), Rep.Some(educationCountry)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11.get, _12.get, _13.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
