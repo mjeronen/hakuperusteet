@@ -7,9 +7,9 @@ object EmailTemplate {
   private val welcomeTemplate = compileMustache("/email/welcome.mustache")
   private val receiptTemplate = compileMustache("/email/receipt.mustache")
 
-  def renderWelcome(email: String) = {
+  def renderWelcome(values: WelcomeValues) = {
     val sw = new StringWriter()
-    welcomeTemplate.execute(sw, WelcomeValues(email))
+    welcomeTemplate.execute(sw, values)
     sw.toString
   }
 
