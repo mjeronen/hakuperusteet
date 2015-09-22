@@ -56,7 +56,6 @@ object HakuperusteetBuild extends Build {
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-auth" % ScalatraVersion,
         "org.scalatra" %% "scalatra-json" % ScalatraVersion,
-        "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
         "ch.qos.logback" % "logback-classic" % "1.1.2" % "runtime",
         "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
         "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "container;compile",
@@ -74,12 +73,11 @@ object HakuperusteetBuild extends Build {
         "org.flywaydb" % "flyway-core" % "3.2.1",
         "com.google.api-client" % "google-api-client" % "1.20.0",
         "org.apache.httpcomponents" % "fluent-hc" % "4.5",
-        "fi.vm.sade" %% "scala-utils" % "0.2.0-SNAPSHOT"
+        "fi.vm.sade" %% "scala-utils" % "0.2.0-SNAPSHOT",
+        "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+        "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
+        "org.typelevel" %% "scalaz-scalatest" % "0.2.2" % "test"
       ),
-      libraryDependencies ++= Seq(
-        "org.scalatest" % "scalatest_2.11" % "2.2.4",
-        "org.typelevel" %% "scalaz-scalatest" % "0.2.2"
-      ).map(_ % "test"),
       mainClass in (Compile, run) := Some("fi.vm.sade.hakuperusteet.HakuperusteetServer"),
       compile <<= (compile in Compile) dependsOn npmInstallTask,
       compile <<= (compile in Compile) dependsOn npmBuildTask,
