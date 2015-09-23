@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.domain.Payment
 import org.apache.commons.codec.digest.DigestUtils
 
-case class Vetuma(sharedSecret: String, host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
+case class Vetuma(sharedSecret: String, ap: String, host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
                      errorUrl: String, appName: String, amount: String, ref: String, orderNumber: String,
                      msgBuyer: String, msgSeller: String, msgForm: String, paymCallId: String) {
 
@@ -20,7 +20,6 @@ case class Vetuma(sharedSecret: String, host: String, timestamp: Date, language:
   val solist = "P,L"
   val `type` = "PAYMENT"
   val au = "PAY"
-  val ap = "TESTIASIAKAS1"
 
   private def formatTime = dtf.format(timestamp)
 
@@ -46,6 +45,7 @@ object Vetuma extends LazyLogging {
   def apply(config: Config, payment: Payment, language: String): Vetuma = {
     Vetuma(
       config.getString("vetuma.shared.secret"),
+      config.getString("vetuma.shared.ap"),
       config.getString("vetuma.host"),
       payment.timestamp,
       language,
