@@ -21,6 +21,7 @@ vetuma.cancel.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/can
 vetuma.error.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/error
 vetuma.shared.secret={{hakuperusteet_vetuma_shared_secret}}
 vetuma.shared.ap={{hakuperusteet_vetuma_shared_ap}}
+vetuma.shared.rcvid={{hakuperusteet_vetuma_shared_rcvid}}
 vetuma.app.name=Hakumaksu Syksy 2015
 vetuma.amount={{hakuperusteet_vetuma_amount}}
 vetuma.msg.buyer=Hakumaksu Syksy 2015
