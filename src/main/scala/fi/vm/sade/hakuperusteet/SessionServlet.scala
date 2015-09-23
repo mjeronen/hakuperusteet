@@ -5,6 +5,7 @@ import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{Session, SessionData, User}
 import fi.vm.sade.hakuperusteet.email.{EmailTemplate, WelcomeValues, EmailSender}
+import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
@@ -19,7 +20,7 @@ import scalaz._
 import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
 
-class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, countries: Countries, languages: Languages, educations: Educations, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus) with ValidationUtil {
+class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, countries: Countries, languages: Languages, educations: Educations, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) with ValidationUtil {
   case class UserDataResponse(field: String, value: SessionData)
 
   val henkiloClient = HenkiloClient.init(config)

@@ -7,6 +7,7 @@ import java.util.Date
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.koodisto.Countries
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.rsa.RSASigner
@@ -15,7 +16,7 @@ import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
 
 
-class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, signer: RSASigner, countries: Countries) extends HakuperusteetServlet(config, db, oppijanTunnistus) {
+class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, signer: RSASigner, countries: Countries) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) {
 
   get("/redirect") {
     failUnlessAuthenticated

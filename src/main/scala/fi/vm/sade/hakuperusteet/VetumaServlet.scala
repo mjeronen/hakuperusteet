@@ -7,10 +7,11 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.email.{ReceiptValues, EmailTemplate, EmailSender}
+import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.vetuma.Vetuma
 
-class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus) {
+class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) {
 
   get("/openvetuma") {
     failUnlessAuthenticated

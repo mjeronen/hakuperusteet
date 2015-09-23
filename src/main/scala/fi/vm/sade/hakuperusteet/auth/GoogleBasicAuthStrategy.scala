@@ -11,12 +11,10 @@ import org.json4s.native.JsonMethods._
 import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryStrategy
 
-class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase) extends ScentryStrategy[Session] with LazyLogging {
+class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase, googleVerifier: GoogleVerifier) extends ScentryStrategy[Session] with LazyLogging {
   import fi.vm.sade.hakuperusteet._
 
   private def request = app.enrichRequest(app.request)
-
-  val verifier = GoogleVerifier.init(config)
 
   val json = parse(request.body)
   val email = (json \ "email").extract[Option[String]]
@@ -41,7 +39,7 @@ class GoogleBasicAuthStrategy(protected override val app: ScalatraBase, config: 
   }
 
   private def verifyAndCreateSession(session: Session): Option[Session] = {
-    if (verifier.verify(session.token)) {
+    if (googleVerifier.verify(session.token)) {
       db.upsertSession(session)
       Some(session)
     } else {

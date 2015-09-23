@@ -14,7 +14,7 @@ trait AuthenticationSupport extends ScentrySupport[Session] with BasicAuthSuppor
   protected def toSession   = { case usr: Session => usr.email }
 
   override protected def registerAuthStrategies = {
-    scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration, db))
+    scentry.register("Google", app => new GoogleBasicAuthStrategy(app, configuration, db, googleVerifier))
     scentry.register("Token", app => new TokenAuthStrategy(app, configuration, db, oppijanTunnistus))
   }
 }
