@@ -18,4 +18,6 @@ class HakuperusteetServlet(val configuration: Config, val db: HakuperusteetDatab
   before() {
     contentType = "application/json"
   }
+
+  error { case e: Throwable => logger.error("uncaught exception", e) }
 }

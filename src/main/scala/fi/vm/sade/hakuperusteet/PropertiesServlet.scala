@@ -1,6 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.tarjonta.ApplicationObject
 import org.scalatra.ScalatraServlet
@@ -10,7 +11,7 @@ import org.json4s._
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
 
-class PropertiesServlet(config: Config, countries: Countries, languages: Languages, educations: Educations) extends ScalatraServlet {
+class PropertiesServlet(config: Config, countries: Countries, languages: Languages, educations: Educations) extends ScalatraServlet with LazyLogging {
   implicit val formats = Serialization.formats(NoTypeHints)
 
   before() {
@@ -33,6 +34,8 @@ class PropertiesServlet(config: Config, countries: Countries, languages: Languag
     )
     compact(render(properties))
   }
+
+  error { case e: Throwable => logger.error("uncaught exception", e) }
 }
 
 
