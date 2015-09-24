@@ -14,9 +14,47 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Payment.schema ++ SchemaVersion.schema ++ Session.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Education.schema ++ Payment.schema ++ SchemaVersion.schema ++ Session.schema ++ User.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
+
+  /** Entity class storing rows of table Education
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true)
+   *  @param hakukohdeOid Database column hakukohde_oid SqlType(varchar), Length(255,true)
+   *  @param educationLevel Database column education_level SqlType(varchar), Length(255,true)
+   *  @param educationCountry Database column education_country SqlType(varchar), Length(255,true) */
+  case class EducationRow(id: Int, henkiloOid: String, hakukohdeOid: String, educationLevel: String, educationCountry: String)
+  /** GetResult implicit for fetching EducationRow objects using plain SQL queries */
+  implicit def GetResultEducationRow(implicit e0: GR[Int], e1: GR[String]): GR[EducationRow] = GR{
+    prs => import prs._
+    EducationRow.tupled((<<[Int], <<[String], <<[String], <<[String], <<[String]))
+  }
+  /** Table description of table education. Objects of this class serve as prototypes for rows in queries. */
+  class Education(_tableTag: Tag) extends Table[EducationRow](_tableTag, "education") {
+    def * = (id, henkiloOid, hakukohdeOid, educationLevel, educationCountry) <> (EducationRow.tupled, EducationRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), Rep.Some(henkiloOid), Rep.Some(hakukohdeOid), Rep.Some(educationLevel), Rep.Some(educationCountry)).shaped.<>({r=>import r._; _1.map(_=> EducationRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column henkilo_oid SqlType(varchar), Length(255,true) */
+    val henkiloOid: Rep[String] = column[String]("henkilo_oid", O.Length(255,varying=true))
+    /** Database column hakukohde_oid SqlType(varchar), Length(255,true) */
+    val hakukohdeOid: Rep[String] = column[String]("hakukohde_oid", O.Length(255,varying=true))
+    /** Database column education_level SqlType(varchar), Length(255,true) */
+    val educationLevel: Rep[String] = column[String]("education_level", O.Length(255,varying=true))
+    /** Database column education_country SqlType(varchar), Length(255,true) */
+    val educationCountry: Rep[String] = column[String]("education_country", O.Length(255,varying=true))
+
+    /** Foreign key referencing User (database name education_henkilo_oid_fkey) */
+    lazy val userFk = foreignKey("education_henkilo_oid_fkey", Rep.Some(henkiloOid), User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+
+    /** Index over (henkiloOid,hakukohdeOid) (database name education_henkilo_oid_hakukohde_oid_idx) */
+    val index1 = index("education_henkilo_oid_hakukohde_oid_idx", (henkiloOid, hakukohdeOid))
+  }
+  /** Collection-like TableQuery object for table Education */
+  lazy val Education = new TableQuery(tag => new Education(tag))
 
   /** Entity class storing rows of table Payment
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
@@ -168,20 +206,18 @@ trait Tables {
    *  @param birthdate Database column birthdate SqlType(date)
    *  @param personid Database column personid SqlType(varchar), Length(255,true), Default(None)
    *  @param nativeLanguage Database column native_language SqlType(varchar), Length(255,true)
-   *  @param nationality Database column nationality SqlType(varchar), Length(255,true)
-   *  @param educationLevel Database column education_level SqlType(varchar), Length(255,true)
-   *  @param educationCountry Database column education_country SqlType(varchar), Length(255,true) */
-  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentityid: String, firstname: String, lastname: String, gender: String, birthdate: java.sql.Date, personid: Option[String] = None, nativeLanguage: String, nationality: String, educationLevel: String, educationCountry: String)
+   *  @param nationality Database column nationality SqlType(varchar), Length(255,true) */
+  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentityid: String, firstname: String, lastname: String, gender: String, birthdate: java.sql.Date, personid: Option[String] = None, nativeLanguage: String, nationality: String)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
   implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[String], e3: GR[java.sql.Date]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<?[String], <<[String], <<[String], <<[String], <<[String]))
+    UserRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<?[String], <<[String], <<[String]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, "user") {
-    def * = (id, henkiloOid, email, idpentityid, firstname, lastname, gender, birthdate, personid, nativeLanguage, nationality, educationLevel, educationCountry) <> (UserRow.tupled, UserRow.unapply)
+    def * = (id, henkiloOid, email, idpentityid, firstname, lastname, gender, birthdate, personid, nativeLanguage, nationality) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nativeLanguage), Rep.Some(nationality), Rep.Some(educationLevel), Rep.Some(educationCountry)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11.get, _12.get, _13.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nativeLanguage), Rep.Some(nationality)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -205,10 +241,6 @@ trait Tables {
     val nativeLanguage: Rep[String] = column[String]("native_language", O.Length(255,varying=true))
     /** Database column nationality SqlType(varchar), Length(255,true) */
     val nationality: Rep[String] = column[String]("nationality", O.Length(255,varying=true))
-    /** Database column education_level SqlType(varchar), Length(255,true) */
-    val educationLevel: Rep[String] = column[String]("education_level", O.Length(255,varying=true))
-    /** Database column education_country SqlType(varchar), Length(255,true) */
-    val educationCountry: Rep[String] = column[String]("education_country", O.Length(255,varying=true))
 
     /** Uniqueness Index over (henkiloOid) (database name henkilo_oid) */
     val index1 = index("henkilo_oid", henkiloOid, unique=true)
