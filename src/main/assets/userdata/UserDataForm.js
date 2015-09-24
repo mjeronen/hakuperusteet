@@ -1,8 +1,8 @@
 import Bacon from 'baconjs'
 import moment from 'moment-timezone'
 
-import HttpUtil from './HttpUtil.js'
-import {enableSubmitAndHideBusy} from './HtmlUtils.js'
+import HttpUtil from '../util/HttpUtil.js'
+import {enableSubmitAndHideBusy} from '../util/HtmlUtils.js'
 
 export function submitUserDataToServer(state) {
   const userData = {

@@ -6,7 +6,7 @@ import {initGoogleAuthentication} from './session/GoogleAuthentication'
 import {isLoginToken, initEmailAuthentication} from './session/EmailAuthentication'
 import {initChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from './util/FieldValidator.js'
-import {submitUserDataToServer} from './util/UserDataForm.js'
+import {submitUserDataToServer} from './userdata/UserDataForm.js'
 import {submitEducationDataToServer} from './education/EducationForm.js'
 
 const dispatcher = new Dispatcher()
