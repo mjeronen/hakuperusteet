@@ -52,7 +52,11 @@ function hasUserData(state) {
 }
 function paymentRequired(state) {
   const educationForCurrentHakukohdeOid = _.find(state.sessionData.education, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
-  const eeaCountries = (state.properties && state.properties.eeaCountries) ? state.properties.eeaCountries : []
-  const isEeaCountry = _.contains(eeaCountries, educationForCurrentHakukohdeOid.educationCountry)
-  return !isEeaCountry
+  if (_.isEmpty(educationForCurrentHakukohdeOid)) {
+    return false
+  } else {
+    const eeaCountries = (state.properties && state.properties.eeaCountries) ? state.properties.eeaCountries : []
+    const isEeaCountry = _.contains(eeaCountries, educationForCurrentHakukohdeOid.educationCountry)
+    return !isEeaCountry
+  }
 }
