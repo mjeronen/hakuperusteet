@@ -1,5 +1,6 @@
 package fi.vm.sade.hakuperusteet
 
+import ch.qos.logback.access.jetty.RequestLogImpl
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.util.Jmx
 import org.eclipse.jetty.server._
@@ -20,6 +21,12 @@ object HakuperusteetServer {
     val server = new Server()
     server.setHandler(createContext)
     server.setConnectors(createConnectors(portHttp, portHttps, server))
+
+    val requestLog = new RequestLogImpl()
+    requestLog.setFileName(sys.props.getOrElse("logbackaccess.configurationFile","src/main/resources/logbackAccess.xml"))
+    server.setRequestLog(requestLog)
+    requestLog.start
+
     initJmx(server)
     server.start
     server.join
