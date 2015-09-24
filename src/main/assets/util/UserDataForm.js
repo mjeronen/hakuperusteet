@@ -13,8 +13,6 @@ export function submitUserDataToServer(state) {
     gender: state.gender,
     nativeLanguage: state.nativeLanguage,
     nationality: state.nationality,
-    educationLevel: state.educationLevel,
-    educationCountry: state.educationCountry
   }
   const promise = Bacon.fromPromise(HttpUtil.post(state.properties.userDataUrl, userData))
   promise.onError((error) => {

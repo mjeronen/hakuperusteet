@@ -7,9 +7,6 @@ import UserSSNInput from './UserSSNInput.jsx'
 import Gender from './Gender.jsx'
 import Nationality from './Nationality.jsx'
 import NativeLanguage from './NativeLanguage.jsx'
-import EducationLevel from './EducationLevel.jsx'
-import Countries from './Countries.jsx'
-import CountryPaymentInfo from './CountryPaymentInfo.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 
 import {validateUserDataForm} from './../util/FieldValidator.js'
@@ -31,9 +28,6 @@ export default class UserDataForm extends React.Component {
         <Gender state={state} controller={controller} />
         <NativeLanguage languages={languages} controller={controller} />
         <Nationality countries={countries} controller={controller} />
-        <EducationLevel state={state} controller={controller} />
-        <Countries countries={countries} controller={controller} lang="en" />
-        <CountryPaymentInfo state={state} />
         <div className="userDataFormRow">
           <input type="submit" name="submit" value={translation("userdataform.submit")} disabled={disabled} />
           <AjaxLoader hide={true} />

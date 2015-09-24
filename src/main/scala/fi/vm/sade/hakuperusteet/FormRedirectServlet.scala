@@ -6,7 +6,7 @@ import java.util.Date
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.domain.{Education, User, PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.koodisto.Countries
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
@@ -23,23 +23,25 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
 
     val host = config.getString("form.redirect.base")
     val userData = userDataFromSession
+    val hakukohdeOid = params.get("hakukohdeOid").getOrElse(halt(409))
+    val educationForThisHakukohde = db.findEducations(userDataFromSession).find(_.hakukohdeOid == hakukohdeOid).getOrElse(halt(409))
     val payments = db.findPayments(userData)
-    val shouldPay = countries.shouldPay(userData.educationCountry)
+    val shouldPay = countries.shouldPay(educationForThisHakukohde.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
-    compact(render(Map("url" -> generateUrl(host, userData, shouldPay, hasPaid))))
+    compact(render(Map("url" -> generateUrl(host, userData, educationForThisHakukohde, shouldPay, hasPaid))))
   }
 
-  private def generateUrl(host: String, userData: User, shouldPay: Boolean, hasPaid: Boolean) = {
-    val seq = paramSequence(userData, shouldPay, hasPaid)
+  def generateUrl(host: Oid, userData: User, educationForThisHakukohde: Education, shouldPay: Boolean, hasPaid: Boolean) = {
+    val seq = paramSequence(userData, shouldPay, hasPaid, educationForThisHakukohde)
     val signature = signer.signData(seq.map(_._2).mkString(""))
     val query = seq.map{ case (k, v) => s"$k=${URLEncoder.encode(v, "UTF-8")}" }.mkString("&") + s"&signature=$signature"
     s"$host?$query"
   }
 
-  def paramSequence(u: User, shouldPay: Boolean, hasPaid: Boolean) =
+  def paramSequence(u: User, shouldPay: Boolean, hasPaid: Boolean, e: Education) =
     Seq(("personOid", u.personOid.getOrElse(halt(500))), ("email", u.email), ("firstName", u.firstName), ("lastName", u.lastName),
       ("birthDate", new SimpleDateFormat("ddMMyyyy").format(u.birthDate)), ("personId", u.personId.getOrElse("")),
-      ("gender", u.gender), ("nationality", u.nationality), ("educationLevel", u.educationLevel),
-      ("educationCountry", u.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString),
+      ("gender", u.gender), ("nationality", u.nationality), ("hakukohdeOid", e.hakukohdeOid), ("educationLevel", e.educationLevel),
+      ("educationCountry", e.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString),
       ("created", new Date().toInstant.getEpochSecond.toString))
 }

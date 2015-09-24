@@ -7,6 +7,7 @@ import {isLoginToken, initEmailAuthentication} from './session/EmailAuthenticati
 import {initChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from './util/FieldValidator.js'
 import {submitUserDataToServer} from './util/UserDataForm.js'
+import {submitEducationDataToServer} from './education/EducationForm.js'
 
 const dispatcher = new Dispatcher()
 const events = {
@@ -27,7 +28,10 @@ export function initAppState(props) {
   const serverUpdatesBus = new Bacon.Bus()
   const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
-  const tarjontaS = Bacon.fromPromise(HttpUtil.get(tarjontaUrl))
+  const hakukohdeS = Bacon.once("1.2.246.562.20.69046715533").toProperty()
+  const tarjontaS = hakukohdeS.flatMap((hakukohde) => {
+    return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
+  }).toEventStream()
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
   const sessionS = propertiesS.flatMap(sessionFromServer(sessionUrl))
@@ -48,7 +52,7 @@ export function initAppState(props) {
   const logOutS = dispatcher.stream(events.logOut)
 
   const stateP = Bacon.update(initialState,
-    [propertiesS, tarjontaS], onStateInit,
+    [propertiesS, hakukohdeS, tarjontaS], onStateInit,
     [cssEffectsBus], onCssEffectValue,
     [credentialsS], onCredentialsChange,
     [sessionDataS], onSessionDataFromServer,
@@ -62,6 +66,11 @@ export function initAppState(props) {
     .filter(({form}) => form === 'userDataForm')
     .flatMapLatest(({state}) => submitUserDataToServer(state))
   serverUpdatesBus.plug(userDataFormSubmittedP)
+
+  const educationFromSubmittedP = formSubmittedS
+    .filter(({form}) => form === 'educationForm')
+    .flatMapLatest(({state}) => submitEducationDataToServer(state))
+  serverUpdatesBus.plug(educationFromSubmittedP)
 
   return stateP
 
@@ -82,8 +91,8 @@ export function initAppState(props) {
     return currentUser
   }
 
-  function onStateInit(state, properties, tarjonta) {
-    return {...state, properties, tarjonta}
+  function onStateInit(state, properties, hakukohdeOid, tarjonta) {
+    return {...state, properties, hakukohdeOid, tarjonta}
   }
 
   function onCssEffectValue(state, effect) {

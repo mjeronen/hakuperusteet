@@ -111,6 +111,14 @@
       "en": "Submit"
     }
   },
+  "educationForm": {
+    "info": {
+      "en": "Please enter your education information"
+    },
+    "submit": {
+      "en": "Submit"
+    }
+  },
   "vetuma": {
     "start": {
       "info": {

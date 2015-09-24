@@ -2,8 +2,10 @@ package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
+import fi.vm.sade.hakuperusteet.koodisto.{SimplifiedCode, Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.tarjonta.ApplicationObject
+import org.json4s.JValue
+import org.json4s.JsonAST.JValue
 import org.scalatra.ScalatraServlet
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
@@ -21,18 +23,19 @@ class PropertiesServlet(config: Config, countries: Countries, languages: Languag
   get("/") {
     val properties = Map(
       "userDataUrl" -> "/hakuperusteet/api/v1/session/userData",
+      "educationDataUrl" -> "/hakuperusteet/api/v1/session/educationData",
       "logOutUrl" -> "/hakuperusteet/api/v1/session/logout",
       "emailTokenUrl" -> "/hakuperusteet/api/v1/session/emailToken",
       "vetumaStartUrl" -> "/hakuperusteet/api/v1/vetuma/openvetuma",
       "formRedirectUrl" -> "/hakuperusteet/api/v1/form/redirect",
-      "countries" -> write(countries.countries),
-      "eeaCountries" -> write(countries.eeaCountries),
-      "languages" -> write(languages.languages),
-      "baseEducation" -> write(educations.educations),
+      "countries" -> countries.countries,
+      "eeaCountries" -> countries.eeaCountries,
+      "languages" -> languages.languages,
+      "baseEducation" -> educations.educations,
       "googleAuthenticationClientId" -> config.getString("google.authentication.client.id"),
       "googleAuthenticationHostedDomain" -> config.getString("google.authentication.hosted.domain")
     )
-    compact(render(properties))
+    write(properties)
   }
 
   error { case e: Throwable => logger.error("uncaught exception", e) }
