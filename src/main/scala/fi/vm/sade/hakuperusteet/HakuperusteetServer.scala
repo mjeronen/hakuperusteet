@@ -56,6 +56,7 @@ object HakuperusteetServer {
     val context = new WebAppContext()
     context setContextPath ("/hakuperusteet/")
     context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
+    context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")
     context

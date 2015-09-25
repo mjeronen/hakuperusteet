@@ -13,7 +13,7 @@ export default class HakuList extends React.Component {
       e.preventDefault()
       const form = e.target
       disableSubmitAndShowBusy(form)
-      const promise = Bacon.fromPromise(HttpUtil.get(state.properties.formRedirectUrl))
+      const promise = Bacon.fromPromise(HttpUtil.get(state.properties.formRedirectUrl + "?hakukohdeOid=" + state.hakukohdeOid))
       promise.onValue((result) => { window.location = result.url })
       promise.onError((_) => { enableSubmitAndHideBusyAndShowError(form) })
     }

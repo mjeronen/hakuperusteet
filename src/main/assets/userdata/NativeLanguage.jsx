@@ -15,7 +15,7 @@ export default class NativeLanguage extends React.Component {
 
   render() {
     const controller = this.props.controller
-    const languages = _.isEmpty(this.props.languages) ? {} : JSON.parse(this.props.languages)
+    const languages = _.isEmpty(this.props.languages) ? {} : this.props.languages
     const result = createSelectOptions(languages)
 
     return <div className="userDataFormRow">

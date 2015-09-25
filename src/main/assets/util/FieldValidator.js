@@ -17,7 +17,13 @@ export function parseNewValidationErrors(state, field, value) {
 export function validateUserDataForm(state) {
   const allV = state.validationErrors || {}
   const userV = [allV.firstName, allV.lastName, allV.birthDate, allV.personId, allV.gender, allV.nativeLanguage,
-    allV.nationality, allV.educationLevel, allV.educationCountry].filter(function(x) {return !_.isEmpty(x) })
+    allV.nationality].filter(function(x) {return !_.isEmpty(x) })
+  return _.all(userV, function(v) { return v.length == 0})
+}
+
+export function validateEducationForm(state) {
+  const allV = state.validationErrors || {}
+  const userV = [allV.educationLevel, allV.educationCountry].filter(function(x) {return !_.isEmpty(x) })
   return _.all(userV, function(v) { return v.length == 0})
 }
 

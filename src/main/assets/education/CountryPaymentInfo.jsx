@@ -5,8 +5,7 @@ import {translation} from '../translations/translations.js'
 export default class CountryPaymentInfo extends React.Component {
   render() {
     const state = this.props.state
-    const eeaCountries = (_.isEmpty(state.properties) || _.isEmpty(state.properties.eeaCountries))
-      ? [] : JSON.parse(state.properties.eeaCountries)
+    const eeaCountries = (_.isEmpty(state.properties) || _.isEmpty(state.properties.eeaCountries)) ? [] : state.properties.eeaCountries
     const country = state.educationCountry
     const isEeaCountry = eeaCountries.indexOf(country) !== -1
 

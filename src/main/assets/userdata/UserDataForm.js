@@ -1,8 +1,8 @@
 import Bacon from 'baconjs'
 import moment from 'moment-timezone'
 
-import HttpUtil from './HttpUtil.js'
-import {enableSubmitAndHideBusy} from './HtmlUtils.js'
+import HttpUtil from '../util/HttpUtil.js'
+import {enableSubmitAndHideBusy} from '../util/HtmlUtils.js'
 
 export function submitUserDataToServer(state) {
   const userData = {
@@ -13,8 +13,6 @@ export function submitUserDataToServer(state) {
     gender: state.gender,
     nativeLanguage: state.nativeLanguage,
     nationality: state.nationality,
-    educationLevel: state.educationLevel,
-    educationCountry: state.educationCountry
   }
   const promise = Bacon.fromPromise(HttpUtil.post(state.properties.userDataUrl, userData))
   promise.onError((error) => {

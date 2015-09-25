@@ -1,10 +1,11 @@
+package fi.vm.sade.hakuperusteet
+
 import javax.servlet.ServletContext
 
-import fi.vm.sade.hakuperusteet._
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.email.EmailSender
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
-import fi.vm.sade.hakuperusteet.koodisto.{Koodisto, Languages, Countries}
+import fi.vm.sade.hakuperusteet.koodisto.Koodisto
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.rsa.RSASigner
 import fi.vm.sade.hakuperusteet.tarjonta.Tarjonta

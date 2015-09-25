@@ -18,24 +18,22 @@ export function showUserDataForm(state) {
   return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && _.isUndefined(state.sessionData.user)
 }
 
+export function showEducationForm(state) {
+  return hasUserData(state) && _.isEmpty(state.sessionData.education)
+}
+
 export function showVetumaStart(state) {
-  function paymentRequired() {
-    return state.sessionData.shouldPay === true
-  }
   function hasNoValidPayment() {
     return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
   }
-  return hasUserData(state) && paymentRequired() && hasNoValidPayment()
+  return hasUserData(state) && !_.isEmpty(state.sessionData.education) && paymentRequired(state) && hasNoValidPayment()
 }
 
 export function showHakuList(state) {
-  function noPaymentRequired() {
-    return state.sessionData.shouldPay === false
-  }
   function hasValidPayment() {
     return _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
   }
-  return hasUserData(state) && (hasValidPayment() || noPaymentRequired())
+  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && (hasValidPayment() || !paymentRequired(state))
 }
 
 export function showVetumaResultOk(state) {
@@ -51,4 +49,19 @@ export function showVetumaResultError(state) {
 
 function hasUserData(state) {
   return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user)
+}
+
+function hasEducationForCurrentHakuOid(state) {
+  return _.some(state.sessionData.education, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
+}
+
+function paymentRequired(state) {
+  const educationForCurrentHakukohdeOid = _.find(state.sessionData.education, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
+  if (_.isEmpty(educationForCurrentHakukohdeOid)) {
+    return false
+  } else {
+    const eeaCountries = (state.properties && state.properties.eeaCountries) ? state.properties.eeaCountries : []
+    const isEeaCountry = _.contains(eeaCountries, educationForCurrentHakukohdeOid.educationCountry)
+    return !isEeaCountry
+  }
 }

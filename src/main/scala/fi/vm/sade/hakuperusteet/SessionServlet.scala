@@ -3,7 +3,7 @@ package fi.vm.sade.hakuperusteet
 import java.time.LocalDate
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{Session, SessionData, User}
+import fi.vm.sade.hakuperusteet.domain.{Education, Session, SessionData, User}
 import fi.vm.sade.hakuperusteet.email.{EmailTemplate, WelcomeValues, EmailSender}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
@@ -29,8 +29,11 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     failUnlessAuthenticated
 
     db.findUser(user.email) match {
-      case Some(u) => write(SessionData(user, Some(u), Some(countries.shouldPay(u.educationCountry)), db.findPayments(u).toList))
-      case None => write(SessionData(user, None, None, List.empty))
+      case Some(u) =>
+        val educations = db.findEducations(u).toList
+        val payments = db.findPayments(u).toList
+        write(SessionData(user, Some(u), educations, payments))
+      case None => write(SessionData(user, None, List.empty, List.empty))
     }
   }
 
@@ -59,6 +62,15 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
       userData => createNewUser(user, userData))
   }
 
+  post("/educationData") {
+    failUnlessAuthenticated
+    val params = parse(request.body).extract[Params]
+    val userData = userDataFromSession
+    parseEducationData(userData.personOid.getOrElse(halt(500)), params).bitraverse(
+      errors => renderConflictWithErrors(errors),
+      education => addNewEducation(user, userData, education))
+  }
+
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 
   def createNewUser(session: Session, userData: User) = {
@@ -66,7 +78,14 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     val newUser = upsertUserToHenkilo(userData)
     val userWithId = db.upsertUser(newUser)
     sendEmail(newUser)
-    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, Some(countries.shouldPay(newUser.educationCountry)), List.empty))))
+    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, List.empty, List.empty))))
+  }
+
+  def addNewEducation(session: Session, userData: User, education: Education) = {
+    logger.info(s"Updating education: $education")
+    db.upsertEducation(education)
+    val educations = db.findEducations(userData).toList
+    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, Some(userData), educations, List.empty))))
   }
 
   private def sendEmail(newUser: User): Boolean = {
@@ -92,14 +111,20 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
       |@| parseExists("gender")(params).flatMap(validateGender)
       |@| parseExists("nativeLanguage")(params).flatMap(validateNativeLanguage)
       |@| parseExists("nationality")(params).flatMap(validateCountry)
-      |@| parseExists("educationLevel")(params).flatMap(validateEducationLevel)
-      |@| parseExists("educationCountry")(params).flatMap(validateCountry)
-    ) { (firstName, lastName, birthDate, personId, gender, nativeLanguage, nationality, educationLevel, educationCountry) =>
+    ) { (firstName, lastName, birthDate, personId, gender, nativeLanguage, nationality) =>
       User(None, None, email, firstName, lastName, java.sql.Date.valueOf(birthDate), createPersonalId(birthDate, personId),
-        idpentityid, gender, nativeLanguage, nationality, educationLevel, educationCountry)
+        idpentityid, gender, nativeLanguage, nationality)
     }
   }
 
+  def parseEducationData(personOid: String, params: Params): ValidationResult[Education] = {
+    (parseNonEmpty("hakukohdeOid")(params)
+      |@| parseExists("educationLevel")(params).flatMap(validateEducationLevel)
+      |@| parseExists("educationCountry")(params).flatMap(validateCountry)
+      ) { (hakukohdeOid, educationLevel, educationCountry) =>
+      Education(None, personOid, hakukohdeOid, educationLevel, educationCountry)
+    }
+  }
   private def validateGender(gender: String): ValidationResult[String] =
     if (gender == "1" || gender == "2") gender.successNel
     else  s"gender value $gender is invalid".failureNel
