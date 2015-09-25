@@ -24,7 +24,7 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
     val host = config.getString("form.redirect.base")
     val userData = userDataFromSession
     val hakukohdeOid = params.get("hakukohdeOid").getOrElse(halt(409))
-    val educationForThisHakukohde = db.findEducations(userDataFromSession).find(_.hakukohdeOid == hakukohdeOid).getOrElse(halt(409))
+    val educationForThisHakukohde = db.findEducationByHakukohdeOid(userDataFromSession, hakukohdeOid).getOrElse(halt(409))
     val payments = db.findPayments(userData)
     val shouldPay = countries.shouldPay(educationForThisHakukohde.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))

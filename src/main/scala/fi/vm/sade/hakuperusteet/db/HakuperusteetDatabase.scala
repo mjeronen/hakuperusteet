@@ -46,6 +46,9 @@ case class HakuperusteetDatabase(db: DB) {
   def findEducations(user: User): Seq[Education] =
     Tables.Education.filter(_.henkiloOid === user.personOid).result.run.map(educationRowToEducation)
 
+  def findEducationByHakukohdeOid(user: User, hakukohdeOid: String) =
+    Tables.Education.filter(_.henkiloOid === user.personOid).filter(_.hakukohdeOid === hakukohdeOid).result.headOption.run.map(educationRowToEducation)
+
   def upsertEducation(education: Education) =
     (Tables.Education returning Tables.Education).insertOrUpdate(educationToEducationRow(education)).run.map(educationRowToEducation)
 
