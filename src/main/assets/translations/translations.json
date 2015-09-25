@@ -113,7 +113,10 @@
   },
   "educationForm": {
     "info": {
-      "en": "Please enter your education information"
+      "en": "Please enter your education information for applying to"
+    },
+    "payment": {
+      "en": "This education here is used only to decide if you need to pay application fee. You can give other educations in application form."
     },
     "submit": {
       "en": "Submit"

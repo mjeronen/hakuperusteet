@@ -13,10 +13,17 @@ export default class EducationForm extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
+    const tarjonta = _.isUndefined(this.props.state.tarjonta) ? {name : "", description: ""} : this.props.state.tarjonta
+    const name = tarjonta.name
     const disabled = (validateEducationForm(state)) ? "" : "disabled"
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     return <form id="educationForm" onSubmit={controller.formSubmits}>
-      <p>{translation("educationForm.info")}</p>
+      <p>
+        {translation("educationForm.info")} <strong>{name}.</strong>
+      </p>
+      <p>
+        {translation("educationForm.payment")}
+      </p>
       <EducationLevel state={state} controller={controller} />
       <Countries countries={countries} controller={controller} lang="en" />
       <CountryPaymentInfo state={state} />
