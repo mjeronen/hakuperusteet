@@ -33,7 +33,7 @@ export function showHakuList(state) {
   function hasValidPayment() {
     return _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
   }
-  return hasUserData(state) && (hasValidPayment() || !paymentRequired(state))
+  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && (hasValidPayment() || !paymentRequired(state))
 }
 
 export function showVetumaResultOk(state) {
@@ -50,6 +50,11 @@ export function showVetumaResultError(state) {
 function hasUserData(state) {
   return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user)
 }
+
+function hasEducationForCurrentHakuOid(state) {
+  return _.some(state.sessionData.education, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
+}
+
 function paymentRequired(state) {
   const educationForCurrentHakukohdeOid = _.find(state.sessionData.education, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
   if (_.isEmpty(educationForCurrentHakukohdeOid)) {
