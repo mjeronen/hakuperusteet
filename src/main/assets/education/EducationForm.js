@@ -14,11 +14,7 @@ export function submitEducationDataToServer(state) {
   promise.onError((error) => {
     const form = document.getElementById('educationForm')
     enableSubmitAndHideBusy(form)
-    if (error.status == 409) {
-      form.querySelector("span.invalid").classList.remove("hide")
-    } else {
-      form.querySelector("span.general").classList.remove("hide")
-    }
+    form.querySelector("span.general").classList.remove("hide")
   })
   return promise
 }
