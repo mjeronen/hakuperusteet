@@ -37,8 +37,9 @@ MacOS users install docker with command `rew cask install dockertoolbox`.
 3. Check DOCKER_HOST variable
 4. Edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
 5. `docker run -p 5432:5432 postgres`
-6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
-7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
+6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE ROLE OPH;"`
+7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
+8. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
 
 ### Create slick-classes
 
