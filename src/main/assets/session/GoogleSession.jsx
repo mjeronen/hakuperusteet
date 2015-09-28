@@ -9,8 +9,8 @@ export default class GoogleSession extends React.Component {
     const state = this.props.state
     const controller = this.props.controller
 
-    return <div id="googleAuthentication">
-      <img id="googleAuthenticationStatus" src="/hakuperusteet/img/button_google_signedin.png" />
+    return <div className="googleAuthentication session">
+      <img src="/hakuperusteet/img/button_google_signedin.png" />
       <a id="logout" href="#" onClick={logOut(state, controller)}>{translation("logout")}</a>
     </div>
   }
