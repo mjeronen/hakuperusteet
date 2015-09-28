@@ -9,7 +9,7 @@ export default class EmailLogIn extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
-    return <div id="emailAuthentication">
+    return <div className="emailAuthentication login">
       <p>{translation("login.order.link")}</p>
       <form onSubmit={orderEmailLoginLink(state)} method="POST">
         <label htmlFor="emailToken">{translation("title.email")}</label>
