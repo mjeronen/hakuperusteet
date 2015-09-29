@@ -51,5 +51,9 @@ describe('Page with email session', function() {
     expect(S(".loggedInAs").text()).to.equal("mochatest@example.com")
   })
 
+  it('should show logout button', function () {
+    expect(S("#logout").length).to.equal(1)
+  })
+
   after(logout)
 })
