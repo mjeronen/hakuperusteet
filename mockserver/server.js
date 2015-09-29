@@ -47,12 +47,17 @@ app.post('/oppijan-tunnistus/api/v1/token', function(req, res){
   res.send(callback_url);
 });
 app.get('/oppijan-tunnistus/api/v1/token/:token', function(req, res){
-  console.log("Verifying token " + req.params.token)
-  var email = oppijanTunnistusEmails[req.params.token]
-  if(email) {
-    res.send({ "valid" : true, "email" : email});
+  var token = req.params.token
+  console.log("Verifying token " + token)
+  if (token == "mochaTestToken") {
+    res.send({ "valid" : true, "email" : "mochatest@example.com"});
   } else {
-    res.send({ "valid" : false });
+    var email = oppijanTunnistusEmails[token]
+    if(email) {
+      res.send({ "valid" : true, "email" : email});
+    } else {
+      res.send({ "valid" : false });
+    }
   }
 });
 
