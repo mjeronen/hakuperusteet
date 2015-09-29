@@ -2,7 +2,8 @@ const outputDir = "./target/scala-2.11/classes/"
 
 module.exports = {
   entry: {
-    app: "./src/main/assets/HakuperusteetApp.jsx"
+    app: "./src/main/assets/HakuperusteetApp.jsx",
+    spec: "./src/main/spec/HakuperusteetSpec.js"
   },
   output: {
     path: outputDir,
