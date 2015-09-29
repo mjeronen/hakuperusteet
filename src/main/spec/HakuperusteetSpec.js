@@ -2,7 +2,7 @@ import 'mocha'
 import {expect} from 'chai'
 import $ from 'jquery'
 
-import {openPage, hakuperusteetLoaded, testFrame, takeScreenshot, S} from './testUtil.js'
+import {openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S} from './testUtil.js'
 
 const testTimeoutDefault = 30000
 mocha.ui('bdd')
@@ -50,4 +50,6 @@ describe('Page with email session', function() {
   it('should show email as loggedIn user', function () {
     expect(S(".loggedInAs").text()).to.equal("mochatest@example.com")
   })
+
+  after(logout)
 })

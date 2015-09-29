@@ -73,6 +73,10 @@ export function openPage(path, predicate) {
   }
 }
 
+export function logout() {
+  S("#logout").get(0).click()
+}
+
 export function takeScreenshot() {
   if (window.callPhantom) {
     var date = new Date()
