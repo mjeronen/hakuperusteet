@@ -143,5 +143,6 @@ function sessionFromServer(sessionUrl) {
 }
 
 function sessionInit() {
+  window.SESSION_INITED_FOR_TESTING = true
   dispatcher.push(events.updateField, {field: 'sessionInit', value: true})
 }

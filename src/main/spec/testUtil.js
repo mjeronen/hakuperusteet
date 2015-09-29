@@ -52,7 +52,7 @@ export function waitforMilliseconds(ms) {
 }
 
 export function hakuperusteetLoaded() {
-  return $(testFrame().document).find("#footer").is(":visible")
+  return $("#testframe").get(0).contentWindow.SESSION_INITED_FOR_TESTING === true
 }
 
 export function testFrame() {
