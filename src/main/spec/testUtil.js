@@ -60,11 +60,6 @@ export function testFrame() {
 }
 
 export function openPage(path, predicate) {
-  if (!predicate) {
-    predicate = function () {
-      return testFrame().jQuery
-    }
-  }
   return function () {
     var newTestFrame = $('<iframe>').attr({src: path, width: 1024, height: 800, id: "testframe"})
     $("#testframe").replaceWith(newTestFrame)
