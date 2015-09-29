@@ -43,3 +43,11 @@ describe('Page without session', function() {
     expect(S(".hakuList").length).to.equal(0)
   })
 })
+
+describe('Page with email session', function() {
+  before(openPage("https://localhost:18080/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
+
+  it('should show email as loggedIn user', function () {
+    expect(S(".loggedInAs").text()).to.equal("mochatest@example.com")
+  })
+})

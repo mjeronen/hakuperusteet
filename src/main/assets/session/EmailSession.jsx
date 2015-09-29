@@ -11,7 +11,7 @@ export default class EmailSession extends React.Component {
     const controller = this.props.controller
     const email = _.isUndefined(state.sessionData) ? "" : state.sessionData.session.email
     return <div className="emailAuthentication session">
-      <p>{translation("login.logged.in.as") + email}.</p>
+      <p>{translation("login.logged.in.as")} <span className="loggedInAs">{email}</span>.</p>
       <a id="logout" href="#" onClick={logOut(state, controller)}>{translation("logout")}</a>
     </div>
   }
