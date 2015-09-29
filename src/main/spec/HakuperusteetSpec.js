@@ -44,15 +44,43 @@ describe('Page without session', function() {
   })
 })
 
-describe('Page with email session', function() {
+describe('Page with email session - no userdata', function() {
   before(openPage("https://localhost:18080/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
 
   it('should show email as loggedIn user', function () {
     expect(S(".loggedInAs").text()).to.equal("mochatest@example.com")
   })
 
+  it('should not show email login button', function() {
+    expect(S(".emailAuthentication.login").length).to.equal(0)
+  })
+
+  it('should not show Google login button', function() {
+    expect(S(".googleAuthentication.login").length).to.equal(0)
+  })
+
+  it('should not show Google session', function() {
+    expect(S(".googleAuthentication.session").length).to.equal(0)
+  })
+
   it('should show logout button', function () {
     expect(S("#logout").length).to.equal(1)
+  })
+
+  it('should show userDataForm', function() {
+    expect(S("#userDataForm").length).to.equal(1)
+  })
+
+  it('should not show educationForm', function() {
+    expect(S("#educationForm").length).to.equal(0)
+  })
+
+  it('should not show vetuma start', function() {
+    expect(S(".vetumaStart").length).to.equal(0)
+  })
+
+  it('should not show hakuList', function() {
+    expect(S(".hakuList").length).to.equal(0)
   })
 
   after(logout)
