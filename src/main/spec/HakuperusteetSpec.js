@@ -8,11 +8,38 @@ const testTimeoutDefault = 30000
 mocha.ui('bdd')
 mocha.timeout(testTimeoutDefault)
 
-describe('Page without sessions', function() {
+describe('Page without session', function() {
   before(openPage("https://localhost:18080/hakuperusteet", hakuperusteetLoaded))
 
   it('should show Google login button', function() {
-    const googleAuth = S(".googleAuthentication.login")
-    expect(googleAuth.length).to.equal(1)
+    expect(S(".googleAuthentication.login").length).to.equal(1)
+  })
+
+  it('should not show Google session', function() {
+    expect(S(".googleAuthentication.session").length).to.equal(0)
+  })
+
+  it('should show Email login button', function() {
+    expect(S(".emailAuthentication.login").length).to.equal(1)
+  })
+
+  it('should not show Email session', function() {
+    expect(S(".emailAuthentication.session").length).to.equal(0)
+  })
+
+  it('should not show userDataForm', function() {
+    expect(S("#userDataForm").length).to.equal(0)
+  })
+
+  it('should not show educationForm', function() {
+    expect(S("#educationForm").length).to.equal(0)
+  })
+
+  it('should not show vetuma start', function() {
+    expect(S(".vetumaStart").length).to.equal(0)
+  })
+
+  it('should not show hakuList', function() {
+    expect(S(".hakuList").length).to.equal(0)
   })
 })
