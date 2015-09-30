@@ -18,8 +18,7 @@ import scala.util.Try
 object HakuperusteetServer {
   val logger = LoggerFactory.getLogger(this.getClass)
 
-  private val isAdminApiEnabled = Option(System.getProperty("admin-api"))
-    .exists(m => Try(m.toBoolean).toOption.exists(_.equals(true)))
+  private val isAdminApiEnabled = System.getProperty("admin-api", "false") == "true"
 
   def main(args: Array[String]) {
     val portHttp = props.getInt("hakuperusteet.port.http")

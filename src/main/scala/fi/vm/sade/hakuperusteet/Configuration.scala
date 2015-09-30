@@ -9,8 +9,7 @@ import scala.util.Try
 import com.typesafe.config._
 
 object Configuration extends LazyLogging {
-  private val isMockConfig = Option(System.getProperty("mock"))
-    .exists(m => Try(m.toBoolean).toOption.exists(_.equals(true)))
+  private val isMockConfig = System.getProperty("mock", "false") == "true"
 
   if(isMockConfig) {
     logger.info("Using mock configuration")
