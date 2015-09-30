@@ -13,17 +13,17 @@ object JettyUtil extends LazyLogging {
     val server = new Server()
     server.setHandler(context)
     server.setConnectors(createConnectors(portHttp, portHttps, server))
-
-    val requestLog = new RequestLogImpl()
-    requestLog.setFileName(sys.props.getOrElse("logbackaccess.configurationFile","src/main/resources/logbackAccess.xml"))
-    server.setRequestLog(requestLog)
-    requestLog.start
-
+    initRequestLog(server)
     initJmx(server)
-
     server
   }
 
+  def initRequestLog(server: Server): Unit = {
+    val requestLog = new RequestLogImpl()
+    requestLog.setFileName(sys.props.getOrElse("logbackaccess.configurationFile", "src/main/resources/logbackAccess.xml"))
+    server.setRequestLog(requestLog)
+    requestLog.start
+  }
 
   private def initJmx(server: Server): Boolean = {
     val jmxPort = System.getProperty("com.sun.management.jmxremote.port", "12345").toInt
@@ -43,8 +43,6 @@ object JettyUtil extends LazyLogging {
     httpConnector.setPort(portHttp)
     httpConnector
   }
-
-
 
   private def createSSLConnector(port: Int, server: Server): Connector = {
     val sslContextFactory = new SslContextFactory
