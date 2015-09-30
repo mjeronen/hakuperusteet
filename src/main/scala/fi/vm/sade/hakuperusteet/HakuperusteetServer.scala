@@ -3,7 +3,7 @@ package fi.vm.sade.hakuperusteet
 import ch.qos.logback.access.jetty.RequestLogImpl
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.HakuperusteetServer._
-import fi.vm.sade.hakuperusteet.util.Jmx
+import fi.vm.sade.hakuperusteet.util.{JettyUtil, Jmx}
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.servlet.DefaultServlet
@@ -18,69 +18,18 @@ import scala.util.Try
 object HakuperusteetServer {
   val logger = LoggerFactory.getLogger(this.getClass)
 
-  private val isAdminApiEnabled = System.getProperty("admin-api", "false") == "true"
-
   def main(args: Array[String]) {
     val portHttp = props.getInt("hakuperusteet.port.http")
     val portHttps = Option(props.getInt("hakuperusteet.port.https")).find(_ != -1)
 
-    val handlers = new HandlerCollection()
-    if(isAdminApiEnabled) {
-      handlers.addHandler(HakuperusteetAdminContext.createContext)
-    }
-    handlers.addHandler(HakuperusteetContext.createContext)
+    val server =
+      JettyUtil.createServerWithContext(portHttp, portHttps, HakuperusteetContext.createContext)
 
-    val server = new Server()
-    server.setHandler(handlers)
-    server.setConnectors(createConnectors(portHttp, portHttps, server))
-
-    val requestLog = new RequestLogImpl()
-    requestLog.setFileName(sys.props.getOrElse("logbackaccess.configurationFile","src/main/resources/logbackAccess.xml"))
-    server.setRequestLog(requestLog)
-    requestLog.start
-
-    initJmx(server)
     server.start
     server.join
     logger.info(s"Hakuperusteet-server started on ports $portHttp and $portHttps")
   }
 
-  private def initJmx(server: Server): Boolean = {
-    val jmxPort = System.getProperty("com.sun.management.jmxremote.port", "12345").toInt
-    logger.info(s"Starting jmx on $jmxPort")
-    val jmx = Jmx.init(jmxPort)
-    server.addEventListener(jmx.mBean)
-    server.addBean(jmx.mBean)
-  }
-
-  private def createConnectors(portHttp: Int, portHttps: Option[Int], server: Server): Array[Connector] = {
-    Array(createHttpConnector(portHttp, server)) ++
-      portHttps.map(p => Array(createSSLConnector(p,server))).getOrElse(Array())
-  }
-
-  private def createHttpConnector(portHttp: Int, server: Server): Connector = {
-    val httpConnector = new ServerConnector(server, new HttpConnectionFactory(new HttpConfiguration))
-    httpConnector.setPort(portHttp)
-    httpConnector
-  }
-
-
-
-  private def createSSLConnector(port: Int, server: Server): Connector = {
-    val sslContextFactory = new SslContextFactory
-    sslContextFactory.setKeyStoreType("jks")
-    sslContextFactory.setKeyStorePath(this.getClass.getClassLoader.getResource("keystore").toExternalForm)
-    sslContextFactory.setKeyStorePassword("keystore")
-    sslContextFactory.setKeyManagerPassword("keystore")
-
-    val httpsConfig = new HttpConfiguration
-    httpsConfig.setSecurePort(port)
-    httpsConfig.addCustomizer(new SecureRequestCustomizer)
-
-    val https = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(httpsConfig))
-    https.setPort(port)
-    https
-  }
 }
 object HakuperusteetContext {
   def createContext: WebAppContext = {
@@ -88,17 +37,6 @@ object HakuperusteetContext {
     context setContextPath ("/hakuperusteet/")
     context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
     context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
-    context.addEventListener(new ScalatraListener)
-    context.addServlet(classOf[DefaultServlet], "/")
-    context
-  }
-}
-object HakuperusteetAdminContext {
-  def createContext: WebAppContext = {
-    val context = new WebAppContext()
-    context setContextPath ("/hakuperusteetadmin")
-    context.setResourceBase(getClass.getClassLoader.getResource("webapp-admin").toExternalForm)
-    context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraAdminBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")
     context
