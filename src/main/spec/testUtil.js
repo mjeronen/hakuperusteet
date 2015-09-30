@@ -1,7 +1,3 @@
-import $ from 'jquery'
-import Q from 'q'
-
-const testTimeoutPageLoad = 120000
 const waitIntervalMs = 10
 
 export function S(selector) {

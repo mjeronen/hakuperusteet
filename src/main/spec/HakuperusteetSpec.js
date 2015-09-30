@@ -1,12 +1,6 @@
-import 'mocha'
 import {expect} from 'chai'
-import $ from 'jquery'
 
 import {openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S} from './testUtil.js'
-
-const testTimeoutDefault = 30000
-mocha.ui('bdd')
-mocha.timeout(testTimeoutDefault)
 
 describe('Page without session', function() {
   before(openPage("https://localhost:18080/hakuperusteet", hakuperusteetLoaded))
