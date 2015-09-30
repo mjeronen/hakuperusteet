@@ -45,6 +45,7 @@ object HakuperusteetBuild extends Build {
       name := Name,
       version := Version,
       scalaVersion := ScalaVersion,
+      resolvers += Resolver.mavenLocal,
       resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
       resolvers += "OPH snapshots" at "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local",
       resolvers += Classpaths.typesafeReleases,
@@ -74,7 +75,8 @@ object HakuperusteetBuild extends Build {
         "org.flywaydb" % "flyway-core" % "3.2.1",
         "com.google.api-client" % "google-api-client" % "1.20.0",
         "org.apache.httpcomponents" % "fluent-hc" % "4.5",
-        "fi.vm.sade" %% "scala-utils" % "0.2.0-SNAPSHOT",
+        "fi.vm.sade" %% "scala-cas" % "0.2.0-SNAPSHOT",
+        "fi.vm.sade" %% "scala-security" % "0.2.0-SNAPSHOT",
         "org.scalatest" %% "scalatest" % "2.2.4" % "test",
         "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
         "org.typelevel" %% "scalaz-scalatest" % "0.2.2" % "test"

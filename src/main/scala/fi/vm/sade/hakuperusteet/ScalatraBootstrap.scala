@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import javax.servlet.ServletContext
 
+import fi.vm.sade.hakuperusteet.admin.AdminServlet
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.email.EmailSender
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier

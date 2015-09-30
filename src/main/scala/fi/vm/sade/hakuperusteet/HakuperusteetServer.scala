@@ -2,8 +2,10 @@ package fi.vm.sade.hakuperusteet
 
 import ch.qos.logback.access.jetty.RequestLogImpl
 import com.typesafe.scalalogging.LazyLogging
+import fi.vm.sade.hakuperusteet.HakuperusteetServer._
 import fi.vm.sade.hakuperusteet.util.Jmx
 import org.eclipse.jetty.server._
+import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.webapp.WebAppContext
@@ -11,15 +13,26 @@ import org.scalatra.servlet.ScalatraListener
 import Configuration._
 import org.slf4j.LoggerFactory
 
+import scala.util.Try
+
 object HakuperusteetServer {
   val logger = LoggerFactory.getLogger(this.getClass)
+
+  private val isAdminApiEnabled = Option(System.getProperty("admin-api"))
+    .exists(m => Try(m.toBoolean).toOption.exists(_.equals(true)))
 
   def main(args: Array[String]) {
     val portHttp = props.getInt("hakuperusteet.port.http")
     val portHttps = Option(props.getInt("hakuperusteet.port.https")).find(_ != -1)
 
+    val handlers = new HandlerCollection()
+    if(isAdminApiEnabled) {
+      handlers.addHandler(HakuperusteetAdminContext.createContext)
+    }
+    handlers.addHandler(HakuperusteetContext.createContext)
+
     val server = new Server()
-    server.setHandler(createContext)
+    server.setHandler(handlers)
     server.setConnectors(createConnectors(portHttp, portHttps, server))
 
     val requestLog = new RequestLogImpl()
@@ -52,15 +65,7 @@ object HakuperusteetServer {
     httpConnector
   }
 
-  private def createContext: WebAppContext = {
-    val context = new WebAppContext()
-    context setContextPath ("/hakuperusteet/")
-    context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
-    context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
-    context.addEventListener(new ScalatraListener)
-    context.addServlet(classOf[DefaultServlet], "/")
-    context
-  }
+
 
   private def createSSLConnector(port: Int, server: Server): Connector = {
     val sslContextFactory = new SslContextFactory
@@ -76,5 +81,27 @@ object HakuperusteetServer {
     val https = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(httpsConfig))
     https.setPort(port)
     https
+  }
+}
+object HakuperusteetContext {
+  def createContext: WebAppContext = {
+    val context = new WebAppContext()
+    context setContextPath ("/hakuperusteet/")
+    context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
+    context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
+    context.addEventListener(new ScalatraListener)
+    context.addServlet(classOf[DefaultServlet], "/")
+    context
+  }
+}
+object HakuperusteetAdminContext {
+  def createContext: WebAppContext = {
+    val context = new WebAppContext()
+    context setContextPath ("/hakuperusteetadmin")
+    context.setResourceBase(getClass.getClassLoader.getResource("webapp-admin").toExternalForm)
+    context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraAdminBootstrap].getCanonicalName)
+    context.addEventListener(new ScalatraListener)
+    context.addServlet(classOf[DefaultServlet], "/")
+    context
   }
 }
