@@ -11,6 +11,8 @@ import org.json4s.native.JsonMethods._
 import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryStrategy
 
+import scala.util.{Failure, Success, Try}
+
 class TokenAuthStrategy (protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends ScentryStrategy[Session] with LazyLogging {
   import fi.vm.sade.hakuperusteet._
 
@@ -34,13 +36,16 @@ class TokenAuthStrategy (protected override val app: ScalatraBase, config: Confi
   }
 
   def handleNewSessionOrUpdatedTokenCase(tokenFromRequest: String) = {
-    oppijanTunnistus.validateToken(tokenFromRequest) match {
-      case Some(email) =>
+    Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
+      case Success(Some(email)) =>
         db.findSession(email) match {
           case Some(session) => updateExistingSessionWithNewToken(tokenFromRequest, email, session)
           case None => createNewSession(tokenFromRequest, email)
         }
-      case _ => None
+      case Success(None) => None
+      case Failure(f) =>
+        logger.error("Oppijantunnistus.validateToken error", f)
+        app.halt(500)
     }
   }
 
