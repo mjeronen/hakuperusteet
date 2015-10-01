@@ -25,10 +25,7 @@ export function initAppState(props) {
   const {tarjontaUrl, propertiesUrl, sessionUrl, authenticationUrl} = props
   const initialState = {}
 
-  const gapiLoading = Bacon.fromPoll(10, function() {
-    if (typeof gapi == "undefined") return new Bacon.Next("loading")
-    else return new Bacon.End()
-  })
+  const gapiLoading = Bacon.fromPoll(10, checkGapiStatus)
   const serverUpdatesBus = new Bacon.Bus()
   const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
@@ -135,7 +132,10 @@ export function initAppState(props) {
   function isNotEmpty(x) { return !_.isEmpty(x) }
   function isCssEffect(x) { return x.startsWith("#/effect/") }
   function toCssEffect(x) { return x.replace("#/effect/", "") }
-
+  function checkGapiStatus() {
+    if (typeof gapi == "undefined") return new Bacon.Next("loading")
+    else return new Bacon.End()
+  }
 }
 
 function authenticate(authenticationUrl) {
