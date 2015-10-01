@@ -32,16 +32,22 @@ openssl as follows.
 
 MacOS users install docker with command `rew cask install dockertoolbox`. 
 
-1. Create new docker-machine `docker-machine create —-driver virtualbox dockerV`
+1. Create new docker-machine `docker-machine create —-driver virtualbox dockerVM`
 2. Eval "$(docker-machine env dockerVM)"`
 3. Check DOCKER_HOST variable
 4. Edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
-5. `docker run -p 5432:5432 postgres`
+5. `docker run -p -d 5432:5432 postgres`
 6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE ROLE OPH;"`
 7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
 8. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
 
-### Create slick-classes
+To start docker again (e.g. after boot), run the following commands.
+
+1. `docker-machine start dockerVM`
+2. `eval "$(docker-machine env dockerVM)"`
+3. `docker run -d -p 5432:5432 postgres`
+
+## Create slick-classes
 
 During development, after schema changes you must regenerate db-classes with command:
 
