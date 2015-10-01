@@ -50,9 +50,14 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   post("/emailToken") {
     val json = parse(request.body)
     val email = (json \ "email").extract[Option[String]].getOrElse(halt(409))
-    val token = oppijanTunnistus.createToken(email)
-    logger.info(s"Sending token to $email with value $token")
-    compact(render(Map("token" -> token)))
+    Try(oppijanTunnistus.createToken(email)) match {
+      case Success(token) =>
+        logger.info(s"Sending token to $email with value $token")
+        compact(render(Map("token" -> token)))
+      case Failure(f) =>
+        logger.error("Oppijantunnistus.createToken error", f)
+        halt(status = 500)
+    }
   }
 
   post("/userData") {
