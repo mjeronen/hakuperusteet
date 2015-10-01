@@ -51,6 +51,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     val json = parse(request.body)
     val email = (json \ "email").extract[Option[String]].getOrElse(halt(409))
     val token = oppijanTunnistus.createToken(email)
+    logger.info(s"Sending token to $email with value $token")
     compact(render(Map("token" -> token)))
   }
 
