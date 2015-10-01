@@ -97,8 +97,9 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     val newUser = Try(henkiloClient.upsertHenkilo(userData)) match {
       case Success(u) => userData.copy(personOid = Some(u.personOid))
       case Failure(t) =>
-        logger.error("Unable to get henkilö", t)
-        halt(500, "Unable to get henkilö")
+        val error = s"Henkilopalvelu upsert failed for email ${userData.email}"
+        logger.error(error, t)
+        renderConflictWithErrors(NonEmptyList[String](error))
     }
     newUser
   }
