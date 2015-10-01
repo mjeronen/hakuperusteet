@@ -25,7 +25,7 @@ export function initAppState(props) {
   const {tarjontaUrl, propertiesUrl, sessionUrl, authenticationUrl} = props
   const initialState = {}
 
-  const gapiLoading = Bacon.fromPoll(10, checkGapiStatus)
+  const gapiLoading = Bacon.fromPoll(10, checkGapiStatus).filter(skipLoadingMessages)
   const serverUpdatesBus = new Bacon.Bus()
   const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
@@ -136,6 +136,7 @@ export function initAppState(props) {
     if (typeof gapi == "undefined") return new Bacon.Next("loading")
     else return new Bacon.End()
   }
+  function skipLoadingMessages(x) { return x != "loading" }
 }
 
 function authenticate(authenticationUrl) {
