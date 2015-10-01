@@ -1,10 +1,11 @@
 import Bacon from 'baconjs'
+import _ from 'lodash'
 
 import HttpUtil from '../util/HttpUtil'
 import {disableSubmitAndShowBusy, enableSubmitAndHideBusy, enableSubmitAndHideBusyAndShowError} from '../util/HtmlUtils.js'
 
 export function isLoginToken(hash) {
-  return hash.startsWith("#/token/")
+  return _.startsWith(hash, "#/token/")
 }
 
 export function initEmailAuthentication(hash) {

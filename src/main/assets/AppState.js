@@ -1,4 +1,5 @@
 import Bacon from 'baconjs'
+import _ from 'lodash'
 
 import HttpUtil from './util/HttpUtil.js'
 import Dispatcher from './util/Dispatcher'
@@ -130,7 +131,7 @@ export function initAppState(props) {
     return Bacon.once(currentHash)
   }
   function isNotEmpty(x) { return !_.isEmpty(x) }
-  function isCssEffect(x) { return x.startsWith("#/effect/") }
+  function isCssEffect(x) { return _.startsWith(x, "#/effect/") }
   function toCssEffect(x) { return x.replace("#/effect/", "") }
   function checkGapiStatus() {
     if (typeof gapi == "undefined") return new Bacon.Next("loading")
