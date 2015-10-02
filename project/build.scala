@@ -2,8 +2,9 @@ import sbt._
 import Keys._
 import org.scalatra.sbt._
 import sbtassembly.AssemblyKeys._
-import sbtassembly.{PathList, MergeStrategy}
+import sbtassembly.{AssemblyPlugin, PathList, MergeStrategy}
 import com.earldouglas.xwp.XwpPlugin._
+import sbt.Defaults.{runTask}
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -35,9 +36,12 @@ object HakuperusteetBuild extends Build {
       IO.write(f, buildversionTxt)
   }
 
+  lazy val HakuperusteetAdminConfig = config("admin") extend(Compile)
+
   lazy val project = Project (
     "hakuperusteet",
     file("."),
+    configurations = Seq(HakuperusteetAdminConfig),
     settings = ScalatraPlugin.scalatraWithJRebel ++ sbtassembly.AssemblyPlugin.assemblySettings ++
       addArtifact(Artifact("hakuperusteet", "assembly"), sbtassembly.AssemblyKeys.assembly) ++
       com.earldouglas.xwp.XwpPlugin.jetty() ++ Seq(
@@ -108,7 +112,14 @@ object HakuperusteetBuild extends Build {
         else
           Some("releases" at artifactory + "/oph-sade-release-local")
       }
-    )
+    )++ inConfig(HakuperusteetAdminConfig)(
+      AssemblyPlugin.baseAssemblySettings ++
+        Seq(
+          test in assembly := {},
+          run <<= runTask(fullClasspath, mainClass, runner in run),
+          assemblyJarName := Name.toLowerCase + "admin" + "-" + Version + "-assembly.jar",
+          mainClass := Some("fi.vm.sade.hakuperusteet.HakuperusteetAdminServer")
+        ))
   )
 
   lazy val npmInstallTask = taskKey[Unit]("Execute the npm install command")
