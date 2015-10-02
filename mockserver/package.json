@@ -10,6 +10,7 @@
   "dependencies" : {
     "express" : "4.11.0",
     "requestify": "0.1.17",
-    "body-parser": "1.13.3"
+    "body-parser": "1.13.3",
+    "ldapjs": "mcavage/node-ldapjs#acc1ca8f4314fd9d67561feabc8ce4c235076a5e"
   }
 }

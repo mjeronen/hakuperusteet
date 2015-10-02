@@ -4,6 +4,35 @@ var crypto = require('crypto')
 var bodyParser = require('body-parser')
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+var ldap = require('ldapjs');
+var server = ldap.createServer();
+server.bind('ou=People, dc=opintopolku, dc=fi', function(req, res, next) {
+  console.log('bind DN: ' + req.dn.toString());
+  console.log('bind PW: ' + req.credentials);
+  // AUTH CHECK WOULD BE HERE BUT PASSING ALL
+  res.end();
+  return next();
+});
+
+server.search('ou=People, dc=opintopolku, dc=fi', function(req, res, next) {
+  var obj = {
+    dn: 'uid=testitest,ou=People,dc=opintopolku,dc=fi',
+    attributes: {
+      employeeNumber: "1.2.246.562.24.00000001337",
+      uid: "testitest",
+      sn: "Testaaja",
+      givenname: "Testi",
+      description: '["ROLE1", "ROLE2", "ROLE3"]'
+    }
+  };
+  res.send(obj);
+  res.end();
+});
+
+server.listen(1389, function() {
+  console.log('ldapjs listening at ' + server.url);
+});
+
 var app = express();
 // Body parser
 app.use(bodyParser.json())
