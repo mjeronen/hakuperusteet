@@ -33,6 +33,4 @@ trait CasAuthenticationSupport extends ScentrySupport[CasSession] with BasicAuth
   val redirectUrl = cfg.getString("hakuperusteet.cas.url") + "/cas/login?service=" + URLEncoder.encode(cfg.getString("adminhost.url.base"), "UTF-8")
 
   def failUnlessAuthenticated = if (!isAuthenticated) redirect(redirectUrl)
-
-  // "https://itest-virkailija.oph.ware.fi/cas/login?service=" + URLEncoder.encode("https://localhost:18080/hakuperusteetadmin", "UTF-8")
 }
