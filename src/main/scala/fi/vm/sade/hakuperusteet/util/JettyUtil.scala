@@ -14,7 +14,6 @@ object JettyUtil extends LazyLogging {
     server.setHandler(context)
     server.setConnectors(createConnectors(portHttp, portHttps, server))
     initRequestLog(server)
-    initJmx(server)
     server
   }
 
@@ -23,14 +22,6 @@ object JettyUtil extends LazyLogging {
     requestLog.setFileName(sys.props.getOrElse("logbackaccess.configurationFile", "src/main/resources/logbackAccess.xml"))
     server.setRequestLog(requestLog)
     requestLog.start
-  }
-
-  private def initJmx(server: Server): Boolean = {
-    val jmxPort = System.getProperty("com.sun.management.jmxremote.port", "12345").toInt
-    logger.info(s"Starting jmx on $jmxPort")
-    val jmx = Jmx.init(jmxPort)
-    server.addEventListener(jmx.mBean)
-    server.addBean(jmx.mBean)
   }
 
   private def createConnectors(portHttp: Int, portHttps: Option[Int], server: Server): Array[Connector] = {
