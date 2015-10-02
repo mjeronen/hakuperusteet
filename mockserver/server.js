@@ -2,6 +2,8 @@ var express = require('express')
 var requestify = require('requestify')
 var crypto = require('crypto')
 var bodyParser = require('body-parser')
+var xml = require('xml');
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 var ldap = require('ldapjs');
@@ -125,6 +127,16 @@ app.post('/VETUMAPayment', function(req, res){
 });
 
 // CAS
+app.get('/cas/serviceValidate', function(req, res){
+  var msg = {"cas:serviceResponse": [ { "_attr": { "xmlns:cas": "http://www.yale.edu/tp/cas"} }, { "cas:authenticationSuccess": [{ "cas:user": "testitest"} ]}]}
+  console.log(msg)
+  res.set('Content-Type', 'text/xml');
+  res.send(xml(msg));
+});
+app.get('/cas/login', function(req, res){
+  var service = decodeURI(req.query['service'])
+  res.redirect(service + "?ticket=ST_MOCK");
+});
 app.post('/cas/v1/tickets', function(req, res){
   res.append('Location', 'http://localhost:3000/cas/v1/tickets/TGT-123');
   res.status(201)
