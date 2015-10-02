@@ -64,4 +64,6 @@ Currently we store generated code in git, and hence it is not necessary to run t
 `cd mockserver`
 `npm install`
 `node server.js`
-
+or use nodemon to auto reload on changes
+`npm install -g nodemon`
+`nodemon server.js`
