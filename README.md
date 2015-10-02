@@ -11,6 +11,10 @@ setting the environment variable `PORT`.
 or
 3. `sbt admin:assembly` (for admin app build)
 
+## Auto compile frontend while developing
+1. `npm install` (first time)
+2. `npm run watch`
+
 ## Test API
 
 The application serves a simple test form in `/test_form.html`. The form can
