@@ -8,6 +8,8 @@ setting the environment variable `PORT`.
 ## Standalone JAR building
 1. `npm install` (first time)
 2. `sbt assembly`
+or
+3. `sbt admin:assembly` (for admin app build)
 
 ## Test API
 
