@@ -31,7 +31,7 @@ server.search('ou=People, dc=opintopolku, dc=fi', function(req, res, next) {
   res.end();
 });
 
-server.listen(1389, function() {
+server.listen(process.env.LDAP_PORT || 1389, function() {
   console.log('ldapjs listening at ' + server.url);
 });
 
@@ -153,4 +153,6 @@ app.get('/ryhmasahkoposti-service/j_spring_cas_security_check', function(req, re
   res.append('Set-Cookie', 'JSESSIONID=foobar-123');
   res.send({});
 });
-app.listen(process.env.PORT || 3000);
+var appPort = process.env.PORT || 3000
+console.log("Mock server listening " + appPort)
+app.listen(appPort);
