@@ -8,7 +8,7 @@ import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
 
 /**
- * sbt "run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminServer"
+ * ./sbt "run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminServer"
  */
 object HakuperusteetAdminServer {
   val logger = LoggerFactory.getLogger(this.getClass)
