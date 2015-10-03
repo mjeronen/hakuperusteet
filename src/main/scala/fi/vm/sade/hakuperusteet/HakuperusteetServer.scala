@@ -18,7 +18,7 @@ class HakuperusteetServer {
     logger.info(s"Using ports $portHttp and $portHttps")
   }
 
-  private def createContext = {
+  def createContext = {
     val context = new WebAppContext()
     context setContextPath ("/hakuperusteet/")
     context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
