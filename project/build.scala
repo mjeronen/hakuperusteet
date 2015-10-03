@@ -83,7 +83,8 @@ object HakuperusteetBuild extends Build {
         "fi.vm.sade" %% "scala-security" % "0.2.0-SNAPSHOT",
         "org.scalatest" %% "scalatest" % "2.2.4" % "test",
         "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
-        "org.typelevel" %% "scalaz-scalatest" % "0.2.2" % "test"
+        "org.typelevel" %% "scalaz-scalatest" % "0.2.2" % "test",
+        "org.hsqldb" % "hsqldb" % "2.3.3" % "test"
       ),
       mainClass in (Compile, run) := Some("fi.vm.sade.hakuperusteet.HakuperusteetServer"),
       compile <<= (compile in Compile) dependsOn npmInstallTask,
