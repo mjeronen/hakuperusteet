@@ -7,9 +7,9 @@ setting the environment variable `PORT`.
 
 ## Standalone JAR building
 1. `npm install` (first time)
-2. `sbt assembly`
+2. `./sbt assembly`
 or
-3. `sbt admin:assembly` (for admin app build)
+3. `./sbt admin:assembly` (for admin app build)
 
 ## Auto compile frontend while developing
 1. `npm install` (first time)
@@ -61,7 +61,7 @@ Currently we store generated code in git, and hence it is not necessary to run t
 
 ## Run using mock configuration
 
-`sbt run -J-Dmock=true` starts server using mock configuration
+`./sbt run -J-Dmock=true` starts server using mock configuration
 
 ## Start mock server
 
