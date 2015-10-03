@@ -13,7 +13,7 @@ class PropertiesServletSpec extends FunSuite with ScalatraSuite with ServletTest
       status should equal (200)
       val json = parse(body)
       val ghd = (json \ "googleAuthenticationHostedDomain").extract[Option[String]]
-      ghd should equal (Some("https://localhost:18080"))
+      ghd should equal (Some("https://localhost:18081"))
     }
   }
 }
