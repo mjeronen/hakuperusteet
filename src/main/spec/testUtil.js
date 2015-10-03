@@ -13,6 +13,13 @@ export function S(selector) {
   }
 }
 
+export function S2(selector) {
+  var deferred = Q.defer()
+  waitUntil(() => $(testFrame().document).find(selector).length > 0).then(function() {
+    deferred.resolve($(testFrame().document).find(selector))
+  })
+  return deferred.promise
+}
 
 export function waitUntil(condition, maxWaitMs) {
   if (maxWaitMs == undefined) maxWaitMs = testTimeoutDefault;
@@ -78,7 +85,13 @@ export function openPage(path, predicate) {
 }
 
 export function logout() {
-  S("#logout").get(0).click()
+  return S2("#logout").then((e) => {
+    try {
+      e.get(0).click()
+    } catch(e) {
+      // ignore phantomjs logout problem for now
+    }
+  })
 }
 
 export function takeScreenshot() {
