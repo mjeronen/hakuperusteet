@@ -72,7 +72,7 @@ This project has multiple configuration files, which are used for following purp
 
  - This optional config files is used to enable in-memory HSQLDB. Used with UI-tests, because Bamboo does not have Postgres.
 
-## Standalone JAR building
+## Build
 
 To create assembly jars (app and admin), run the following commands
 
