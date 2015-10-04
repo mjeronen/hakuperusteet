@@ -2,8 +2,28 @@
 
 ## Configuration
 
-As default, the application runs in the port `8080`. This can be changed by
-setting the environment variable `PORT`.
+This project has multiple configuration files, which are used for following purposes.
+
+### src/main/resources/reference.conf
+
+ - Development time configuration file, which uses luokka-environment
+
+### src/main/resources/mockReference.conf
+
+ - Development time configuration file, which uses mock server (see below).
+
+### src/main/resources/oph-configuration/hakuperusteet.properties.template
+
+ - This file is the configuration template used with real environments.
+
+### src/test/resources/reference.conf
+
+ - This file is used during unit and UI-tests, uses mock server and Postgres. Both mock server and Posgres has different ports
+   than in reference.conf above. Unit tests do not use mock server, hence their port numbers are irrelevant.
+
+### src/test/resources/hsqlReference.conf
+
+ - This optional config files is used to enable in-memory HSQLDB. Used with UI-tests, because Bamboo does not have Postgres.
 
 ## Standalone JAR building
 
