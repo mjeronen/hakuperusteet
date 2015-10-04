@@ -80,10 +80,21 @@ To create assembly jars (app and admin), run the following commands
 2. `./sbt assembly`
 3. `./sbt admin:assembly`
 
-## Create slick-classes
+## Postgres client classes for Slick
 
+Currently we store generated Postgres-client classes in git, and hence it is not necessary to run this normally.
 During development, after schema changes you must regenerate db-classes with command:
 
 `./sbt "run-main fi.vm.sade.hakuperusteet.db.CodeGenerator"`
 
-Currently we store generated code in git, and hence it is not necessary to run this normally.
+Remember to create separate schema migration script for HSQLDB also, and ensure that UI-tests continue to work.
+
+## UI-tests
+
+1. `./sbt "test:run-main fi.vm.sade.hakuperusteet.db.CodeGeneratorTest"`
+2. `./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-DuseHsql=true`
+3. `./node_modules/.bin/mocha-phantomjs --ignore-resource-errors --ssl-protocol=any --ignore-ssl-errors=true  https://localhost:18081/hakuperusteet/spec/testRunner.html`
+
+Remember to remove HSQLDD-client classes after tests, because their existence breaks unit tests
+
+1. `rm -r src/test/scala/fi/vm/sade/hakuperusteet/db/generated/`
