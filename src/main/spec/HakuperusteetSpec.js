@@ -2,7 +2,7 @@ import {expect, done} from 'chai'
 import {openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S, S2} from './testUtil.js'
 
 describe('Page without session', function() {
-  before(openPage("https://localhost:18080/hakuperusteet", hakuperusteetLoaded))
+  before(openPage("/hakuperusteet", hakuperusteetLoaded))
 
   it('should show Google login button', function() {
     return S2(".googleAuthentication.login").then((e) => {
@@ -41,7 +41,7 @@ describe('Page without session', function() {
 })
 
 describe('Page with email session - no userdata', function() {
-  before(openPage("https://localhost:18080/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
+  before(openPage("/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
 
   it('should show email as loggedIn user', function () {
     return S2(".loggedInAs").then((e) => {
