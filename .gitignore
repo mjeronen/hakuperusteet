@@ -25,3 +25,6 @@ node_modules/
 
 #slick generated classes
 #src/main/scala/fi/vm/sade/hakuperusteet/db/generated/
+
+#slick generated test classes. used with hsqldb, normally we use postgres stuff from main with tests also
+src/test/scala/fi/vm/sade/hakuperusteet/db/generated/
