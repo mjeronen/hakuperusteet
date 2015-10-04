@@ -1,4 +1,4 @@
-package fi.vm.sade.hakuperusteet
+package fi.vm.sade.hakuperusteet.db
 
 import java.sql.DriverManager
 import java.util.Properties

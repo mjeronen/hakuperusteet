@@ -1,4 +1,4 @@
-package fi.vm.sade.hakuperusteet
+package fi.vm.sade.hakuperusteet.db
 
 object CodeGeneratorTest {
   val dbUrl = "jdbc:hsqldb:mem:hakuperusteet"
@@ -6,7 +6,7 @@ object CodeGeneratorTest {
   val password = ""
 
   /*
-   * ./sbt "test:run-main fi.vm.sade.hakuperusteet.CodeGeneratorTest"
+   * ./sbt "test:run-main fi.vm.sade.hakuperusteet.db.CodeGeneratorTest"
   */
   def main(args: Array[String]): Unit = {
     val db = new HsqlDatabase(dbUrl, user, password)

@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import java.io.File
 
+import fi.vm.sade.hakuperusteet.db.HsqlDatabase
 import org.slf4j.LoggerFactory
 
 import scala.sys.process.{Process, ProcessIO}
