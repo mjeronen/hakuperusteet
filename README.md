@@ -6,37 +6,20 @@ As default, the application runs in the port `8080`. This can be changed by
 setting the environment variable `PORT`.
 
 ## Standalone JAR building
-1. `npm install` (first time)
+
+To create assembly jars (app and admin), run the following commands
+
+1. `npm install`
 2. `./sbt assembly`
-or
-3. `./sbt admin:assembly` (for admin app build)
+3. `./sbt admin:assembly`
 
 ## Auto compile frontend while developing
-1. `npm install` (first time)
+1. `npm install`
 2. `npm run watch`
-
-## Test API
-
-The application serves a simple test form in `/test_form.html`. The form can
-be used to call the `/api/v1/test` endpoint to create a redirect to a user
-given URL with signed parameters. See the specification of this redirect in
-SPEC.md.
-
-The test API uses a RSA keypair to sign the parameters. These keys are
-included in the repository in the `testkey.pub.pem` and
-`src/main/resources/testkey.pem` files. New keypair can be generated using
-openssl as follows.
-
-1. Generate the keypair: `openssl genrsa <number of bits> > key.pem`
-2. Create a copy of the keypair in PKCS8 format for easy use from Java:  
-   `cat key.pem | openssl pkcs8 -topk8 -inform PEM -outform DER -nocrypt > key.der`
-3. Extract the public key from the keypair in PEM and DER formats:  
-   `cat key.pem | openssl rsa -pubout -inform PEM -outform PEM > key.pub.pem`  
-   `cat key.pem | openssl rsa -pubout -inform PEM -outform DER > key.pub.der`
 
 ## Local Postgres setup
 
-MacOS users install docker with command `rew cask install dockertoolbox`. 
+MacOS users install docker with command `brew cask install dockertoolbox`. 
 
 1. Create new docker-machine `docker-machine create —-driver virtualbox dockerVM`
 2. `eval "$(docker-machine env dockerVM)"`
@@ -65,9 +48,11 @@ Currently we store generated code in git, and hence it is not necessary to run t
 
 ## Start mock server
 
-`cd mockserver`
-`npm install`
-`node server.js`
+1. `cd mockserver`
+2. `npm install`
+3. `node server.js`
+
 or use nodemon to auto reload on changes
-`npm install -g nodemon`
-`nodemon server.js`
+
+1. `npm install -g nodemon`
+2. `nodemon server.js`
