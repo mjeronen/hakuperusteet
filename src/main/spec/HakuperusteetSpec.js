@@ -85,5 +85,23 @@ describe('Page with email session - no userdata', function() {
     expect(S(".hakuList").length).to.equal(0)
   })
 
+  describe('Insert data', function () {
+    it('initially submit should be disabled', assertSubmitDisabled)
+
+    it('insert firstname', function () {
+      S("#firstName").val("John")
+    })
+
+    it('submit should be disabled', assertSubmitDisabled)
+  })
+
   after(logout)
 })
+
+function assertSubmitDisabled() {
+  return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done)
+}
+
+function expectToBeDisabled(e) {
+  expect($(e).attr("disabled")).to.equal("disabled")
+}
