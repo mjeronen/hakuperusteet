@@ -88,20 +88,30 @@ describe('Page with email session - no userdata', () => {
   describe('Insert data', () => {
     it('initially submit should be disabled', assertSubmitDisabled)
 
-    it('insert firstname', () => {
-      S("#firstName").val("John")
-    })
-
+    it('insert firstName', () => { S("#firstName").val("John") })
     it('submit should be disabled', assertSubmitDisabled)
+
+    it('insert lastName', () => { S("#lastName").val("Doe") })
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('insert birthDate', () => { S("#birthDate").val("15051979") })
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('select gender', () => { S("#gender-male").click() })
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('select nativeLanguage', () => { S("#nativeLanguage").val("FI") })
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('select nationality', () => { S("#nationality").val("246") })
+    //it('submit should be enabled', assertSubmitEnabled)
   })
 
   after(logout)
 })
 
-function assertSubmitDisabled() {
-  return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done)
-}
+function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
+function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
 
-function expectToBeDisabled(e) {
-  expect($(e).attr("disabled")).to.equal("disabled")
-}
+function expectToBeDisabled(e) { expect($(e).attr("disabled")).to.equal("disabled") }
+function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal("") }
