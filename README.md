@@ -25,6 +25,7 @@ To start hakuperusteet after Postgres is up, run the following commands:
 
 1. `npm install`
 2. `./sbt run`
+3. `npm run watch` on separate console to enable front auto compile
 
 By default hakuperusteet uses services from Luokka-environment.
 
@@ -78,10 +79,6 @@ To create assembly jars (app and admin), run the following commands
 1. `npm install`
 2. `./sbt assembly`
 3. `./sbt admin:assembly`
-
-## Auto compile frontend while developing
-1. `npm install`
-2. `npm run watch`
 
 ## Create slick-classes
 
