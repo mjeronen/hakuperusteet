@@ -18,10 +18,14 @@ object HakuperusteetTestServer {
 
   /*
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
+   * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-DuseHsql=true
    */
   def main(args: Array[String]): Unit = {
     startMockServer()
-    startHsqlServer()
+    val useHsqldb = System.getProperty("useHsql", "false") == "true"
+    if (useHsqldb) {
+      startHsqlServer()
+    }
     val s = new HakuperusteetServer
     s.runServer()
     logger.info("Started HakuperusteetTestServer")
