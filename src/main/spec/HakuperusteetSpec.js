@@ -105,6 +105,12 @@ describe('Page with email session - no userdata', () => {
 
     it('select nationality', () => { S("#nationality").val("246").focus().blur() })
     it('submit should be enabled', assertSubmitEnabled)
+
+    it('select personId', () => { S("#hasPersonId").click() })
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('insert birthDate', () => { S("#personId").val("-9358").focus().blur() })
+    it('submit should be enabled', assertSubmitEnabled)
   })
 
   after(logout)
