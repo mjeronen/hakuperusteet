@@ -129,6 +129,13 @@ describe('Page with email session - educationdata', () => {
     return S2(".paymentRequired").then(assertOneElementFound).then(done).catch(done)
   })
 
+  describe('Submit educationForm', () => {
+    it('click submit should post educationdata', () => {
+      S("input[name='submit']").click()
+      return S2(".vetumaStart").then(assertOneElementFound).then(done).catch(done)
+    })
+  })
+
   after(logout)
 })
 
