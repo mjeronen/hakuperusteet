@@ -55,15 +55,6 @@ app.post('/authentication-service/resources/s2s/hakuperusteet', function(req, re
   res.send({ "personOid": "1.2.246.562.24.11523238937" });
 });
 
-var callback_get = function(url) {
-  console.log("Sending GET request to " + url);
-  requestify.request(url, {
-    method: 'GET'
-  }).then(function(response) {
-    console.log(response)
-  });
-}
-
 // Oppijan-tunnistus
 var oppijanTunnistusEmails = {}
 app.post('/oppijan-tunnistus/api/v1/token', function(req, res){
@@ -92,37 +83,35 @@ app.get('/oppijan-tunnistus/api/v1/token/:token', function(req, res){
   }
 });
 
-var callback = function(url, params) {
-    console.log("Sending POST request to " + url);
-    requestify.request(url, {
-      method: 'POST',
-      params: params
-    })
-    .then(function(response) {
-        console.log(response)
-    });
-}
-
 // Vetuma
 app.post('/VETUMAPayment', function(req, res){
   var p = req.query
-  var SO = "P2"
+  var SO = ""
   var PAYID = "441265046723995"
   var PAID = "15092588INWX0000"
   var STATUS = "SUCCESSFUL"
   var SHARED_SECRET = "TESTIASIAKAS11-873C992B8C4C01EC8355500CAA709B37EA43BC2E591ABF29FEE5EAFE4DCBFA35"
-  var TIMESTAMP = "20150903102417186"
-  var op = [p["RCVID"], TIMESTAMP, SO, p["LG"], p["RETURL"], p["CANURL"], p["ERRURL"], PAYID, p["REF"], p["ORDNR"], PAID, STATUS]
+  var op = [p["RCVID"], p["TIMESTMP"], SO, p["LG"], p["RETURL"], p["CANURL"], p["ERRURL"], PAYID, p["REF"], p["ORDNR"], PAID, STATUS]
   var sha256 = crypto.createHash('sha256');
   sha256.update(op.join('&') + "&" + SHARED_SECRET + "&")
   var mac = sha256.digest('hex').toUpperCase()
-  callback(p["RETURL"], {
-    "RCVID": p["RCVID"], "TIMESTMP" : TIMESTAMP, "SO": SO, "LG": p["LG"], "RETURL": p["RETURL"], "CANURL": p["CANURL"],
-    "ERRURL": p["ERRURL"], "PAYID": PAYID, "REF": p["REF"], "ORDNR" : p["ORDNR"], "PAID": PAID, "STATUS" : STATUS, "MAC" : mac
-  });
-  console.log("Responding from Vetuma with MAC = " + mac);
   res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write("<form action=\"" + "https://localhost:18080/hakuperusteet/?result=ok" +"\"><input type=\"submit\" value=\"Palaa myyj&auml;n palveluun\"></form>");
+  res.write("<form method=POST action=\"" + p["RETURL"] +"\"><input type=\"submit\" value=\"Palaa myyj&auml;n palveluun\">");
+  res.write("<input type=\"hidden\" name=\"RCVID\" value=\"" + p["RCVID"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"TIMESTMP\" value=\"" + p["TIMESTMP"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"SO\" value=\"" + SO + "\" />");
+  res.write("<input type=\"hidden\" name=\"LG\" value=\"" + p["LG"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"RETURL\" value=\"" + p["RETURL"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"CANURL\" value=\"" + p["CANURL"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"ERRURL\" value=\"" + p["ERRURL"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"MAC\" value=\"" + mac + "\" />");
+  res.write("<input type=\"hidden\" name=\"PAYID\" value=\"" + PAYID + "\" />");
+  res.write("<input type=\"hidden\" name=\"REF\" value=\"" + p["REF"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"ORDNR\" value=\"" + p["ORDNR"]+ "\" />");
+  res.write("<input type=\"hidden\" name=\"PAID\" value=\"" + PAID+ "\" />");
+  res.write("<input type=\"hidden\" name=\"STATUS\" value=\"" + STATUS + "\" />");
+  res.write("<input type=\"hidden\" name=\"TRID\" value=\"" + "TODO"+ "\" />");
+  res.write("</form>");
   res.end();
 });
 
