@@ -13,11 +13,11 @@ export default class CountryPaymentInfo extends React.Component {
     const noPaymentRequired = country && isEeaCountry
     return <div className="userDataFormRow">
       { paymentRequired
-        ? <p>{translation("apply.payment.required")}</p>
+        ? <p className="paymentRequired">{translation("apply.payment.required")}</p>
         : null
       }
       { noPaymentRequired
-        ? <p>{translation("apply.payment.notRequired")}</p>
+        ? <p className="noPaymentRequired">{translation("apply.payment.notRequired")}</p>
         : null
       }
       </div>

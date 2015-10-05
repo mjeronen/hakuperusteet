@@ -8,20 +8,20 @@ export default class Countries extends React.Component {
   constructor(props) {
     super()
     this.id = "educationCountry"
+    this.changes = props.controller.valueChanges
   }
 
   componentDidMount() {
-    this.props.controller.valueChanges({ target: { id: this.id, value: emptySelectValue() }})
+    this.changes({ target: { id: this.id, value: emptySelectValue() }})
   }
 
   render() {
-    const controller = this.props.controller
     const countries = _.isEmpty(this.props.countries) ? {} : this.props.countries
     const result = createSelectOptions(countries)
 
     return <div className="userDataFormRow">
         <label htmlFor={this.id}>{translation("title.education.country")}</label>
-        <select id={this.id} onChange={controller.valueChanges}>
+        <select id={this.id} onChange={this.changes} onBlur={this.changes}>
           {result}
         </select>
       </div>
