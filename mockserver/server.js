@@ -96,7 +96,7 @@ app.post('/VETUMAPayment', function(req, res){
   sha256.update(op.join('&') + "&" + SHARED_SECRET + "&")
   var mac = sha256.digest('hex').toUpperCase()
   res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write("<form method=POST action=\"" + p["RETURL"] +"\"><input type=\"submit\" value=\"Palaa myyj&auml;n palveluun\">");
+  res.write("<form method=POST name=\"form\" action=\"" + p["RETURL"] +"\"><input type=\"submit\" value=\"Palaa myyj&auml;n palveluun\">");
   res.write("<input type=\"hidden\" name=\"RCVID\" value=\"" + p["RCVID"]+ "\" />");
   res.write("<input type=\"hidden\" name=\"TIMESTMP\" value=\"" + p["TIMESTMP"]+ "\" />");
   res.write("<input type=\"hidden\" name=\"SO\" value=\"" + SO + "\" />");
@@ -112,6 +112,7 @@ app.post('/VETUMAPayment', function(req, res){
   res.write("<input type=\"hidden\" name=\"STATUS\" value=\"" + STATUS + "\" />");
   res.write("<input type=\"hidden\" name=\"TRID\" value=\"" + "TODO"+ "\" />");
   res.write("</form>");
+  res.write("<script>document.forms[\"form\"].submit();</script>");
   res.end();
 });
 
