@@ -153,6 +153,22 @@ describe('Page with email session - vetuma start page', () => {
       return S2("#redirectToForm").then(assertOneElementFound).then(done).catch(done)
     })
   })
+})
+
+describe('Page with email session - hakulist page', () => {
+  // reload page to get rid of cross domain errors when security is enabled in browser
+  before(openPage("/hakuperusteet", hakuperusteetLoaded))
+
+  it('initially submit should be enabled', () => {
+    return S2("input[name='redirectToForm']").then(expectToBeEnabled).then(done).catch(done)
+  })
+
+  describe('Submit hakulist form', () => {
+    it('click submit should redirect to form', () => {
+      S("input[name='redirectToForm']").click()
+      // todo: goto proper mock result form
+    })
+  })
 
   after(logout)
 })
