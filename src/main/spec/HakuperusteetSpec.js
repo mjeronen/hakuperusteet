@@ -5,18 +5,14 @@ describe('Page without session', () => {
   before(openPage("/hakuperusteet", hakuperusteetLoaded))
 
   it('should show Google login button', () => {
-    return S2(".googleAuthentication.login").then((e) => {
-      expect(e.length).to.equal(1)
-    }).then(done).catch(done)
+    return S2(".googleAuthentication.login").then(assertOneElementFound).then(done).catch(done)
   })
   it('should not show Google session', () => {
     expect(S(".googleAuthentication.session").length).to.equal(0)
   })
 
   it('should show Email login button', () => {
-    return S2(".emailAuthentication.login").then((e) => {
-      expect(e.length).to.equal(1)
-    }).then(done).catch(done)
+    return S2(".emailAuthentication.login").then(assertOneElementFound).then(done).catch(done)
   })
 
   it('should not show Email session', () => {
@@ -44,9 +40,7 @@ describe('Page with email session - no userdata', () => {
   before(openPage("/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
 
   it('should show email as loggedIn user', () => {
-    return S2(".loggedInAs").then((e) => {
-      expect(e.text()).to.equal("mochatest@example.com")
-    }).then(done).catch(done)
+    return S2(".loggedInAs").then(assertOneElementFound).then(done).catch(done)
   })
 
   it('should not show email login button', () => {
@@ -62,15 +56,11 @@ describe('Page with email session - no userdata', () => {
   })
 
   it('should show logout button', () => {
-    return S2("#logout").then((e) => {
-      expect(e.length).to.equal(1)
-    }).then(done).catch(done)
+    return S2("#logout").then(assertOneElementFound).then(done).catch(done)
   })
 
   it('should show userDataForm', () => {
-    return S2("#userDataForm").then((e) => {
-      expect(e.length).to.equal(1)
-    }).then(done).catch(done)
+    return S2("#userDataForm").then(assertOneElementFound).then(done).catch(done)
   })
 
   it('should not show educationForm', () => {
@@ -116,14 +106,14 @@ describe('Page with email session - no userdata', () => {
   describe('Submit userDataForm', () => {
     it('click submit should post userdata', () => {
       S("input[name='submit']").click()
-      return S2("#educationForm").then((e) => {
-        expect(e.length).to.equal(1)
-      }).then(done).catch(done)
+      return S2("#educationForm").then(assertOneElementFound).then(done).catch(done)
     })
   })
 
   after(logout)
 })
+
+function assertOneElementFound(e) { expect(e.length).to.equal(1)}
 
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
 function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
