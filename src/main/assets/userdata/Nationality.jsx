@@ -7,10 +7,11 @@ export default class Nationality extends React.Component {
   constructor(props) {
     super()
     this.id = "nationality"
+    this.changes = props.controller.valueChanges
   }
 
   componentDidMount() {
-    this.props.controller.valueChanges({ target: { id: this.id, value: emptySelectValue() }})
+    this.changes({ target: { id: this.id, value: emptySelectValue() }})
   }
 
   render() {
@@ -20,7 +21,7 @@ export default class Nationality extends React.Component {
 
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>{translation("title.nationality")}</label>
-      <select id={this.id} onChange={controller.valueChanges}>
+      <select id={this.id} onChange={this.changes} onBlur={this.changes}>
         {result}
       </select>
     </div>

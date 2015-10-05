@@ -4,20 +4,20 @@ import _ from 'lodash'
 import {translation} from '../translations/translations.js'
 
 export default class UserBirthDateInput extends React.Component {
-  constructor() {
+  constructor(props) {
     super()
     this.id = "birthDate"
+    this.changes = props.controller.valueChanges
   }
 
   componentDidMount() {
-    this.props.controller.valueChanges({ target: { id: this.id, value: "" }})
+    this.changes({ target: { id: this.id, value: "" }})
   }
 
   render() {
-    const controller = this.props.controller
     return <div className="userDataFormRow">
         <label htmlFor="birthDate">{translation("title.birth.date")}</label>
-        <input type="text" id={this.id} name="birthDate" onChange={controller.valueChanges} maxLength="8" />
+        <input type="text" id={this.id} name={this.id} onChange={this.changes} onBlur={this.changes} maxLength="8" />
         <span className="fieldFormatInfo">ddmmyyyy</span>
       </div>
   }
