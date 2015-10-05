@@ -113,6 +113,15 @@ describe('Page with email session - no userdata', () => {
     it('submit should be enabled', assertSubmitEnabled)
   })
 
+  describe('Submit userDataForm', () => {
+    it('click submit should post userdata', () => {
+      S("input[name='submit']").click()
+      return S2("#educationForm").then((e) => {
+        expect(e.length).to.equal(1)
+      }).then(done).catch(done)
+    })
+  })
+
   after(logout)
 })
 

@@ -138,7 +138,7 @@ app.get('/cas/login', function(req, res){
   res.redirect(service + "?ticket=ST_MOCK");
 });
 app.post('/cas/v1/tickets', function(req, res){
-  res.append('Location', 'http://localhost:3000/cas/v1/tickets/TGT-123');
+  res.append('Location', 'http://localhost:' + appPort + '/cas/v1/tickets/TGT-123');
   res.status(201)
   res.send({});
 });
