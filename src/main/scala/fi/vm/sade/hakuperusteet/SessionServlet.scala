@@ -102,6 +102,9 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   def upsertUserToHenkilo(userData: User): User = {
     val newUser = Try(henkiloClient.upsertHenkilo(userData)) match {
       case Success(u) => userData.copy(personOid = Some(u.personOid))
+      case Failure(t) if t.isInstanceOf[java.net.ConnectException] =>
+        logger.error(s"Henkilopalvelu connection error for email ${userData.email}", t)
+        halt(500)
       case Failure(t) =>
         val error = s"Henkilopalvelu upsert failed for email ${userData.email}"
         logger.error(error, t)
