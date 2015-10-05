@@ -116,12 +116,16 @@ object HakuperusteetBuild extends Build {
           Some("releases" at artifactory + "/oph-sade-release-local")
       }
     )++ inConfig(HakuperusteetAdminConfig)(
-      AssemblyPlugin.baseAssemblySettings ++
+      ScalatraPlugin.scalatraWithJRebel ++ sbtassembly.AssemblyPlugin.assemblySettings ++
+        addArtifact(Artifact("hakuperusteet", "assembly"), sbtassembly.AssemblyKeys.assembly) ++
+        com.earldouglas.xwp.XwpPlugin.jetty() ++
         Seq(
           test in assembly := {},
           run <<= runTask(fullClasspath, mainClass, runner in run),
           assemblyJarName := Name.toLowerCase + "admin" + "-" + Version + "-assembly.jar",
-          mainClass := Some("fi.vm.sade.hakuperusteet.HakuperusteetAdminServer")
+          mainClass := Some("fi.vm.sade.hakuperusteet.HakuperusteetAdminServer"),
+          npmBuildTask := { "npm run admin:build" !},
+          compile <<= (compile in Compile) dependsOn npmBuildTask
         ))
   )
 

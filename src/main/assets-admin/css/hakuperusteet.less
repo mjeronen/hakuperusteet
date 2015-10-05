@@ -1,0 +1,235 @@
+@import "fonts";
+
+@formLeftColumnWidth: 200px;
+@formLabelWidth: 175px;
+@formLabelPadding: 25px;
+@marginLeft: 15%;
+
+body {
+  margin: 0;
+  background-color: #fafafa;
+}
+
+.hide {
+  display: none !important;
+}
+
+.ajax-loader {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.serverError {
+  padding: 10px 0 10px 0;
+  .FontError(14px);
+  display: block;
+}
+
+#header {
+  width: 100%;
+  height: 90px;
+  background-color: #149ECB;
+  border: 0;
+  margin: 0;
+  img {
+    margin-left: @marginLeft;
+    border: none;
+    padding-top: 20px;
+  }
+}
+
+#session {
+  margin-left: @marginLeft;
+  .googleAuthentication {
+    padding: 20px 0 20px 0;
+    #logout {
+      display: inline-block;
+      vertical-align: top;
+      padding-top: 23px;
+    }
+  }
+  .emailAuthentication {
+    input[type=submit] {
+      margin: 15px 5px 15px 116px;
+      display: inline-block;
+    }
+    p {
+      display: inline-block;
+    }
+    #logout {
+      margin-left: 10px;
+    }
+    .ajax-loader {
+      margin-top: 18px;
+    }
+    .serverError {
+      margin-left: 120px;
+    }
+    .success {
+      margin-left: 120px;
+      display: block;
+    }
+  }
+  #logout {
+    display: inline-block;
+    text-decoration: none;
+    color: #149ECB;
+  }
+}
+
+h1 {
+  .FontBold(20px);
+}
+
+h2 {
+  .FontBold(16px);
+}
+
+p {
+  .Font(14px);
+}
+
+#program-info {
+  margin-left: @marginLeft;
+  border-bottom: 1px solid #e6e6e6;
+  margin-bottom: 20px;
+}
+
+#userDataForm {
+  p {
+    margin-left: @marginLeft;
+    padding-bottom: 10px;
+  }
+}
+
+.userDataFormRow {
+  margin-left: 10%;
+  height: 50px;
+  p {
+    margin-left: @formLeftColumnWidth;
+  }
+  .serverError {
+    margin-left: @formLeftColumnWidth;
+  }
+  input[type=submit] {
+    margin-left: @formLeftColumnWidth;
+  }
+  input[type=checkbox] {
+    display: inline-block;
+    margin-left: @formLeftColumnWidth;
+    width: 17px;
+    height: 17px;
+    border: 1px solid #999290;
+  }
+  label {
+    width: @formLabelWidth;
+    text-align: right;
+  }
+  .genderLabel {
+    width: 50px;
+    padding-right: 0;
+    text-align: left;
+  }
+  .ssnLabel {
+    width: 260px;
+    text-align: left;
+    padding-right: 0;
+  }
+  #personId {
+    width: 50px;
+  }
+  #birthDate {
+    width: 100px;
+  }
+  .fieldFormatInfo {
+    .Font(12px);
+    color: #d0d0d0;
+    padding-left: 10px;
+  }
+}
+
+#educationForm {
+  p {
+    margin-left: @marginLeft;
+    padding-bottom: 10px;
+  }
+}
+
+label {
+  .Font(14px);
+  padding-right: @formLabelPadding;
+  display: inline-block;
+}
+
+input[type=text] {
+  .Font(14px);
+  width: 210px;
+  height: 30px;
+  border: 1px solid #999290;
+}
+
+input[type=radio] {
+  border: 1px solid #999290;
+}
+
+input[type=submit] {
+  border: 0;
+  margin: 0;
+  font-family: OpenSans, sans-serif;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #84bf41;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  &[disabled] {
+    background-color: #999290;
+  }
+}
+
+input[disabled=disabled], input[disabled] {
+  background-color: #fafafa;
+  border-color: #d9d9d9;
+}
+
+select {
+  .Font(14px);
+  width: 214px;
+  height: 30px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  border: 1px solid #999290;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+.vetumaStart {
+  margin-left: @marginLeft;
+}
+
+.vetumaResult {
+  .Font(14px);
+  margin-left: @marginLeft;
+}
+
+.hakuList {
+  margin-left: @marginLeft;
+}
+
+.vetuma-result-enter {
+  opacity: 0.01;
+  transition: opacity 1s ease-in;
+}
+
+.vetuma-result-enter.vetuma-result-enter-active {
+  opacity: 1;
+}
+
+.vetuma-result-leave {
+  opacity: 1;
+}
+
+.vetuma-result-leave.vetuma-result-leave-active {
+  opacity: 0.01;
+  transition: opacity .9s ease-in;
+}

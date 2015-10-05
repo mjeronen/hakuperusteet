@@ -15,7 +15,7 @@ class ScalatraAdminBootstrap extends LifeCycle with GlobalExecutionContext {
     //context.addFilter("cas", new CasFilter(config))
     //.addMappingForUrlPatterns(EnumSet.allOf(classOf[DispatcherType]), true, "/*")
 
-    context mount(new AdminServlet(config), "/")
+    context mount(new AdminServlet(config), "/api/v1/admin")
   }
 
 }

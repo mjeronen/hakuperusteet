@@ -52,6 +52,8 @@
     "unittest": "mocha --compilers js:babel/register web/test/*Test.js",
     "watch-unittest": "mocha --watch --compilers js:babel/register web/test/*Test.js",
     "build": "UGLIFY=false webpack -p",
-    "watch": "webpack -d --progress --colors --watch"
+    "watch": "webpack -d --progress --colors --watch",
+    "admin:build": "UGLIFY=false webpack -p --config webpack.config.admin.js",
+    "admin:watch": "webpack -d --progress --colors --watch --config webpack.config.admin.js"
   }
 }
