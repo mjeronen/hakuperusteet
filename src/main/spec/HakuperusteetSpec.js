@@ -135,6 +135,24 @@ describe('Page with email session - educationdata', () => {
       return S2(".vetumaStart").then(assertOneElementFound).then(done).catch(done)
     })
   })
+})
+
+describe('Page with email session - vetuma start page', () => {
+  // input name=submit is not allowed when doing redirect, hence different name than in other forms
+  it('initially submit should be enabled', () => {
+    return S2("input[name='submitVetuma']").then(expectToBeEnabled).then(done).catch(done)
+  })
+
+  describe('Submit vetumaForm', () => {
+    it('click submit should go to vetuma and return back with successful payment', () => {
+      S("input[name='submitVetuma']").click()
+      return S2(".vetumaResult").then(assertOneElementFound).then(done).catch(done)
+    })
+
+    it('redirectForm should be visible', () => {
+      return S2("#redirectToForm").then(assertOneElementFound).then(done).catch(done)
+    })
+  })
 
   after(logout)
 })
