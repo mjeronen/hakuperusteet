@@ -31,9 +31,7 @@ export function initAppState(props) {
   const cssEffectsBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const hakukohdeS = Bacon.once("1.2.246.562.20.69046715533").toProperty()
-  const tarjontaS = hakukohdeS.flatMap((hakukohde) => {
-    return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
-  }).toEventStream()
+  const tarjontaS = hakukohdeS.flatMap(fetchFromTarjonta).toEventStream()
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
   const sessionS = propertiesS.flatMap(sessionFromServer(sessionUrl))
@@ -138,6 +136,9 @@ export function initAppState(props) {
     else return new Bacon.End()
   }
   function skipLoadingMessages(x) { return x != "loading" }
+  function fetchFromTarjonta(hakukohde) {
+    return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
+  }
 }
 
 function authenticate(authenticationUrl) {

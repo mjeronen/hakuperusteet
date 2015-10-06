@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import EducationLevel from './EducationLevel.jsx'
-import Countries from './Countries.jsx'
+import EducationCountry from './EducationCountry.jsx'
 import CountryPaymentInfo from './CountryPaymentInfo.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 
@@ -25,7 +25,7 @@ export default class EducationForm extends React.Component {
         {translation("educationForm.payment")}
       </p>
       <EducationLevel state={state} controller={controller} />
-      <Countries countries={countries} controller={controller} lang="en" />
+      <EducationCountry countries={countries} controller={controller} lang="en" />
       <CountryPaymentInfo state={state} />
       <div className="userDataFormRow">
         <input type="submit" name="submit" value={translation("educationForm.submit")} disabled={disabled} />

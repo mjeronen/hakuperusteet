@@ -4,7 +4,7 @@ import _ from 'lodash'
 import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
 import {translation} from '../translations/translations.js'
 
-export default class Countries extends React.Component {
+export default class EducationCountry extends React.Component {
   constructor(props) {
     super()
     this.id = "educationCountry"
