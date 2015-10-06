@@ -34,7 +34,7 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
   def generateUrl(host: Oid, userData: User, educationForThisHakukohde: Education, shouldPay: Boolean, hasPaid: Boolean) = {
     val seq = paramSequence(userData, shouldPay, hasPaid, educationForThisHakukohde)
     val signature = signer.signData(seq.map(_._2).mkString(""))
-    val query = seq.map{ case (k, v) => s"$k=${URLEncoder.encode(v, "UTF-8")}" }.mkString("&") + s"&signature=$signature"
+    val query = seq.map{ case (k, v) => s"$k=${URLEncoder.encode(v, "UTF-8")}" }.mkString("&") + s"&signature=${URLEncoder.encode(signature, "UTF-8")}"
     s"$host?$query"
   }
 
