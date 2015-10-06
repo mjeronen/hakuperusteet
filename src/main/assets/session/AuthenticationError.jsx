@@ -3,7 +3,7 @@ import addons from 'react/addons'
 
 var ReactTransitionGroup = React.addons.CSSTransitionGroup
 
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class AuthenticationError extends React.Component {
   render() {
