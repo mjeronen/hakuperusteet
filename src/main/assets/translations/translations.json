@@ -34,6 +34,11 @@
           "en": "Invalid userdata. Please check form values and try again."
         }
       }
+    },
+    "authentication": {
+      "invalid": {
+        "en": "Invalid authentication credentials."
+      }
     }
   },
   "success": {

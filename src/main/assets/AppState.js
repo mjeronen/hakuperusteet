@@ -142,11 +142,21 @@ export function initAppState(props) {
 }
 
 function authenticate(authenticationUrl) {
-  return (user) => Bacon.fromPromise(HttpUtil.post(authenticationUrl, user)).skipErrors()
+  return (user) => Bacon.fromPromise(HttpUtil.post(authenticationUrl, user)).doAction(removeAuthenticationError).doError(handleAuthenticationError).skipErrors()
 }
 
 function sessionFromServer(sessionUrl) {
   return (user) => Bacon.fromPromise(HttpUtil.get(sessionUrl, user)).doError(sessionInit).skipErrors()
+}
+
+function removeAuthenticationError(_) {
+  dispatcher.push(events.updateField, {field: 'authenticationError', value: false})
+}
+
+function handleAuthenticationError(e) {
+  if (e.status == 401) {
+    dispatcher.push(events.updateField, {field: 'authenticationError', value: true})
+  }
 }
 
 function sessionInit() {

@@ -14,6 +14,10 @@ export function hasEmailSession(state) {
   return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && !_.isUndefined(state.sessionData.session.email) && state.sessionData.session.idpentityid == "oppijaToken"
 }
 
+export function hasAuthenticationError(state) {
+  return !_.isUndefined(state.authenticationError) && state.authenticationError == true
+}
+
 export function showUserDataForm(state) {
   return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && _.isUndefined(state.sessionData.user)
 }
