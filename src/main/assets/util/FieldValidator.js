@@ -1,7 +1,5 @@
 import _ from 'lodash'
 
-import {emptySelectValue} from './HtmlUtils.js'
-
 const personIdFields = ["personId", "hasPersonId"]
 const selectFields = ["educationCountry", "educationLevel", "nationality", "nativeLanguage"]
 
@@ -65,7 +63,7 @@ function validateGender(value) {
 }
 
 function validateSelect(value) {
-  return (value == emptySelectValue()) ? ["required"] : []
+  return (_.isEmpty(value)) ? ["required"] : []
 }
 
 export function requiredField(state, fieldName) {

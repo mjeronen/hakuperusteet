@@ -1,16 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
 
-export function emptySelectValue() {
-  return "Choose..."
-}
-
 export function createSelectOptions(data) {
-  const emptyOptions = [{ id: "", name: emptySelectValue()}]
+  const emptyOptions = [{ id: "", name: "Loading..."}]
   const dataJson = _.isEmpty(data) ? emptyOptions : data
   var toOptions = function (item) { return <option value={item.id} key={item.id}>{item.name}</option> }
   const result = dataJson.map(toOptions)
-  result.unshift(<option value="" key="-">{emptySelectValue()}</option>)
+  result.unshift(<option value="" key="-">{"Choose..."}</option>)
   return result
 }
 

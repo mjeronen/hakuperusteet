@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
+import {createSelectOptions} from '../util/HtmlUtils.js'
 import {translation} from '../../assets-common/translations/translations.js'
 
 export default class Nationality extends React.Component {
@@ -11,7 +11,7 @@ export default class Nationality extends React.Component {
   }
 
   componentDidMount() {
-    this.changes({ target: { id: this.id, value: emptySelectValue() }})
+    this.changes({ target: { id: this.id, value: "" }})
   }
 
   render() {
