@@ -22,7 +22,7 @@ export default class EducationLevel extends React.Component {
     const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
     const result = createSelectOptions(baseEducationOptions)
     return <div className="userDataFormRow">
-      <label htmlFor={this.id}>{translation("title.education.level")}</label>
+      <label htmlFor={this.id}>{translation("title.education.level") + " *"}</label>
       <select id={this.id} onChange={this.changes} onBlur={this.changes}>
         {result}
       </select>
