@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class UserBirthDateInput extends React.Component {
   constructor(props) {

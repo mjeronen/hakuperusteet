@@ -5,7 +5,7 @@ import _ from 'lodash'
 import HttpUtil from './util/HttpUtil'
 import AjaxLoader from './util/AjaxLoader.jsx'
 import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from './util/HtmlUtils.js'
-import {translation} from './translations/translations.js'
+import {translation} from '../assets-common/translations/translations.js'
 
 export default class HakuList extends React.Component {
   onSubmitRedirect(state) {

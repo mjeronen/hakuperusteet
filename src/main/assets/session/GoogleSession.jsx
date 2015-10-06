@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import {logOut} from './GoogleAuthentication'
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class GoogleSession extends React.Component {
   render() {

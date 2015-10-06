@@ -10,7 +10,7 @@ import NativeLanguage from './NativeLanguage.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 
 import {validateUserDataForm} from './../util/FieldValidator.js'
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class UserDataForm extends React.Component {
   render() {

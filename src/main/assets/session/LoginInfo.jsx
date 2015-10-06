@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class LoginInfo extends React.Component {
   render() {

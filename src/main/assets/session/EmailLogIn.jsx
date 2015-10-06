@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import {orderEmailLoginLink} from './EmailAuthentication.js'
 import AjaxLoader from '../util/AjaxLoader.jsx'
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class EmailLogIn extends React.Component {
   render() {

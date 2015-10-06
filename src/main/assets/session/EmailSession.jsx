@@ -3,7 +3,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 
 import {logOut} from './GoogleAuthentication'
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class EmailSession extends React.Component {
   render() {

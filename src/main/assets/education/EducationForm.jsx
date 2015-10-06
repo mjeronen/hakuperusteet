@@ -7,7 +7,7 @@ import CountryPaymentInfo from './CountryPaymentInfo.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 
 import {validateEducationForm} from './../util/FieldValidator.js'
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class EducationForm extends React.Component {
   render() {

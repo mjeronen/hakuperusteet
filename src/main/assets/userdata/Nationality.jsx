@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {emptySelectValue, createSelectOptions} from '../util/HtmlUtils.js'
-import {translation} from '../translations/translations.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class Nationality extends React.Component {
   constructor(props) {
