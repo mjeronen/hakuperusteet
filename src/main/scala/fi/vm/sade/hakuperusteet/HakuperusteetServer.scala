@@ -4,6 +4,7 @@ import fi.vm.sade.hakuperusteet.Configuration._
 import fi.vm.sade.hakuperusteet.HakuperusteetServer._
 import fi.vm.sade.hakuperusteet.util.JettyUtil
 import org.eclipse.jetty.servlet.DefaultServlet
+import org.eclipse.jetty.util.resource.ResourceCollection
 import org.eclipse.jetty.webapp.WebAppContext
 import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
@@ -20,8 +21,12 @@ class HakuperusteetServer {
 
   def createContext = {
     val context = new WebAppContext()
+    val resources = new ResourceCollection(Array(
+      getClass.getClassLoader.getResource("webapp-common").toExternalForm,
+      getClass.getClassLoader.getResource("webapp").toExternalForm
+    ))
     context setContextPath ("/hakuperusteet/")
-    context.setResourceBase(getClass.getClassLoader.getResource("webapp").toExternalForm)
+    context.setBaseResource(resources)
     context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")

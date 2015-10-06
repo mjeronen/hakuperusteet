@@ -4,15 +4,21 @@ import fi.vm.sade.hakuperusteet.Configuration._
 import fi.vm.sade.hakuperusteet.HakuperusteetAdminServer._
 import fi.vm.sade.hakuperusteet.util.JettyUtil
 import org.eclipse.jetty.servlet.DefaultServlet
+import org.eclipse.jetty.util.resource.ResourceCollection
 import org.eclipse.jetty.webapp.WebAppContext
 import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
 
 class HakuperusteetAdminServer extends HakuperusteetServer {
   override def createContext = {
+    val resources = new ResourceCollection(Array(
+      getClass.getClassLoader.getResource("webapp-common").toExternalForm,
+      getClass.getClassLoader.getResource("webapp-admin").toExternalForm
+      ));
+
     val context = new WebAppContext()
     context setContextPath ("/hakuperusteetadmin")
-    context.setResourceBase(getClass.getClassLoader.getResource("webapp-admin").toExternalForm)
+    context.setBaseResource(resources)
     context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraAdminBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")

@@ -1,10 +1,10 @@
 import React from 'react'
 import _ from 'lodash'
 
-import style from './css/hakuperusteet.less'
+import style from '../assets-common/css/hakuperusteet.less'
 
-import Header from './Header.jsx'
-import Footer from './Footer.jsx'
+import Header from '../assets-common/Header.jsx'
+import Footer from '../assets-common/Footer.jsx'
 
 export default class HakuperusteetPage extends React.Component {
     render() {

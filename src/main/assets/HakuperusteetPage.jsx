@@ -1,13 +1,13 @@
 import React from 'react'
 import _ from 'lodash'
 
-import style from './css/hakuperusteet.less'
+import style from '../assets-common/css/hakuperusteet.less'
 
 import {showUserDataForm, showEducationForm, showVetumaStart, showHakuList} from './AppLogic.js'
-import Header from './Header.jsx'
+import Header from '../assets-common/Header.jsx'
 import Session from './session/Session.jsx'
 import ProgramInfo from './ProgramInfo.jsx'
-import Footer from './Footer.jsx'
+import Footer from '../assets-common/Footer.jsx'
 import VetumaResultWrapper from './vetuma/VetumaResultWrapper.jsx'
 import UserDataForm from './userdata/UserDataForm.jsx'
 import EducationForm from './education/EducationForm.jsx'
