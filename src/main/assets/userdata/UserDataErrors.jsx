@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {requiredField, invalidField} from './UserDataErrors.js'
+import {requiredField, invalidField} from '../util/FieldValidator.js'
 
 import {translation} from '../../assets-common/translations/translations.js'
 
