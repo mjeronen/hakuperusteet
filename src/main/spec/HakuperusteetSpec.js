@@ -85,6 +85,9 @@ describe('Page with email session - userdata', () => {
 
   describe('Insert data', () => {
     it('initially submit should be disabled', assertSubmitDisabled)
+    it('initially show all missing errors', () => {
+      return S2("#userDataForm .error").then((e) => { expect(e.length).to.equal(6) }).then(done).catch(done)
+    })
 
     it('insert firstName', () => { S("#firstName").val("John").focus() })
     it('submit should be disabled', assertSubmitDisabled)
@@ -103,12 +106,17 @@ describe('Page with email session - userdata', () => {
 
     it('select nationality', () => { S("#nationality").val("246").focus().blur() })
     it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', () => { expect(S("#userDataForm .error").length).to.equal(0) })
 
     it('select personId', () => { S("#hasPersonId").click() })
     it('submit should be disabled', assertSubmitDisabled)
+    it('show one error after personId is clicked', () => {
+      return S2("#userDataForm .error").then(assertOneElementFound).then(done).catch(done)
+    })
 
     it('insert birthDate', () => { S("#personId").val("-9358").focus().blur() })
     it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', () => { expect(S("#userDataForm .error").length).to.equal(0) })
   })
 
   describe('Submit userDataForm', () => {
