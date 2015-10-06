@@ -12,6 +12,11 @@ export function parseNewValidationErrors(state, field, value) {
   }
 }
 
+export function validateEmailForm(state) {
+  return !_.isEmpty(state.emailToken) && _.contains(state.emailToken, "@")
+    && !_.contains(state.emailToken, " ") && !_.contains(state.emailToken, ",") && !_.contains(state.emailToken, "\t")
+}
+
 export function validateUserDataForm(state) {
   const allV = state.validationErrors || {}
   const userV = [allV.firstName, allV.lastName, allV.birthDate, allV.personId, allV.gender, allV.nativeLanguage,
