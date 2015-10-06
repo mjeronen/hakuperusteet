@@ -114,6 +114,11 @@
     },
     "submit": {
       "en": "Submit"
+    },
+    "errors": {
+      "requiredPersonId": {
+        "en": "Social security number is required."
+      }
     }
   },
   "educationForm": {

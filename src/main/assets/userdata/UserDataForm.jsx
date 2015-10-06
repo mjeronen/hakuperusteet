@@ -8,6 +8,7 @@ import Gender from './Gender.jsx'
 import Nationality from './Nationality.jsx'
 import NativeLanguage from './NativeLanguage.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
+import UserDataErrors from './UserDataErrors.jsx'
 
 import {validateUserDataForm} from './../util/FieldValidator.js'
 import {translation} from '../../assets-common/translations/translations.js'
@@ -34,6 +35,7 @@ export default class UserDataForm extends React.Component {
           <span className="serverError invalid hide">{translation("errors.server.invalid.userdata")}</span>
           <span className="serverError general hide">{translation("errors.server.unexpected")}</span>
         </div>
+        <UserDataErrors state={state} controller={controller} />
       </form>
   }
 }
