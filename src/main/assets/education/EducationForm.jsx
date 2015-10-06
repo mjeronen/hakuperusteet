@@ -5,6 +5,7 @@ import EducationLevel from './EducationLevel.jsx'
 import EducationCountry from './EducationCountry.jsx'
 import CountryPaymentInfo from './CountryPaymentInfo.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
+import EducationErrors from './EducationErrors.jsx'
 
 import {validateEducationForm} from './../util/FieldValidator.js'
 import {translation} from '../../assets-common/translations/translations.js'
@@ -32,6 +33,7 @@ export default class EducationForm extends React.Component {
         <AjaxLoader hide={true} />
         <span className="serverError general hide">{translation("errors.server.unexpected")}</span>
       </div>
+      <EducationErrors state={state} controller={controller} />
     </form>
   }
 }

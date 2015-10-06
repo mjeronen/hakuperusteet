@@ -148,6 +148,14 @@
     },
     "submit": {
       "en": "Submit"
+    },
+    "errors": {
+      "requiredEducationLevel": {
+        "en": "Education level is required."
+      },
+      "requiredEducationCountry": {
+        "en": "Education country is required."
+      }
     }
   },
   "vetuma": {
