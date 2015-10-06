@@ -20,7 +20,7 @@ export default class Nationality extends React.Component {
     const result = createSelectOptions(countries)
 
     return <div className="userDataFormRow">
-      <label htmlFor={this.id}>{translation("title.nationality")}</label>
+      <label htmlFor={this.id}>{translation("title.nationality") + " *"}</label>
       <select id={this.id} onChange={this.changes} onBlur={this.changes}>
         {result}
       </select>

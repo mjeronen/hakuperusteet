@@ -16,7 +16,7 @@ export default class UserBirthDateInput extends React.Component {
 
   render() {
     return <div className="userDataFormRow">
-        <label htmlFor="birthDate">{translation("title.birth.date")}</label>
+        <label htmlFor="birthDate">{translation("title.birth.date") + " *"}</label>
         <input type="text" id={this.id} name={this.id} onChange={this.changes} onBlur={this.changes} maxLength="8" />
         <span className="fieldFormatInfo">ddmmyyyy</span>
       </div>

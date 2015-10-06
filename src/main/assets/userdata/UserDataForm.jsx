@@ -22,8 +22,8 @@ export default class UserDataForm extends React.Component {
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     return <form id="userDataForm" onSubmit={controller.formSubmits}>
         <p>{translation("userdataform.info")}</p>
-        <UserDataInput name="firstName" title={translation("title.first.name")} state={state} controller={controller} />
-        <UserDataInput name="lastName" title={translation("title.last.name")} state={state} controller={controller} />
+        <UserDataInput name="firstName" title={translation("title.first.name") + " *"} state={state} controller={controller} />
+        <UserDataInput name="lastName" title={translation("title.last.name") + " *"} state={state} controller={controller} />
         <UserBirthDateInput state={state} controller={controller} />
         <UserSSNInput state={state} controller={controller} />
         <Gender state={state} controller={controller} />
