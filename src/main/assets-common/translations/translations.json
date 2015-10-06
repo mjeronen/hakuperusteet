@@ -116,8 +116,26 @@
       "en": "Submit"
     },
     "errors": {
+      "requiredFirstName": {
+        "en": "First name is required."
+      },
+      "requiredLastName": {
+        "en": "Last name is required."
+      },
+      "invalidBirthDate": {
+        "en": "Insert birth date in correct format."
+      },
       "requiredPersonId": {
-        "en": "Social security number is required."
+        "en": "Insert Social security number in correct format (last 5 characters)."
+      },
+      "requiredGender": {
+        "en": "Gender is required."
+      },
+      "requiredNativeLanguage": {
+        "en": "Native language is required."
+      },
+      "requiredNationality": {
+        "en": "Nationality is required."
       }
     }
   },
