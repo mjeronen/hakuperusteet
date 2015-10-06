@@ -129,18 +129,23 @@ describe('Page with email session - userdata', () => {
 
 describe('Page with email session - educationdata', () => {
   it('initially submit should be disabled', assertSubmitDisabled)
+  it('initially show all missing errors', () => {
+    return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
+  })
 
   it('select educationLevel', () => { S("#educationLevel").val("116").focus().blur() })
   it('submit should be disabled', assertSubmitDisabled)
 
   it('select educationCountry - Finland', () => { S("#educationCountry").val("246").focus().blur() })
   it('submit should be enabled', assertSubmitEnabled)
+  it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
   it('noPaymentRequired should be visible', () => {
     return S2(".noPaymentRequired").then(assertOneElementFound).then(done).catch(done)
   })
 
   it('select educationCountry - Solomin Islands', () => { S("#educationCountry").val("090").focus().blur() })
   it('submit should be enabled', assertSubmitEnabled)
+  it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
   it('noPaymentRequired should be visible', () => {
     return S2(".paymentRequired").then(assertOneElementFound).then(done).catch(done)
   })
