@@ -36,6 +36,14 @@ describe('Page without session', () => {
   })
 })
 
+describe('Page without session - invalid login token', () => {
+  before(openPage("/hakuperusteet/#/token/nonExistingToken", hakuperusteetLoaded))
+
+  it('should show login error message', () => {
+    return S2(".authentication-error").then(assertOneElementFound).then(done).catch(done)
+  })
+})
+
 describe('Page with email session - userdata', () => {
   before(openPage("/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
 
