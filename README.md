@@ -6,7 +6,7 @@
 
 MacOS users install docker with command `brew cask install dockertoolbox`.
 
-1. Create new docker-machine `docker-machine create —-driver virtualbox dockerVM`
+1. Create new docker-machine `docker-machine create --driver virtualbox dockerVM`
 2. `eval "$(docker-machine env dockerVM)"`
 3. Check DOCKER_HOST variable
 4. Edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
