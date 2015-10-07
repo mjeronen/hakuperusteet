@@ -16,7 +16,7 @@ case class Vetuma(sharedSecret: String, ap: String, rcvid: String, host: String,
   val dtf = new SimpleDateFormat("yyyyMMddHHmmssSSS")
   val appid = "PAYMENT-APP2"
   val so = ""
-  val solist = "P"
+  val solist = "P,L"
   val `type` = "PAYMENT"
   val au = "PAY"
 
