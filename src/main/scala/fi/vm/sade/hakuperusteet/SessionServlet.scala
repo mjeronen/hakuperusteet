@@ -48,16 +48,10 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   }
 
   post("/emailToken") {
-    val json = parse(request.body)
-    val email = (json \ "email").extract[Option[String]].getOrElse(halt(409))
-    Try(oppijanTunnistus.createToken(email)) match {
-      case Success(token) =>
-        logger.info(s"Sending token to $email with value $token")
-        compact(render(Map("token" -> token)))
-      case Failure(f) =>
-        logger.error("Oppijantunnistus.createToken error", f)
-        halt(status = 500)
-    }
+    val params = parse(request.body).extract[Params]
+    parseNonEmpty("email")(params).flatMap(validateEmail).bitraverse(
+      errors => renderConflictWithErrors(errors),
+      email => orderEmailToken(email))
   }
 
   post("/userData") {
@@ -78,6 +72,16 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   }
 
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
+
+  def orderEmailToken(email: String) =
+    Try(oppijanTunnistus.createToken(email)) match {
+      case Success(token) =>
+        logger.info(s"Sending token to $email with value $token")
+        halt(status = 200, body = compact(render(Map("token" -> token))))
+      case Failure(f) =>
+        logger.error("Oppijantunnistus.createToken error", f)
+        halt(status = 500)
+    }
 
   def createNewUser(session: Session, userData: User) = {
     logger.info(s"Updating userData: $userData")
@@ -153,4 +157,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   private def createPersonalId(birthDate: LocalDate, personId: Option[String]) =
     personId.map { (pid) => birthDate.format(personIdDateFormatter) + pid }
+
+  private def validateEmail(email: String): ValidationResult[String] =
+    if (!email.isEmpty && email.contains("@") && !email.contains(" ") && !email.contains(",") && !email.contains("\t")) email.successNel
+    else s"invalid email $email".failureNel
 }
