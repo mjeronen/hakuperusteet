@@ -1,13 +1,13 @@
 <configuration>
     <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/data00/oph/hakuperusteet/log/hakuperusteet-access.log</file>
+        <file>/data00/oph/hakuperusteet/logs/hakuperusteet-access.log</file>
         <append>true</append>
         <encoder>
             <charset>utf-8</charset>
             <pattern>combined</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/data00/oph/hakuperusteet/log/hakuperusteet-access-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
+            <fileNamePattern>/data00/oph/hakuperusteet/logs/hakuperusteet-access-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>5MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
