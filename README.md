@@ -2,15 +2,18 @@
 
 ## Setup
 
+### Requirements
+* JDK 1.8
+* node
+
 ### Local Postgres setup
 
 MacOS users install docker with command `brew cask install dockertoolbox`.
 
 1. Create new docker-machine `docker-machine create --driver virtualbox dockerVM`
-2. `eval "$(docker-machine env dockerVM)"`
-3. Check DOCKER_HOST variable
+2. Run `docker-machine env dockerVM` and check DOCKER_HOST variable
 4. Edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
-5. `docker run -p -d 5432:5432 postgres`
+5. `docker run -d -p 5432:5432 postgres`
 6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE ROLE OPH;"`
 7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
 8. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
@@ -25,7 +28,8 @@ To start hakuperusteet after Postgres is up, run the following commands:
 
 1. `npm install`
 2. `./sbt run`
-3. `npm run watch` on separate console to enable front auto compile
+3. Access hakuperusteet at [https://localhost:18080/hakuperusteet/](https://localhost:18080/hakuperusteet/)
+4. `npm run watch` on separate console to enable front auto compile
 
 By default hakuperusteet uses services from Luokka-environment.
 
