@@ -165,6 +165,6 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     else s"invalid email $email".failureNel
 
   private def parseFormId(providerOidsList: String): String = {
-    if (providerOidsList.contains("1.2.246.562.10.39920288212")) "aalto" else halt(409)
+    if (providerOidsList.contains("1.2.246.562.10.39920288212")) "aalto" else "aalto" // todo: parameterize and check if this really works
   }
 }
