@@ -9,12 +9,13 @@ import EducationErrors from './EducationErrors.jsx'
 
 import {validateEducationForm} from './../util/FieldValidator.js'
 import {translation} from '../../assets-common/translations/translations.js'
+import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export default class EducationForm extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
-    const tarjonta = _.isUndefined(this.props.state.tarjonta) ? {name : "", description: ""} : this.props.state.tarjonta
+    const tarjonta = tarjontaForHakukohdeOid(state, state.hakukohdeOid)
     const name = tarjonta.name
     const disabled = (validateEducationForm(state)) ? "" : "disabled"
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries

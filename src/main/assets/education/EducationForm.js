@@ -3,11 +3,12 @@ import moment from 'moment-timezone'
 
 import HttpUtil from '../util/HttpUtil.js'
 import {enableSubmitAndHideBusy} from '../util/HtmlUtils.js'
+import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export function submitEducationDataToServer(state) {
   const educationData = {
     hakukohdeOid: state.hakukohdeOid,
-    providerOids: state.tarjonta.providerOids.join(" "),
+    providerOids: tarjontaForHakukohdeOid(state, state.hakukohdeOid).providerOids.join(" "),
     educationLevel: state.educationLevel,
     educationCountry: state.educationCountry
   }

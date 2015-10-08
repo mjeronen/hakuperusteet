@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import {createSelectOptions} from '../util/HtmlUtils.js'
 import {translation} from '../../assets-common/translations/translations.js'
+import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export default class EducationLevel extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ export default class EducationLevel extends React.Component {
   render() {
     const state = this.props.state
     const allBaseEducations = (_.isEmpty(state.properties) || _.isEmpty(state.properties.baseEducation)) ? [] : state.properties.baseEducation
-    const baseEducationsForCurrent = _.isEmpty(state.tarjonta) ? [] : state.tarjonta.baseEducations
+    const baseEducationsForCurrent = tarjontaForHakukohdeOid(state, state.hakukohdeOid).baseEducations
     const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
     const result = createSelectOptions(baseEducationOptions)
     return <div className="userDataFormRow">

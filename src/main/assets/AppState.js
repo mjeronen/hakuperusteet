@@ -52,7 +52,8 @@ export function initAppState(props) {
   const logOutS = dispatcher.stream(events.logOut)
 
   const stateP = Bacon.update(initialState,
-    [propertiesS, hakukohdeS, tarjontaS], onStateInit,
+    [propertiesS, hakukohdeS], onStateInit,
+    [tarjontaS], onTarjontaValue,
     [cssEffectsBus], onCssEffectValue,
     [credentialsS], onCredentialsChange,
     [sessionDataS], onSessionDataFromServer,
@@ -91,8 +92,14 @@ export function initAppState(props) {
     return currentUser
   }
 
-  function onStateInit(state, properties, hakukohdeOid, tarjonta) {
-    return {...state, properties, hakukohdeOid, tarjonta}
+  function onStateInit(state, properties, hakukohdeOid) {
+    return {...state, properties, hakukohdeOid}
+  }
+
+  function onTarjontaValue(state, tarjonta) {
+    const currentTarjonta = state.tarjonta || []
+    const newTarjonta = {...currentTarjonta, [tarjonta.hakukohdeOid]: tarjonta}
+    return {...state, ['tarjonta']: newTarjonta}
   }
 
   function onCssEffectValue(state, effect) {
