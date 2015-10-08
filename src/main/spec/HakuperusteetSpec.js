@@ -192,7 +192,7 @@ describe('Page with email session - vetuma start page', () => {
     })
 
     it('redirectForm should be visible', () => {
-      return S2("#redirectToForm").then(assertOneElementFound).then(done).catch(done)
+      return S2(".redirectToForm").then(assertOneElementFound).then(done).catch(done)
     })
   })
 })

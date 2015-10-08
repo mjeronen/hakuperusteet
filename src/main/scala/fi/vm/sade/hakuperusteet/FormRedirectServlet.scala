@@ -21,14 +21,14 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
   get("/redirect") {
     failUnlessAuthenticated
 
-    val host = config.getString("form.redirect.base")
     val userData = userDataFromSession
     val hakukohdeOid = params.get("hakukohdeOid").getOrElse(halt(409))
-    val educationForThisHakukohde = db.findApplicationObjectByHakukohdeOid(userDataFromSession, hakukohdeOid).getOrElse(halt(409))
+    val applicationObjectForThisHakukohde = db.findApplicationObjectByHakukohdeOid(userDataFromSession, hakukohdeOid).getOrElse(halt(409))
+    val host = hostBaseUrl(applicationObjectForThisHakukohde.formId)
     val payments = db.findPayments(userData)
-    val shouldPay = countries.shouldPay(educationForThisHakukohde.educationCountry)
+    val shouldPay = countries.shouldPay(applicationObjectForThisHakukohde.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
-    compact(render(Map("url" -> generateUrl(host, userData, educationForThisHakukohde, shouldPay, hasPaid))))
+    compact(render(Map("url" -> generateUrl(host, userData, applicationObjectForThisHakukohde, shouldPay, hasPaid))))
   }
 
   def generateUrl(host: Oid, userData: User, educationForThisHakukohde: ApplicationObject, shouldPay: Boolean, hasPaid: Boolean) = {
@@ -44,4 +44,6 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
       ("gender", u.gender), ("nationality", u.nationality), ("hakukohdeOid", e.hakukohdeOid), ("educationLevel", e.educationLevel),
       ("educationCountry", e.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString),
       ("created", new Date().toInstant.getEpochSecond.toString))
+
+  private def hostBaseUrl(formId: String) = config.getConfig("form.redirect.base").getString(formId)
 }
