@@ -2,10 +2,10 @@ import React from 'react'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
-import HttpUtil from './util/HttpUtil'
-import AjaxLoader from './util/AjaxLoader.jsx'
-import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from './util/HtmlUtils.js'
-import {translation} from '../assets-common/translations/translations.js'
+import HttpUtil from '../util/HttpUtil'
+import AjaxLoader from '../util/AjaxLoader.jsx'
+import {disableSubmitAndShowBusy, enableSubmitAndHideBusyAndShowError} from '../util/HtmlUtils.js'
+import {translation} from '../../assets-common/translations/translations.js'
 
 export default class HakuList extends React.Component {
   onSubmitRedirect(state) {

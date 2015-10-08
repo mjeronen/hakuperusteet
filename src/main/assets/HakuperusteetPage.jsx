@@ -12,7 +12,7 @@ import VetumaResultWrapper from './vetuma/VetumaResultWrapper.jsx'
 import UserDataForm from './userdata/UserDataForm.jsx'
 import EducationForm from './education/EducationForm.jsx'
 import VetumaStart from './vetuma/VetumaStart.jsx'
-import HakuList from './HakuList.jsx'
+import HakuList from './hakulist/HakuList.jsx'
 
 export default class HakuperusteetPage extends React.Component {
   render() {
