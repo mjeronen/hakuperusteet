@@ -29,8 +29,9 @@ export function initAppState(props) {
   const gapiLoading = Bacon.fromPoll(10, checkGapiStatus).filter(skipLoadingMessages)
   const serverUpdatesBus = new Bacon.Bus()
   const cssEffectsBus = new Bacon.Bus()
+  const tarjontaLoadBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
-  const hakukohdeS = Bacon.once(parseAoId()).toProperty()
+  const hakukohdeS = tarjontaLoadBus.merge(Bacon.once(parseAoId())).toProperty()
   const tarjontaS = hakukohdeS.flatMap(fetchFromTarjonta).toEventStream()
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
@@ -45,6 +46,9 @@ export function initAppState(props) {
   ).skipDuplicates().toEventStream()
 
   const sessionDataS = credentialsS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl)).doAction(sessionInit)
+  const otherApplicationObjects = sessionDataS.flatMap(applicationObjects).map(".hakukohdeOid").filter(notCurrentHakukohde).toEventStream()
+  tarjontaLoadBus.plug(otherApplicationObjects)
+
   cssEffectsBus.plug(hashS.filter(isCssEffect).flatMap(toCssEffect))
 
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
@@ -147,6 +151,8 @@ export function initAppState(props) {
     const aoid = /\/hakuperusteet\/ao\/([0-9\.]*)$/
     return aoid.test(location.pathname) ? aoid.exec(location.pathname).pop() : "1.2.246.562.20.69046715533"
   }
+  function applicationObjects(s) { return Bacon.fromArray(s.applicationObject) }
+  function notCurrentHakukohde(x) { return x != parseAoId() }
   function fetchFromTarjonta(hakukohde) {
     return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
   }
