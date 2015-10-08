@@ -1,5 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
+import javax.servlet.SessionCookieConfig
+
 import fi.vm.sade.hakuperusteet.Configuration._
 import fi.vm.sade.hakuperusteet.HakuperusteetServer._
 import fi.vm.sade.hakuperusteet.util.JettyUtil
@@ -30,6 +32,9 @@ class HakuperusteetServer {
     context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")
+    val sessionCookieConfig: SessionCookieConfig = context.getServletContext.getSessionCookieConfig
+    sessionCookieConfig.setHttpOnly(true)
+    sessionCookieConfig.setSecure(true)
     context
   }
 }
