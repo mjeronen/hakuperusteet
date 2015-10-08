@@ -43,14 +43,14 @@ case class HakuperusteetDatabase(db: DB) {
   def upsertUser(user: User): Option[User] =
     (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
 
-  def findEducations(user: User): Seq[ApplicationObject] =
+  def findApplicationObjects(user: User): Seq[ApplicationObject] =
     Tables.ApplicationObject.filter(_.henkiloOid === user.personOid).result.run.map(aoRowToAo)
 
-  def findEducationByHakukohdeOid(user: User, hakukohdeOid: String) =
+  def findApplicationObjectByHakukohdeOid(user: User, hakukohdeOid: String) =
     Tables.ApplicationObject.filter(_.henkiloOid === user.personOid).filter(_.hakukohdeOid === hakukohdeOid).result.headOption.run.map(aoRowToAo)
 
-  def upsertEducation(education: ApplicationObject) =
-    (Tables.ApplicationObject returning Tables.ApplicationObject).insertOrUpdate(aoToAoRow(education)).run.map(aoRowToAo)
+  def upsertApplicationObject(applicationObject: ApplicationObject) =
+    (Tables.ApplicationObject returning Tables.ApplicationObject).insertOrUpdate(aoToAoRow(applicationObject)).run.map(aoRowToAo)
 
   def findPaymentByOrderNumber(user: User, orderNumber: String): Option[Payment] =
     Tables.Payment.filter(_.henkiloOid === user.personOid).filter(_.orderNumber === orderNumber).sortBy(_.tstamp.desc).result.headOption.run.map(paymentRowToPayment)

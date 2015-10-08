@@ -30,7 +30,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
     db.findUser(user.email) match {
       case Some(u) =>
-        val educations = db.findEducations(u).toList
+        val educations = db.findApplicationObjects(u).toList
         val payments = db.findPayments(u).toList
         write(SessionData(user, Some(u), educations, payments))
       case None => write(SessionData(user, None, List.empty, List.empty))
@@ -93,8 +93,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   def addNewEducation(session: Session, userData: User, education: ApplicationObject) = {
     logger.info(s"Updating education: $education")
-    db.upsertEducation(education)
-    val educations = db.findEducations(userData).toList
+    db.upsertApplicationObject(education)
+    val educations = db.findApplicationObjects(userData).toList
     halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, Some(userData), educations, List.empty))))
   }
 
