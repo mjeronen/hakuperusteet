@@ -95,7 +95,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     logger.info(s"Updating education: $education")
     db.upsertApplicationObject(education)
     val educations = db.findApplicationObjects(userData).toList
-    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, Some(userData), educations, List.empty))))
+    val payments = db.findPayments(userData).toList
+    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, Some(userData), educations, payments))))
   }
 
   private def sendEmail(newUser: User): Boolean = {
