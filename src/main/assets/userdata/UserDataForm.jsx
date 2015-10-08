@@ -27,8 +27,8 @@ export default class UserDataForm extends React.Component {
         <UserBirthDateInput state={state} controller={controller} />
         <UserSSNInput state={state} controller={controller} />
         <Gender state={state} controller={controller} />
-        <NativeLanguage languages={languages} controller={controller} />
-        <Nationality countries={countries} controller={controller} />
+        <NativeLanguage state={state} languages={languages} controller={controller} />
+        <Nationality state={state} countries={countries} controller={controller} />
         <div className="userDataFormRow">
           <input type="submit" name="submit" value={translation("userdataform.submit")} disabled={disabled} />
           <AjaxLoader hide={true} />

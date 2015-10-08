@@ -6,18 +6,6 @@ import style from '../assets-common/css/hakuperusteet.less'
 import Header from './Header.jsx'
 import Footer from '../assets-common/Footer.jsx'
 import AdminForm from './HakuperusteetAdminForm.jsx'
-import {navigateToUser,routeP} from "./router.js"
-
-export const oppijaP = routeP.flatMap(route => {
-    var match = route.match(new RegExp("oppija/(.*)"))
-    if(match) {
-        console.log("Lue hakijan tiedot kannasta " + match)
-        return true
-    } else {
-        console.log("Hakija ei ole valittu!")
-        return false
-    }
-}).toProperty()
 
 export default class HakuperusteetPage extends React.Component {
     constructor(props) {
@@ -29,7 +17,6 @@ export default class HakuperusteetPage extends React.Component {
         const state = this.props.state
         const controller = this.props.controller
         const users = state.users
-        console.log(oppijaP)
         return <div>
             <Header />
                 <div className="userDataFormRow">
@@ -50,6 +37,8 @@ export default class HakuperusteetPage extends React.Component {
     }
 
     selectUser(user) {
-        navigateToUser(user)
+        const controller = this.props.controller
+        history.pushState(null, null, `/hakuperusteetadmin/oppija/${user.personOid}`)
+        controller.pushRouteChange(document.location.pathname)
     }
 }

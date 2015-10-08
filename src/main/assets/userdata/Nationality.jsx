@@ -11,17 +11,17 @@ export default class Nationality extends React.Component {
   }
 
   componentDidMount() {
-    this.changes({ target: { id: this.id, value: "" }})
+    //this.changes({ target: { id: this.id, value: "" }})
   }
 
   render() {
-    const controller = this.props.controller
     const countries = _.isEmpty(this.props.countries) ? {} : this.props.countries
+    const selected = _.isEmpty(this.props.state) ? null : this.props.state[this.id]
     const result = createSelectOptions(countries)
 
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>{translation("title.nationality") + " *"}</label>
-      <select id={this.id} onChange={this.changes} onBlur={this.changes}>
+      <select id={this.id} onChange={this.changes} onBlur={this.changes} value={selected}>
         {result}
       </select>
     </div>

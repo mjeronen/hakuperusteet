@@ -21,7 +21,8 @@ import scala.io.Source
 class AdminServlet(val resourcePath: String, protected val cfg: Config, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging {
   val staticFileContent = Source.fromURL(getClass.getResource(resourcePath)).takeWhile(_ != -1).map(_.toByte).toArray
   override def realm: String = "hakuperusteet_admin"
-  implicit val formats = Serialization.formats(NoTypeHints)
+  ///implicit val formats = Serialization.formats(NoTypeHints)
+  implicit val formats = fi.vm.sade.hakuperusteet.formatsUI
   val host = cfg.getString("hakuperusteet.cas.url")
 
   get("/") {
@@ -57,7 +58,23 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     */
     write(db.allUsers)
   }
+  get("/api/v1/admin/:personoid") {
+    //println(params("personoid"))
+    contentType = "application/json"
+    /*
+    authenticate
+    failUnlessAuthenticated
 
+    if(user.roles.contains("APP_HENKILONHALLINTA_OPHREKISTERI")) {
+      val properties = Map("admin" -> true)
+      write(properties)
+    } else {
+      val properties = Map()
+      write(properties)
+    }
+    */
+    write(db.findUserByOid(params("personoid")))
+  }
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
 }

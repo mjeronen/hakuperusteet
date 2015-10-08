@@ -1,9 +1,9 @@
 package fi.vm.sade
 
+import java.time.{LocalDateTime, ZoneId, LocalDate, Instant}
 import java.time.format.DateTimeFormatter
 
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus
-import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import org.json4s.DefaultJsonFormats._
 
@@ -28,8 +28,22 @@ package object hakuperusteet {
     )
   )
 
+  case object UiDateSerializer extends CustomSerializer[Date](format => (
+    {
+      case JString(s) => Date.from(LocalDate.parse(s, UIDateFormatter).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())
+      case JInt(s) => null
+      case JNull => null
+    },
+    {
+      case d: Date => JString(UIDateFormatter.format(
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(d.getTime()), ZoneId.systemDefault())))
+    }
+    )
+  )
+
   val formatsHenkilo = Serialization.formats(org.json4s.NoTypeHints) + DateSerializer
 
+  val formatsUI = Serialization.formats(org.json4s.NoTypeHints) + UiDateSerializer
 
   case object PaymentStatusSerializer extends CustomSerializer[PaymentStatus](format => (
     { case JString(s) => PaymentStatus.withName(s) },
@@ -37,6 +51,6 @@ package object hakuperusteet {
   )
 
   implicit val formats = org.json4s.DefaultFormats + PaymentStatusSerializer
-
+  val UIDateFormatter = DateTimeFormatter.ofPattern("ddMMyyyy")
   val personIdDateFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 }

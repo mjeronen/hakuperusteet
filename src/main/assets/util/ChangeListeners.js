@@ -25,7 +25,9 @@ export function initChangeListeners(dispatcher, events) {
     disableSubmitAndShowBusy(form)
     dispatcher.push(events.submitForm, e.target.id)
   }
-
+  function pushRouteChange(path) {
+    dispatcher.push(events.route, path)
+  }
   function pushChangeAndValidation(field, value) {
     dispatcher.push(events.updateField, {field: field, value: value})
     dispatcher.push(events.fieldValidation, {field: field, value: value})
@@ -34,6 +36,6 @@ export function initChangeListeners(dispatcher, events) {
   function logOut() {
     dispatcher.push(events.logOut, {})
   }
-  return { valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits, logOut: logOut }
+  return { pushChangeAndValidation: pushChangeAndValidation, pushRouteChange: pushRouteChange, valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits, logOut: logOut }
 }
 
