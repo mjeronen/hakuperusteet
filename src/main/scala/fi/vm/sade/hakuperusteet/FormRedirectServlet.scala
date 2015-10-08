@@ -6,7 +6,7 @@ import java.util.Date
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{Education, User, PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, User, PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.koodisto.Countries
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
@@ -31,14 +31,14 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
     compact(render(Map("url" -> generateUrl(host, userData, educationForThisHakukohde, shouldPay, hasPaid))))
   }
 
-  def generateUrl(host: Oid, userData: User, educationForThisHakukohde: Education, shouldPay: Boolean, hasPaid: Boolean) = {
+  def generateUrl(host: Oid, userData: User, educationForThisHakukohde: ApplicationObject, shouldPay: Boolean, hasPaid: Boolean) = {
     val seq = paramSequence(userData, shouldPay, hasPaid, educationForThisHakukohde)
     val signature = signer.signData(seq.map(_._2).mkString(""))
     val query = seq.map{ case (k, v) => s"$k=${URLEncoder.encode(v, "UTF-8")}" }.mkString("&") + s"&signature=${URLEncoder.encode(signature, "UTF-8")}"
     s"$host?$query"
   }
 
-  def paramSequence(u: User, shouldPay: Boolean, hasPaid: Boolean, e: Education) =
+  def paramSequence(u: User, shouldPay: Boolean, hasPaid: Boolean, e: ApplicationObject) =
     Seq(("personOid", u.personOid.getOrElse(halt(500))), ("email", u.email), ("firstName", u.firstName), ("lastName", u.lastName),
       ("birthDate", new SimpleDateFormat("ddMMyyyy").format(u.birthDate)), ("personId", u.personId.getOrElse("")),
       ("gender", u.gender), ("nationality", u.nationality), ("hakukohdeOid", e.hakukohdeOid), ("educationLevel", e.educationLevel),

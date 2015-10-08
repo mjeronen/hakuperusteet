@@ -3,7 +3,7 @@ package fi.vm.sade.hakuperusteet
 import java.time.LocalDate
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{Education, Session, SessionData, User}
+import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Session, SessionData, User}
 import fi.vm.sade.hakuperusteet.email.{EmailTemplate, WelcomeValues, EmailSender}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
@@ -91,7 +91,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, List.empty, List.empty))))
   }
 
-  def addNewEducation(session: Session, userData: User, education: Education) = {
+  def addNewEducation(session: Session, userData: User, education: ApplicationObject) = {
     logger.info(s"Updating education: $education")
     db.upsertEducation(education)
     val educations = db.findEducations(userData).toList
@@ -131,12 +131,12 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     }
   }
 
-  def parseEducationData(personOid: String, params: Params): ValidationResult[Education] = {
+  def parseEducationData(personOid: String, params: Params): ValidationResult[ApplicationObject] = {
     (parseNonEmpty("hakukohdeOid")(params)
       |@| parseExists("educationLevel")(params).flatMap(validateEducationLevel)
       |@| parseExists("educationCountry")(params).flatMap(validateCountry)
       ) { (hakukohdeOid, educationLevel, educationCountry) =>
-      Education(None, personOid, hakukohdeOid, educationLevel, educationCountry)
+      ApplicationObject(None, personOid, hakukohdeOid, "", educationLevel, educationCountry)
     }
   }
   private def validateGender(gender: String): ValidationResult[String] =

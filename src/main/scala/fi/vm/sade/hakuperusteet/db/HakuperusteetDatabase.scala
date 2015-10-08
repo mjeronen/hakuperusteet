@@ -8,8 +8,8 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
-import fi.vm.sade.hakuperusteet.db.generated.Tables.{SessionRow, PaymentRow, UserRow, EducationRow}
-import fi.vm.sade.hakuperusteet.domain.{Session, PaymentStatus, Payment, User, Education}
+import fi.vm.sade.hakuperusteet.db.generated.Tables.{SessionRow, PaymentRow, UserRow, ApplicationObjectRow}
+import fi.vm.sade.hakuperusteet.domain.{Session, PaymentStatus, Payment, User, ApplicationObject}
 
 
 import slick.driver.PostgresDriver
@@ -43,14 +43,14 @@ case class HakuperusteetDatabase(db: DB) {
   def upsertUser(user: User): Option[User] =
     (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
 
-  def findEducations(user: User): Seq[Education] =
-    Tables.Education.filter(_.henkiloOid === user.personOid).result.run.map(educationRowToEducation)
+  def findEducations(user: User): Seq[ApplicationObject] =
+    Tables.ApplicationObject.filter(_.henkiloOid === user.personOid).result.run.map(aoRowToAo)
 
   def findEducationByHakukohdeOid(user: User, hakukohdeOid: String) =
-    Tables.Education.filter(_.henkiloOid === user.personOid).filter(_.hakukohdeOid === hakukohdeOid).result.headOption.run.map(educationRowToEducation)
+    Tables.ApplicationObject.filter(_.henkiloOid === user.personOid).filter(_.hakukohdeOid === hakukohdeOid).result.headOption.run.map(aoRowToAo)
 
-  def upsertEducation(education: Education) =
-    (Tables.Education returning Tables.Education).insertOrUpdate(educationToEducationRow(education)).run.map(educationRowToEducation)
+  def upsertEducation(education: ApplicationObject) =
+    (Tables.ApplicationObject returning Tables.ApplicationObject).insertOrUpdate(aoToAoRow(education)).run.map(aoRowToAo)
 
   def findPaymentByOrderNumber(user: User, orderNumber: String): Option[Payment] =
     Tables.Payment.filter(_.henkiloOid === user.personOid).filter(_.orderNumber === orderNumber).sortBy(_.tstamp.desc).result.headOption.run.map(paymentRowToPayment)
@@ -74,9 +74,9 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def sessionRowToSession(r: SessionRow) = Session(Some(r.id), r.email, r.token, r.idpentityid)
 
-  private def educationRowToEducation(r: EducationRow) = Education(Some(r.id), r.henkiloOid, r.hakukohdeOid, r.educationLevel, r.educationCountry)
+  private def aoRowToAo(r: ApplicationObjectRow) = ApplicationObject(Some(r.id), r.henkiloOid, r.hakukohdeOid, r.formId, r.educationLevel, r.educationCountry)
 
-  private def educationToEducationRow(e: Education) = EducationRow(e.id.getOrElse(useAutoIncrementId), e.personOid, e.hakukohdeOid, e.educationLevel, e.educationCountry)
+  private def aoToAoRow(e: ApplicationObject) = ApplicationObjectRow(e.id.getOrElse(useAutoIncrementId), e.personOid, e.hakukohdeOid, e.educationLevel, e.educationCountry, e.formId)
 
   private def userToUserRow(u: User): Tables.UserRow =
     UserRow(u.id.getOrElse(useAutoIncrementId), u.personOid, u.email, u.idpentityid, u.firstName,
