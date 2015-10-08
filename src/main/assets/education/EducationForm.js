@@ -7,6 +7,7 @@ import {enableSubmitAndHideBusy} from '../util/HtmlUtils.js'
 export function submitEducationDataToServer(state) {
   const educationData = {
     hakukohdeOid: state.hakukohdeOid,
+    providerOids: state.providerOids.join(" "),
     educationLevel: state.educationLevel,
     educationCountry: state.educationCountry
   }
