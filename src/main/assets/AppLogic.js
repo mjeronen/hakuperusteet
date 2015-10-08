@@ -23,14 +23,14 @@ export function showUserDataForm(state) {
 }
 
 export function showEducationForm(state) {
-  return hasUserData(state) && _.isEmpty(state.sessionData.education)
+  return hasUserData(state) && !hasEducationForCurrentHakuOid(state)
 }
 
 export function showVetumaStart(state) {
   function hasNoValidPayment() {
     return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
   }
-  return hasUserData(state) && !_.isEmpty(state.sessionData.education) && paymentRequired(state) && hasNoValidPayment()
+  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && paymentRequired(state) && hasNoValidPayment()
 }
 
 export function showHakuList(state) {
@@ -56,11 +56,11 @@ function hasUserData(state) {
 }
 
 function hasEducationForCurrentHakuOid(state) {
-  return _.some(state.sessionData.education, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
+  return !_.isEmpty(state.sessionData.applicationObject) && _.some(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
 }
 
 function paymentRequired(state) {
-  const educationForCurrentHakukohdeOid = _.find(state.sessionData.education, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
+  const educationForCurrentHakukohdeOid = _.find(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
   if (_.isEmpty(educationForCurrentHakukohdeOid)) {
     return false
   } else {
