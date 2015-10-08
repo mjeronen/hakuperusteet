@@ -102,6 +102,9 @@
       },
       "notRequired": {
         "en": "With EEA-based education you don't need to pay applying charge."
+      },
+      "alreadyPaid": {
+        "en": "You have already paid applying charge of 100€."
       }
     }
   },

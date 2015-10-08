@@ -34,10 +34,11 @@ export function showVetumaStart(state) {
 }
 
 export function showHakuList(state) {
-  function hasValidPayment() {
-    return _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
-  }
-  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && (hasValidPayment() || !paymentRequired(state))
+  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && (hasValidPayment(state) || !paymentRequired(state))
+}
+
+export function hasValidPayment(state) {
+  return _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
 }
 
 export function showVetumaResultOk(state) {

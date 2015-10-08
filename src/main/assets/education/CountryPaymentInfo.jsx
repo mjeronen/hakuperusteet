@@ -2,6 +2,9 @@ import React from 'react'
 import _ from 'lodash'
 import {translation} from '../../assets-common/translations/translations.js'
 
+import {hasValidPayment} from '../AppLogic.js'
+
+
 export default class CountryPaymentInfo extends React.Component {
   render() {
     const state = this.props.state
@@ -11,15 +14,21 @@ export default class CountryPaymentInfo extends React.Component {
 
     const paymentRequired = country && !isEeaCountry
     const noPaymentRequired = country && isEeaCountry
+    const alreadyPaid = hasValidPayment(state)
+
     return <div className="userDataFormRow">
-      { paymentRequired
+      { paymentRequired && !alreadyPaid && !_.isEmpty(state.educationCountry)
         ? <p className="paymentRequired">{translation("apply.payment.required")}</p>
         : null
       }
-      { noPaymentRequired
+      { noPaymentRequired && !_.isEmpty(state.educationCountry)
         ? <p className="noPaymentRequired">{translation("apply.payment.notRequired")}</p>
         : null
       }
-      </div>
+      { alreadyPaid && !noPaymentRequired && !_.isEmpty(state.educationCountry)
+        ? <p className="alreadyPaid">{translation("apply.payment.alreadyPaid")}</p>
+        : null
+      }
+    </div>
   }
 }
