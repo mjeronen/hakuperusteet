@@ -1,6 +1,5 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
-import moment from 'moment-timezone'
 
 import {enableSubmitAndHideBusy} from '../assets/util/HtmlUtils.js'
 import HttpUtil from '../assets/util/HttpUtil.js'
