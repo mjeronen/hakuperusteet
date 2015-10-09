@@ -19,21 +19,10 @@ describe('Page without session', () => {
     expect(S(".emailAuthentication.session").length).to.equal(0)
   })
 
-  it('should not show userDataForm', () => {
-    expect(S("#userDataForm").length).to.equal(0)
-  })
-
-  it('should not show educationForm', () => {
-    expect(S("#educationForm").length).to.equal(0)
-  })
-
-  it('should not show vetuma start', () => {
-    expect(S(".vetumaStart").length).to.equal(0)
-  })
-
-  it('should not show hakuList', () => {
-    expect(S(".hakuList").length).to.equal(0)
-  })
+  it('should not show userDataForm', () => {expect(S("#userDataForm").length).to.equal(0) })
+  it('should not show educationForm', () => {expect(S("#educationForm").length).to.equal(0) })
+  it('should not show vetuma start', () => { expect(S(".vetumaStart").length).to.equal(0) })
+  it('should not show hakuList', () => { expect(S(".hakuList").length).to.equal(0)})
 })
 
 describe('Page without session - order email token', () => {
@@ -88,21 +77,10 @@ describe('Page with email session - userdata', () => {
     return S2("#logout").then(assertOneElementFound).then(done).catch(done)
   })
 
-  it('should show userDataForm', () => {
-    return S2("#userDataForm").then(assertOneElementFound).then(done).catch(done)
-  })
-
-  it('should not show educationForm', () => {
-    expect(S("#educationForm").length).to.equal(0)
-  })
-
-  it('should not show vetuma start', () => {
-    expect(S(".vetumaStart").length).to.equal(0)
-  })
-
-  it('should not show hakuList', () => {
-    expect(S(".hakuList").length).to.equal(0)
-  })
+  it('should show userDataForm', () => { return S2("#userDataForm").then(assertOneElementFound).then(done).catch(done) })
+  it('should not show educationForm', () => { expect(S("#educationForm").length).to.equal(0) })
+  it('should not show vetuma start', () => { expect(S(".vetumaStart").length).to.equal(0) })
+  it('should not show hakuList', () => { expect(S(".hakuList").length).to.equal(0)})
 
   describe('Insert data', () => {
     it('initially submit should be disabled', assertSubmitDisabled)
