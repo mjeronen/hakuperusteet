@@ -127,34 +127,41 @@ describe('Page with email session - userdata', () => {
 })
 
 describe('Page with email session - educationdata', () => {
-  it('initially submit should be disabled', assertSubmitDisabled)
-  it('initially show all missing errors', () => {
-    return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
-  })
+  it('should not show userDataForm', () => {expect(S("#userDataForm").length).to.equal(0) })
+  it('should show educationForm', () => { return S2("#educationForm").then(assertOneElementFound).then(done).catch(done) })
+  it('should not show vetuma start', () => { expect(S(".vetumaStart").length).to.equal(0) })
+  it('should not show hakuList', () => { expect(S(".hakuList").length).to.equal(0)})
 
-  it('select educationLevel', () => { S("#educationLevel").val("116").focus().blur() })
-  it('submit should be disabled', assertSubmitDisabled)
+  describe('Insert data', () => {
+    it('initially submit should be disabled', assertSubmitDisabled)
+    it('initially show all missing errors', () => {
+      return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
+    })
 
-  it('select educationCountry - Finland', () => { S("#educationCountry").val("246").focus().blur() })
-  it('submit should be enabled', assertSubmitEnabled)
-  it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
-  it('noPaymentRequired should be visible', () => {
-    return S2(".noPaymentRequired").then(assertOneElementFound).then(done).catch(done)
-  })
-  it('alreadyPaid should be hidden', () => { expect(S(".alreadyPaid").length).to.equal(0) })
+    it('select educationLevel', () => { S("#educationLevel").val("116").focus().blur() })
+    it('submit should be disabled', assertSubmitDisabled)
 
-  it('select educationCountry - Solomin Islands', () => { S("#educationCountry").val("090").focus().blur() })
-  it('submit should be enabled', assertSubmitEnabled)
-  it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
-  it('paymentRequired should be visible', () => {
-    return S2(".paymentRequired").then(assertOneElementFound).then(done).catch(done)
-  })
-  it('alreadyPaid should be hidden', () => { expect(S(".alreadyPaid").length).to.equal(0) })
+    it('select educationCountry - Finland', () => { S("#educationCountry").val("246").focus().blur() })
+    it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
+    it('noPaymentRequired should be visible', () => {
+      return S2(".noPaymentRequired").then(assertOneElementFound).then(done).catch(done)
+    })
+    it('alreadyPaid should be hidden', () => { expect(S(".alreadyPaid").length).to.equal(0) })
 
-  describe('Submit educationForm', () => {
-    it('click submit should post educationdata', () => {
-      S("input[name='submit']").click()
-      return S2(".vetumaStart").then(assertOneElementFound).then(done).catch(done)
+    it('select educationCountry - Solomin Islands', () => { S("#educationCountry").val("090").focus().blur() })
+    it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
+    it('paymentRequired should be visible', () => {
+      return S2(".paymentRequired").then(assertOneElementFound).then(done).catch(done)
+    })
+    it('alreadyPaid should be hidden', () => { expect(S(".alreadyPaid").length).to.equal(0) })
+
+    describe('Submit educationForm', () => {
+      it('click submit should post educationdata', () => {
+        S("input[name='submit']").click()
+        return S2(".vetumaStart").then(assertOneElementFound).then(done).catch(done)
+      })
     })
   })
 })
