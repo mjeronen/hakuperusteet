@@ -1,0 +1,159 @@
+@color-blue: #4194BF;
+@color-white: #FFFFFF;
+@color-lightgray: #FAFAFA;
+@color-darkgray: #F5F5F5;
+@color-disabled: #E6E6E6;
+@color-red: #ee4444;
+@color-darkgray-text: #918C8A;
+
+@page-border-width: ~"calc((100vw - 1200px) / 2)";
+@oppija-haku-width: ~"calc(100px + (100vw - 1200px) / 2)";
+
+#topbar {
+  padding-left: @page-border-width;
+  padding-right: @page-border-width;
+  height: 90px;
+  background-color: #149ECB;
+  border: 0;
+  margin: 0;
+  img {
+    border: none;
+    padding-top: 20px;
+  }
+}
+
+.content-area {
+  display: table;
+  height: 100%;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.sidebar {
+  display: table-cell;
+  width: @oppija-haku-width;
+  padding-left: @page-border-width;
+  padding-top: 35px;
+  vertical-align: top;
+}
+
+.main-content {
+  display: table-cell;
+  padding-right: @page-border-width;
+  padding-left: 60px;
+  vertical-align: top;
+}
+
+.Triangle(@size, @color, @direction) {
+  display: block;
+  width: 0;
+  height: 0;
+  border: @size solid transparent;
+  border-@{direction}: @size solid @color;
+}
+
+.oppija-haku {
+  background-color: @color-lightgray;
+  input {
+    width: ~"calc(100% - 10px)";
+  }
+
+  hr {
+    margin-right: 40px;
+    margin-top: 22px;
+  }
+
+  .hakutulokset {
+    position: relative;
+
+    ul {
+      list-style: none;
+      margin: 5px 0 0 0;
+      padding: 0;
+
+      li {
+        cursor: pointer;
+        position: relative;
+        height: 49px;
+        a {
+          padding-left: 9px;
+          line-height: 49px;
+          display: inline-block;
+          height: 100%;
+          width: 100%;
+        }
+      }
+
+      li.selected {
+        background-color: @color-blue;
+        a {
+          color: @color-white;
+        }
+        &:after {
+          content: "";
+          .Triangle(12px, @color-blue, left);
+          position: absolute;
+          bottom: 12px;
+          right: -24px;
+        }
+      }
+    }
+
+    @keyframes fadein {
+      0% { opacity: 0; }
+      100% { opacity: 0.5;}
+    }
+  }
+
+  .lisaa-oppija {
+    float: right;
+    margin-right: 40px;
+    font-size: 14px;
+    vertical-align: bottom;
+    line-height: 25px;
+  }
+}
+
+.oppija-haku.searching .hakutulokset {
+  &:before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: @color-lightgray;
+    z-index: 100;
+    opacity: 0.8;
+  }
+  &:after {
+    display: block;
+    width: 100px;
+    height: 100px;
+    content: '';
+    position: absolute;
+    z-index: 200;
+    top: 27px;
+    left: 120px;
+    opacity: 0.5;
+    animation-name: fadein;
+    animation-duration: 1s;
+  }
+}
+
+.oppija {
+  background-color: @color-darkgray;
+
+  h2 {
+    font-weight: normal;
+    font-size: 20px;
+    .hetu {
+      color: @color-darkgray-text;
+    }
+  }
+
+  hr {
+    margin: 29px 64px 40px 0;
+  }
+}

@@ -1,7 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 
-import style from '../assets-common/css/hakuperusteet.less'
+import '../assets-common/css/hakuperusteet.less'
+import './css/admin.less'
 
 import Header from './Header.jsx'
 import Footer from '../assets-common/Footer.jsx'
@@ -19,19 +20,24 @@ export default class HakuperusteetPage extends React.Component {
         const users = state.users
         return <div>
             <Header />
-                <div className="userDataFormRow">
+            <div className="content-area">
+                <div className="sidebar oppija-haku">
                     <label htmlFor="userSearch">
                         <span>Opiskelija</span>
                         <input type="text" id="userSearchz" name="userSearch" onChange={this.changes} onBlur={this.changes} maxLength="255" />
                     </label>
+                    <div className="hakutulokset">
+                        <ul>
+                        {users.map((u, i) => {
+                            const selected = u.id == state.id ? "selected" : null
+                            return <li key={i} className={selected}><a onClick={this.selectUser.bind(this, u)}>{u.firstName}&nbsp;{u.lastName}</a></li>;
+                        })}
+                        </ul>
+                    </div>
                 </div>
-                <ul>
-                    {users.map((u, i) => {
-                        return <li key={i}><a onClick={this.selectUser.bind(this, u)}>{u.firstName}&nbsp;{u.lastName}</a></li>;
-                    })}
-                </ul>
-                <p></p>
                 <AdminForm state={state} controller={controller} />
+            </div>
+
             <Footer />
         </div>
     }

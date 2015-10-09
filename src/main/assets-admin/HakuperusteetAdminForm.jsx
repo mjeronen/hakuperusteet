@@ -24,11 +24,12 @@ export default class HakuperusteetAdminForm extends React.Component {
         const disabled = (validateUserDataForm(state)) ? "" : "disabled"
         const languages = _.isUndefined(state.properties) ? [] : state.properties.languages
         const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
-        const isUserSelected = state.id ? false : true
-        console.log(isUserSelected + ", " + state.id)
-        return <section id="hakuperusteet-admin-form">
-            <form id="userDataForm" onSubmit={controller.formSubmits} hide={true}>
-                <p>{translation("userdataform.info")}</p>
+        const isUserSelected = state.id ? true : false
+        if(isUserSelected) {
+        return <section className="main-content oppija">
+            <form id="userDataForm" onSubmit={controller.formSubmits}>
+                <h2>{state.firstName}&nbsp;{state.lastName}</h2>
+                <hr/>
                 <UserDataInput name="firstName" title={translation("title.first.name")} state={state} controller={controller} />
                 <UserDataInput name="lastName" title={translation("title.last.name")} state={state} controller={controller} />
                 <UserBirthDateInput state={state} controller={controller} />
@@ -36,8 +37,6 @@ export default class HakuperusteetAdminForm extends React.Component {
                 <Gender state={state} controller={controller} />
                 <NativeLanguage state={state} languages={languages} controller={controller} />
                 <Nationality state={state} countries={countries} controller={controller} />
-                <EducationLevel state={state} controller={controller} />
-                <EducationCountry state={state} countries={countries} controller={controller} lang="en" />
                 <div className="userDataFormRow">
                     <input type="submit" name="submit" value={translation("userdataform.submit")} disabled={disabled} />
                     <AjaxLoader hide={true} />
@@ -46,5 +45,8 @@ export default class HakuperusteetAdminForm extends React.Component {
                 </div>
             </form>
         </section>
+        } else {
+            return <section/>;
+        }
     }
 }
