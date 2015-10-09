@@ -99,6 +99,10 @@ Remember to create separate schema migration script for HSQLDB also, and ensure 
 2. `./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-DuseHsql=true`
 3. `./node_modules/.bin/mocha-phantomjs --ignore-resource-errors --ssl-protocol=any --ignore-ssl-errors=true  https://localhost:18081/hakuperusteet/spec/testRunner.html`
 
+To run tests in browser, open following url after steps 1. and 2. above.
+
+1. http://localhost:8081/hakuperusteet/spec/testRunner.html
+
 Remember to remove HSQLD-client classes after tests, because their existence breaks unit tests
 
 1. `rm -r src/test/scala/fi/vm/sade/hakuperusteet/db/generated/`
