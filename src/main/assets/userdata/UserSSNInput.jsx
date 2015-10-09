@@ -17,8 +17,9 @@ export default class UserBirthDateInput extends React.Component {
   render() {
     const controller = this.props.controller
     const disabled = (this.props.state.hasPersonId == true) ? "" : "disabled"
+    const checked = this.props.state[this.id]?true:null
     return <div className="userDataFormRow">
-        <input type="checkbox" name="hasPersonId" id="hasPersonId" onChange={controller.checkedChanges} checked={this.props.state[this.name]?true:null} />
+        <input type="checkbox" name="hasPersonId" id="hasPersonId" onChange={controller.checkedChanges} checked={checked} />
         <label htmlFor="personId" className="ssnLabel">{translation("userdataform.personalId")}</label>
         <input type="text" id={this.id} name="personId" onChange={this.changes} onBlur={this.changes} disabled={disabled} maxLength="5" value={this.props.state[this.id]}/>
         <span className="fieldFormatInfo">xxxxx</span>
