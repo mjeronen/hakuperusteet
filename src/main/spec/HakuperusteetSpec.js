@@ -144,17 +144,15 @@ describe('Page with email session - educationdata', () => {
     it('select educationCountry - Finland', () => { S("#educationCountry").val("246").focus().blur() })
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
-    it('noPaymentRequired should be visible', () => {
-      return S2(".noPaymentRequired").then(assertOneElementFound).then(done).catch(done)
-    })
+    it('noPaymentRequired should be visible', () => { return S2(".noPaymentRequired").then(assertOneElementFound).then(done).catch(done) })
+    it('paymentRequired should be hidden', () => { expect(S(".paymentRequired").length).to.equal(0) })
     it('alreadyPaid should be hidden', () => { expect(S(".alreadyPaid").length).to.equal(0) })
 
     it('select educationCountry - Solomin Islands', () => { S("#educationCountry").val("090").focus().blur() })
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
-    it('paymentRequired should be visible', () => {
-      return S2(".paymentRequired").then(assertOneElementFound).then(done).catch(done)
-    })
+    it('paymentRequired should be visible', () => { return S2(".paymentRequired").then(assertOneElementFound).then(done).catch(done)})
+    it('noPaymentRequired should be hidden', () => { expect(S(".noPaymentRequired").length).to.equal(0) })
     it('alreadyPaid should be hidden', () => { expect(S(".alreadyPaid").length).to.equal(0) })
 
     describe('Submit educationForm', () => {
