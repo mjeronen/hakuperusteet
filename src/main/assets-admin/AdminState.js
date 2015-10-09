@@ -57,7 +57,7 @@ export function initAppState(props) {
         return {...state, [field]: value}
     }
     function onUpdateUser(state, user) {
-        return {...state, ...user}
+        return {...state, ...user.user, ['applicationObjects']: user.applicationObject}
     }
     function onStateInit(state, properties, users) {
         return {...state, properties, users}

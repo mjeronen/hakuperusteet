@@ -6,6 +6,7 @@ import fi.vm.sade.hakuperusteet.Configuration
 import fi.vm.sade.hakuperusteet.admin.auth.CasAuthenticationSupport
 import fi.vm.sade.hakuperusteet.auth.AuthenticationSupport
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
+import fi.vm.sade.hakuperusteet.domain.UserData
 import fi.vm.sade.security.ProductionSecurityContext
 import fi.vm.sade.utils.cas.CasClient
 import org.json4s.NoTypeHints
@@ -61,6 +62,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
   get("/api/v1/admin/:personoid") {
     //println(params("personoid"))
     contentType = "application/json"
+    val personOid = params("personoid")
     /*
     authenticate
     failUnlessAuthenticated
@@ -73,7 +75,15 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
       write(properties)
     }
     */
-    write(db.findUserByOid(params("personoid")))
+    val user = db.findUserByOid(personOid)
+    user match {
+      case Some(u) =>
+        write(UserData(u, db.findApplicationObjects(u)))
+
+      case _ => {
+        halt(status = 404, body = s"User ${personOid} not found")
+      }
+    }
   }
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
