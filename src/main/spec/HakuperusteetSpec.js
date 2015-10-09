@@ -167,10 +167,13 @@ describe('Page with email session - educationdata', () => {
 })
 
 describe('Page with email session - vetuma start page', () => {
+  it('should not show userDataForm', () => {expect(S("#userDataForm").length).to.equal(0) })
+  it('should not show educationForm', () => { expect(S("#educationForm").length).to.equal(0) })
+  it('should show vetuma start', () => { return S2(".vetumaStart").then(assertOneElementFound).then(done).catch(done) })
+  it('should not show hakuList', () => { expect(S(".hakuList").length).to.equal(0)})
+
   // input name=submit is not allowed when doing redirect, hence different name than in other forms
-  it('initially submit should be enabled', () => {
-    return S2("input[name='submitVetuma']").then(expectToBeEnabled).then(done).catch(done)
-  })
+  it('initially submit should be enabled', () => { return S2("input[name='submitVetuma']").then(expectToBeEnabled).then(done).catch(done) })
 
   describe('Submit vetumaForm', () => {
     it('click submit should go to vetuma and return back with successful payment', () => {
@@ -185,12 +188,12 @@ describe('Page with email session - vetuma start page', () => {
 })
 
 describe('Page with email session - hakulist page', () => {
-  // reload page to get rid of cross domain errors when security is enabled in browser
-  before(openPage("/hakuperusteet", hakuperusteetLoaded))
+  it('should not show userDataForm', () => {expect(S("#userDataForm").length).to.equal(0) })
+  it('should not show educationForm', () => { expect(S("#educationForm").length).to.equal(0) })
+  it('should not show vetuma start', () => { expect(S(".vetumaStart").length).to.equal(0) })
+  it('should show hakuList', () => { return S2(".hakuList").then(assertOneElementFound).then(done).catch(done) })
 
-  it('initially submit should be enabled', () => {
-    return S2("input[name='redirectToForm']").then(expectToBeEnabled).then(done).catch(done)
-  })
+  it('initially submit should be enabled', () => { return S2("input[name='redirectToForm']").then(expectToBeEnabled).then(done).catch(done)})
 
   describe('Submit hakulist form', () => {
     it('click submit should redirect to form', () => {
