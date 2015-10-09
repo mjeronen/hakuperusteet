@@ -15,10 +15,18 @@ export function S(selector) {
 
 export function S2(selector) {
   var deferred = Q.defer()
-  waitUntil(() => $(testFrame().document).find(selector).length > 0).then(function() {
+  waitUntil(() => findSelector(selector)).then(function() {
     deferred.resolve($(testFrame().document).find(selector))
   })
   return deferred.promise
+}
+
+function findSelector(selector) {
+  try {
+    return $(testFrame().document).find(selector).length > 0
+  } catch(exception){
+    return false
+  }
 }
 
 export function waitUntil(condition, maxWaitMs) {
@@ -55,7 +63,11 @@ export function waitforMilliseconds(ms) {
 }
 
 export function hakuperusteetLoaded() {
-  return testFrame().SESSION_INITED_FOR_TESTING === true
+  try {
+    return testFrame().SESSION_INITED_FOR_TESTING === true
+  } catch(exception){
+    return false
+  }
 }
 
 export function testFrame() {

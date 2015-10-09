@@ -177,6 +177,7 @@ function handleAuthenticationError(e) {
 }
 
 function sessionInit() {
+  document.domain = location.hostname
   window.SESSION_INITED_FOR_TESTING = true
   dispatcher.push(events.updateField, {field: 'sessionInit', value: true})
 }

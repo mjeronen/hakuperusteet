@@ -3,9 +3,14 @@ package fi.vm.sade.hakuperusteet
 import java.io.File
 
 import fi.vm.sade.hakuperusteet.db.HsqlDatabase
+import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
 
 import scala.sys.process.{Process, ProcessIO}
+
+class HakuperusteetTestServer extends HakuperusteetServer {
+  override def setCookieParams(context: WebAppContext) {}
+}
 
 object HakuperusteetTestServer {
   val logger = LoggerFactory.getLogger(this.getClass)
@@ -21,7 +26,7 @@ object HakuperusteetTestServer {
       val hsqlDb = new HsqlDatabase("jdbc:hsqldb:mem:hakuperusteet", "sa", "")
       hsqlDb.startHsqlServer()
     }
-    val s = new HakuperusteetServer
+    val s = new HakuperusteetTestServer
     s.runServer()
     logger.info("Started HakuperusteetTestServer")
   }
