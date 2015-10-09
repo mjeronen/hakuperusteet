@@ -203,6 +203,51 @@ describe('Page with email session - hakulist page', () => {
   after(logout)
 })
 
+describe('Page with email session - add second application object', () => {
+  before(openPage("/hakuperusteet/ao/1.2.246.562.20.31077988074#/token/mochaTestToken", hakuperusteetLoaded))
+
+  it('should show email as loggedIn user', () => {
+    return S2(".loggedInAs").then(assertOneElementFound).then(done).catch(done)
+  })
+
+  it('should not show userDataForm', () => { expect(S("#userDataForm").length).to.equal(0) })
+  it('should show educationForm', () => { return S2("#educationForm").then(assertOneElementFound).then(done).catch(done) })
+  it('should not show vetuma start', () => { expect(S(".vetumaStart").length).to.equal(0) })
+  it('should not show hakuList', () => { expect(S(".hakuList").length).to.equal(0)})
+
+  describe('Insert data', () => {
+    it('initially submit should be disabled', assertSubmitDisabled)
+    it('initially show all missing errors', () => {
+      return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
+    })
+
+    it('select educationLevel', () => { S("#educationLevel").val("100").focus().blur() })
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('select educationCountry - Finland', () => { S("#educationCountry").val("246").focus().blur() })
+    it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
+    it('noPaymentRequired should be visible', () => { return S2(".noPaymentRequired").then(assertOneElementFound).then(done).catch(done) })
+    it('paymentRequired should be hidden', () => { expect(S(".paymentRequired").length).to.equal(0) })
+    it('alreadyPaid should be hidden', () => { expect(S(".alreadyPaid").length).to.equal(0) })
+
+    it('select educationCountry - Solomin Islands', () => { S("#educationCountry").val("090").focus().blur() })
+    it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', () => { expect(S("#educationForm .error").length).to.equal(0) })
+    it('noPaymentRequired should be hidden', () => { expect(S(".noPaymentRequired").length).to.equal(0) })
+    it('paymentRequired should be hidden', () => { expect(S(".paymentRequired").length).to.equal(0) })
+    it('alreadyPaid should be displayed', () => { return S2(".alreadyPaid").then(assertOneElementFound).then(done).catch(done)})
+
+    describe('Submit educationForm', () => {
+      it('click submit should post educationdata', () => {
+        S("input[name='submit']").click()
+        return S2(".redirectToForm").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
+      })
+    })
+  })
+
+})
+
 function assertOneElementFound(e) { expect(e.length).to.equal(1)}
 
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
