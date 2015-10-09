@@ -4,7 +4,7 @@
         <append>true</append>
         <encoder>
             <charset>utf-8</charset>
-            <pattern>combined</pattern>
+            <pattern>{"customer": "OPH", "environment": "luokka", "timestamp": "%t{yyyy-MM-dd'T'HH:mm:ss.SSSZ}", "requestMethod": "%m", "responseCode": "%s", "processTime": %D, "responseTime": %D, "service": "hakuperusteet", "request": "%r", "user-agent": "%i{User-Agent}", "caller-id": "%i{Caller-Id}", "x-forwarded-for": "%i{X-Forwarded-For}", "remote-ip": "%a", "session": "%reqCookie{JSESSIONID}", "response-size": %B, "referer": "%i{Referer}", "opintopolku-api-key": "%i{Opintopolku-Api-Key}"}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>/data00/oph/hakuperusteet/logs/hakuperusteet-access-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
