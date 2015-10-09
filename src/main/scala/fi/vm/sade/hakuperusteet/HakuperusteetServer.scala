@@ -32,7 +32,7 @@ class HakuperusteetServer {
     context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")
-    val sessionCookieConfig: SessionCookieConfig = context.getServletContext.getSessionCookieConfig
+    val sessionCookieConfig = context.getServletContext.getSessionCookieConfig
     sessionCookieConfig.setHttpOnly(true)
     sessionCookieConfig.setSecure(true)
     context
