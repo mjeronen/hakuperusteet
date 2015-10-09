@@ -1,6 +1,5 @@
 package fi.vm.sade.hakuperusteet
 
-import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -14,6 +13,8 @@ import fi.vm.sade.hakuperusteet.rsa.RSASigner
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
+import org.json4s.native.Serialization
+import org.json4s.native.Serialization.{read, write}
 
 
 class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, signer: RSASigner, countries: Countries) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) {
@@ -28,14 +29,13 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
     val payments = db.findPayments(userData)
     val shouldPay = countries.shouldPay(applicationObjectForThisHakukohde.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
-    compact(render(Map("url" -> generateUrl(host, userData, applicationObjectForThisHakukohde, shouldPay, hasPaid))))
+    write(Map("url" -> host, "params" -> generateParamMap(userData, applicationObjectForThisHakukohde, shouldPay, hasPaid)))
   }
 
-  def generateUrl(host: Oid, userData: User, educationForThisHakukohde: ApplicationObject, shouldPay: Boolean, hasPaid: Boolean) = {
+  def generateParamMap(userData: User, educationForThisHakukohde: ApplicationObject, shouldPay: Boolean, hasPaid: Boolean) = {
     val seq = paramSequence(userData, shouldPay, hasPaid, educationForThisHakukohde)
     val signature = signer.signData(seq.map(_._2).mkString(""))
-    val query = seq.map{ case (k, v) => s"$k=${URLEncoder.encode(v, "UTF-8")}" }.mkString("&") + s"&signature=${URLEncoder.encode(signature, "UTF-8")}"
-    s"$host?$query"
+    (seq.toList ++ List(("signature", signature))).toMap
   }
 
   def paramSequence(u: User, shouldPay: Boolean, hasPaid: Boolean, e: ApplicationObject) =

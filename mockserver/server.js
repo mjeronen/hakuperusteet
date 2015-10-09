@@ -38,6 +38,8 @@ server.listen(process.env.LDAP_PORT || 1389, function() {
 var app = express();
 // Body parser
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
 // Default Content-Type to Application/Json
 app.use(function(req, res, next) { res.setHeader("Content-Type", "application/json"); return next(); });
 
@@ -115,6 +117,12 @@ app.post('/VETUMAPayment', function(req, res){
   res.write("<script>document.forms[\"form\"].submit();</script>");
   res.end();
 });
+
+// Application form (Aalto, UAF)
+app.post('/formredirect', function(req, res) {
+  res.send(req.body)
+  res.end()
+})
 
 // CAS
 app.get('/cas/serviceValidate', function(req, res){
