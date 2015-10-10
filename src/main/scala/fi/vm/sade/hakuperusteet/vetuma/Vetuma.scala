@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.domain.Payment
 import org.apache.commons.codec.digest.DigestUtils
 
-case class Vetuma(sharedSecret: String, ap: String, rcvid: String, host: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
+case class Vetuma(sharedSecret: String, ap: String, rcvid: String, timestamp: Date, language: String, returnUrl: String, cancelUrl: String,
                      errorUrl: String, appName: String, amount: String, ref: String, orderNumber: String,
                      msgBuyer: String, msgSeller: String, msgForm: String, paymCallId: String) {
 
@@ -28,15 +28,12 @@ case class Vetuma(sharedSecret: String, ap: String, rcvid: String, host: String,
 
   private def mac = DigestUtils.sha256Hex(plainText).toUpperCase
 
-  private def query =
-    s"RCVID=$rcvid&APPID=$appid&TIMESTMP=$formatTime&SO=$so&SOLIST=$solist&TYPE=${`type`}&AU=$au&LG=$language&" +
-    s"RETURL=$returnUrl&CANURL=$cancelUrl&ERRURL=$errorUrl&AP=$ap&APPNAME=${enc(appName)}&AM=$amount&REF=$ref&" +
-    s"ORDNR=$orderNumber&MSGBUYER=${enc(msgBuyer)}&MSGSELLER=${enc(msgSeller)}&MSGFORM=${enc(msgForm)}&" +
-    s"PAYM_CALL_ID=$paymCallId"
-
   private def enc(value: String) = URLEncoder.encode(value, "UTF-8")
 
-  def toUrl = s"$host?$query&MAC=$mac"
+  def toParams = Map("RCVID" -> rcvid, "APPID" -> appid, "TIMESTMP" -> formatTime, "SO" -> "so", "SOLIST" -> solist,
+    "TYPE" -> `type`, "AU" -> "au", "LG" -> language, "RETURL" -> returnUrl, "CANURL" -> cancelUrl, "ERRURL" -> errorUrl,
+    "AP" -> ap, "APPNAME" -> enc(appName), "AM" -> amount, "REF" -> ref, "ORDNR" -> orderNumber, "MAC" -> mac,
+    "MSGBUYER" -> enc(msgBuyer), "MSGSELLER" -> enc(msgSeller), "MSGFORM" -> enc(msgForm), "PAYM_CALL_ID" -> paymCallId)
 }
 
 object Vetuma extends LazyLogging {
@@ -46,7 +43,6 @@ object Vetuma extends LazyLogging {
       config.getString("vetuma.shared.secret"),
       config.getString("vetuma.shared.ap"),
       config.getString("vetuma.shared.rcvid"),
-      config.getString("vetuma.host"),
       payment.timestamp,
       language,
       config.getString("vetuma.success.url"),

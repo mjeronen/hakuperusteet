@@ -10,6 +10,7 @@ import fi.vm.sade.hakuperusteet.email.{ReceiptValues, EmailTemplate, EmailSender
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.vetuma.Vetuma
+import org.json4s.native.Serialization._
 
 class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) {
 
@@ -23,7 +24,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val paymCallId = "PCID" + orderNro
     val payment = Payment(None, userData.personOid.get, new Date(), referenceNumber, orderNro, paymCallId, PaymentStatus.started)
     val paymentWithId = db.upsertPayment(payment).getOrElse(halt(500))
-    Vetuma(config, paymentWithId, language).toUrl
+    write(Map("url" -> config.getString("vetuma.host"), "params" -> Vetuma(config, paymentWithId, language).toParams))
   }
 
   post("/return/ok") {

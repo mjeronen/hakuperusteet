@@ -2,7 +2,6 @@ import React from 'react'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
-import HttpUtil from '../util/HttpUtil'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 import {fetchUrlParamsAndRedirectPost} from '../util/FormUtils.js'
 import {translation} from '../../assets-common/translations/translations.js'

@@ -87,7 +87,7 @@ app.get('/oppijan-tunnistus/api/v1/token/:token', function(req, res){
 
 // Vetuma
 app.post('/VETUMAPayment', function(req, res){
-  var p = req.query
+  var p = req.body
   var SO = ""
   var PAYID = "441265046723995"
   var PAID = "15092588INWX0000"
