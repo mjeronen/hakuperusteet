@@ -28,12 +28,10 @@ case class Vetuma(sharedSecret: String, ap: String, rcvid: String, timestamp: Da
 
   private def mac = DigestUtils.sha256Hex(plainText).toUpperCase
 
-  private def enc(value: String) = URLEncoder.encode(value, "UTF-8")
-
-  def toParams = Map("RCVID" -> rcvid, "APPID" -> appid, "TIMESTMP" -> formatTime, "SO" -> "so", "SOLIST" -> solist,
-    "TYPE" -> `type`, "AU" -> "au", "LG" -> language, "RETURL" -> returnUrl, "CANURL" -> cancelUrl, "ERRURL" -> errorUrl,
-    "AP" -> ap, "APPNAME" -> enc(appName), "AM" -> amount, "REF" -> ref, "ORDNR" -> orderNumber, "MAC" -> mac,
-    "MSGBUYER" -> enc(msgBuyer), "MSGSELLER" -> enc(msgSeller), "MSGFORM" -> enc(msgForm), "PAYM_CALL_ID" -> paymCallId)
+  def toParams = Map("RCVID" -> rcvid, "APPID" -> appid, "TIMESTMP" -> formatTime, "SO" -> so, "SOLIST" -> solist,
+    "TYPE" -> `type`, "AU" -> au, "LG" -> language, "RETURL" -> returnUrl, "CANURL" -> cancelUrl, "ERRURL" -> errorUrl,
+    "AP" -> ap, "APPNAME" -> appName, "AM" -> amount, "REF" -> ref, "ORDNR" -> orderNumber, "MAC" -> mac,
+    "MSGBUYER" -> msgBuyer, "MSGSELLER" -> msgSeller, "MSGFORM" -> msgForm, "PAYM_CALL_ID" -> paymCallId)
 }
 
 object Vetuma extends LazyLogging {
