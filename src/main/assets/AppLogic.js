@@ -23,7 +23,7 @@ export function showUserDataForm(state) {
 }
 
 export function showEducationForm(state) {
-  return hasUserData(state) && !hasEducationForCurrentHakukohdeOid(state) && !_.isEmpty(state.hakukohdeOid)
+  return hasUserData(state) && !hasEducationForCurrentHakukohdeOid(state) && hasSelectedHakukohde(state)
 }
 
 export function showVetumaStart(state) {
@@ -34,7 +34,10 @@ export function showVetumaStart(state) {
 }
 
 export function showHakuList(state) {
-  return hasUserData(state) && (_.isEmpty(state.hakukohdeOid) || (hasEducationForCurrentHakukohdeOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state))))
+  return hasUserData(state) && (
+    (!hasSelectedHakukohde(state) && (hasValidPayment(state) || !paymentRequired(state))) ||
+    (hasEducationForCurrentHakukohdeOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state)))
+  )
 }
 
 export function hasValidPayment(state) {
@@ -56,6 +59,10 @@ function hasUserData(state) {
   return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user)
 }
 
+function hasSelectedHakukohde(state) {
+  return !_.isEmpty(state.hakukohdeOid)
+}
+
 function hasEducationForCurrentHakukohdeOid(state) {
   return !_.isEmpty(state.sessionData.applicationObject) && _.some(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
 }
@@ -69,4 +76,11 @@ function paymentRequiredWithCurrentHakukohdeOid(state) {
     const isEeaCountry = _.contains(eeaCountries, educationForCurrentHakukohdeOid.educationCountry)
     return !isEeaCountry
   }
+}
+
+function paymentRequired(state) {
+  const eeaCountries = (state.properties && state.properties.eeaCountries) ? state.properties.eeaCountries : []
+  const educationCountries = state.sessionData.applicationObject.map((ao) =>  { return ao.educationCountry })
+  const allCountriesInEea = _.all(educationCountries, (c) => { return _.contains(eeaCountries, c) })
+  return !allCountriesInEea
 }
