@@ -11,16 +11,17 @@ export default class NativeLanguage extends React.Component {
   }
 
   componentDidMount() {
-    this.changes({ target: { id: this.id, value: "" }})
+    //this.changes({ target: { id: this.id, value: "" }})
   }
 
   render() {
     const languages = _.isEmpty(this.props.languages) ? {} : this.props.languages
+    const selected = _.isEmpty(this.props.state) ? null : this.props.state[this.id]
     const result = createSelectOptions(languages)
 
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>{translation("title.native.language")  + " *"}</label>
-      <select id={this.id} onChange={this.changes} onBlur={this.changes}>
+      <select id={this.id} onChange={this.changes} onBlur={this.changes} value={selected}>
         {result}
       </select>
     </div>

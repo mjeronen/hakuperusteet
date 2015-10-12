@@ -1,7 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 
-import style from '../assets-common/css/hakuperusteet.less'
+import './css/props.less'
+import '../assets-common/css/hakuperusteet.less'
 
 import {showUserDataForm, showEducationForm, showVetumaStart, showHakuList} from './AppLogic.js'
 import Header from './Header.jsx'

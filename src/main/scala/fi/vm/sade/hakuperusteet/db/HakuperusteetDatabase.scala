@@ -40,6 +40,11 @@ case class HakuperusteetDatabase(db: DB) {
   def findUser(email: String): Option[User] =
     Tables.User.filter(_.email === email).result.headOption.run.map(userRowToUser)
 
+  def findUserByOid(henkiloOid: String): Option[User] =
+    Tables.User.filter(_.henkiloOid === henkiloOid).result.headOption.run.map(userRowToUser)
+
+  def allUsers: Seq[User] = Tables.User.sortBy(_.firstname.asc).result.run.map(userRowToUser)
+
   def upsertUser(user: User): Option[User] =
     (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
 

@@ -11,13 +11,13 @@ export default class UserBirthDateInput extends React.Component {
   }
 
   componentDidMount() {
-    this.changes({ target: { id: this.id, value: "" }})
+    //this.changes({ target: { id: this.id, value: "" }})
   }
 
   render() {
     return <div className="userDataFormRow">
         <label htmlFor="birthDate">{translation("title.birth.date") + " *"}</label>
-        <input type="text" id={this.id} name={this.id} onChange={this.changes} onBlur={this.changes} maxLength="8" />
+        <input type="text" id={this.id} name={this.id} onChange={this.changes} onBlur={this.changes} maxLength="8" value={this.props.state[this.id]}/>
         <span className="fieldFormatInfo">ddmmyyyy</span>
       </div>
   }

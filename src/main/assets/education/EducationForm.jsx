@@ -27,7 +27,7 @@ export default class EducationForm extends React.Component {
         {translation("educationForm.payment")}
       </p>
       <EducationLevel state={state} controller={controller} />
-      <EducationCountry countries={countries} controller={controller} lang="en" />
+      <EducationCountry state={state} countries={countries} controller={controller} lang="en" />
       <CountryPaymentInfo state={state} />
       <div className="userDataFormRow">
         <input type="submit" name="submit" value={translation("educationForm.submit")} disabled={disabled} />
