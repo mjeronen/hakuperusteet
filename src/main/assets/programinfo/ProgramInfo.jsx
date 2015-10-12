@@ -2,25 +2,18 @@ import React from 'react'
 import _ from 'lodash'
 
 import AjaxLoader from '../util/AjaxLoader.jsx'
+import EmptyProgramInfo from './EmptyProgramInfo.jsx'
+import SelectedProgramInfo from './SelectedProgramInfo.jsx'
+
 import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export default class ProgramInfo extends React.Component {
   render() {
     const state = this.props.state
-    const tarjonta = tarjontaForHakukohdeOid(state, state.hakukohdeOid)
-    const name = tarjonta.name
-    const description = tarjonta.description
-    const isLoading = !_.isEmpty(state.hakukohdeOid) && _.isEmpty(name) && _.isEmpty(description)
-
-  return <section id="program-info">
-      { isLoading ?
-        <AjaxLoader hide={false} />
-        :
-        <div>
-          <h1>{name}</h1>
-          <p dangerouslySetInnerHTML={{__html: description}}/>
-        </div>
-      }
+    const controller = this.props.controller
+    return <section id="program-info">
+      { _.isEmpty(state.hakukohdeOid) ? <EmptyProgramInfo state={state} controller={controller} /> : null}
+      { !_.isEmpty(state.hakukohdeOid) ? <SelectedProgramInfo state={state} controller={controller} /> : null}
     </section>
   }
 }

@@ -25,6 +25,7 @@ export default class HakuList extends React.Component {
         </div>
       )}
 
+      {_.isEmpty(state.sessionData.applicationObject) ? <p>{translation("hakulist.empty")}</p> : null}
       </div>
   }
 }

@@ -24,6 +24,16 @@
   "logout": {
     "en": "Log out"
   },
+  "programinfo": {
+    "empty": {
+      "title": {
+        "en": "Opintopolku - Hakuperusteet"
+      },
+      "text": {
+        "en": "You have not selected any program and therefore you can only see existing applications. In case you want to apply to a new program, please select program from www.studyinfo.fi."
+      }
+    }
+  },
   "errors": {
     "server": {
       "unexpected": {
@@ -184,7 +194,10 @@
   },
   "hakulist": {
     "info": {
-      "en": "Continue to application form with following link."
+      "en": "Continue to application forms with following links."
+    },
+    "empty": {
+      "en": "No existing applications found."
     },
     "submit": {
       "en": "Proceed to application form"
