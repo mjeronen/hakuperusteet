@@ -23,7 +23,7 @@ export function showUserDataForm(state) {
 }
 
 export function showEducationForm(state) {
-  return hasUserData(state) && !hasEducationForSelectedHakukohdeOid(state) && hasSelectedHakukohde(state)
+  return hasUserData(state) && hasSelectedHakukohde(state) && !hasEducationForSelectedHakukohdeOid(state)
 }
 
 export function showVetumaStart(state) {
