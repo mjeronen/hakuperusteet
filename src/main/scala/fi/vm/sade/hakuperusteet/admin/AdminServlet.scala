@@ -1,54 +1,52 @@
 package fi.vm.sade.hakuperusteet.admin
 
-import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.Configuration
 import fi.vm.sade.hakuperusteet.admin.auth.CasAuthenticationSupport
-import fi.vm.sade.hakuperusteet.auth.AuthenticationSupport
-import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
-import fi.vm.sade.hakuperusteet.domain.UserData
-import fi.vm.sade.security.ProductionSecurityContext
-import fi.vm.sade.utils.cas.CasClient
-import org.json4s.NoTypeHints
-import org.json4s.native.Serialization
+import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
+import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, UserData, User}
+import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
+import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
 import com.typesafe.config.Config
-import fi.vm.sade.security.ldap.LdapConfig
-import fi.vm.sade.security.SecurityContext
 
 import scala.io.Source
+import scala.util.{Failure, Success, Try}
+import scalaz.NonEmptyList
+import org.json4s._
+import org.json4s.native.JsonMethods._
+import org.json4s.JsonDSL._
+import org.json4s.native.Serialization._
 
 class AdminServlet(val resourcePath: String, protected val cfg: Config, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging {
   val staticFileContent = Source.fromURL(getClass.getResource(resourcePath)).takeWhile(_ != -1).map(_.toByte).toArray
   override def realm: String = "hakuperusteet_admin"
-  ///implicit val formats = Serialization.formats(NoTypeHints)
   implicit val formats = fi.vm.sade.hakuperusteet.formatsUI
   val host = cfg.getString("hakuperusteet.cas.url")
+  val henkiloClient = HenkiloClient.init(cfg)
 
-  get("/") {
+  def checkAuthentication = {
     /*
     authenticate
     failUnlessAuthenticated
     */
+  }
+
+  get("/") {
+    checkAuthentication
     contentType = "text/html"
     staticFileContent
   }
   get("/oppija/*") {
-    /*
-    authenticate
-    failUnlessAuthenticated
-    */
+    checkAuthentication
     contentType = "text/html"
     staticFileContent
   }
 
   get("/api/v1/admin") {
+    checkAuthentication
     contentType = "application/json"
     /*
-    authenticate
-    failUnlessAuthenticated
-
     if(user.roles.contains("APP_HENKILONHALLINTA_OPHREKISTERI")) {
       val properties = Map("admin" -> true)
       write(properties)
@@ -60,13 +58,10 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     write(db.allUsers)
   }
   get("/api/v1/admin/:personoid") {
-    //println(params("personoid"))
+    checkAuthentication
     contentType = "application/json"
     val personOid = params("personoid")
     /*
-    authenticate
-    failUnlessAuthenticated
-
     if(user.roles.contains("APP_HENKILONHALLINTA_OPHREKISTERI")) {
       val properties = Map("admin" -> true)
       write(properties)
@@ -85,6 +80,31 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
       }
     }
   }
+  post("/api/v1/admin/user") {
+    checkAuthentication
+    contentType = "application/json"
+    val userData = parse(request.body).extract[User]
+    val newUser = Try(henkiloClient.upsertHenkilo(userData)) match {
+      case Success(u) => userData.copy(personOid = Some(u.personOid))
+      case Failure(t) if t.isInstanceOf[java.net.ConnectException] =>
+        logger.error(s"Henkilopalvelu connection error for email ${userData.email}", t)
+        halt(500)
+      case Failure(t) =>
+        val error = s"Henkilopalvelu upsert failed for email ${userData.email}"
+        logger.error(error, t)
+        renderConflictWithErrors(NonEmptyList[String](error))
+    }
+    db.upsertUser(newUser)
+    write(newUser)
+  }
+  post("/api/v1/admin/applicationobject") {
+    checkAuthentication
+    contentType = "application/json"
+    val ao = parse(request.body).extract[ApplicationObject]
+    db.upsertApplicationObject(ao)
+    write(ao)
+  }
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
+  def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 }

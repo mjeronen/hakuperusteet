@@ -30,6 +30,10 @@ export default class HakuperusteetAdminForm extends React.Component {
             <form id="userDataForm" onSubmit={controller.formSubmits}>
                 <h2>{state.firstName}&nbsp;{state.lastName}</h2>
                 <hr/>
+                <div className="userDataFormRow">
+                    <label>Email</label>
+                    <span className="">{state.email}</span>
+                </div>
                 <UserDataInput name="firstName" title={translation("title.first.name")} state={state} controller={controller} />
                 <UserDataInput name="lastName" title={translation("title.last.name")} state={state} controller={controller} />
                 <UserBirthDateInput state={state} controller={controller} />

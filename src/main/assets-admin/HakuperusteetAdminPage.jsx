@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import '../assets-common/css/hakuperusteet.less'
 import './css/admin.less'
+import './css/props.less'
 
 import Header from './Header.jsx'
 import Footer from '../assets-common/Footer.jsx'
@@ -24,7 +25,7 @@ export default class HakuperusteetPage extends React.Component {
                 <div className="sidebar oppija-haku">
                     <label htmlFor="userSearch">
                         <span>Opiskelija</span>
-                        <input type="text" id="userSearchz" name="userSearch" onChange={this.changes} onBlur={this.changes} maxLength="255" />
+                        <input type="text" id="userSearch" name="userSearch" onChange={this.changes} onBlur={this.changes} maxLength="255" />
                     </label>
                     <div className="hakutulokset">
                         <ul>
