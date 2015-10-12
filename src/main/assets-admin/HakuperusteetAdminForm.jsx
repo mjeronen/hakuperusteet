@@ -16,6 +16,7 @@ import {translation} from '../assets-common/translations/translations.js'
 
 import EducationLevel from '../assets/education/EducationLevel.jsx'
 import EducationCountry from '../assets/education/EducationCountry.jsx'
+import UserDataErrors from '../assets/userdata/UserDataErrors.jsx'
 
 export default class HakuperusteetAdminForm extends React.Component {
     render() {
@@ -47,6 +48,7 @@ export default class HakuperusteetAdminForm extends React.Component {
                     <span className="serverError invalid hide">{translation("errors.server.invalid.userdata")}</span>
                     <span className="serverError general hide">{translation("errors.server.unexpected")}</span>
                 </div>
+                <UserDataErrors state={state} controller={controller} />
             </form>
         </section>
         } else {

@@ -6,6 +6,7 @@ import {enableSubmitAndHideBusy} from '../assets/util/HtmlUtils.js'
 import HttpUtil from '../assets/util/HttpUtil.js'
 import Dispatcher from '../assets/util/Dispatcher'
 import {initChangeListeners} from '../assets/util/ChangeListeners'
+import {parseNewValidationErrors} from '../assets/util/FieldValidator.js'
 
 const dispatcher = new Dispatcher()
 const events = {
@@ -22,7 +23,6 @@ export function changeListeners() {
 export function initAppState(props) {
     const {propertiesUrl, usersUrl, userUpdateUrl} = props
     const initialState = {}
-    const fieldValidationS = dispatcher.stream(events.fieldValidation)
     const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
     const usersS = Bacon.fromPromise(HttpUtil.get(usersUrl))
     const serverUpdatesBus = new Bacon.Bus()
@@ -45,16 +45,13 @@ export function initAppState(props) {
 
     const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
     const formSubmittedS = dispatcher.stream(events.submitForm)
-    /*
-        stateP.sampledBy(, (state, form) => {
-        console.log("SAmpling!")
-        return ({state, form})
-    })*/
+    const fieldValidationS = dispatcher.stream(events.fieldValidation)
 
     const stateP = Bacon.update(initialState,
         [propertiesS, usersS], onStateInit,
         [updateRouteS],onUpdateUser,
-        [updateFieldS], onUpdateField)
+        [updateFieldS], onUpdateField,
+        [fieldValidationS], onFieldValidation)
 
     serverUpdatesBus.plug(stateP.sampledBy(formSubmittedS, (state, form) => ({state, form})).flatMapLatest(({state}) => {
             const userData = {
@@ -62,7 +59,7 @@ export function initAppState(props) {
                 email: state.email,
                 firstName: state.firstName,
                 lastName: state.lastName,
-                birthDate: state.birthDate, //moment(, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD"),
+                birthDate: state.birthDate,
                 personOid: state.personOid,
                 personId: state.personId,
                 gender: state.gender,
