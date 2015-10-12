@@ -30,11 +30,11 @@ export function showVetumaStart(state) {
   function hasNoValidPayment() {
     return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
   }
-  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && paymentRequired(state) && hasNoValidPayment()
+  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && paymentRequiredWithCurrentHakukohdeOid(state) && hasNoValidPayment()
 }
 
 export function showHakuList(state) {
-  return hasUserData(state) && (_.isEmpty(state.hakukohdeOid) ||  (hasEducationForCurrentHakuOid(state) && (hasValidPayment(state) || !paymentRequired(state))))
+  return hasUserData(state) && (_.isEmpty(state.hakukohdeOid) || (hasEducationForCurrentHakuOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state))))
 }
 
 export function hasValidPayment(state) {
@@ -60,7 +60,7 @@ function hasEducationForCurrentHakuOid(state) {
   return !_.isEmpty(state.sessionData.applicationObject) && _.some(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
 }
 
-function paymentRequired(state) {
+function paymentRequiredWithCurrentHakukohdeOid(state) {
   const educationForCurrentHakukohdeOid = _.find(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
   if (_.isEmpty(educationForCurrentHakukohdeOid)) {
     return false
