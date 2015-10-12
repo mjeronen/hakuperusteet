@@ -23,7 +23,7 @@ export function showUserDataForm(state) {
 }
 
 export function showEducationForm(state) {
-  return hasUserData(state) && !hasEducationForCurrentHakukohdeOid(state) && hasSelectedHakukohde(state)
+  return hasUserData(state) && !hasEducationForSelectedHakukohdeOid(state) && hasSelectedHakukohde(state)
 }
 
 export function showVetumaStart(state) {
@@ -32,13 +32,13 @@ export function showVetumaStart(state) {
   }
   return hasUserData(state) && hasNoValidPayment() && (
       (!hasSelectedHakukohde(state) && paymentRequired(state)) ||
-      (hasEducationForCurrentHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state)))
+      (hasEducationForSelectedHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state)))
 }
 
 export function showHakuList(state) {
   return hasUserData(state) && (
       (!hasSelectedHakukohde(state) && (hasValidPayment(state) || !paymentRequired(state))) ||
-      (hasEducationForCurrentHakukohdeOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state))))
+      (hasEducationForSelectedHakukohdeOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state))))
 }
 
 export function hasValidPayment(state) {
@@ -64,7 +64,7 @@ function hasSelectedHakukohde(state) {
   return !_.isEmpty(state.hakukohdeOid)
 }
 
-function hasEducationForCurrentHakukohdeOid(state) {
+function hasEducationForSelectedHakukohdeOid(state) {
   return !_.isEmpty(state.sessionData.applicationObject) && _.some(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
 }
 
