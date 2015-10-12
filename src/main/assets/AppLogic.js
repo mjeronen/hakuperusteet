@@ -30,9 +30,9 @@ export function showVetumaStart(state) {
   function hasNoValidPayment() {
     return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
   }
-  return hasUserData(state) && (
-      (!hasSelectedHakukohde(state) && paymentRequired(state) && hasNoValidPayment()) ||
-      (hasEducationForCurrentHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state) && hasNoValidPayment()))
+  return hasUserData(state) && hasNoValidPayment() && (
+      (!hasSelectedHakukohde(state) && paymentRequired(state)) ||
+      (hasEducationForCurrentHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state)))
 }
 
 export function showHakuList(state) {
