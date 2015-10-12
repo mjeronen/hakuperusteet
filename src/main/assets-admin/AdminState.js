@@ -1,11 +1,12 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
 
-import {enableSubmitAndHideBusy} from '../assets/util/HtmlUtils.js'
+import {submitUserDataToServer} from './userdata/UserDataForm.js'
 import HttpUtil from '../assets/util/HttpUtil.js'
 import Dispatcher from '../assets/util/Dispatcher'
 import {initChangeListeners} from '../assets/util/ChangeListeners'
 import {parseNewValidationErrors} from '../assets/util/FieldValidator.js'
+import {enableSubmitAndHideBusy} from '../assets/util/HtmlUtils.js'
 
 const dispatcher = new Dispatcher()
 const events = {
@@ -22,13 +23,14 @@ export function changeListeners() {
 
 export function initAppState(props) {
     const {propertiesUrl, usersUrl, userUpdateUrl} = props
-    const initialState = {}
+    const initialState = {['userUpdateUrl']:userUpdateUrl}
     const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
     const usersS = Bacon.fromPromise(HttpUtil.get(usersUrl))
     const serverUpdatesBus = new Bacon.Bus()
 
     var personOidInUrl = function(url) {
-        return url.match(new RegExp("oppija/(.*)")) ? match[1] : null
+        var match = url.match(new RegExp("oppija/(.*)"))
+        return match ? match[1] : null
     }
     const updateRouteS = Bacon.mergeAll(dispatcher.stream(events.route),Bacon.once(document.location.pathname).toProperty())
         .map(personOidInUrl)
@@ -47,32 +49,9 @@ export function initAppState(props) {
         [updateFieldS], onUpdateField,
         [fieldValidationS], onFieldValidation)
 
-    serverUpdatesBus.plug(stateP.sampledBy(formSubmittedS, (state, form) => ({state, form})).flatMapLatest(({state}) => {
-            const userData = {
-                id: state.id,
-                email: state.email,
-                firstName: state.firstName,
-                lastName: state.lastName,
-                birthDate: state.birthDate,
-                personOid: state.personOid,
-                personId: state.personId,
-                gender: state.gender,
-                nativeLanguage: state.nativeLanguage,
-                nationality: state.nationality,
-                idpentityid: state.idpentityid
-            }
-            const promise = Bacon.fromPromise(HttpUtil.post(userUpdateUrl, userData))
-            promise.onError((error) => {
-                const form = document.getElementById('userDataForm')
-                enableSubmitAndHideBusy(form)
-                if (error.status == 409) {
-                    form.querySelector("span.invalid").classList.remove("hide")
-                } else {
-                    form.querySelector("span.general").classList.remove("hide")
-                }
-            })
-            return promise
-        }).map((result) => {
+    serverUpdatesBus.plug(stateP.sampledBy(formSubmittedS, (state, form) => ({state, form})).flatMapLatest(({state}) =>
+        submitUserDataToServer(state)
+        ).map((result) => {
         const form = document.getElementById('userDataForm')
         enableSubmitAndHideBusy(form)
         return result
