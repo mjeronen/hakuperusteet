@@ -23,7 +23,7 @@ export function showUserDataForm(state) {
 }
 
 export function showEducationForm(state) {
-  return hasUserData(state) && !hasEducationForCurrentHakuOid(state)
+  return hasUserData(state) && !hasEducationForCurrentHakuOid(state) && !_.isEmpty(state.hakukohdeOid)
 }
 
 export function showVetumaStart(state) {
@@ -34,7 +34,7 @@ export function showVetumaStart(state) {
 }
 
 export function showHakuList(state) {
-  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && (hasValidPayment(state) || !paymentRequired(state))
+  return hasUserData(state) && (_.isEmpty(state.hakukohdeOid) ||  (hasEducationForCurrentHakuOid(state) && (hasValidPayment(state) || !paymentRequired(state))))
 }
 
 export function hasValidPayment(state) {
