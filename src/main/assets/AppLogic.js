@@ -23,18 +23,18 @@ export function showUserDataForm(state) {
 }
 
 export function showEducationForm(state) {
-  return hasUserData(state) && !hasEducationForCurrentHakuOid(state) && !_.isEmpty(state.hakukohdeOid)
+  return hasUserData(state) && !hasEducationForCurrentHakukohdeOid(state) && !_.isEmpty(state.hakukohdeOid)
 }
 
 export function showVetumaStart(state) {
   function hasNoValidPayment() {
     return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
   }
-  return hasUserData(state) && hasEducationForCurrentHakuOid(state) && paymentRequiredWithCurrentHakukohdeOid(state) && hasNoValidPayment()
+  return hasUserData(state) && hasEducationForCurrentHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state) && hasNoValidPayment()
 }
 
 export function showHakuList(state) {
-  return hasUserData(state) && (_.isEmpty(state.hakukohdeOid) || (hasEducationForCurrentHakuOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state))))
+  return hasUserData(state) && (_.isEmpty(state.hakukohdeOid) || (hasEducationForCurrentHakukohdeOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state))))
 }
 
 export function hasValidPayment(state) {
@@ -56,7 +56,7 @@ function hasUserData(state) {
   return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.user)
 }
 
-function hasEducationForCurrentHakuOid(state) {
+function hasEducationForCurrentHakukohdeOid(state) {
   return !_.isEmpty(state.sessionData.applicationObject) && _.some(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
 }
 
