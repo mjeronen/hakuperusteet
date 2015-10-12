@@ -1,8 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 
-import AjaxLoader from './util/AjaxLoader.jsx'
-import {tarjontaForHakukohdeOid} from "./util/TarjontaUtil.js"
+import AjaxLoader from '../util/AjaxLoader.jsx'
+import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export default class ProgramInfo extends React.Component {
   render() {
