@@ -60,9 +60,4 @@ package object hakuperusteet {
   val UIDateFormatter = DateTimeFormatter.ofPattern("ddMMyyyy")
   val personIdDateFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
-  def main(args: Array[String]) {
-    val s = "22111980"
-    val v = Date.from(LocalDate.parse(s, UIDateFormatter).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())
-    println(v)
-  }
 }
