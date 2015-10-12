@@ -9,6 +9,7 @@ import {parseNewValidationErrors} from '../assets/util/FieldValidator.js'
 
 const dispatcher = new Dispatcher()
 const events = {
+    route: 'route',
     updateField: 'updateField',
     submitForm: 'submitForm',
     fieldValidation: 'fieldValidation',
@@ -27,20 +28,14 @@ export function initAppState(props) {
     const serverUpdatesBus = new Bacon.Bus()
 
     var personOidInUrl = function(url) {
-        var match = url.match(new RegExp("oppija/(.*)"));
-        if(match) {
-            return match[1];
-        } else {
-            return null;
-        }
+        return url.match(new RegExp("oppija/(.*)")) ? match[1] : null
     }
     const updateRouteS = Bacon.mergeAll(dispatcher.stream(events.route),Bacon.once(document.location.pathname).toProperty())
         .map(personOidInUrl)
-        //.filter(_.isNotEmpty)
         .skipDuplicates(_.isEqual)
         .flatMap(function(uniquePersonOid) {
-            return Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin/${uniquePersonOid}`));
-        })//.log()
+            return Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin/${uniquePersonOid}`))
+        })
 
     const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
     const formSubmittedS = dispatcher.stream(events.submitForm)
