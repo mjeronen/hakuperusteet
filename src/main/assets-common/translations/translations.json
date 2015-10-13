@@ -61,12 +61,12 @@
   "title": {
     "first": {
       "name": {
-        "en": "First name"
+        "en": "Given names"
       }
     },
     "last": {
       "name": {
-        "en": "Last name"
+        "en": "Family name"
       }
     },
     "email": {
@@ -92,11 +92,11 @@
       }
     },
     "nationality": {
-      "en": "Nationality"
+      "en": "Citizenship"
     },
     "native": {
       "language": {
-        "en": "Native language"
+        "en": "Mother tongue"
       }
     },
     "birth": {
@@ -130,10 +130,10 @@
     },
     "errors": {
       "requiredFirstName": {
-        "en": "First name is required."
+        "en": "Given names are required."
       },
       "requiredLastName": {
-        "en": "Last name is required."
+        "en": "Family name is required."
       },
       "invalidBirthDate": {
         "en": "Insert birth date in correct format."
@@ -145,10 +145,10 @@
         "en": "Gender is required."
       },
       "requiredNativeLanguage": {
-        "en": "Native language is required."
+        "en": "Mother tongue is required."
       },
       "requiredNationality": {
-        "en": "Nationality is required."
+        "en": "Citizenship is required."
       }
     }
   },
@@ -174,7 +174,7 @@
   "vetuma": {
     "start": {
       "info": {
-        "en": "You are required to pay application fee of 100€ before continuing to the application form."
+        "en": "You are required to pay an application fee of 100€ before continuing to the application form."
       },
       "submit": {
         "en": "Continue to payment"
@@ -194,13 +194,13 @@
   },
   "hakulist": {
     "info": {
-      "en": "Continue to application forms with following links."
+      "en": "Thank you, your payment has been received. You can now continue to the application form."
     },
     "empty": {
       "en": "No existing applications found."
     },
     "submit": {
-      "en": "Proceed to application form"
+      "en": "Continue to application form"
     }
   }
 }
