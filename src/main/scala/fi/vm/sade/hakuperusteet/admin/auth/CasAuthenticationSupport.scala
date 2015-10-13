@@ -2,17 +2,10 @@ package fi.vm.sade.hakuperusteet.admin.auth
 
 import java.net.URLEncoder
 
-import fi.vm.sade.hakuperusteet.HakuperusteetServlet
 import fi.vm.sade.hakuperusteet.admin.AdminServlet
-import fi.vm.sade.hakuperusteet.auth.{TokenAuthStrategy, GoogleBasicAuthStrategy}
-import fi.vm.sade.hakuperusteet.domain.{CasSession, Session}
-import fi.vm.sade.security.ldap.LdapConfig
-import fi.vm.sade.security.{ProductionSecurityContext, SecurityContext}
-import fi.vm.sade.utils.cas.CasClient
+import fi.vm.sade.hakuperusteet.domain.CasSession
 import org.scalatra.auth.strategy.BasicAuthSupport
-import org.scalatra.auth.{ScentrySupport, ScentryConfig}
-
-import scala.collection.mutable
+import org.scalatra.auth.{ScentryConfig, ScentrySupport}
 
 object CasSessionDB {
   val db = new java.util.concurrent.ConcurrentHashMap[String,CasSession]()

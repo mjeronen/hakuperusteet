@@ -10,21 +10,18 @@ import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.json4s.native.JsonMethods._
 import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryStrategy
+import org.scalatra.servlet.RichRequest
 
 import scala.util.{Failure, Success, Try}
 
 class TokenAuthStrategy (protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends ScentryStrategy[Session] with LazyLogging {
   import fi.vm.sade.hakuperusteet._
-
-  private def request = app.enrichRequest(app.request)
-
   val tokenName = "oppijaToken"
 
-  val json = parse(request.body)
-  val token = (json \ "token").extract[Option[String]]
-  val idpentityid = (json \ "idpentityid").extract[Option[String]]
-
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[Session] = {
+    val json = parse(RichRequest(request).body)
+    val token = (json \ "token").extract[Option[String]]
+    val idpentityid = (json \ "idpentityid").extract[Option[String]]
     (token, idpentityid) match {
       case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName =>
         db.findSessionByToken(tokenFromRequest) match {
