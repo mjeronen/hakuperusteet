@@ -10,7 +10,8 @@ export default class Gender extends React.Component {
   }
 
   componentDidMount() {
-    //this.props.controller.radioChanges({ target: { name: this.id, value: "" }})
+    if (_.isEmpty(this.props.state[this.id])) this.props.controller.radioChanges({ target: { name: this.id, value: "" }})
+    else this.props.controller.radioChanges({ target: { name: this.id, value: this.props.state[this.id] }})
   }
 
   render() {
