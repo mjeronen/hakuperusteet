@@ -37,12 +37,10 @@ koodisto.eea.countries.url=https://{{host_virkailija}}/koodisto-service/rest/cod
 koodisto.languages.url=https://{{host_virkailija}}/koodisto-service/rest/json/kieli/koodi?onlyValidKoodis=false
 koodisto.base.education.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/pohjakoulutusvaatimuskorkeakoulut/1?onlyValidKoodis=false
 
-tarjonta.application.object.url=https://{{host_virkailija}}/tarjonta-service/rest/v1/hakukohde
+tarjonta.api.url=https://{{host_virkailija}}/tarjonta-service/rest/v1/
 
 oppijantunnistus.create.url=https://{{host_virkailija}}/oppijan-tunnistus/api/v1/token
 oppijantunnistus.verify.url=https://{{host_virkailija}}/oppijan-tunnistus/api/v1/token
 
 google.authentication.client.id={{hakuperusteet_google_authentication_client_id}}
 google.authentication.hosted.domain=https://{{host_oppija}}
-
-form.redirect.base.aalto=https://eage-test.org.aalto.fi/?opintopolkuregistration/register
