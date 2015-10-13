@@ -89,13 +89,13 @@ describe('Page with email session - userdata', () => {
       return S2("#userDataForm .error").then((e) => { expect(e.length).to.equal(6) }).then(done).catch(done)
     })
 
-    it('insert firstName', () => { S("#firstName").val("John").focus() })
+    it('insert firstName', () => { S("#firstName").val("John").focus().blur() })
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('insert lastName', () => { S("#lastName").val("Doe").focus() })
+    it('insert lastName', () => { S("#lastName").val("Doe").focus().blur() })
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('insert birthDate', () => { S("#birthDate").val("15051979").focus() })
+    it('insert birthDate', () => { S("#birthDate").val("15051979").focus().blur() })
     it('submit should be disabled', assertSubmitDisabled)
 
     it('select gender', () => { S("#gender-male").click() })
