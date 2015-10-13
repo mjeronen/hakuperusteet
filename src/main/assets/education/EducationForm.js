@@ -8,7 +8,7 @@ import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 export function submitEducationDataToServer(state) {
   const educationData = {
     hakukohdeOid: state.hakukohdeOid,
-    providerOids: tarjontaForHakukohdeOid(state, state.hakukohdeOid).providerOids.join(" "),
+    hakuOid: tarjontaForHakukohdeOid(state, state.hakukohdeOid).hakuOid,
     educationLevel: state.educationLevel,
     educationCountry: state.educationCountry
   }

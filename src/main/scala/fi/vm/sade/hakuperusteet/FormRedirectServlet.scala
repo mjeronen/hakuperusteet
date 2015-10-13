@@ -10,6 +10,7 @@ import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.koodisto.Countries
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.rsa.RSASigner
+import fi.vm.sade.hakuperusteet.tarjonta.Tarjonta
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
@@ -17,7 +18,7 @@ import org.json4s.native.Serialization
 import org.json4s.native.Serialization.{read, write}
 
 
-class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, signer: RSASigner, countries: Countries) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) {
+class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, signer: RSASigner, countries: Countries, tarjonta: Tarjonta) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) {
 
   get("/redirect") {
     failUnlessAuthenticated
@@ -25,11 +26,11 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
     val userData = userDataFromSession
     val hakukohdeOid = params.get("hakukohdeOid").getOrElse(halt(409))
     val applicationObjectForThisHakukohde = db.findApplicationObjectByHakukohdeOid(userDataFromSession, hakukohdeOid).getOrElse(halt(409))
-    val host = "FIXME"
+    val formUrl = tarjonta.getApplicationSystem(applicationObjectForThisHakukohde.hakuOid).formUrl
     val payments = db.findPayments(userData)
     val shouldPay = countries.shouldPay(applicationObjectForThisHakukohde.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
-    write(Map("url" -> host, "params" -> generateParamMap(userData, applicationObjectForThisHakukohde, shouldPay, hasPaid)))
+    write(Map("url" -> formUrl, "params" -> generateParamMap(userData, applicationObjectForThisHakukohde, shouldPay, hasPaid)))
   }
 
   def generateParamMap(userData: User, educationForThisHakukohde: ApplicationObject, shouldPay: Boolean, hasPaid: Boolean) = {

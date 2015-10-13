@@ -134,11 +134,11 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   def parseEducationData(personOid: String, params: Params): ValidationResult[ApplicationObject] = {
     (parseNonEmpty("hakukohdeOid")(params)
-      |@| parseNonEmpty("providerOids")(params)
+      |@| parseNonEmpty("hakuOid")(params)
       |@| parseExists("educationLevel")(params).flatMap(validateEducationLevel)
       |@| parseExists("educationCountry")(params).flatMap(validateCountry)
-      ) { (hakukohdeOid, providerOids, educationLevel, educationCountry) =>
-      ApplicationObject(None, personOid, hakukohdeOid, parseFormId(providerOids), educationLevel, educationCountry)
+      ) { (hakukohdeOid, hakuOid, educationLevel, educationCountry) =>
+      ApplicationObject(None, personOid, hakukohdeOid, hakuOid, educationLevel, educationCountry)
     }
   }
   private def validateGender(gender: String): ValidationResult[String] =
@@ -163,8 +163,4 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   private def validateEmail(email: String): ValidationResult[String] =
     if (!email.isEmpty && email.contains("@") && !email.contains(" ") && !email.contains(",") && !email.contains("\t")) email.successNel
     else s"invalid email $email".failureNel
-
-  private def parseFormId(providerOidsList: String): String = {
-    if (providerOidsList.contains("1.2.246.562.10.39920288212")) "aalto" else "aalto" // todo: parameterize and check if this really works
-  }
 }
