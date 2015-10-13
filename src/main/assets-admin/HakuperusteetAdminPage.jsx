@@ -29,7 +29,14 @@ export default class HakuperusteetPage extends React.Component {
                     </label>
                     <div className="hakutulokset">
                         <ul>
-                        {users.map((u, i) => {
+                        {users.filter(u => {
+                            if(_.isEmpty(state.userSearch)) {
+                                return true
+                            } else {
+                                var name = (u.firstName + " " + u.lastName).toLowerCase()
+                                return name.indexOf(state.userSearch.toLowerCase()) > -1
+                            }
+                        }).map((u, i) => {
                             const selected = u.id == state.id ? "selected" : null
                             return <li key={i} className={selected}><a onClick={this.selectUser.bind(this, u)}>{u.firstName}&nbsp;{u.lastName}</a></li>;
                         })}
