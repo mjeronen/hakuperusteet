@@ -46,6 +46,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
   get("/api/v1/admin") {
     checkAuthentication
     contentType = "application/json"
+    val search = params.getOrElse("search", halt(400)).toLowerCase()
     /*
     if(user.roles.contains("APP_HENKILONHALLINTA_OPHREKISTERI")) {
       val properties = Map("admin" -> true)
@@ -55,7 +56,8 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
       write(properties)
     }
     */
-    write(db.allUsers)
+    // TODO What do we want to search here? Do optimized query when search terms are decided!
+    write(db.allUsers.filter(u => search.isEmpty || u.email.toLowerCase().contains(search) || (u.firstName + " " + u.lastName).toLowerCase().contains(search)))
   }
   get("/api/v1/admin/:personoid") {
     checkAuthentication

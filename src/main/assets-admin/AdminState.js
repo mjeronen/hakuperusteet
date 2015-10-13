@@ -13,6 +13,7 @@ const dispatcher = new Dispatcher()
 const events = {
     updateEducationForm: 'updateEducationForm',
     route: 'route',
+    search: 'search',
     updateField: 'updateField',
     submitForm: 'submitForm',
     fieldValidation: 'fieldValidation',
@@ -27,15 +28,15 @@ export function initAppState(props) {
     const {tarjontaUrl, propertiesUrl, usersUrl, userUpdateUrl, applicationObjectUpdateUrl} = props
     const initialState = {['userUpdateUrl']:userUpdateUrl, ['applicationObjectUpdateUrl']:applicationObjectUpdateUrl}
     const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
-    const usersS = Bacon.fromPromise(HttpUtil.get(usersUrl))
     const serverUpdatesBus = new Bacon.Bus()
     const hakukohdeS = Bacon.once("1.2.246.562.20.69046715533")
     const tarjontaS = hakukohdeS.flatMap(fetchFromTarjonta).toEventStream()
 
-    var personOidInUrl = function(url) {
-        var match = url.match(new RegExp("oppija/(.*)"))
-        return match ? match[1] : null
-    }
+    const searchS = Bacon.mergeAll(dispatcher.stream(events.search),Bacon.once("")).skipDuplicates(_.isEqual)
+    const fetchUsersFromServerS =
+      searchS.flatMap(search => Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin?search=${search}`)))
+
+
     const updateRouteS = Bacon.mergeAll(dispatcher.stream(events.route),Bacon.once(document.location.pathname))
         .map(personOidInUrl)
         .skipDuplicates(_.isEqual)
@@ -48,11 +49,12 @@ export function initAppState(props) {
     const fieldValidationS = dispatcher.stream(events.fieldValidation)
     const updateEducationFormS = dispatcher.stream(events.updateEducationForm)
     const stateP = Bacon.update(initialState,
-        [propertiesS, usersS], onStateInit,
+        [propertiesS], onStateInit,
+        [fetchUsersFromServerS], onSearchUpdate,
         [tarjontaS], onTarjontaValue,
         [updateRouteS],onUpdateUser,
         [updateEducationFormS], onUpdateEducationForm,
-        [updateFieldS], onUpdateField,
+        [updateFieldS, searchS], onUpdateField,
         [fieldValidationS], onFieldValidation)
 
     const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
@@ -77,6 +79,9 @@ export function initAppState(props) {
 
     return stateP
 
+    function onSearchUpdate(state, users) {
+        return {...state, ['users']: users}
+    }
     function onUpdateEducationForm(state, newAo) {
         var updatedAos = _.map(state.applicationObjects, (oldAo => oldAo.id == newAo.id ? newAo : oldAo))
         return {...state, ['applicationObjects']: updatedAos}
@@ -92,8 +97,8 @@ export function initAppState(props) {
     function onUpdateUser(state, user) {
         return {...state, ...user.user, ['applicationObjects']: user.applicationObject, ['fromServer']: user}
     }
-    function onStateInit(state, properties, users) {
-        return {...state, properties, users}
+    function onStateInit(state, properties) {
+        return {...state, properties}
     }
     function onFieldValidation(state, {field, value}) {
         const newValidationErrors = parseNewValidationErrors(state, field, value)
@@ -101,5 +106,9 @@ export function initAppState(props) {
     }
     function fetchFromTarjonta(hakukohde) {
         return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
+    }
+    function personOidInUrl(url) {
+        var match = url.match(new RegExp("oppija/(.*)"))
+        return match ? match[1] : null
     }
 }

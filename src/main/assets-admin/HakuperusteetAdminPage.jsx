@@ -12,7 +12,7 @@ import AdminForm from './HakuperusteetAdminForm.jsx'
 export default class HakuperusteetPage extends React.Component {
     constructor(props) {
         super()
-        this.changes = props.controller.valueChanges
+        this.changes = props.controller.pushSearchChange
     }
 
     render() {
