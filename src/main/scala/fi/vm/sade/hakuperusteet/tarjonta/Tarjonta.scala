@@ -12,10 +12,10 @@ case class ApplicationSystem(hakuOid: String, formUrl: String)
 case class Tarjonta(tarjontaBaseUrl: String) {
   implicit val formats = Serialization.formats(NoTypeHints)
 
-  def getApplicationObject(hakukohdeOid: String) = Option(read[Result](urlToString(tarjontaBaseUrl + "/hakukohde/" + hakukohdeOid))).map(_.result)
+  def getApplicationObject(hakukohdeOid: String) = Option(read[Result](urlToString(tarjontaBaseUrl + "hakukohde/" + hakukohdeOid))).map(_.result)
     .map(r => ApplicationObject(r.oid, r.hakuOid, r.hakukohteenNimet.kieli_en, r.tarjoajaNimet.en, tarjontaUrisToKoodis(r.hakukelpoisuusvaatimusUris), r.lisatiedot.kieli_en)).get
 
-  def getApplicationSystem(hakuOid: String) = Option(read[Result2](urlToString(tarjontaBaseUrl + "/haku/" + hakuOid))).map(_.result)
+  def getApplicationSystem(hakuOid: String) = Option(read[Result2](urlToString(tarjontaBaseUrl + "haku/" + hakuOid))).map(_.result)
     .map(r => ApplicationSystem(r.oid, r.hakulomakeUri)).get
 
   private def tarjontaUrisToKoodis(tarjontaUri: List[String]) = tarjontaUri.map(_.split("_")(1))
