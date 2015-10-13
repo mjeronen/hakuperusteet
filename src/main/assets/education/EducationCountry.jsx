@@ -12,7 +12,8 @@ export default class EducationCountry extends React.Component {
   }
 
   componentDidMount() {
-    this.changes({ target: { id: this.id, value: "" }})
+    if (_.isEmpty(this.props.state[this.id])) this.changes({ target: { id: this.id, value: "" }})
+    else this.changes({ target: { id: this.id, value: this.props.state[this.id] }})
   }
 
   render() {

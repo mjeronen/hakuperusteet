@@ -28,6 +28,11 @@ export function initChangeListeners(dispatcher, events) {
   function pushRouteChange(path) {
     dispatcher.push(events.route, path)
   }
+  function pushEducationFormChanges(ao, e) {
+    const field = e.target.id
+    const value = e.target.value
+    dispatcher.push(events.updateEducationForm, {...ao, [field]: value})
+  }
   function pushChangeAndValidation(field, value) {
     dispatcher.push(events.updateField, {field: field, value: value})
     dispatcher.push(events.fieldValidation, {field: field, value: value})
@@ -36,6 +41,6 @@ export function initChangeListeners(dispatcher, events) {
   function logOut() {
     dispatcher.push(events.logOut, {})
   }
-  return { pushChangeAndValidation: pushChangeAndValidation, pushRouteChange: pushRouteChange, valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits, logOut: logOut }
+  return { pushEducationFormChanges: pushEducationFormChanges, pushChangeAndValidation: pushChangeAndValidation, pushRouteChange: pushRouteChange, valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits, logOut: logOut }
 }
 

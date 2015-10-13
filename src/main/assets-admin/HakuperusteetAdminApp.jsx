@@ -7,6 +7,7 @@ import HakuperusteetAdminPage from './HakuperusteetAdminPage.jsx'
 
 
 const appState = initAppState({
+    tarjontaUrl: "/hakuperusteetadmin/api/v1/tarjonta",
     propertiesUrl: "/hakuperusteetadmin/api/v1/properties",
     usersUrl: "/hakuperusteetadmin/api/v1/admin",
     userUpdateUrl: "/hakuperusteetadmin/api/v1/admin/user",
