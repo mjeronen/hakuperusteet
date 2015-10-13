@@ -24,8 +24,8 @@ trait Tables {
    *  @param hakukohdeOid Database column hakukohde_oid SqlType(varchar), Length(255,true)
    *  @param educationLevel Database column education_level SqlType(varchar), Length(255,true)
    *  @param educationCountry Database column education_country SqlType(varchar), Length(255,true)
-   *  @param formId Database column form_id SqlType(varchar), Length(255,true) */
-  case class ApplicationObjectRow(id: Int, henkiloOid: String, hakukohdeOid: String, educationLevel: String, educationCountry: String, formId: String)
+   *  @param hakuOid Database column haku_oid SqlType(varchar), Length(255,true) */
+  case class ApplicationObjectRow(id: Int, henkiloOid: String, hakukohdeOid: String, educationLevel: String, educationCountry: String, hakuOid: String)
   /** GetResult implicit for fetching ApplicationObjectRow objects using plain SQL queries */
   implicit def GetResultApplicationObjectRow(implicit e0: GR[Int], e1: GR[String]): GR[ApplicationObjectRow] = GR{
     prs => import prs._
@@ -33,9 +33,9 @@ trait Tables {
   }
   /** Table description of table application_object. Objects of this class serve as prototypes for rows in queries. */
   class ApplicationObject(_tableTag: Tag) extends Table[ApplicationObjectRow](_tableTag, "application_object") {
-    def * = (id, henkiloOid, hakukohdeOid, educationLevel, educationCountry, formId) <> (ApplicationObjectRow.tupled, ApplicationObjectRow.unapply)
+    def * = (id, henkiloOid, hakukohdeOid, educationLevel, educationCountry, hakuOid) <> (ApplicationObjectRow.tupled, ApplicationObjectRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(henkiloOid), Rep.Some(hakukohdeOid), Rep.Some(educationLevel), Rep.Some(educationCountry), Rep.Some(formId)).shaped.<>({r=>import r._; _1.map(_=> ApplicationObjectRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(henkiloOid), Rep.Some(hakukohdeOid), Rep.Some(educationLevel), Rep.Some(educationCountry), Rep.Some(hakuOid)).shaped.<>({r=>import r._; _1.map(_=> ApplicationObjectRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -47,8 +47,8 @@ trait Tables {
     val educationLevel: Rep[String] = column[String]("education_level", O.Length(255,varying=true))
     /** Database column education_country SqlType(varchar), Length(255,true) */
     val educationCountry: Rep[String] = column[String]("education_country", O.Length(255,varying=true))
-    /** Database column form_id SqlType(varchar), Length(255,true) */
-    val formId: Rep[String] = column[String]("form_id", O.Length(255,varying=true))
+    /** Database column haku_oid SqlType(varchar), Length(255,true) */
+    val hakuOid: Rep[String] = column[String]("haku_oid", O.Length(255,varying=true))
 
     /** Foreign key referencing User (database name education_henkilo_oid_fkey) */
     lazy val userFk = foreignKey("education_henkilo_oid_fkey", Rep.Some(henkiloOid), User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
