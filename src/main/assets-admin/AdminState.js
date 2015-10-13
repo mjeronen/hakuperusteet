@@ -54,7 +54,7 @@ export function initAppState(props) {
         [tarjontaS], onTarjontaValue,
         [updateRouteS],onUpdateUser,
         [updateEducationFormS], onUpdateEducationForm,
-        [updateFieldS, searchS], onUpdateField,
+        [updateFieldS], onUpdateField,
         [fieldValidationS], onFieldValidation)
 
     const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))

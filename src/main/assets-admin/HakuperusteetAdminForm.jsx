@@ -33,12 +33,16 @@ export default class HakuperusteetAdminForm extends React.Component {
         return <section className="main-content oppija">
             <UserDataForm state={state} controller={controller} />
             {applicationObjects.map((ao, i) => {
-                const baseEducationsForCurrent = tarjontaForHakukohdeOid(state, ao.hakukohdeOid).baseEducations
+                const tarjonta = tarjontaForHakukohdeOid(state, ao.hakukohdeOid)
+                const baseEducationsForCurrent = tarjonta.baseEducations
                 const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
                 const levelResult = createSelectOptions(baseEducationOptions)
                 const formId = "educationForm_" + ao.hakukohdeOid
+                const name = tarjonta.name
 
                 return <form id={formId} onSubmit={controller.formSubmits}>
+                    <p><strong>{name}.</strong></p>
+                    <br/>
                     <div className="userDataFormRow">
                         <label htmlFor="educationLevel">{translation("title.education.level") + " *"}</label>
                         <select id="educationLevel" onChange={changes.bind(this, ao)} onBlur={changes.bind(this, ao)} value={ao.educationLevel}>
