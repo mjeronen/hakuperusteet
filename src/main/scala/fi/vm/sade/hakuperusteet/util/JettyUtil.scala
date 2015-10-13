@@ -5,7 +5,6 @@ import com.typesafe.scalalogging.LazyLogging
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.webapp.WebAppContext
-import org.scalatra.Handler
 
 object JettyUtil extends LazyLogging {
 
@@ -19,7 +18,7 @@ object JettyUtil extends LazyLogging {
 
   def initRequestLog(server: Server): Unit = {
     val requestLog = new RequestLogImpl()
-    requestLog.setFileName(sys.props.getOrElse("logbackaccess.configurationFile", "src/main/resources/logbackAccess.xml"))
+    requestLog.setFileName(sys.props.getOrElse("logback.access", "src/main/resources/logback-access.xml"))
     server.setRequestLog(requestLog)
     requestLog.start
   }
