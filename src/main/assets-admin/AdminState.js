@@ -36,7 +36,7 @@ export function initAppState(props) {
         var match = url.match(new RegExp("oppija/(.*)"))
         return match ? match[1] : null
     }
-    const updateRouteS = Bacon.mergeAll(dispatcher.stream(events.route),Bacon.once(document.location.pathname).toProperty())
+    const updateRouteS = Bacon.mergeAll(dispatcher.stream(events.route),Bacon.once(document.location.pathname))
         .map(personOidInUrl)
         .skipDuplicates(_.isEqual)
         .flatMap(function(uniquePersonOid) {
@@ -56,22 +56,24 @@ export function initAppState(props) {
         [fieldValidationS], onFieldValidation)
 
     const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
-    serverUpdatesBus.plug(formSubmittedS.filter(({form}) => form === 'userDataForm').flatMapLatest(({state}) =>
-        submitUserDataToServer(state)
-        ).map((result) => {
+    const userDataFormSubmitS = formSubmittedS.filter(({form}) => form === 'userDataForm').flatMapLatest(({state}) => submitUserDataToServer(state))
+
+    userDataFormSubmitS.onValue((_) => {
         const form = document.getElementById('userDataForm')
         enableSubmitAndHideBusy(form)
-        return result
-    }))
-    serverUpdatesBus.plug(formSubmittedS.filter(({form}) => form.match(new RegExp("educationForm_(.*)"))).flatMapLatest(({state, form}) => {
-        const hakukohdeOid = form.match(new RegExp("educationForm_(.*)"))[1]
-        const applicationObject = _.find(state.applicationObjects, ao => ao.hakukohdeOid === hakukohdeOid)
-        return submitEducationDataToServer(state, applicationObject, document.getElementById(form))
-    }).map((result) => {
-          const form = document.getElementById('educationForm_'+ result.hakukohdeOid)
-          enableSubmitAndHideBusy(form)
-          return result
-    }))
+    })
+    serverUpdatesBus.plug(userDataFormSubmitS)
+
+    const educationFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("educationForm_(.*)"))).flatMapLatest(({state, form}) => {
+      const hakukohdeOid = form.match(new RegExp("educationForm_(.*)"))[1]
+      const applicationObject = _.find(state.applicationObjects, ao => ao.hakukohdeOid === hakukohdeOid)
+      return submitEducationDataToServer(state, applicationObject, document.getElementById(form))
+    });
+    educationFormSubmitS.onValue((result) => {
+        const form = document.getElementById('educationForm_'+ result.hakukohdeOid)
+        enableSubmitAndHideBusy(form)
+    })
+    serverUpdatesBus.plug(educationFormSubmitS)
 
     return stateP
 
