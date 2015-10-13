@@ -1,5 +1,5 @@
 import {expect, done} from 'chai'
-import {openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S, S2} from './testUtil.js'
+import {resetServer, openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S, S2} from './testUtil.js'
 
 describe('Page without session', () => {
   before(openPage("/hakuperusteet", hakuperusteetLoaded))
@@ -55,6 +55,7 @@ describe('Page without session - invalid login token', () => {
 })
 
 describe('Page with email session - userdata', () => {
+  before(resetServer)
   before(openPage("/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
 
   it('should show email as loggedIn user', () => {

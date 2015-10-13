@@ -7,10 +7,14 @@ import org.flywaydb.core.Flyway
 
 class HsqlDatabase(val db: String, val user: String, val password: String) {
   def startHsqlServer() {
+    conn
+    migrateDb
+  }
+
+  private def conn = {
     Class.forName("org.hsqldb.jdbc.JDBCDriver")
     val props = createConnectionProperties
     DriverManager.getConnection(db, props)
-    migrateDb
   }
 
   def createConnectionProperties = {
@@ -31,6 +35,11 @@ class HsqlDatabase(val db: String, val user: String, val password: String) {
     val flyway = new Flyway
     flyway.setDataSource(db, user, password)
     flyway.setValidateOnMigrate(false)
+    flyway.clean
     flyway.migrate
+  }
+
+  def resetDb {
+    migrateDb
   }
 }

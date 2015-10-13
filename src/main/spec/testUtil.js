@@ -106,6 +106,12 @@ export function logout() {
   })
 }
 
+export function resetServer() {
+  var deferred = Q.defer()
+  $.get("http://localhost:8000/testoperation/reset", (_) => { deferred.resolve() })
+  return deferred.promise
+}
+
 export function takeScreenshot() {
   if (window.callPhantom) {
     var date = new Date()
