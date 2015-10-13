@@ -45,4 +45,4 @@ oppijantunnistus.verify.url=https://{{host_virkailija}}/oppijan-tunnistus/api/v1
 google.authentication.client.id={{hakuperusteet_google_authentication_client_id}}
 google.authentication.hosted.domain=https://{{host_oppija}}
 
-form.redirect.base.aalto=https://eage-dev.org.aalto.fi/apply/jsalmela/public/?opintopolku/register
+form.redirect.base.aalto=https://eage-test.org.aalto.fi/?opintopolkuregistration/register
