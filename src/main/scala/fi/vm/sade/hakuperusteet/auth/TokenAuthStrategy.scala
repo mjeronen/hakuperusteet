@@ -1,6 +1,6 @@
 package fi.vm.sade.hakuperusteet.auth
 
-import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
+import javax.servlet.http.HttpServletRequest
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
@@ -8,17 +8,16 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.Session
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.json4s.native.JsonMethods._
-import org.scalatra.ScalatraBase
-import org.scalatra.auth.ScentryStrategy
+import org.scalatra.ScalatraServlet
 import org.scalatra.servlet.RichRequest
 
 import scala.util.{Failure, Success, Try}
 
-class TokenAuthStrategy (protected override val app: ScalatraBase, config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends ScentryStrategy[Session] with LazyLogging {
+class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends SimpleAuth with LazyLogging {
   import fi.vm.sade.hakuperusteet._
   val tokenName = "oppijaToken"
 
-  def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[Session] = {
+  def authenticate(app: ScalatraServlet, request: HttpServletRequest): Option[Session] = {
     val json = parse(RichRequest(request).body)
     val token = (json \ "token").extract[Option[String]]
     val idpentityid = (json \ "idpentityid").extract[Option[String]]
@@ -26,13 +25,13 @@ class TokenAuthStrategy (protected override val app: ScalatraBase, config: Confi
       case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName =>
         db.findSessionByToken(tokenFromRequest) match {
           case s @ Some(session) => s
-          case _ => handleNewSessionOrUpdatedTokenCase(tokenFromRequest)
+          case _ => handleNewSessionOrUpdatedTokenCase(app, tokenFromRequest)
         }
       case _ => None
     }
   }
 
-  def handleNewSessionOrUpdatedTokenCase(tokenFromRequest: String) = {
+  def handleNewSessionOrUpdatedTokenCase(app: ScalatraServlet, tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
       case Success(Some(email)) =>
         db.findSession(email) match {
