@@ -197,11 +197,9 @@ describe('Page with email session - hakulist page', () => {
   describe('Submit hakulist form', () => {
     it('click submit should redirect to form', () => {
       S("input[name='redirectToForm']").click()
-      // todo: goto proper mock result form
+      return S2(".mockRedirect").then(assertOneElementFound).then(done).catch(done)
     })
   })
-
-  after(logout)
 })
 
 describe('Page with email session - add second application object', () => {

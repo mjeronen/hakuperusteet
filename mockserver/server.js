@@ -120,7 +120,14 @@ app.post('/VETUMAPayment', function(req, res){
 
 // Application form (Aalto, UAF)
 app.post('/formredirect', function(req, res) {
-  res.send(req.body)
+  res.writeHead(200, {'Content-Type': 'text/html'})
+  res.write("<html>")
+  res.write("<body>")
+  res.write("<script>document.domain = location.hostname</script>")
+  res.write("<div class='mockRedirect'>Mock redirect form got values:</div>")
+  res.write(JSON.stringify(req.body))
+  res.write("</body>")
+  res.write("</html>")
   res.end()
 })
 
