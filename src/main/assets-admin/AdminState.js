@@ -7,6 +7,7 @@ import HttpUtil from '../assets/util/HttpUtil.js'
 import Dispatcher from '../assets/util/Dispatcher'
 import {initChangeListeners} from '../assets/util/ChangeListeners'
 import {parseNewValidationErrors} from '../assets/util/FieldValidator.js'
+import {parseNewApplicationObjectValidationErrors} from './util/ApplicationObjectValidator.js'
 import {enableSubmitAndHideBusy} from '../assets/util/HtmlUtils.js'
 
 const dispatcher = new Dispatcher()
@@ -29,7 +30,7 @@ export function initAppState(props) {
     const initialState = {['userUpdateUrl']:userUpdateUrl, ['applicationObjectUpdateUrl']:applicationObjectUpdateUrl}
     const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
     const serverUpdatesBus = new Bacon.Bus()
-    const userFromServerUpdatesBus = new Bacon.Bus()
+    const serverEducationUpdatesBus = new Bacon.Bus()
     const hakukohdeS = Bacon.once("1.2.246.562.20.69046715533")
     const tarjontaS = hakukohdeS.flatMap(fetchFromTarjonta).toEventStream()
 
@@ -45,9 +46,9 @@ export function initAppState(props) {
         }).merge(serverUpdatesBus)
 
     const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
-
     const fieldValidationS = dispatcher.stream(events.fieldValidation).merge(serverUpdatesBus)
-    const updateEducationFormS = dispatcher.stream(events.updateEducationForm)
+    const updateEducationFormS = dispatcher.stream(events.updateEducationForm).merge(serverEducationUpdatesBus)
+
     const stateP = Bacon.update(initialState,
         [propertiesS], onStateInit,
         [fetchUsersFromServerS], onSearchUpdate,
@@ -64,7 +65,6 @@ export function initAppState(props) {
         const form = document.getElementById('userDataForm')
         enableSubmitAndHideBusy(form)
     })
-    userFromServerUpdatesBus.plug(userDataFormSubmitS)
     serverUpdatesBus.plug(userDataFormSubmitS)
 
     const educationFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("educationForm_(.*)"))).flatMapLatest(({state, form}) => {
@@ -79,14 +79,18 @@ export function initAppState(props) {
         enableSubmitAndHideBusy(form)
     })
     serverUpdatesBus.plug(educationFormSubmitS.map(({hakukohdeOid, userdata}) => userdata))
+    serverEducationUpdatesBus.plug(serverUpdatesBus.flatMap(userdata => userdata.applicationObject))
 
     return stateP
 
+    function onStateInit(state, properties) {
+        return {...state, properties}
+    }
     function onSearchUpdate(state, users) {
         return {...state, ['users']: users}
     }
     function onUpdateEducationForm(state, newAo) {
-        var updatedAos = _.map(state.applicationObjects, (oldAo => oldAo.id == newAo.id ? newAo : oldAo))
+        var updatedAos = _.map(state.applicationObjects, (oldAo => oldAo.id == newAo.id ? applicationObjectWithValidationErrors(state, newAo) : oldAo))
         return {...state, ['applicationObjects']: updatedAos}
     }
     function onTarjontaValue(state, tarjonta) {
@@ -100,9 +104,6 @@ export function initAppState(props) {
     function onUpdateUser(state, user) {
         return {...state, ...user.user, ['applicationObjects']: user.applicationObject, ['fromServer']: user}
     }
-    function onStateInit(state, properties) {
-        return {...state, properties}
-    }
     function onFieldValidation(state, {field, value}) {
         const newValidationErrors = parseNewValidationErrors(state, field, value)
         const validationErrors = {...newValidationErrors, ['noChanges']: _.isMatch(state, state.fromServer.user) ? "required" : null}
@@ -114,5 +115,10 @@ export function initAppState(props) {
     function personOidInUrl(url) {
         var match = url.match(new RegExp("oppija/(.*)"))
         return match ? match[1] : null
+    }
+    function applicationObjectWithValidationErrors(state, newAo) {
+        const aoFromServer = _.find(state.fromServer.applicationObject, ao => ao.id == newAo.id)
+        const validationErrors = {...parseNewApplicationObjectValidationErrors(newAo), ['noChanges']: _.isMatch(newAo, aoFromServer) ? "required" : null}
+        return {...newAo, ['validationErrors']: validationErrors}
     }
 }

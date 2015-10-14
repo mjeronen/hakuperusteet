@@ -33,10 +33,12 @@ export function initChangeListeners(dispatcher, events) {
     dispatcher.push(events.route, path)
   }
   function pushEducationFormChanges(ao, e) {
-    const field = e.target.id
-    const value = e.target.value
-    dispatcher.push(events.updateEducationForm, {...ao, [field]: value})
+    dispatcher.push(events.updateEducationForm, {...ao, ...valueEventToObject(e)})
   }
+  function valueEventToObject(e) {
+    return e ? {[e.target.id]: e.target.value} : {}
+  }
+
   function pushChangeAndValidation(field, value) {
     dispatcher.push(events.updateField, {field: field, value: value})
     dispatcher.push(events.fieldValidation, {field: field, value: value})
