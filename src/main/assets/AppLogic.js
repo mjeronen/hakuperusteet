@@ -2,6 +2,10 @@ export function sessionInit(state) {
   return !_.isUndefined(state.sessionInit) && state.sessionInit == true
 }
 
+export function serverError(state) {
+  return !_.isUndefined(state.serverError) && state.serverError == true
+}
+
 export function showLoginInfo(state) {
   return sessionInit(state) && (_.isUndefined(state.sessionData) || _.isUndefined(state.sessionData.session) || _.isUndefined(state.sessionData.session.email))
 }
@@ -19,24 +23,24 @@ export function hasAuthenticationError(state) {
 }
 
 export function showUserDataForm(state) {
-  return !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && _.isUndefined(state.sessionData.user)
+  return !serverError(state) && !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && _.isUndefined(state.sessionData.user)
 }
 
 export function showEducationForm(state) {
-  return hasUserData(state) && hasSelectedHakukohde(state) && !hasEducationForSelectedHakukohdeOid(state)
+  return !serverError(state) && hasUserData(state) && hasSelectedHakukohde(state) && !hasEducationForSelectedHakukohdeOid(state)
 }
 
 export function showVetumaStart(state) {
   function hasNoValidPayment() {
     return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
   }
-  return hasUserData(state) && hasNoValidPayment() && (
+  return !serverError(state) && hasUserData(state) && hasNoValidPayment() && (
       (!hasSelectedHakukohde(state) && paymentRequired(state)) ||
       (hasEducationForSelectedHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state)))
 }
 
 export function showHakuList(state) {
-  return hasUserData(state) && (
+  return !serverError(state) && hasUserData(state) && (
       (!hasSelectedHakukohde(state) && (hasValidPayment(state) || !paymentRequired(state))) ||
       (hasEducationForSelectedHakukohdeOid(state) && (hasValidPayment(state) || !paymentRequiredWithCurrentHakukohdeOid(state))))
 }

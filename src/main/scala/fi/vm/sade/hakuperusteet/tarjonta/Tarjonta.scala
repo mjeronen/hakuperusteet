@@ -6,19 +6,22 @@ import org.json4s.native.Serialization
 import org.json4s.native.Serialization._
 import fi.vm.sade.hakuperusteet.util.HttpUtil._
 
+import scala.util.{Failure, Success, Try}
+
 case class ApplicationObject(hakukohdeOid: String, hakuOid: String, name: String, providerName: String, baseEducations: List[String], description: String)
 case class ApplicationSystem(hakuOid: String, formUrl: String)
 
 case class Tarjonta(tarjontaBaseUrl: String) {
   implicit val formats = Serialization.formats(NoTypeHints)
 
-  def getApplicationObject(hakukohdeOid: String) = Option(read[Result](urlToString(tarjontaBaseUrl + "hakukohde/" + hakukohdeOid))).map(_.result)
-    .map(r => ApplicationObject(r.oid, r.hakuOid, r.hakukohteenNimet.kieli_en, r.tarjoajaNimet.en, tarjontaUrisToKoodis(r.hakukelpoisuusvaatimusUris), r.lisatiedot.kieli_en)).get
+  def getApplicationObject(hakukohdeOid: String) = hakukohdeToApplicationObject(read[Result](urlToString(tarjontaBaseUrl + "hakukohde/" + hakukohdeOid)).result)
 
-  def getApplicationSystem(hakuOid: String) = Option(read[Result2](urlToString(tarjontaBaseUrl + "haku/" + hakuOid))).map(_.result)
-    .map(r => ApplicationSystem(r.oid, r.hakulomakeUri)).get
+  def getApplicationSystem(hakuOid: String) = hakuToApplicationSystem(read[Result2](urlToString(tarjontaBaseUrl + "haku/" + hakuOid)).result)
 
   private def tarjontaUrisToKoodis(tarjontaUri: List[String]) = tarjontaUri.map(_.split("_")(1))
+
+  private def hakukohdeToApplicationObject(r: Hakukohde) = ApplicationObject(r.oid, r.hakuOid, r.hakukohteenNimet.kieli_en, r.tarjoajaNimet.en, tarjontaUrisToKoodis(r.hakukelpoisuusvaatimusUris), r.lisatiedot.kieli_en)
+  private def hakuToApplicationSystem(r: Haku) = ApplicationSystem(r.oid, r.hakulomakeUri)
 }
 
 object Tarjonta {

@@ -154,7 +154,7 @@ export function initAppState(props) {
   function applicationObjects(s) { return Bacon.fromArray(s.applicationObject) }
   function notCurrentHakukohde(x) { return x != parseAoId() }
   function fetchFromTarjonta(hakukohde) {
-    return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
+    return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde)).doError(handleTarjontaError).skipErrors()
   }
 }
 
@@ -174,6 +174,10 @@ function handleAuthenticationError(e) {
   if (e.status == 401) {
     dispatcher.push(events.updateField, {field: 'authenticationError', value: true})
   }
+}
+
+function handleTarjontaError(_) {
+  dispatcher.push(events.updateField, {field: 'serverError', value: true})
 }
 
 function sessionInit() {

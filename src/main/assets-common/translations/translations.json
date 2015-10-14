@@ -43,6 +43,9 @@
         "userdata": {
           "en": "Invalid userdata. Please check form values and try again."
         }
+      },
+      "pageload": {
+        "en": "Unfortunately something went wrong. Please reload page and try again."
       }
     },
     "authentication": {
