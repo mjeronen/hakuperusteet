@@ -53,6 +53,7 @@ class ResetHandler(val db: HsqlDatabase) extends HttpHandler {
     println("HSQLDB reset!")
     db.resetDb
     val response = "OK"
+    t.getResponseHeaders.add("Access-Control-Allow-Origin", "*")
     t.sendResponseHeaders(200, response.length)
     val os = t.getResponseBody
     os.write(response.getBytes)
