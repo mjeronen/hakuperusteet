@@ -70,13 +70,15 @@ export function initAppState(props) {
     const educationFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("educationForm_(.*)"))).flatMapLatest(({state, form}) => {
       const hakukohdeOid = form.match(new RegExp("educationForm_(.*)"))[1]
       const applicationObject = _.find(state.applicationObjects, ao => ao.hakukohdeOid === hakukohdeOid)
-      return submitEducationDataToServer(state, applicationObject, document.getElementById(form))
+      return submitEducationDataToServer(state, applicationObject, document.getElementById(form)).map(userdata => {
+          return {['hakukohdeOid']: hakukohdeOid, ['userdata']: userdata}
+      })
     });
-    educationFormSubmitS.onValue((result) => {
-        const form = document.getElementById('educationForm_'+ result.hakukohdeOid)
+    educationFormSubmitS.onValue(({hakukohdeOid}) => {
+        const form = document.getElementById('educationForm_'+ hakukohdeOid)
         enableSubmitAndHideBusy(form)
     })
-    serverUpdatesBus.plug(educationFormSubmitS)
+    serverUpdatesBus.plug(educationFormSubmitS.map(({hakukohdeOid, userdata}) => userdata))
 
     return stateP
 
