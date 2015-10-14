@@ -10,16 +10,20 @@ import NativeLanguage from '../../assets/userdata/NativeLanguage.jsx'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 import UserDataErrors from '../../assets/userdata/UserDataErrors.jsx'
 
-import {validateUserDataForm} from '../../assets/util/FieldValidator.js'
+import {validateUserDataForm, requiredField} from '../../assets/util/FieldValidator.js'
 import {translation} from '../../assets-common/translations/translations.js'
 
 export default class UserDataForm extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
-    const disabled = (validateUserDataForm(state)) ? "" : "disabled"
+    const disabled = (validateUserDataForm(state) && !requiredField(state, "noChanges")) ? "" : "disabled"
     const languages = _.isUndefined(state.properties) ? [] : state.properties.languages
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
+    const errors = requiredField(state, "noChanges") ? <div className="userDataFormRow">
+      <span className="error">Lomakkeella ei ole muuttuneita tietoja</span>
+    </div> : <UserDataErrors state={state} controller={controller} />
+
     return <form id="userDataForm" onSubmit={controller.formSubmits}>
       <h2>{state.firstName}&nbsp;{state.lastName}</h2>
       <hr/>
@@ -40,7 +44,7 @@ export default class UserDataForm extends React.Component {
         <span className="serverError invalid hide">{translation("errors.server.invalid.userdata")}</span>
         <span className="serverError general hide">{translation("errors.server.unexpected")}</span>
       </div>
-      <UserDataErrors state={state} controller={controller} />
+      {errors}
     </form>
   }
 }

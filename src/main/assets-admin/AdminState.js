@@ -36,7 +36,6 @@ export function initAppState(props) {
     const fetchUsersFromServerS =
       searchS.flatMap(search => Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin?search=${search}`)))
 
-
     const updateRouteS = Bacon.mergeAll(dispatcher.stream(events.route),Bacon.once(document.location.pathname))
         .map(personOidInUrl)
         .skipDuplicates(_.isEqual)
@@ -102,7 +101,8 @@ export function initAppState(props) {
     }
     function onFieldValidation(state, {field, value}) {
         const newValidationErrors = parseNewValidationErrors(state, field, value)
-        return {...state, ['validationErrors']: newValidationErrors}
+        const validationErrors = {...newValidationErrors, ['noChanges']: _.isMatch(state, state.fromServer.user) ? "required" : null}
+        return {...state, ...{'validationErrors' : validationErrors}}
     }
     function fetchFromTarjonta(hakukohde) {
         return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
