@@ -8,13 +8,12 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.Session
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import org.json4s.native.JsonMethods._
-import org.scalatra.ScalatraServlet
 import org.scalatra.servlet.RichRequest
 
 class GoogleBasicAuthStrategy(config: Config, db: HakuperusteetDatabase, googleVerifier: GoogleVerifier) extends SimpleAuth with LazyLogging {
   import fi.vm.sade.hakuperusteet._
 
-  def authenticate(app: ScalatraServlet, request: HttpServletRequest): Option[Session] = {
+  def authenticate(request: HttpServletRequest): Option[Session] = {
     val json = parse(RichRequest(request).body)
     val email = (json \ "email").extract[Option[String]]
     val token = (json \ "token").extract[Option[String]] // todo: currently real token

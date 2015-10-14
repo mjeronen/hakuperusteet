@@ -8,16 +8,16 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.Session
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.json4s.native.JsonMethods._
-import org.scalatra.ScalatraServlet
+import org.scalatra.Control
 import org.scalatra.servlet.RichRequest
 
 import scala.util.{Failure, Success, Try}
 
-class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends SimpleAuth with LazyLogging {
+class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends SimpleAuth with LazyLogging with Control {
   import fi.vm.sade.hakuperusteet._
   val tokenName = "oppijaToken"
 
-  def authenticate(app: ScalatraServlet, request: HttpServletRequest): Option[Session] = {
+  def authenticate(request: HttpServletRequest): Option[Session] = {
     val json = parse(RichRequest(request).body)
     val token = (json \ "token").extract[Option[String]]
     val idpentityid = (json \ "idpentityid").extract[Option[String]]
@@ -25,13 +25,13 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
       case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName =>
         db.findSessionByToken(tokenFromRequest) match {
           case s @ Some(session) => s
-          case _ => handleNewSessionOrUpdatedTokenCase(app, tokenFromRequest)
+          case _ => handleNewSessionOrUpdatedTokenCase(tokenFromRequest)
         }
       case _ => None
     }
   }
 
-  def handleNewSessionOrUpdatedTokenCase(app: ScalatraServlet, tokenFromRequest: String) = {
+  def handleNewSessionOrUpdatedTokenCase(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
       case Success(Some(email)) =>
         db.findSession(email) match {
@@ -41,7 +41,7 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
       case Success(None) => None
       case Failure(f) =>
         logger.error("Oppijantunnistus.validateToken error", f)
-        app.halt(500)
+        halt(500)
     }
   }
 

@@ -4,10 +4,9 @@ import javax.servlet.http.{HttpServletRequest, HttpSession}
 
 import fi.vm.sade.hakuperusteet.HakuperusteetServlet
 import fi.vm.sade.hakuperusteet.domain.Session
-import org.scalatra.ScalatraServlet
 
 trait SimpleAuth {
-  def authenticate(app: ScalatraServlet, request: HttpServletRequest): Option[Session]
+  def authenticate(request: HttpServletRequest): Option[Session]
 }
 
 trait AuthenticationSupport { self: HakuperusteetServlet =>
@@ -19,7 +18,7 @@ trait AuthenticationSupport { self: HakuperusteetServlet =>
   }
 
   def authenticate() = {
-    val matchedSessions: List[Session] = List(new GoogleBasicAuthStrategy(configuration, db, googleVerifier), new TokenAuthStrategy(configuration, db, oppijanTunnistus)).map( a => a.authenticate(this, request)).flatten
+    val matchedSessions: List[Session] = List(new GoogleBasicAuthStrategy(configuration, db, googleVerifier), new TokenAuthStrategy(configuration, db, oppijanTunnistus)).map( a => a.authenticate(request)).flatten
     if(matchedSessions.nonEmpty) {
       request.getSession.setAttribute(sessionAuthKey, matchedSessions.head)
     }
