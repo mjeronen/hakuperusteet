@@ -16,7 +16,7 @@
     </appender>
 
     <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/data00/oph/hakuperusteet/log/oph-hakuperusteet.log</file>
+        <file>/data00/oph/hakuperusteet/logs/oph-hakuperusteet.log</file>
         <append>true</append>
         <encoder>
             <charset>utf-8</charset>
