@@ -29,6 +29,7 @@ export function initAppState(props) {
     const initialState = {['userUpdateUrl']:userUpdateUrl, ['applicationObjectUpdateUrl']:applicationObjectUpdateUrl}
     const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
     const serverUpdatesBus = new Bacon.Bus()
+    const userFromServerUpdatesBus = new Bacon.Bus()
     const hakukohdeS = Bacon.once("1.2.246.562.20.69046715533")
     const tarjontaS = hakukohdeS.flatMap(fetchFromTarjonta).toEventStream()
 
@@ -41,11 +42,11 @@ export function initAppState(props) {
         .skipDuplicates(_.isEqual)
         .flatMap(function(uniquePersonOid) {
             return Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin/${uniquePersonOid}`))
-        })
+        }).merge(serverUpdatesBus)
 
     const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
 
-    const fieldValidationS = dispatcher.stream(events.fieldValidation)
+    const fieldValidationS = dispatcher.stream(events.fieldValidation).merge(serverUpdatesBus)
     const updateEducationFormS = dispatcher.stream(events.updateEducationForm)
     const stateP = Bacon.update(initialState,
         [propertiesS], onStateInit,
@@ -63,6 +64,7 @@ export function initAppState(props) {
         const form = document.getElementById('userDataForm')
         enableSubmitAndHideBusy(form)
     })
+    userFromServerUpdatesBus.plug(userDataFormSubmitS)
     serverUpdatesBus.plug(userDataFormSubmitS)
 
     const educationFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("educationForm_(.*)"))).flatMapLatest(({state, form}) => {

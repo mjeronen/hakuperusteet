@@ -97,14 +97,15 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
         renderConflictWithErrors(NonEmptyList[String](error))
     }
     db.upsertUser(newUser)
-    write(newUser)
+    write(UserData(newUser, db.findApplicationObjects(newUser)))
   }
   post("/api/v1/admin/applicationobject") {
     checkAuthentication
     contentType = "application/json"
     val ao = parse(request.body).extract[ApplicationObject]
     db.upsertApplicationObject(ao)
-    write(ao)
+    val user = db.findUserByOid(ao.personOid).get
+    write(UserData(user, db.findApplicationObjects(user)))
   }
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
