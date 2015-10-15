@@ -13,10 +13,11 @@ MacOS users install docker with command `brew cask install dockertoolbox`.
 1. Create new docker-machine `docker-machine create --driver virtualbox dockerVM`
 2. Run `docker-machine env dockerVM` and check DOCKER_HOST variable
 4. Edit /etc/hosts. Add line `<docker-host-ip-goes-here> hakuperusteetdb`
-5. `docker run -d -p 5432:5432 postgres`
-6. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE ROLE OPH;"`
-7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
-8. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
+5. `eval "$(docker-machine env dockerVM)"`
+6. `docker run -d -p 5432:5432 postgres`
+7. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE ROLE OPH;"`
+8. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteet;"`
+9. `psql -hhakuperusteetdb -p5432 -Upostgres postgres -c "CREATE DATABASE hakuperusteettest;"`
 
 To start docker again (e.g. after boot), run the following command and continue from step 2 above.
 
