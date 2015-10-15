@@ -20,7 +20,7 @@ trait ValidationUtil {
   def parseOptional(key: String)(params: Params) = params.get(key) match { case e => e.successNel }
 
   def parseLocalDate(input: String): ValidationResult[LocalDate] =
-    Try(LocalDate.parse(input, DateTimeFormatter.ISO_LOCAL_DATE).successNel).recover {
+    Try(LocalDate.parse(input, DateTimeFormatter.ofPattern("ddMMyyyy")).successNel).recover {
       case e => e.getMessage.failureNel
     }.get
 }

@@ -1,5 +1,4 @@
 import Bacon from 'baconjs'
-import moment from 'moment-timezone'
 import _ from 'lodash'
 
 import HttpUtil from '../util/HttpUtil.js'
@@ -9,7 +8,7 @@ export function submitUserDataToServer(state) {
   var userData = {
     firstName: state.firstName,
     lastName: state.lastName,
-    birthDate: moment(state.birthDate, "DDMMYYYY").tz('Europe/Helsinki').format("YYYY-MM-DD"),
+    birthDate: state.birthDate,
     gender: state.gender,
     nativeLanguage: state.nativeLanguage,
     nationality: state.nationality,

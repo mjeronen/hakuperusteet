@@ -1,5 +1,4 @@
 import Bacon from 'baconjs'
-import moment from 'moment-timezone'
 
 import HttpUtil from '../util/HttpUtil.js'
 import {enableSubmitAndHideBusy} from '../util/HtmlUtils.js'
