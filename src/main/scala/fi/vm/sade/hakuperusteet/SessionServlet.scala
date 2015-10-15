@@ -50,9 +50,9 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   post("/emailToken") {
     val params = parse(request.body).extract[Params]
-    parseNonEmpty("email")(params).flatMap(validateEmail).bitraverse(
+    parseEmailToken(params).bitraverse(
       errors => renderConflictWithErrors(errors),
-      email => orderEmailToken(email))
+      res => orderEmailToken(res._1, res._2))
   }
 
   post("/userData") {
@@ -72,10 +72,14 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
       education => addNewEducation(user, userData, education))
   }
 
+  def parseEmailToken(params: Params): ValidationResult[(String, String)] = {
+    (parseNonEmpty("email")(params).flatMap(validateEmail) |@| parseExists("hakukohdeOid")(params)) { (email, hakukohdeOid) => (email, hakukohdeOid) }
+  }
+
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 
-  def orderEmailToken(email: String) =
-    Try(oppijanTunnistus.createToken(email)) match {
+  def orderEmailToken(email: String, hakukohdeOid: String) =
+    Try(oppijanTunnistus.createToken(email, hakukohdeOid)) match {
       case Success(token) =>
         logger.info(s"Sending token to $email with value $token")
         halt(status = 200, body = compact(render(Map("token" -> token))))

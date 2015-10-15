@@ -23,5 +23,5 @@ class DummyVerifier() extends GoogleVerifier("", "") {
 }
 
 class DummyOppijanTunnistus(c: Config) extends OppijanTunnistus(c) {
-  override def createToken(email: String) = "dummyLoginToken"
+  override def createToken(email: String, hakukohdeOid: String) = "dummyLoginToken"
 }

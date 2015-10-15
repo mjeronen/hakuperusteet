@@ -12,8 +12,8 @@ import org.json4s.JsonDSL._
 case class OppijanTunnistus(c: Config) extends LazyLogging {
   import fi.vm.sade.hakuperusteet._
 
-  def createToken(email: String) = {
-    val siteUrlBase = c.getString("host.url.base") + "#/token/"
+  def createToken(email: String, hakukohdeOid: String) = {
+    val siteUrlBase = if (hakukohdeOid.length > 0) s"${c.getString("host.url.base")}ao/$hakukohdeOid/#/token/" else s"${c.getString("host.url.base")}#/token/"
     val data = Map("email" -> email, "url" -> siteUrlBase)
 
     Request.Post(c.getString("oppijantunnistus.create.url"))

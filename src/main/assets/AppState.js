@@ -32,7 +32,7 @@ export function initAppState(props) {
   const tarjontaLoadBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const hakukohdeS = tarjontaLoadBus.merge(Bacon.once(parseAoId())).toProperty()
-  const tarjontaS = hakukohdeS.flatMap(fetchFromTarjonta).toEventStream()
+  const tarjontaS = hakukohdeS.filter(isNotEmpty).flatMap(fetchFromTarjonta).toEventStream()
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
   const sessionS = propertiesS.flatMap(sessionFromServer(sessionUrl))
@@ -148,8 +148,8 @@ export function initAppState(props) {
   }
   function skipLoadingMessages(x) { return x != "loading" }
   function parseAoId() {
-    const aoid = /\/hakuperusteet\/ao\/([0-9\.]*)$/
-    return aoid.test(location.pathname) ? aoid.exec(location.pathname).pop() : "1.2.246.562.20.69046715533"
+    const aoid = /\/hakuperusteet\/ao\/([0-9\.]*)\/?$/
+    return aoid.test(location.pathname) ? aoid.exec(location.pathname).pop() : ""
   }
   function applicationObjects(s) { return Bacon.fromArray(s.applicationObject) }
   function notCurrentHakukohde(x) { return x != parseAoId() }

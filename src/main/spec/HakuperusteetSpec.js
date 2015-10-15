@@ -56,7 +56,7 @@ describe('Page without session - invalid login token', () => {
 
 describe('Page with email session - userdata', () => {
   before(resetServer)
-  before(openPage("/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
+  before(openPage("/hakuperusteet/ao/1.2.246.562.20.69046715533/#/token/mochaTestToken", hakuperusteetLoaded))
 
   it('should show email as loggedIn user', () => {
     return S2(".loggedInAs").then(assertOneElementFound).then(done).catch(done)

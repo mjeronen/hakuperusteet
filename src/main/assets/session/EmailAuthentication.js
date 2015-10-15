@@ -23,7 +23,7 @@ export function orderEmailLoginLink(state) {
     e.preventDefault()
     const form = e.target
     disableSubmitAndShowBusy(form)
-    const promise = Bacon.fromPromise(HttpUtil.post(state.properties.emailTokenUrl, {email: state.emailToken}))
+    const promise = Bacon.fromPromise(HttpUtil.post(state.properties.emailTokenUrl, { email: state.emailToken, hakukohdeOid: state.hakukohdeOid }))
     promise.onValue((result) => {
       enableSubmitAndHideBusy(form)
       form.querySelector(".success").classList.remove("hide")
