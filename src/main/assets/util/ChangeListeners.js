@@ -32,6 +32,9 @@ export function initChangeListeners(dispatcher, events) {
   function pushRouteChange(path) {
     dispatcher.push(events.route, path)
   }
+  function pushPaymentFormChanges(payment, e) {
+    dispatcher.push(events.updatePaymentForm, {...payment, ...valueEventToObject(e)})
+  }
   function pushEducationFormChanges(ao, e) {
     dispatcher.push(events.updateEducationForm, {...ao, ...valueEventToObject(e)})
   }
@@ -46,6 +49,17 @@ export function initChangeListeners(dispatcher, events) {
   function logOut() {
     dispatcher.push(events.logOut, {})
   }
-  return { pushSearchChange: pushSearchChange, pushEducationFormChanges: pushEducationFormChanges, pushChangeAndValidation: pushChangeAndValidation, pushRouteChange: pushRouteChange, valueChanges: valueChanges, checkedChanges: checkedChanges, radioChanges: radioChanges, formSubmits: formSubmits, logOut: logOut }
+  return {
+    pushPaymentFormChanges: pushPaymentFormChanges,
+    pushSearchChange: pushSearchChange,
+    pushEducationFormChanges: pushEducationFormChanges,
+    pushChangeAndValidation: pushChangeAndValidation,
+    pushRouteChange: pushRouteChange,
+    valueChanges: valueChanges,
+    checkedChanges: checkedChanges,
+    radioChanges: radioChanges,
+    formSubmits: formSubmits,
+    logOut: logOut
+  }
 }
 

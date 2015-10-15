@@ -49,7 +49,7 @@ package object hakuperusteet {
       df.setTimeZone(TimeZone.getDefault)
       df
     }
-  } + UiDateSerializer
+  } + UiDateSerializer + PaymentStatusSerializer
 
   case object PaymentStatusSerializer extends CustomSerializer[PaymentStatus](format => (
     { case JString(s) => PaymentStatus.withName(s) },

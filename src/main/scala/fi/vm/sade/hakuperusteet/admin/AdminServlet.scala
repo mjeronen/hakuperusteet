@@ -3,7 +3,7 @@ package fi.vm.sade.hakuperusteet.admin
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.admin.auth.CasAuthenticationSupport
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
-import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, UserData, User}
+import fi.vm.sade.hakuperusteet.domain.{Payment, ApplicationObject, UserData, User}
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
@@ -75,8 +75,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     val user = db.findUserByOid(personOid)
     user match {
       case Some(u) =>
-        write(UserData(u, db.findApplicationObjects(u)))
-
+        write(UserData(u, db.findApplicationObjects(u), db.findPayments(u)))
       case _ => {
         halt(status = 404, body = s"User ${personOid} not found")
       }
@@ -97,7 +96,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
         renderConflictWithErrors(NonEmptyList[String](error))
     }
     db.upsertUser(newUser)
-    write(UserData(newUser, db.findApplicationObjects(newUser)))
+    write(UserData(newUser, db.findApplicationObjects(newUser), db.findPayments(newUser)))
   }
   post("/api/v1/admin/applicationobject") {
     checkAuthentication
@@ -105,7 +104,15 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     val ao = parse(request.body).extract[ApplicationObject]
     db.upsertApplicationObject(ao)
     val user = db.findUserByOid(ao.personOid).get
-    write(UserData(user, db.findApplicationObjects(user)))
+    write(UserData(user, db.findApplicationObjects(user), db.findPayments(user)))
+  }
+  post("/api/v1/admin/payment") {
+    checkAuthentication
+    contentType = "application/json"
+    val payment = parse(request.body).extract[Payment]
+    db.upsertPayment(payment)
+    val user = db.findUserByOid(payment.personOid).get
+    write(UserData(user, db.findApplicationObjects(user), db.findPayments(user)))
   }
   error { case e: Throwable => logger.error("uncaught exception", e) }
 

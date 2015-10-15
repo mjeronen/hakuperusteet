@@ -51,8 +51,10 @@ export default class EducationForm extends React.Component {
     const educationCountryId = "educationCountry_" + ao.hakukohdeOid
 
     return <form id={formId} onSubmit={controller.formSubmits}>
-      <p><strong>{name}.</strong></p>
-      <br/>
+      <div className="userDataFormRow">
+        <label>Hakukohde</label>
+        <span>{name}.</span>
+      </div>
       <div className="userDataFormRow">
         <label htmlFor={educationLevelId}>{translation("title.education.level") + " *"}</label>
         <select id={educationLevelId} name="educationLevel" onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationLevel}>
