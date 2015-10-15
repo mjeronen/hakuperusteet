@@ -31,7 +31,7 @@ export default class EducationForm extends React.Component {
     const baseEducationsForCurrent = tarjonta.baseEducations
     const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
     const levelResult = createSelectOptions(baseEducationOptions)
-    const formId = "educationForm_" + ao.hakukohdeOid
+
     const name = tarjonta.name
     const disabled = (validateApplicationObject(ao) && !requiredField(ao, "noChanges")) ? "" : "disabled"
 
@@ -46,18 +46,22 @@ export default class EducationForm extends React.Component {
                       { requiredField(ao, "educationCountry") ? <span className="error">{translation("educationForm.errors.requiredEducationCountry")}</span> : null}
     </div>
 
+    const formId = "educationForm_" + ao.hakukohdeOid
+    const educationLevelId = "educationLevel_" + ao.hakukohdeOid
+    const educationCountryId = "educationCountry_" + ao.hakukohdeOid
+
     return <form id={formId} onSubmit={controller.formSubmits}>
       <p><strong>{name}.</strong></p>
       <br/>
       <div className="userDataFormRow">
-        <label htmlFor="educationLevel">{translation("title.education.level") + " *"}</label>
-        <select id="educationLevel" onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationLevel}>
+        <label htmlFor={educationLevelId}>{translation("title.education.level") + " *"}</label>
+        <select id={educationLevelId} onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationLevel}>
                              {levelResult}
         </select>
       </div>
       <div className="userDataFormRow">
-        <label htmlFor="educationCountry">{translation("title.education.country") + " *"}</label>
-        <select id="educationCountry" onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationCountry}>
+        <label htmlFor={educationCountryId}>{translation("title.education.country") + " *"}</label>
+        <select id={educationCountryId} onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationCountry}>
                             {countriesResult}
         </select>
       </div>
