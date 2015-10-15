@@ -10,6 +10,7 @@ import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.ValidationUtil
+import fi.vm.sade.utils.validator.HenkilotunnusValidator
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
@@ -122,13 +123,12 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     (parseNonEmpty("firstName")(params)
       |@| parseNonEmpty("lastName")(params)
       |@| parseExists("birthDate")(params).flatMap(parseLocalDate)
-      |@| parseOptional("personId")(params)
+      |@| parseOptionalPersonalId(params)
       |@| parseExists("gender")(params).flatMap(validateGender)
       |@| parseExists("nativeLanguage")(params).flatMap(validateNativeLanguage)
       |@| parseExists("nationality")(params).flatMap(validateCountry)
     ) { (firstName, lastName, birthDate, personId, gender, nativeLanguage, nationality) =>
-      User(None, None, email, firstName, lastName, java.sql.Date.valueOf(birthDate), createPersonalId(birthDate, personId),
-        idpentityid, gender, nativeLanguage, nationality)
+      User(None, None, email, firstName, lastName, java.sql.Date.valueOf(birthDate), personId, idpentityid, gender, nativeLanguage, nationality)
     }
   }
 
@@ -157,8 +157,20 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     if (educations.educations.map(_.id).contains(educationLevel)) educationLevel.successNel
     else s"unknown educationLevel $educationLevel".failureNel
 
-  private def createPersonalId(birthDate: LocalDate, personId: Option[String]) =
-    personId.map { (pid) => birthDate.format(personIdDateFormatter) + pid }
+  def parseOptionalPersonalId(params: Params): ValidationResult[Option[String]] =
+    (params.get("birthDate"), params.get("personId")) match {
+      case (Some(b), Some(p)) =>
+        parseLocalDate(b) match {
+          case scalaz.Success(birthDateParsed) =>
+            val pid = birthDateParsed.format(personIdDateFormatter) + p
+            HenkilotunnusValidator.validate(pid) match {
+              case scalaz.Success(a) => Some(pid).successNel
+              case scalaz.Failure(e) => s"invalid pid $pid - [${e.stream.mkString(",")}]".failureNel
+            }
+          case scalaz.Failure(e) => s"invalid birthDate $b".failureNel
+        }
+      case _ => None.successNel
+    }
 
   private def validateEmail(email: String): ValidationResult[String] =
     if (!email.isEmpty && email.contains("@") && !email.contains(" ") && !email.contains(",") && !email.contains("\t")) email.successNel
