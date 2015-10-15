@@ -55,13 +55,13 @@ export default class EducationForm extends React.Component {
       <br/>
       <div className="userDataFormRow">
         <label htmlFor={educationLevelId}>{translation("title.education.level") + " *"}</label>
-        <select id={educationLevelId} onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationLevel}>
+        <select id={educationLevelId} name="educationLevel" onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationLevel}>
                              {levelResult}
         </select>
       </div>
       <div className="userDataFormRow">
         <label htmlFor={educationCountryId}>{translation("title.education.country") + " *"}</label>
-        <select id={educationCountryId} onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationCountry}>
+        <select id={educationCountryId} name="educationCountry" onChange={this.changes.bind(this, ao)} onBlur={this.changes.bind(this, ao)} value={ao.educationCountry}>
                             {countriesResult}
         </select>
       </div>
