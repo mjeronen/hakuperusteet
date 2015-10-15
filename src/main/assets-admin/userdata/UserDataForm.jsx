@@ -28,7 +28,7 @@ export default class UserDataForm extends React.Component {
       <h2>{state.firstName}&nbsp;{state.lastName}</h2>
       <hr/>
       <div className="userDataFormRow">
-        <label>Email</label>
+        <label>{translation("title.email")}</label>
         <span className="">{state.email}</span>
       </div>
       <UserDataInput name="firstName" title={translation("title.first.name")} state={state} controller={controller} />
