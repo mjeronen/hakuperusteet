@@ -7,6 +7,7 @@ import {submitPaymentDataToServer} from './payment/Payment.js'
 import HttpUtil from '../assets/util/HttpUtil.js'
 import Dispatcher from '../assets/util/Dispatcher'
 import {initChangeListeners} from '../assets/util/ChangeListeners'
+import {initAdminChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from '../assets/util/FieldValidator.js'
 import {parseNewApplicationObjectValidationErrors} from './util/ApplicationObjectValidator.js'
 import {parseNewPaymentValidationErrors} from './util/PaymentValidator.js'
@@ -25,7 +26,7 @@ const events = {
 }
 
 export function changeListeners() {
-    return initChangeListeners(dispatcher, events)
+    return {...initChangeListeners(dispatcher, events), ...initAdminChangeListeners(dispatcher, events)}
 }
 
 export function initAppState(props) {

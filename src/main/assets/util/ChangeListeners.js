@@ -25,22 +25,7 @@ export function initChangeListeners(dispatcher, events) {
     disableSubmitAndShowBusy(form)
     dispatcher.push(events.submitForm, e.target.id)
   }
-  function pushSearchChange(e) {
-    const value = e.target.value
-    dispatcher.push(events.search, value)
-  }
-  function pushRouteChange(path) {
-    dispatcher.push(events.route, path)
-  }
-  function pushPaymentFormChanges(payment, e) {
-    dispatcher.push(events.updatePaymentForm, {...payment, ...valueEventToObject(e)})
-  }
-  function pushEducationFormChanges(ao, e) {
-    dispatcher.push(events.updateEducationForm, {...ao, ...valueEventToObject(e)})
-  }
-  function valueEventToObject(e) {
-    return e ? {[e.target.name]: e.target.value} : {}
-  }
+
   function pushChangeAndValidation(field, value) {
     dispatcher.push(events.updateField, {field: field, value: value})
     dispatcher.push(events.fieldValidation, {field: field, value: value})
@@ -50,11 +35,7 @@ export function initChangeListeners(dispatcher, events) {
     dispatcher.push(events.logOut, {})
   }
   return {
-    pushPaymentFormChanges: pushPaymentFormChanges,
-    pushSearchChange: pushSearchChange,
-    pushEducationFormChanges: pushEducationFormChanges,
     pushChangeAndValidation: pushChangeAndValidation,
-    pushRouteChange: pushRouteChange,
     valueChanges: valueChanges,
     checkedChanges: checkedChanges,
     radioChanges: radioChanges,

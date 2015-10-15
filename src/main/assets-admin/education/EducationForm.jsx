@@ -7,7 +7,7 @@ import {createSelectOptions} from '../../assets/util/HtmlUtils.js'
 import HttpUtil from '../../assets/util/HttpUtil'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 
-import {validateUserDataForm, requiredField, invalidField} from '../../assets/util/FieldValidator.js'
+import {requiredField} from '../../assets/util/FieldValidator.js'
 import {validateApplicationObject} from '../util/ApplicationObjectValidator.js'
 import {translation} from '../../assets-common/translations/translations.js'
 
