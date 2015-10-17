@@ -214,7 +214,7 @@ describe('Page with email session - add second application object', () => {
 
     it('select educationCountry - Finland', () => { return setField("#educationCountry", "246") })
     it('submit should be enabled', assertSubmitEnabled)
-    it('should not show missing errors', expectNotFound(".noPaymentRequired"))
+    it('should not show missing errors', expectNotFound("#educationForm .error"))
     it('noPaymentRequired should be visible', () => { return S2(".noPaymentRequired").then(assertOneElementFound).then(done).catch(done) })
     it('paymentRequired should be hidden', expectNotFound(".paymentRequired"))
     it('alreadyPaid should be hidden', expectNotFound(".alreadyPaid"))
