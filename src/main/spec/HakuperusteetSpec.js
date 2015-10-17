@@ -29,14 +29,10 @@ describe('Page without session - order email token', () => {
   before(openPage("/hakuperusteet/", hakuperusteetLoaded))
 
   it('submit should be disabled', assertSubmitDisabled)
-  it('insert invalid email', () => {
-    return S2("#emailToken").then(setVal("asd@asd.fi asd2@asd.fi")).then(done).catch(done)
-  })
+  it('insert invalid email', () => { return setField("#emailToken", "asd@asd.fi asd2@asd.fi") })
   it('submit should be disabled', assertSubmitDisabled)
 
-  it('insert valid email', () => {
-    return S2("#emailToken").then(setVal("asd@asd.fi")).then(done).catch(done)
-  })
+  it('insert valid email', () => { return setField("#emailToken", "asd@asd.fi") })
   it('submit should be enabled', assertSubmitEnabled)
 
   describe('Submit email token order', () => {
@@ -90,22 +86,22 @@ describe('Page with email session - userdata', () => {
       return S2("#userDataForm .error").then((e) => { expect(e.length).to.equal(6) }).then(done).catch(done)
     })
 
-    it('insert firstName', () => { S("#firstName").val("John").focus().blur() })
+    it('insert firstName', () => { return setField("#firstName", "John") })
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('insert lastName', () => { S("#lastName").val("Doe").focus().blur() })
+    it('insert lastName', () => { return setField("#lastName", "Doe") })
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('insert birthDate', () => { S("#birthDate").val("15051979").focus().blur() })
+    it('insert birthDate', () => { return setField("#birthDate", "15051979") })
     it('submit should be disabled', assertSubmitDisabled)
 
     it('select gender', () => { S("#gender-male").click() })
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('select nativeLanguage', () => { S("#nativeLanguage").val("FI").focus().blur() })
+    it('select nativeLanguage', () => { return setField("#nativeLanguage", "FI") })
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('select nationality', () => { S("#nationality").val("246").focus().blur() })
+    it('select nationality', () => { return setField("#nationality", "246") })
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', () => { expect(S("#userDataForm .error").length).to.equal(0) })
 
@@ -115,7 +111,7 @@ describe('Page with email session - userdata', () => {
       return S2("#userDataForm .error").then(assertOneElementFound).then(done).catch(done)
     })
 
-    it('insert birthDate', () => { S("#personId").val("-9358").focus().blur() })
+    it('insert birthDate', () => { return setField("#personId", "-9358") })
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', () => { expect(S("#userDataForm .error").length).to.equal(0) })
   })
@@ -267,3 +263,4 @@ function expectToBeDisabled(e) { expect($(e).attr("disabled")).to.equal("disable
 function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal(undefined) }
 
 function setVal(val) { return (e) => { $(e).val(val).focus().blur() }}
+function setField(field, val) { return S2(field).then(setVal(val)).then(done).catch(done) }
