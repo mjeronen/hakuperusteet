@@ -28,11 +28,8 @@ describe('Page without session', () => {
 describe('Page without session - order email token', () => {
   before(openPage("/hakuperusteet/", hakuperusteetLoaded))
 
-  it('submit button should be disabled', () => {
-    return S2("#session input[name='submit']").then(expectToBeDisabled).then(done).catch(done)
-  })
-
-  it('insert invalid email', () => { S("#emailToken").val("asd@asd.fi asd2@asd.fi").focus() })
+  it('submit should be disabled', assertSubmitDisabled)
+  it('insert invalid email', () => { S("#emailToken").val("asd@asd.fi asd2@asd.fi").focus().blur() })
   it('submit should be disabled', assertSubmitDisabled)
 
   it('insert valid email', () => { S("#emailToken").val("asd@asd.fi").focus().blur() })
