@@ -186,11 +186,6 @@ describe('Page with email session - hakulist page', () => {
   })
 })
 
-function expectNotFound(selector) {
-  return () => {
-    expect(S(selector).length).to.equal(0)
-  }
-}
 describe('Page with email session - add second application object', () => {
   before(openPage("/hakuperusteet/ao/1.2.246.562.20.31077988074#/token/mochaTestToken", hakuperusteetLoaded))
 
@@ -250,6 +245,7 @@ function assertOneElementFound(e) { expect(e.length).to.equal(1)}
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
 function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
 
+function expectNotFound(selector) { return () => { expect(S(selector).length).to.equal(0) } }
 function expectToBeDisabled(e) { expect($(e).attr("disabled")).to.equal("disabled") }
 function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal(undefined) }
 
