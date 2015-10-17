@@ -29,10 +29,14 @@ describe('Page without session - order email token', () => {
   before(openPage("/hakuperusteet/", hakuperusteetLoaded))
 
   it('submit should be disabled', assertSubmitDisabled)
-  it('insert invalid email', () => { S("#emailToken").val("asd@asd.fi asd2@asd.fi").focus().blur() })
+  it('insert invalid email', () => {
+    return S2("#emailToken").then(setVal("asd@asd.fi asd2@asd.fi")).then(done).catch(done)
+  })
   it('submit should be disabled', assertSubmitDisabled)
 
-  it('insert valid email', () => { S("#emailToken").val("asd@asd.fi").focus().blur() })
+  it('insert valid email', () => {
+    return S2("#emailToken").then(setVal("asd@asd.fi")).then(done).catch(done)
+  })
   it('submit should be enabled', assertSubmitEnabled)
 
   describe('Submit email token order', () => {
@@ -261,3 +265,5 @@ function assertSubmitEnabled() { return S2("input[name='submit']").then(expectTo
 
 function expectToBeDisabled(e) { expect($(e).attr("disabled")).to.equal("disabled") }
 function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal(undefined) }
+
+function setVal(val) { return (e) => { $(e).val(val).focus().blur() }}
