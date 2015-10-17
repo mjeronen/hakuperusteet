@@ -53,9 +53,7 @@ describe('Page with email session - userdata', () => {
 
   describe('Insert data', () => {
     it('initially submit should be disabled', assertSubmitDisabled)
-    it('initially show all missing errors', () => {
-      return S2("#userDataForm .error").then((e) => { expect(e.length).to.equal(6) }).then(done).catch(done)
-    })
+    it('initially show all missing errors', assertElementsFound("#userDataForm .error", 6))
 
     it('insert firstName', setField("#firstName", "John"))
     it('submit should be disabled', assertSubmitDisabled)
@@ -99,13 +97,10 @@ describe('Page with email session - educationdata', () => {
 
   describe('Insert data', () => {
     it('initially submit should be disabled', assertSubmitDisabled)
-    it('initially show all missing errors', () => {
-      return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
-    })
+    it('initially show all missing errors', assertElementsFound("#educationForm .error", 2))
 
     it('select educationLevel', setField("#educationLevel", "116"))
     it('submit should be disabled', assertSubmitDisabled)
-
     it('select educationCountry - Finland', setField("#educationCountry", "246"))
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#educationForm .error"))
@@ -167,9 +162,7 @@ describe('Page with email session - add second application object', () => {
 
   describe('Insert data', () => {
     it('initially submit should be disabled', assertSubmitDisabled)
-    it('initially show all missing errors', () => {
-      return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
-    })
+    it('initially show all missing errors', assertElementsFound("#educationForm .error", 2))
 
     it('select educationLevel', setField("#educationLevel", "100"))
     it('submit should be disabled', assertSubmitDisabled)
@@ -190,9 +183,7 @@ describe('Page with email session - add second application object', () => {
 
     describe('Submit educationForm', () => {
       it('click submit should post educationdata', () => { clickField("input[name='submit']") })
-      it('should show to application objects on hakulist page', () => {
-        return S2(".redirectToForm").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
-      })
+      it('should show to application objects on hakulist page', assertElementsFound(".redirectToForm", 2))
     })
   })
 })
@@ -211,6 +202,7 @@ describe('Page with email session - no new ao but two existing', () => {
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
 function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
 function assertOneFound(selector) { return () => { return S2(selector).then(expectElementsFound(1)).then(done).catch(done) }}
+function assertElementsFound(selector, count) { return () => { return S2(selector).then(expectElementsFound(count)).then(done).catch(done) }}
 function assertEnabled(selector) { return () => { return S2(selector).then(expectToBeEnabled).then(done).catch(done) }}
 function assertNotFound(selector) { return () => { expect(S(selector).length).to.equal(0) } }
 
