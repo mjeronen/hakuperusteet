@@ -25,7 +25,7 @@ describe('Page without session - order email token', () => {
   it('submit should be enabled', assertSubmitEnabled)
 
   describe('Submit email token order', () => {
-    it('click submit should post emailToken', () => { clickField("#session input[name='submit']") })
+    it('click submit should post emailToken', clickField("#session input[name='submit']"))
     it('should show token order success', assertOneFound("#session .success"))
   })
 })
@@ -64,7 +64,7 @@ describe('Page with email session - userdata', () => {
     it('insert birthDate', setField("#birthDate", "15051979"))
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('select gender', () => { return clickField("#gender-male") })
+    it('select gender', clickField("#gender-male"))
     it('submit should be disabled', assertSubmitDisabled)
 
     it('select nativeLanguage', setField("#nativeLanguage", "FI"))
@@ -74,7 +74,7 @@ describe('Page with email session - userdata', () => {
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#userDataForm .error"))
 
-    it('select personId', () => { clickField("#hasPersonId") })
+    it('select personId', clickField("#hasPersonId"))
     it('submit should be disabled', assertSubmitDisabled)
     it('show one error after personId is clicked', assertOneFound("#userDataForm .error"))
 
@@ -84,7 +84,7 @@ describe('Page with email session - userdata', () => {
   })
 
   describe('Submit userDataForm', () => {
-    it('click submit should post userdata', () => { clickField("input[name='submit']") })
+    it('click submit should post userdata', clickField("input[name='submit']"))
     it('should open educationForm after submit', assertOneFound("#educationForm"))
   })
 })
@@ -116,7 +116,7 @@ describe('Page with email session - educationdata', () => {
     it('alreadyPaid should be hidden', assertNotFound(".alreadyPaid"))
 
     describe('Submit educationForm', () => {
-      it('click submit should post educationdata', () => { clickField("input[name='submit']") })
+      it('click submit should post educationdata', clickField("input[name='submit']"))
       it('should show vetuma startpage after submit', assertOneFound(".vetumaStart"))
     })
   })
@@ -132,7 +132,7 @@ describe('Page with email session - vetuma start page', () => {
   it('initially submit should be enabled', assertEnabled("input[name='submitVetuma']"))
 
   describe('Submit vetumaForm', () => {
-    it('click submit should go to vetuma and return back with successful payment', () => { clickField("input[name='submitVetuma']") })
+    it('click submit should go to vetuma and return back with successful payment', clickField("input[name='submitVetuma']"))
     it('should show successful payment as result', assertOneFound(".vetumaResult"))
     it('redirectForm should be visible', assertOneFound(".redirectToForm"))
   })
@@ -146,7 +146,7 @@ describe('Page with email session - hakulist page', () => {
   it('initially submit should be enabled', assertEnabled("input[name='redirectToForm']"))
 
   describe('Submit hakulist form', () => {
-    it('click submit should redirect to form', () => { clickField("input[name='redirectToForm']") })
+    it('click submit should redirect to form', clickField("input[name='redirectToForm']"))
     it('should show mock form', assertOneFound(".mockRedirect"))
   })
 })
@@ -182,7 +182,7 @@ describe('Page with email session - add second application object', () => {
     it('alreadyPaid should be displayed', assertOneFound(".alreadyPaid"))
 
     describe('Submit educationForm', () => {
-      it('click submit should post educationdata', () => { clickField("input[name='submit']") })
+      it('click submit should post educationdata', clickField("input[name='submit']"))
       it('should show to application objects on hakulist page', assertElementsFound(".redirectToForm", 2))
     })
   })
@@ -212,4 +212,4 @@ function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal(undefined
 
 function setVal(val) { return (e) => { $(e).val(val).focus().blur() }}
 function setField(field, val) { return () => { S2(field).then(setVal(val)).then(done).catch(done) }}
-function clickField(field) { return S2(field).then((e) => { $(e).click() }).then(done).catch(done) }
+function clickField(field) { return () => { S2(field).then((e) => { $(e).click() }).then(done).catch(done) }}
