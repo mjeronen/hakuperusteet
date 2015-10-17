@@ -134,7 +134,7 @@ describe('Page with email session - vetuma start page', () => {
   it('should not show hakuList', assertNotFound(".hakuList"))
 
   // input name=submit is not allowed when doing redirect, hence different name than in other forms
-  it('initially submit should be enabled', () => { return S2("input[name='submitVetuma']").then(expectToBeEnabled).then(done).catch(done) })
+  it('initially submit should be enabled', assertEnabled("input[name='submitVetuma']"))
 
   describe('Submit vetumaForm', () => {
     it('click submit should go to vetuma and return back with successful payment', () => { clickField("input[name='submitVetuma']") })
@@ -148,8 +148,7 @@ describe('Page with email session - hakulist page', () => {
   it('should not show educationForm', assertNotFound("#educationForm"))
   it('should not show vetuma start', assertNotFound(".vetumaStart"))
   it('should show hakuList', assertOneFound(".hakuList"))
-
-  it('initially submit should be enabled', () => { return S2("input[name='redirectToForm']").then(expectToBeEnabled).then(done).catch(done)})
+  it('initially submit should be enabled', assertEnabled("input[name='redirectToForm']"))
 
   describe('Submit hakulist form', () => {
     it('click submit should redirect to form', () => { clickField("input[name='redirectToForm']") })
@@ -212,6 +211,7 @@ describe('Page with email session - no new ao but two existing', () => {
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
 function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
 function assertOneFound(selector) { return () => { return S2(selector).then(expectOneElementFound).then(done).catch(done) }}
+function assertEnabled(selector) { return () => { return S2(selector).then(expectToBeEnabled).then(done).catch(done) }}
 function assertNotFound(selector) { return () => { expect(S(selector).length).to.equal(0) } }
 
 function expectOneElementFound(e) { expect(e.length).to.equal(1)}
