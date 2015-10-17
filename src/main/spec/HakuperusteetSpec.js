@@ -247,6 +247,16 @@ describe('Page with email session - add second application object', () => {
 
 })
 
+describe('Page with email session - no new ao but two existing', () => {
+  before(openPage("/hakuperusteet/#/token/mochaTestToken", hakuperusteetLoaded))
+
+  it('should show email as loggedIn user', () => { return S2(".loggedInAs").then(assertOneElementFound).then(done).catch(done) })
+  it('should not show userDataForm', () => {expect(S("#userDataForm").length).to.equal(0) })
+  it('should not show educationForm', () => { expect(S("#educationForm").length).to.equal(0) })
+  it('should not show vetuma start', () => { expect(S(".vetumaStart").length).to.equal(0) })
+  it('should show hakuList', () => { return S2(".hakuList").then(assertOneElementFound).then(done).catch(done) })
+})
+
 function assertOneElementFound(e) { expect(e.length).to.equal(1)}
 
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
