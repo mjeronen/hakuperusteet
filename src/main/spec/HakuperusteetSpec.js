@@ -210,11 +210,11 @@ describe('Page with email session - no new ao but two existing', () => {
 
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
 function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
-function assertOneFound(selector) { return () => { return S2(selector).then(expectOneElementFound).then(done).catch(done) }}
+function assertOneFound(selector) { return () => { return S2(selector).then(expectElementsFound(1)).then(done).catch(done) }}
 function assertEnabled(selector) { return () => { return S2(selector).then(expectToBeEnabled).then(done).catch(done) }}
 function assertNotFound(selector) { return () => { expect(S(selector).length).to.equal(0) } }
 
-function expectOneElementFound(e) { expect(e.length).to.equal(1)}
+function expectElementsFound(count) { return (e) => { expect(e.length).to.equal(count) }}
 function expectToBeDisabled(e) { expect($(e).attr("disabled")).to.equal("disabled") }
 function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal(undefined) }
 
