@@ -18,10 +18,10 @@ describe('Page without session - order email token', () => {
   before(openPage("/hakuperusteet/", hakuperusteetLoaded))
 
   it('submit should be disabled', assertSubmitDisabled)
-  it('insert invalid email', () => { return setField("#emailToken", "asd@asd.fi asd2@asd.fi") })
+  it('insert invalid email', setField("#emailToken", "asd@asd.fi asd2@asd.fi"))
   it('submit should be disabled', assertSubmitDisabled)
 
-  it('insert valid email', () => { return setField("#emailToken", "asd@asd.fi") })
+  it('insert valid email', setField("#emailToken", "asd@asd.fi"))
   it('submit should be enabled', assertSubmitEnabled)
 
   describe('Submit email token order', () => {
@@ -57,22 +57,22 @@ describe('Page with email session - userdata', () => {
       return S2("#userDataForm .error").then((e) => { expect(e.length).to.equal(6) }).then(done).catch(done)
     })
 
-    it('insert firstName', () => { return setField("#firstName", "John") })
+    it('insert firstName', setField("#firstName", "John"))
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('insert lastName', () => { return setField("#lastName", "Doe") })
+    it('insert lastName', setField("#lastName", "Doe"))
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('insert birthDate', () => { return setField("#birthDate", "15051979") })
+    it('insert birthDate', setField("#birthDate", "15051979"))
     it('submit should be disabled', assertSubmitDisabled)
 
     it('select gender', () => { return clickField("#gender-male") })
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('select nativeLanguage', () => { return setField("#nativeLanguage", "FI") })
+    it('select nativeLanguage', setField("#nativeLanguage", "FI"))
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('select nationality', () => { return setField("#nationality", "246") })
+    it('select nationality', setField("#nationality", "246"))
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#userDataForm .error"))
 
@@ -80,7 +80,7 @@ describe('Page with email session - userdata', () => {
     it('submit should be disabled', assertSubmitDisabled)
     it('show one error after personId is clicked', assertOneFound("#userDataForm .error"))
 
-    it('insert birthDate', () => { return setField("#personId", "-9358") })
+    it('insert birthDate', setField("#personId", "-9358"))
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#userDataForm .error"))
   })
@@ -103,17 +103,17 @@ describe('Page with email session - educationdata', () => {
       return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
     })
 
-    it('select educationLevel', () => { return setField("#educationLevel", "116") })
+    it('select educationLevel', setField("#educationLevel", "116"))
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('select educationCountry - Finland', () => { return setField("#educationCountry", "246") })
+    it('select educationCountry - Finland', setField("#educationCountry", "246"))
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#educationForm .error"))
     it('noPaymentRequired should be visible', assertOneFound(".noPaymentRequired"))
     it('paymentRequired should be hidden', assertNotFound(".paymentRequired"))
     it('alreadyPaid should be hidden', assertNotFound(".alreadyPaid"))
 
-    it('select educationCountry - Solomin Islands', () => { return setField("#educationCountry", "090") })
+    it('select educationCountry - Solomin Islands', setField("#educationCountry", "090"))
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#educationForm .error"))
     it('paymentRequired should be visible', assertOneFound(".paymentRequired"))
@@ -171,17 +171,17 @@ describe('Page with email session - add second application object', () => {
       return S2("#educationForm .error").then((e) => { expect(e.length).to.equal(2) }).then(done).catch(done)
     })
 
-    it('select educationLevel', () => { return setField("#educationLevel", "100") })
+    it('select educationLevel', setField("#educationLevel", "100"))
     it('submit should be disabled', assertSubmitDisabled)
 
-    it('select educationCountry - Finland', () => { return setField("#educationCountry", "246") })
+    it('select educationCountry - Finland', setField("#educationCountry", "246"))
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#educationForm .error"))
     it('noPaymentRequired should be visible', assertOneFound(".noPaymentRequired"))
     it('paymentRequired should be hidden', assertNotFound(".paymentRequired"))
     it('alreadyPaid should be hidden', assertNotFound(".alreadyPaid"))
 
-    it('select educationCountry - Solomin Islands', () => { return setField("#educationCountry", "090") })
+    it('select educationCountry - Solomin Islands', setField("#educationCountry", "090"))
     it('submit should be enabled', assertSubmitEnabled)
     it('should not show missing errors', assertNotFound("#educationForm .error"))
     it('noPaymentRequired should be hidden', assertNotFound(".noPaymentRequired"))
@@ -219,5 +219,5 @@ function expectToBeDisabled(e) { expect($(e).attr("disabled")).to.equal("disable
 function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal(undefined) }
 
 function setVal(val) { return (e) => { $(e).val(val).focus().blur() }}
-function setField(field, val) { return S2(field).then(setVal(val)).then(done).catch(done) }
+function setField(field, val) { return () => { S2(field).then(setVal(val)).then(done).catch(done) }}
 function clickField(field) { return S2(field).then((e) => { $(e).click() }).then(done).catch(done) }
