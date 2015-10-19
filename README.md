@@ -92,18 +92,11 @@ During development, after schema changes you must regenerate db-classes with com
 
 `./sbt "run-main fi.vm.sade.hakuperusteet.db.CodeGenerator"`
 
-Remember to create separate schema migration script for HSQLDB also, and ensure that UI-tests continue to work.
-
 ## UI-tests
 
-1. `./sbt "test:run-main fi.vm.sade.hakuperusteet.db.CodeGeneratorTest"`
-2. `./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-DuseHsql=true`
-3. `./node_modules/.bin/mocha-phantomjs --ignore-resource-errors --ssl-protocol=any --ignore-ssl-errors=true  https://localhost:18081/hakuperusteet/spec/testRunner.html`
+1. `./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"`
+2. `./node_modules/.bin/mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8081/hakuperusteet/spec/testRunner.html`
 
-To run tests in browser, open following url after steps 1. and 2. above.
+To run tests in browser, open following url when HakuperusteetTestServer is running
 
 1. http://localhost:8081/hakuperusteet/spec/testRunner.html
-
-Remember to remove HSQLD-client classes after tests, because their existence breaks unit tests
-
-1. `rm -r src/test/scala/fi/vm/sade/hakuperusteet/db/generated/`

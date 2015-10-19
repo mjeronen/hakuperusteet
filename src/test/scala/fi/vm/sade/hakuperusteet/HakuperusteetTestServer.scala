@@ -20,7 +20,6 @@ object HakuperusteetTestServer {
 
   /*
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
-   * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-DuseHsql=true
    */
   def main(args: Array[String]): Unit = {
     EmbeddedPostgreSql.startEmbeddedPostgreSql
