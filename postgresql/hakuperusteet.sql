@@ -10,6 +10,24 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
+-- Name: hakuperusteet; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE hakuperusteet WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE = 'en_US.utf8';
+
+
+ALTER DATABASE hakuperusteet OWNER TO postgres;
+
+\connect hakuperusteet
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
@@ -30,19 +48,20 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: education; Type: TABLE; Schema: public; Owner: oph; Tablespace: 
+-- Name: application_object; Type: TABLE; Schema: public; Owner: oph; Tablespace: 
 --
 
-CREATE TABLE education (
+CREATE TABLE application_object (
     id integer NOT NULL,
     henkilo_oid character varying(255) NOT NULL,
     hakukohde_oid character varying(255) NOT NULL,
     education_level character varying(255) NOT NULL,
-    education_country character varying(255) NOT NULL
+    education_country character varying(255) NOT NULL,
+    haku_oid character varying(255) NOT NULL
 );
 
 
-ALTER TABLE education OWNER TO oph;
+ALTER TABLE application_object OWNER TO oph;
 
 --
 -- Name: education_id_seq; Type: SEQUENCE; Schema: public; Owner: oph
@@ -62,7 +81,7 @@ ALTER TABLE education_id_seq OWNER TO oph;
 -- Name: education_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: oph
 --
 
-ALTER SEQUENCE education_id_seq OWNED BY education.id;
+ALTER SEQUENCE education_id_seq OWNED BY application_object.id;
 
 
 --
@@ -219,7 +238,7 @@ ALTER SEQUENCE user_id_seq OWNED BY "user".id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: oph
 --
 
-ALTER TABLE ONLY education ALTER COLUMN id SET DEFAULT nextval('education_id_seq'::regclass);
+ALTER TABLE ONLY application_object ALTER COLUMN id SET DEFAULT nextval('education_id_seq'::regclass);
 
 
 --
@@ -247,7 +266,7 @@ ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regcl
 -- Name: education_pkey; Type: CONSTRAINT; Schema: public; Owner: oph; Tablespace: 
 --
 
-ALTER TABLE ONLY education
+ALTER TABLE ONLY application_object
     ADD CONSTRAINT education_pkey PRIMARY KEY (id);
 
 
@@ -311,7 +330,7 @@ ALTER TABLE ONLY "user"
 -- Name: education_henkilo_oid_hakukohde_oid_idx; Type: INDEX; Schema: public; Owner: oph; Tablespace: 
 --
 
-CREATE INDEX education_henkilo_oid_hakukohde_oid_idx ON education USING btree (henkilo_oid, hakukohde_oid);
+CREATE INDEX education_henkilo_oid_hakukohde_oid_idx ON application_object USING btree (henkilo_oid, hakukohde_oid);
 
 
 --
@@ -374,7 +393,7 @@ CREATE INDEX user_email_idx ON "user" USING btree (email);
 -- Name: education_henkilo_oid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: oph
 --
 
-ALTER TABLE ONLY education
+ALTER TABLE ONLY application_object
     ADD CONSTRAINT education_henkilo_oid_fkey FOREIGN KEY (henkilo_oid) REFERENCES "user"(henkilo_oid);
 
 
