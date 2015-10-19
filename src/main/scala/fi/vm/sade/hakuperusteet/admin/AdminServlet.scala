@@ -19,7 +19,7 @@ import org.json4s.JsonDSL._
 import org.json4s.native.Serialization._
 
 class AdminServlet(val resourcePath: String, protected val cfg: Config, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging {
-  val staticFileContent = Source.fromURL(getClass.getResource(resourcePath)).takeWhile(_ != -1).map(_.toByte).toArray
+  val staticFileContent = Source.fromURL(getClass.getResource(resourcePath)).mkString
   override def realm: String = "hakuperusteet_admin"
   implicit val formats = fi.vm.sade.hakuperusteet.formatsUI
   val host = cfg.getString("hakuperusteet.cas.url")
@@ -59,6 +59,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     // TODO What do we want to search here? Do optimized query when search terms are decided!
     write(db.allUsers.filter(u => search.isEmpty || u.email.toLowerCase().contains(search) || (u.firstName + " " + u.lastName).toLowerCase().contains(search)))
   }
+
   get("/api/v1/admin/:personoid") {
     checkAuthentication
     contentType = "application/json"
@@ -74,13 +75,11 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     */
     val user = db.findUserByOid(personOid)
     user match {
-      case Some(u) =>
-        write(UserData(u, db.findApplicationObjects(u), db.findPayments(u)))
-      case _ => {
-        halt(status = 404, body = s"User ${personOid} not found")
-      }
+      case Some(u) => write(UserData(u, db.findApplicationObjects(u), db.findPayments(u)))
+      case _ => halt(status = 404, body = s"User ${personOid} not found")
     }
   }
+
   post("/api/v1/admin/user") {
     checkAuthentication
     contentType = "application/json"
@@ -98,6 +97,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     db.upsertUser(newUser)
     write(UserData(newUser, db.findApplicationObjects(newUser), db.findPayments(newUser)))
   }
+
   post("/api/v1/admin/applicationobject") {
     checkAuthentication
     contentType = "application/json"
@@ -106,6 +106,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     val user = db.findUserByOid(ao.personOid).get
     write(UserData(user, db.findApplicationObjects(user), db.findPayments(user)))
   }
+
   post("/api/v1/admin/payment") {
     checkAuthentication
     contentType = "application/json"
@@ -114,6 +115,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     val user = db.findUserByOid(payment.personOid).get
     write(UserData(user, db.findApplicationObjects(user), db.findPayments(user)))
   }
+
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
