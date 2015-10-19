@@ -4,7 +4,7 @@ import java.io.File
 import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
-import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase, HsqlDatabase}
+import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
 import slick.util.AsyncExecutor
