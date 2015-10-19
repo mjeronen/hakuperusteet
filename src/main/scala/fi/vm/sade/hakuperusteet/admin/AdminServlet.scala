@@ -1,10 +1,13 @@
 package fi.vm.sade.hakuperusteet.admin
 
+import java.net.ConnectException
+
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.admin.auth.CasAuthenticationSupport
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.domain.{Payment, ApplicationObject, UserData, User}
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
+import fi.vm.sade.hakuperusteet.util.AuditLog
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
@@ -75,7 +78,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     */
     val user = db.findUserByOid(personOid)
     user match {
-      case Some(u) => write(UserData(u, db.findApplicationObjects(u), db.findPayments(u)))
+      case Some(u) => writeUserResponse(u)
       case _ => halt(status = 404, body = s"User ${personOid} not found")
     }
   }
@@ -86,7 +89,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     val userData = parse(request.body).extract[User]
     val newUser = Try(henkiloClient.upsertHenkilo(userData)) match {
       case Success(u) => userData.copy(personOid = Some(u.personOid))
-      case Failure(t) if t.isInstanceOf[java.net.ConnectException] =>
+      case Failure(t) if t.isInstanceOf[ConnectException] =>
         logger.error(s"Henkilopalvelu connection error for email ${userData.email}", t)
         halt(500)
       case Failure(t) =>
@@ -95,7 +98,8 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
         renderConflictWithErrors(NonEmptyList[String](error))
     }
     db.upsertUser(newUser)
-    write(UserData(newUser, db.findApplicationObjects(newUser), db.findPayments(newUser)))
+    AuditLog.auditAdminPostUserdata(user.oid, newUser)
+    writeUserResponse(newUser)
   }
 
   post("/api/v1/admin/applicationobject") {
@@ -103,8 +107,9 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     contentType = "application/json"
     val ao = parse(request.body).extract[ApplicationObject]
     db.upsertApplicationObject(ao)
-    val user = db.findUserByOid(ao.personOid).get
-    write(UserData(user, db.findApplicationObjects(user), db.findPayments(user)))
+    val u = db.findUserByOid(ao.personOid).get
+    AuditLog.auditAdminPostEducation(user.oid, u, ao)
+    writeUserResponse(u)
   }
 
   post("/api/v1/admin/payment") {
@@ -112,11 +117,14 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     contentType = "application/json"
     val payment = parse(request.body).extract[Payment]
     db.upsertPayment(payment)
-    val user = db.findUserByOid(payment.personOid).get
-    write(UserData(user, db.findApplicationObjects(user), db.findPayments(user)))
+    val u = db.findUserByOid(payment.personOid).get
+    AuditLog.auditAdminPayment(user.oid, u, payment)
+    writeUserResponse(u)
   }
 
   error { case e: Throwable => logger.error("uncaught exception", e) }
+
+  private def writeUserResponse(u: User): String = write(UserData(u, db.findApplicationObjects(u), db.findPayments(u)))
 
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 }

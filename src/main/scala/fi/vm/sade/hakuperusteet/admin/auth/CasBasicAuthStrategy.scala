@@ -36,7 +36,7 @@ class CasBasicAuthStrategy(protected override val app: ScalatraBase, cfg: Config
             ldapClient.findUser(uid) match {
               case Some(user) =>
                 logger.info(s"User $uid is authenticated")
-                val userSession = CasSession(None, uid, user.roles)
+                val userSession = CasSession(None, user.oid, uid, user.roles)
                 CasSessionDB.db.put(uid, userSession)
                 Some(userSession)
               case _ =>

@@ -1,18 +1,32 @@
 package fi.vm.sade.hakuperusteet.util
 
-import fi.vm.sade.auditlog.hakuperusteet.{LogMessage, HakuPerusteetOperation}
-import fi.vm.sade.auditlog.{Audit, ApplicationType}
+import fi.vm.sade.auditlog.hakuperusteet.HakuPerusteetOperation
+import fi.vm.sade.auditlog.hakuperusteet.LogMessage.builder
+import fi.vm.sade.auditlog.{ApplicationType, Audit}
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain._
-
-import fi.vm.sade.auditlog.hakuperusteet.LogMessage.builder
 
 object AuditLog {
   val serviceName = "hakuperusteet"
   val audit = new Audit(serviceName, ApplicationType.OPISKELIJA)
+  val auditAdmin = new Audit(serviceName, ApplicationType.VIRKAILIJA)
 
-  def auditPostUserdata(userData: User) = {
-    audit.log(builder()
+  def auditPostUserdata(userData: User) = audit.log(buildCommonUserData(userData).build())
+
+  def auditAdminPostUserdata(henkiloOid: String, userData: User) = auditAdmin.log(
+    buildCommonUserData(userData).virkailijaHenkiloOid(henkiloOid).build())
+
+  def auditPostEducation(userData: User, education: ApplicationObject) = audit.log(buildCommonEducation(userData, education).build())
+
+  def auditAdminPostEducation(henkiloOid: String, userData: User, education: ApplicationObject) = auditAdmin.log(
+    buildCommonEducation(userData, education).virkailijaHenkiloOid(henkiloOid).build())
+
+  def auditPayment(userData: User, payment: Payment) = audit.log(buildCommonPayment(userData, payment).build())
+
+  def auditAdminPayment(henkiloOid: String, userData: User, payment: Payment) = auditAdmin.log(
+    buildCommonPayment(userData, payment).virkailijaHenkiloOid(henkiloOid).build())
+
+  private def buildCommonUserData(userData: User) = builder()
       .oppijaHenkiloOid(userData.personOid.getOrElse("<unknown>"))
       .setOperaatio(HakuPerusteetOperation.USERDATA)
       .email(userData.email)
@@ -23,12 +37,8 @@ object AuditLog {
       .gender(userData.gender)
       .nativeLanguage(userData.nativeLanguage)
       .nationality(userData.nationality)
-      .build()
-    )
-  }
 
-  def auditPostEducation(userData: User, education: ApplicationObject) = {
-    audit.log(builder()
+  private def buildCommonEducation(userData: User, education: ApplicationObject) = builder()
       .oppijaHenkiloOid(userData.personOid.getOrElse("<unknown>"))
       .email(userData.email)
       .setOperaatio(HakuPerusteetOperation.EDUCATION)
@@ -36,12 +46,8 @@ object AuditLog {
       .hakukohdeOid(education.hakukohdeOid)
       .educationLevel(education.educationLevel)
       .educationCountry(education.educationCountry)
-      .build()
-    )
-  }
 
-  def auditPayment(userData: User, payment: Payment) =
-    audit.log(builder()
+  private def buildCommonPayment(userData: User, payment: Payment) = builder()
       .oppijaHenkiloOid(userData.personOid.getOrElse("<unknown>"))
       .email(userData.email)
       .setOperaatio(statusToOperation(payment.status))
@@ -49,8 +55,6 @@ object AuditLog {
       .reference(payment.reference)
       .orderNumber(payment.orderNumber)
       .paymCallId(payment.paymCallId)
-      .build()
-    )
 
   private def statusToOperation(status: PaymentStatus) = status match {
     case PaymentStatus.started => HakuPerusteetOperation.PAYMENT_STARTED
