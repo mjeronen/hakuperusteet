@@ -1,6 +1,5 @@
 package fi.vm.sade.hakuperusteet
 
-import java.time.LocalDate
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Session, SessionData, User}
@@ -9,7 +8,7 @@ import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
-import fi.vm.sade.hakuperusteet.util.ValidationUtil
+import fi.vm.sade.hakuperusteet.util.{AuditLog, ValidationUtil}
 import fi.vm.sade.utils.validator.HenkilotunnusValidator
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -93,6 +92,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     val newUser = upsertUserToHenkilo(userData)
     val userWithId = db.upsertUser(newUser)
     sendEmail(newUser)
+    AuditLog.auditPostUserdata(userData)
     halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, List.empty, List.empty))))
   }
 
@@ -101,6 +101,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     db.upsertApplicationObject(education)
     val educations = db.findApplicationObjects(userData).toList
     val payments = db.findPayments(userData).toList
+    AuditLog.auditPostEducation(userData, education)
     halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, Some(userData), educations, payments))))
   }
 

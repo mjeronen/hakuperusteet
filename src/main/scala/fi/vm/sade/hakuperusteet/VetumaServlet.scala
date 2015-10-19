@@ -9,6 +9,7 @@ import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.email.{ReceiptValues, EmailTemplate, EmailSender}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
+import fi.vm.sade.hakuperusteet.util.AuditLog
 import fi.vm.sade.hakuperusteet.vetuma.Vetuma
 import org.json4s.native.Serialization._
 
@@ -24,6 +25,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val paymCallId = "PCID" + orderNro
     val payment = Payment(None, userData.personOid.get, new Date(), referenceNumber, orderNro, paymCallId, PaymentStatus.started)
     val paymentWithId = db.upsertPayment(payment).getOrElse(halt(500))
+    AuditLog.auditPayment(userData, paymentWithId)
     write(Map("url" -> config.getString("vetuma.host"), "params" -> Vetuma(config, paymentWithId, language).toParams))
   }
 
@@ -54,6 +56,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
       case Some(p) =>
         val paymentOk = p.copy(status = status)
         db.upsertPayment(paymentOk)
+        AuditLog.auditPayment(userData, paymentOk)
         if (status == PaymentStatus.ok) {
           sendReceipt(userData, paymentOk)
         }
