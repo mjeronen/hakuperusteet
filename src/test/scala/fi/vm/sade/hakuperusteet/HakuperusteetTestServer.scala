@@ -5,6 +5,7 @@ import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
+import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
 import slick.util.AsyncExecutor
@@ -22,6 +23,7 @@ object HakuperusteetTestServer {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
    */
   def main(args: Array[String]): Unit = {
+    ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
     EmbeddedPostgreSql.startEmbeddedPostgreSql
     startMockServer()
     startCommandServer()

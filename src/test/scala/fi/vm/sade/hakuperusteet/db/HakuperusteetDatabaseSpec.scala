@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet.db
 
 import java.util.Date
 
+import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import fi.vm.sade.hakuperusteet.{EmbeddedPostgreSql, Configuration}
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
 import org.flywaydb.core.Flyway
@@ -10,6 +11,7 @@ import org.scalatest.{BeforeAndAfterEach, BeforeAndAfterAll, Matchers, FlatSpec}
 class HakuperusteetDatabaseSpec extends FlatSpec with Matchers with BeforeAndAfterAll with GlobalExecutionContext {
   behavior of "HakuperusteetDatabase"
 
+  ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
   EmbeddedPostgreSql.startEmbeddedPostgreSql
 
   val config = Configuration.props

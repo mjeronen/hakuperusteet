@@ -100,3 +100,13 @@ During development, after schema changes you must regenerate db-classes with com
 To run tests in browser, open following url when HakuperusteetTestServer is running
 
 1. http://localhost:8081/hakuperusteet/spec/testRunner.html
+
+## Admin UI-tests
+
+1. `./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer"`
+2. `./node_modules/.bin/mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8084/hakuperusteetadmin/spec/testRunner.html`
+
+To run tests in browser, open following url when HakuperusteetAdminTestServer is running
+
+1. http://localhost:8084/hakuperusteetadmin/spec/testRunner.html
+

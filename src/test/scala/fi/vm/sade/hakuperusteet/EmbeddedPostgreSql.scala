@@ -13,22 +13,13 @@ object EmbeddedPostgreSql {
 
 
   def startEmbeddedPostgreSql = {
-    writeConfigFile
     process.start()
-  }
-
-  def writeConfigFile = {
-    Files.write(Configuration.conffile.toPath, configAsString.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE)
   }
 
   def dbUrl = s"jdbc:postgresql://${config.net().host()}:${config.net().port()}/${config.storage().dbName()}"
   def user = s"${config.credentials().username()}"
   def password = s"${config.credentials().password()}"
 
-  private def configAsString = s"""
-         |hakuperusteet.db.url="${dbUrl}"
-         |hakuperusteet.db.username="${user}"
-         |hakuperusteet.db.password="${password}"
-       """.stripMargin
+  def configAsMap = Map("hakuperusteet.db.url"-> dbUrl, "hakuperusteet.db.username" -> user, "hakuperusteet.db.password" -> password)
 
 }
