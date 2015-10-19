@@ -29,10 +29,13 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
   val henkiloClient = HenkiloClient.init(cfg)
 
   def checkAuthentication = {
-    /*
     authenticate
     failUnlessAuthenticated
-    */
+
+    if(!user.roles.contains("APP_HAKUPERUSTEETADMIN_CRUD")) {
+      logger.error(s"User ${user.username} is unauthorized!")
+      halt(401)
+    }
   }
 
   get("/") {
@@ -50,15 +53,6 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     checkAuthentication
     contentType = "application/json"
     val search = params.getOrElse("search", halt(400)).toLowerCase()
-    /*
-    if(user.roles.contains("APP_HENKILONHALLINTA_OPHREKISTERI")) {
-      val properties = Map("admin" -> true)
-      write(properties)
-    } else {
-      val properties = Map()
-      write(properties)
-    }
-    */
     // TODO What do we want to search here? Do optimized query when search terms are decided!
     write(db.allUsers.filter(u => search.isEmpty || u.email.toLowerCase().contains(search) || (u.firstName + " " + u.lastName).toLowerCase().contains(search)))
   }
@@ -67,15 +61,6 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     checkAuthentication
     contentType = "application/json"
     val personOid = params("personoid")
-    /*
-    if(user.roles.contains("APP_HENKILONHALLINTA_OPHREKISTERI")) {
-      val properties = Map("admin" -> true)
-      write(properties)
-    } else {
-      val properties = Map()
-      write(properties)
-    }
-    */
     val user = db.findUserByOid(personOid)
     user match {
       case Some(u) => writeUserResponse(u)

@@ -24,7 +24,7 @@ server.search('ou=People, dc=opintopolku, dc=fi', function(req, res, next) {
       uid: "testitest",
       sn: "Testaaja",
       givenname: "Testi",
-      description: '["ROLE1", "ROLE2", "ROLE3"]'
+      description: '["APP_HAKUPERUSTEETADMIN_CRUD"]'
     }
   };
   res.send(obj);
