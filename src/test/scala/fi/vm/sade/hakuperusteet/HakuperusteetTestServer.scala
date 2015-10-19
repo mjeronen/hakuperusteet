@@ -16,7 +16,7 @@ import slick.util.AsyncExecutor
 import scala.sys.process.{Process, ProcessIO}
 
 class HakuperusteetTestServer extends HakuperusteetServer {
-  override def setCookieParams(context: WebAppContext) {}
+  override def setSecureCookieParams(context: WebAppContext) {}
 }
 
 object HakuperusteetTestServer {

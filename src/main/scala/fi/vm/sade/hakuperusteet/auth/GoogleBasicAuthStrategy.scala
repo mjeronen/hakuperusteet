@@ -12,6 +12,7 @@ import org.scalatra.servlet.RichRequest
 
 class GoogleBasicAuthStrategy(config: Config, db: HakuperusteetDatabase, googleVerifier: GoogleVerifier) extends SimpleAuth with LazyLogging {
   import fi.vm.sade.hakuperusteet._
+  val tokenName = "google"
 
   def authenticate(request: HttpServletRequest): Option[Session] = {
     val json = parse(RichRequest(request).body)
@@ -19,28 +20,14 @@ class GoogleBasicAuthStrategy(config: Config, db: HakuperusteetDatabase, googleV
     val token = (json \ "token").extract[Option[String]] // todo: currently real token
     val idpentityid = (json \ "idpentityid").extract[Option[String]] // todo: currently google
     (email, token, idpentityid) match {
-      case (Some(emailFromRequest), Some(tokenFromRequest), Some(idpentityidFromSession)) =>
-        db.findSession(emailFromRequest) match {
-          case s @ Some(session) if session.token == tokenFromRequest => s
-          case Some(session) =>
-            logger.info(s"Updating session token for $emailFromRequest")
-            verifyAndCreateSession(session.copy(token = tokenFromRequest))
-          case _ =>
-            logger.info(s"Creating new session for $emailFromRequest")
-            val newSession = Session(None, emailFromRequest, tokenFromRequest, idpentityidFromSession)
-            verifyAndCreateSession(newSession)
+      case (Some(emailFromRequest), Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName =>
+        if (googleVerifier.verify(tokenFromRequest)) {
+          Some(Session(emailFromRequest, tokenFromRequest, idpentityidFromSession))
+        } else {
+          logger.warn(s"Session verify failed for user ${emailFromRequest} with token ${tokenFromRequest}")
+          None
         }
       case _ => None
-    }
-  }
-
-  private def verifyAndCreateSession(session: Session): Option[Session] = {
-    if (googleVerifier.verify(session.token)) {
-      db.upsertSession(session)
-      Some(session)
-    } else {
-      logger.warn(s"Session verify failed for user ${session.email} with token ${session.token}")
-      None
     }
   }
 }

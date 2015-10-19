@@ -9,7 +9,7 @@ trait SimpleAuth {
   def authenticate(request: HttpServletRequest): Option[Session]
 }
 
-trait AuthenticationSupport { self: HakuperusteetServlet =>
+trait JavaEESessionAuthentication { self: HakuperusteetServlet =>
   val sessionAuthKey = "SessionAuth"
 
   def isAuthenticated = {
@@ -18,9 +18,11 @@ trait AuthenticationSupport { self: HakuperusteetServlet =>
   }
 
   def authenticate() = {
-    val matchedSessions: List[Session] = List(new GoogleBasicAuthStrategy(configuration, db, googleVerifier), new TokenAuthStrategy(configuration, db, oppijanTunnistus)).map( a => a.authenticate(request)).flatten
-    if(matchedSessions.nonEmpty) {
-      request.getSession.setAttribute(sessionAuthKey, matchedSessions.head)
+    if(!isAuthenticated) { // TODO APO REMOVE when front calls authenticate only when needed
+      val matchedSessions: List[Session] = List(new GoogleBasicAuthStrategy(configuration, db, googleVerifier), new TokenAuthStrategy(configuration, db, oppijanTunnistus)).map( a => a.authenticate(request)).flatten
+      if(matchedSessions.nonEmpty) {
+        request.getSession.setAttribute(sessionAuthKey, matchedSessions.head)
+      }
     }
   }
 

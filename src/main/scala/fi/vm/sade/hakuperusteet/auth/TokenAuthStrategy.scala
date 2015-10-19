@@ -23,42 +23,19 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
     val idpentityid = (json \ "idpentityid").extract[Option[String]]
     (token, idpentityid) match {
       case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName =>
-        db.findSessionByToken(tokenFromRequest) match {
-          case s @ Some(session) => s
-          case _ => handleNewSessionOrUpdatedTokenCase(tokenFromRequest)
-        }
+        createSession(tokenFromRequest)
       case _ => None
     }
   }
 
-  def handleNewSessionOrUpdatedTokenCase(tokenFromRequest: String) = {
+  def createSession(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
       case Success(Some(email)) =>
-        db.findSession(email) match {
-          case Some(session) => updateExistingSessionWithNewToken(tokenFromRequest, email, session)
-          case None => createNewSession(tokenFromRequest, email)
-        }
+        Some(Session(email, tokenFromRequest, tokenName))
       case Success(None) => None
       case Failure(f) =>
         logger.error("Oppijantunnistus.validateToken error", f)
         halt(500)
     }
-  }
-
-  def createNewSession(tokenFromRequest: String, email: String) = {
-    logger.info(s"Creating new $tokenName session for $email")
-    val newSession = Session(None, email, tokenFromRequest, tokenName)
-    upsertAndReturn(newSession)
-  }
-
-  def updateExistingSessionWithNewToken(tokenFromRequest: String, email: String, session: Session) = {
-    logger.info(s"Updating $tokenName session for $email")
-    val sessionWithNewToken = session.copy(token = tokenFromRequest)
-    upsertAndReturn(sessionWithNewToken)
-  }
-
-  def upsertAndReturn(session: Session) = {
-    db.upsertSession(session)
-    Some(session)
   }
 }

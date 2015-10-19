@@ -1,7 +1,5 @@
 package fi.vm.sade.hakuperusteet
 
-import javax.servlet.SessionCookieConfig
-
 import fi.vm.sade.hakuperusteet.Configuration._
 import fi.vm.sade.hakuperusteet.HakuperusteetServer._
 import fi.vm.sade.hakuperusteet.util.JettyUtil
@@ -17,7 +15,10 @@ class HakuperusteetServer {
   def portHttps = Option(props.getInt("hakuperusteet.port.https")).find(_ != -1)
 
   def runServer() {
-    val server = JettyUtil.createServerWithContext(portHttp, portHttps, createContext)
+    val dbUrl = props.getString("hakuperusteet.db.url")
+    val user = props.getString("hakuperusteet.db.username")
+    val password = props.getString("hakuperusteet.db.password")
+    val server = JettyUtil.createServerWithContext(portHttp, portHttps, createContext, dbUrl, user, password)
     server.start
     server.join
     logger.info(s"Using ports $portHttp and $portHttps")
@@ -34,11 +35,11 @@ class HakuperusteetServer {
     context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")
-    setCookieParams(context)
+    setSecureCookieParams(context)
     context
   }
 
-  def setCookieParams(context: WebAppContext) {
+  def setSecureCookieParams(context: WebAppContext) {
     val sessionCookieConfig = context.getServletContext.getSessionCookieConfig
     sessionCookieConfig.setHttpOnly(true)
     sessionCookieConfig.setSecure(true)
