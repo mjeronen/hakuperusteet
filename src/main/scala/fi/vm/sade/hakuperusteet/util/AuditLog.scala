@@ -13,7 +13,7 @@ object AuditLog {
 
   def auditPostUserdata(userData: User) = {
     audit.log(builder()
-      .id(userData.personOid.getOrElse("<unknown>"))
+      .oppijaHenkiloOid(userData.personOid.getOrElse("<unknown>"))
       .setOperaatio(HakuPerusteetOperation.USERDATA)
       .email(userData.email)
       .firstName(userData.firstName)
@@ -29,7 +29,7 @@ object AuditLog {
 
   def auditPostEducation(userData: User, education: ApplicationObject) = {
     audit.log(builder()
-      .id(userData.personOid.getOrElse("<unknown>"))
+      .oppijaHenkiloOid(userData.personOid.getOrElse("<unknown>"))
       .email(userData.email)
       .setOperaatio(HakuPerusteetOperation.EDUCATION)
       .hakuOid(education.hakuOid)
@@ -42,7 +42,7 @@ object AuditLog {
 
   def auditPayment(userData: User, payment: Payment) =
     audit.log(builder()
-      .id(userData.personOid.getOrElse("<unknown>"))
+      .oppijaHenkiloOid(userData.personOid.getOrElse("<unknown>"))
       .email(userData.email)
       .setOperaatio(statusToOperation(payment.status))
       .timestamp(payment.timestamp)
