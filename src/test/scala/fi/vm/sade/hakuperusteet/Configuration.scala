@@ -9,17 +9,13 @@ import com.typesafe.scalalogging.LazyLogging
  * This file is used during tests (sbt/scala feature/hack/kludge) and it overriders actual Configuration.scala
  */
 object Configuration extends LazyLogging {
+
+  val conffile = File.createTempFile("reference",".conf")
+
   logger.info("Using Configuration from test classpath!")
 
-  private val useHsqldb = System.getProperty("useHsql", "false") == "true"
-
-  if(useHsqldb) {
-    logger.info("Using hsqldb configuration")
-  }
-
-  val props = ConfigFactory
-    .parseFile(new File(""))
-    .withFallback(if(useHsqldb) ConfigFactory.parseResources("hsqlReference.conf") else ConfigFactory.empty())
+  lazy val props = ConfigFactory
+    .parseFile(conffile)
     .withFallback(ConfigFactory.parseResources("reference.conf"))
     .resolve
 }

@@ -88,7 +88,7 @@ object HakuperusteetBuild extends Build {
         "org.scalatest" %% "scalatest" % "2.2.4" % "test",
         "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
         "org.typelevel" %% "scalaz-scalatest" % "0.2.2" % "test",
-        "org.hsqldb" % "hsqldb" % "2.3.3" % "test"
+        "ru.yandex.qatools.embed" % "postgresql-embedded" % "1.4" % "test"
       ),
       mainClass in (Compile, run) := Some("fi.vm.sade.hakuperusteet.HakuperusteetServer"),
       compile <<= (compile in Compile) dependsOn npmInstallTask,

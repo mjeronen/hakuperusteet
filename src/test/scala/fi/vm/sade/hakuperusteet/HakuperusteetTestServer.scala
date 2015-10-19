@@ -4,9 +4,10 @@ import java.io.File
 import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
-import fi.vm.sade.hakuperusteet.db.HsqlDatabase
+import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase, HsqlDatabase}
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
+import slick.util.AsyncExecutor
 
 import scala.sys.process.{Process, ProcessIO}
 
@@ -22,13 +23,9 @@ object HakuperusteetTestServer {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-DuseHsql=true
    */
   def main(args: Array[String]): Unit = {
+    EmbeddedPostgreSql.startEmbeddedPostgreSql
     startMockServer()
-    val useHsqldb = System.getProperty("useHsql", "false") == "true"
-    if (useHsqldb) {
-      val hsqlDb = new HsqlDatabase("jdbc:hsqldb:mem:hakuperusteet", "sa", "")
-      hsqlDb.startHsqlServer()
-      startCommandServer(hsqlDb)
-    }
+    startCommandServer()
     val s = new HakuperusteetTestServer
     s.runServer()
     logger.info("Started HakuperusteetTestServer")
@@ -40,18 +37,19 @@ object HakuperusteetTestServer {
     pb.run(pio)
   }
 
-  private def startCommandServer(db: HsqlDatabase) {
+  private def startCommandServer() {
     val server = HttpServer.create(new InetSocketAddress(8000), 0)
-    server.createContext("/testoperation/reset", new ResetHandler(db))
+    server.createContext("/testoperation/reset", new ResetHandler())
     server.setExecutor(null)
     server.start
   }
 }
 
-class ResetHandler(val db: HsqlDatabase) extends HttpHandler {
+class ResetHandler() extends HttpHandler {
+  implicit val executor = GlobalExecutionContext.context
+  implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
   override def handle(t: HttpExchange) = {
-    println("HSQLDB reset!")
-    db.resetDb
+    HakuperusteetDatabase.init(Configuration.props)
     val response = "OK"
     t.getResponseHeaders.add("Access-Control-Allow-Origin", "*")
     t.sendResponseHeaders(200, response.length)
