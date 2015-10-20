@@ -2,17 +2,22 @@ package fi.vm.sade.hakuperusteet.db
 
 import java.util.Date
 
+import com.typesafe.scalalogging.LazyLogging
+import fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer._
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
-import fi.vm.sade.hakuperusteet.{EmbeddedPostgreSql, Configuration}
+import fi.vm.sade.hakuperusteet.{HakuperusteetTestServer, EmbeddedPostgreSql, Configuration}
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
 import org.flywaydb.core.Flyway
 import org.scalatest.{BeforeAndAfterEach, BeforeAndAfterAll, Matchers, FlatSpec}
 
-class HakuperusteetDatabaseSpec extends FlatSpec with Matchers with BeforeAndAfterAll with GlobalExecutionContext {
+class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers with BeforeAndAfterAll with GlobalExecutionContext {
   behavior of "HakuperusteetDatabase"
 
-  ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
-  EmbeddedPostgreSql.startEmbeddedPostgreSql
+  if(HakuperusteetTestServer.isMockConfig) {
+    logger.info("Using embedded PostgreSQL")
+    ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
+    EmbeddedPostgreSql.startEmbeddedPostgreSql
+  }
 
   val config = Configuration.props
   val db = HakuperusteetDatabase.init(config)

@@ -5,6 +5,7 @@ import java.io.File
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 
+
 /*
  * This file is used during tests (sbt/scala feature/hack/kludge) and it overriders actual Configuration.scala
  */
@@ -18,4 +19,5 @@ object Configuration extends LazyLogging {
     .parseFile(conffile)
     .withFallback(ConfigFactory.parseResources("reference.conf"))
     .resolve
+
 }

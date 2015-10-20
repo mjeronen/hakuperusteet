@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import java.io.File
 
+import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObjects, Users}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
@@ -9,19 +10,21 @@ import slick.util.AsyncExecutor
 
 import scala.sys.process.{Process, ProcessIO}
 
-object HakuperusteetAdminTestServer {
+object HakuperusteetAdminTestServer extends LazyLogging {
 
   /*
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer"
    */
   def main(args: Array[String]): Unit = {
-    ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
-
-    implicit val executor = GlobalExecutionContext.context
-    implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
-    EmbeddedPostgreSql.startEmbeddedPostgreSql
+    if(HakuperusteetTestServer.isMockConfig) {
+      logger.info("Using embedded PostgreSQL")
+      ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
+      EmbeddedPostgreSql.startEmbeddedPostgreSql
+    }
     startMockServer()
     // Generate test data
+    implicit val executor = GlobalExecutionContext.context
+    implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
     val db = HakuperusteetDatabase.init(Configuration.props)
 
     val userAndApplication = Users.generateUsers.map(u => (u, ApplicationObjects.generateApplicationObject(u)))

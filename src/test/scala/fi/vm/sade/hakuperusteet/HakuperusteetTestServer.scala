@@ -4,6 +4,7 @@ import java.io.File
 import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
+import fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer._
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import org.eclipse.jetty.webapp.WebAppContext
@@ -18,13 +19,16 @@ class HakuperusteetTestServer extends HakuperusteetServer {
 
 object HakuperusteetTestServer {
   val logger = LoggerFactory.getLogger(this.getClass)
-
+  val isMockConfig = System.getProperty("mock", "false") == "true"
   /*
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
    */
   def main(args: Array[String]): Unit = {
-    ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
-    EmbeddedPostgreSql.startEmbeddedPostgreSql
+    if(isMockConfig) {
+      logger.info("Using embedded PostgreSQL")
+      ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
+      EmbeddedPostgreSql.startEmbeddedPostgreSql
+    }
     startMockServer()
     startCommandServer()
     val s = new HakuperusteetTestServer
