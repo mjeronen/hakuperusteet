@@ -4,10 +4,12 @@ import java.io.File
 import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
+import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer._
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import org.eclipse.jetty.webapp.WebAppContext
+import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import slick.util.AsyncExecutor
 
@@ -49,13 +51,24 @@ object HakuperusteetTestServer {
     server.setExecutor(null)
     server.start
   }
+
+  def cleanDB(): Unit = {
+    val config = Configuration.props
+    val url = config.getString("hakuperusteet.db.url")
+    val user = config.getString("hakuperusteet.db.username")
+    val password = config.getString("hakuperusteet.db.password")
+    val flyway = new Flyway
+    flyway.setDataSource(url, user, password)
+    flyway.clean
+    flyway.migrate
+  }
 }
 
 class ResetHandler() extends HttpHandler {
   implicit val executor = GlobalExecutionContext.context
   implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
   override def handle(t: HttpExchange) = {
-    HakuperusteetDatabase.init(Configuration.props)
+    HakuperusteetTestServer.cleanDB()
     val response = "OK"
     t.getResponseHeaders.add("Access-Control-Allow-Origin", "*")
     t.sendResponseHeaders(200, response.length)
