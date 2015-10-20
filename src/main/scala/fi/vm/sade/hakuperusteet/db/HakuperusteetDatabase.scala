@@ -16,9 +16,10 @@ import fi.vm.sade.hakuperusteet.domain.{Session, PaymentStatus, Payment, User, A
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
 import slick.util.AsyncExecutor
+import org.flywaydb.core.Flyway
 
-import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.Await
 
 case class HakuperusteetDatabase(db: DB) {
   import HakuperusteetDatabase._
