@@ -29,8 +29,10 @@ object HakuperusteetAdminTestServer extends LazyLogging {
 
     val userAndApplication = Users.generateUsers.map(u => (u, ApplicationObjects.generateApplicationObject(u)))
     userAndApplication.foreach{case (user, applicationObject) =>
-      db.upsertUser(user)
-      db.upsertApplicationObject(applicationObject)}
+      if(db.findUser(user.email).isEmpty) {
+        db.upsertUser(user)
+        db.upsertApplicationObject(applicationObject)
+      }}
 
 
     val s = new HakuperusteetAdminServer
