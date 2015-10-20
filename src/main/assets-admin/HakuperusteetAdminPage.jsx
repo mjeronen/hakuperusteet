@@ -18,7 +18,7 @@ export default class HakuperusteetPage extends React.Component {
     render() {
         const state = this.props.state
         const controller = this.props.controller
-        const users = state.users
+        const users = _.isEmpty(state.users) ? [] : state.users
         return <div>
             <Header />
             <div className="content-area">

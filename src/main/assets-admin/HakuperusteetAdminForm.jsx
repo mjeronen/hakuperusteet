@@ -21,12 +21,12 @@ export default class HakuperusteetAdminForm extends React.Component {
             return <section className="main-content oppija">
                 <UserDataForm state={state} controller={controller} />
                 <h3>Maksut</h3>
-                {payments.map(payment => {
-                    return <PaymentForm state={state} controller={controller} payment={payment}/>
+                {payments.map((payment,i) => {
+                    return <PaymentForm key={i} state={state} controller={controller} payment={payment}/>
                 })}
                 <h3>Hakukohteet</h3>
-                {applicationObjects.map(applicationObject => {
-                    return <EducationForm state={state} controller={controller} applicationObject={applicationObject}/>
+                {applicationObjects.map((applicationObject,i) => {
+                    return <EducationForm key={i} state={state} controller={controller} applicationObject={applicationObject}/>
                 })}
             </section>
         } else {

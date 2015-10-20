@@ -99,7 +99,7 @@ export function initAppState(props) {
     paymentFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
     serverUpdatesBus.plug(paymentFormSubmitS.map(({form, userdata}) => userdata))
     serverPaymentUpdatesBus.plug(serverUpdatesBus.flatMap(userdata => userdata.payments))
-    return stateP
+
 
     function onStateInit(state, properties) {
         return {...state, properties}
@@ -147,6 +147,8 @@ export function initAppState(props) {
     function paymentWithValidationErrors(state, payment) {
         const pFromServer = _.find(state.fromServer.payments, p => p.id == payment.id)
         const validationErrors = {...parseNewPaymentValidationErrors(payment), ['noChanges']: _.isMatch(payment, pFromServer) ? "required" : null}
-    return {...payment, ['validationErrors']: validationErrors}
+        return {...payment, ['validationErrors']: validationErrors}
     }
+
+    return stateP
 }
