@@ -71,20 +71,25 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
   post("/api/v1/admin/user") {
     checkAuthentication
     contentType = "application/json"
-    val userData = parse(request.body).extract[User]
-    val newUser = Try(henkiloClient.upsertHenkilo(userData)) match {
-      case Success(u) => userData.copy(personOid = Some(u.personOid))
-      case Failure(t) if t.isInstanceOf[ConnectException] =>
-        logger.error(s"Henkilopalvelu connection error for email ${userData.email}", t)
-        halt(500)
-      case Failure(t) =>
-        val error = s"Henkilopalvelu upsert failed for email ${userData.email}"
-        logger.error(error, t)
-        renderConflictWithErrors(NonEmptyList[String](error))
+    val newUserData = parse(request.body).extract[User]
+    db.findUserByOid(newUserData.personOid.getOrElse(halt(500))) match {
+      case Some(oldUserData) =>
+        val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
+        Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
+          case Success(_) =>
+            db.upsertUser(updatedUserData)
+            AuditLog.auditAdminPostUserdata(user.oid, updatedUserData)
+            syncAndWriteResponse(updatedUserData)
+          case Failure(t) if t.isInstanceOf[ConnectException] =>
+            logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
+            halt(500)
+          case Failure(t) =>
+            val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
+            logger.error(error, t)
+            renderConflictWithErrors(NonEmptyList[String](error))
+        }
+      case _ => halt(404)
     }
-    db.upsertUser(newUser)
-    AuditLog.auditAdminPostUserdata(user.oid, newUser)
-    syncAndWriteResponse(newUser)
   }
 
   post("/api/v1/admin/applicationobject") {
