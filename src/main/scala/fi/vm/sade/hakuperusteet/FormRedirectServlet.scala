@@ -9,6 +9,7 @@ import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, User, PaymentStatus, 
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.koodisto.Countries
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
+import fi.vm.sade.hakuperusteet.redirect.RedirectCreator
 import fi.vm.sade.hakuperusteet.rsa.RSASigner
 import fi.vm.sade.hakuperusteet.tarjonta.{ApplicationSystem, Tarjonta}
 import org.json4s._
@@ -41,21 +42,6 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
     val payments = db.findPayments(userData)
     val shouldPay = countries.shouldPay(applicationObjectForThisHakukohde.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
-    write(Map("url" -> formUrl, "params" -> generateParamMap(userData, applicationObjectForThisHakukohde, shouldPay, hasPaid)))
+    write(Map("url" -> formUrl, "params" -> RedirectCreator.generateParamMap(signer, userData, applicationObjectForThisHakukohde, shouldPay, hasPaid)))
   }
-
-  def generateParamMap(userData: User, educationForThisHakukohde: ApplicationObject, shouldPay: Boolean, hasPaid: Boolean) = {
-    val seq = paramSequence(userData, shouldPay, hasPaid, educationForThisHakukohde)
-    val signature = signer.signData(seq.map(_._2).mkString(""))
-    (seq.toList ++ List(("signature", signature))).toMap
-  }
-
-  def paramSequence(u: User, shouldPay: Boolean, hasPaid: Boolean, e: ApplicationObject) =
-    Seq(("personOid", u.personOid.getOrElse(halt(500))), ("email", u.email), ("firstName", u.firstName), ("lastName", u.lastName),
-      ("birthDate", new SimpleDateFormat("ddMMyyyy").format(u.birthDate)), ("personId", u.personId.getOrElse("")),
-      ("gender", u.gender), ("nationality", u.nationality), ("hakukohdeOid", e.hakukohdeOid), ("educationLevel", e.educationLevel),
-      ("educationCountry", e.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString),
-      ("created", new Date().toInstant.getEpochSecond.toString))
-
-  private def hostBaseUrl(formId: String) = config.getConfig("form.redirect.base").getString(formId)
 }
