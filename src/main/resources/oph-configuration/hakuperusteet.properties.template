@@ -1,7 +1,10 @@
-hakuperusteet.port.http={{palvelu_portti}}
-hakuperusteet.port.https={{palvelu_portti_https}}
-
 host.url.base=https://{{host_oppija}}/hakuperusteet/
+adminhost.url.base=https://{{host_oppija}}/hakuperusteetadmin/
+
+cas.ldap.host={{host_ldap}}
+cas.ldap.userDn={{ldap_manager_userdn}}
+cas.ldap.password={{ldap_manager_password}}
+cas.ldap.port=389
 
 hakuperusteet.port.http={{palvelu_portti}}
 hakuperusteet.port.https={{palvelu_portti_https}}
@@ -11,6 +14,9 @@ hakuperusteet.cas.url=https://{{host_cas}}
 hakuperusteet.user={{hakuperusteet_cas_user}}
 hakuperusteet.password={{hakuperusteet_cas_password}}
 
+hakuperusteet.db.host=hakuperusteetdb
+hakuperusteet.db.port=5432
+hakuperusteet.db.name=hakuperusteet
 hakuperusteet.db.username={{hakuperusteet_db_username}}
 hakuperusteet.db.password={{hakuperusteet_db_password}}
 hakuperusteet.db.url=jdbc:postgresql://{{hakuperusteet_db_host}}:{{hakuperusteet_db_port}}/{{hakuperusteet_db_name}}
