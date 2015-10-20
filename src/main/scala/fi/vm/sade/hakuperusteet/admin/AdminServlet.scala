@@ -63,7 +63,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     val personOid = params("personoid")
     val user = db.findUserByOid(personOid)
     user match {
-      case Some(u) => writeUserResponse(u)
+      case Some(u) => write(fetchUserData(u))
       case _ => halt(status = 404, body = s"User ${personOid} not found")
     }
   }
@@ -84,7 +84,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     }
     db.upsertUser(newUser)
     AuditLog.auditAdminPostUserdata(user.oid, newUser)
-    writeUserResponse(newUser)
+    syncAndWriteResponse(newUser)
   }
 
   post("/api/v1/admin/applicationobject") {
@@ -94,7 +94,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     db.upsertApplicationObject(ao)
     val u = db.findUserByOid(ao.personOid).get
     AuditLog.auditAdminPostEducation(user.oid, u, ao)
-    writeUserResponse(u)
+    syncAndWriteResponse(u)
   }
 
   post("/api/v1/admin/payment") {
@@ -104,12 +104,21 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     db.upsertPayment(payment)
     val u = db.findUserByOid(payment.personOid).get
     AuditLog.auditAdminPayment(user.oid, u, payment)
-    writeUserResponse(u)
+    syncAndWriteResponse(u)
   }
 
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
-  private def writeUserResponse(u: User): String = write(UserData(u, db.findApplicationObjects(u), db.findPayments(u)))
+  private def fetchUserData(u: User): UserData = UserData(u, db.findApplicationObjects(u), db.findPayments(u))
+
+  private def syncAndWriteResponse(u: User) = {
+    val data = fetchUserData(u)
+    insertSyncRequests(data)
+    write(data)
+  }
+
+  private def insertSyncRequests(u: UserData) =
+    u.applicationObject.foreach( (ao) => { db.insertSyncRequest(u.user, ao, "todo") })
 
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 }

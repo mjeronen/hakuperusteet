@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = ApplicationObject.schema ++ Payment.schema ++ SchemaVersion.schema ++ Session.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Array(ApplicationObject.schema, Payment.schema, SchemaVersion.schema, Session.schema, Synchronization.schema, User.schema).reduceLeft(_ ++ _)
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -197,6 +197,47 @@ trait Tables {
   }
   /** Collection-like TableQuery object for table Session */
   lazy val Session = new TableQuery(tag => new Session(tag))
+
+  /** Entity class storing rows of table Synchronization
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param created Database column created SqlType(timestamp)
+   *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true)
+   *  @param hakuOid Database column haku_oid SqlType(varchar), Length(255,true)
+   *  @param hakukohdeOid Database column hakukohde_oid SqlType(varchar), Length(255,true)
+   *  @param status Database column status SqlType(varchar), Length(255,true)
+   *  @param updated Database column updated SqlType(timestamp), Default(None) */
+  case class SynchronizationRow(id: Int, created: java.sql.Timestamp, henkiloOid: String, hakuOid: String, hakukohdeOid: String, status: String, updated: Option[java.sql.Timestamp] = None)
+  /** GetResult implicit for fetching SynchronizationRow objects using plain SQL queries */
+  implicit def GetResultSynchronizationRow(implicit e0: GR[Int], e1: GR[java.sql.Timestamp], e2: GR[String], e3: GR[Option[java.sql.Timestamp]]): GR[SynchronizationRow] = GR{
+    prs => import prs._
+    SynchronizationRow.tupled((<<[Int], <<[java.sql.Timestamp], <<[String], <<[String], <<[String], <<[String], <<?[java.sql.Timestamp]))
+  }
+  /** Table description of table synchronization. Objects of this class serve as prototypes for rows in queries. */
+  class Synchronization(_tableTag: Tag) extends Table[SynchronizationRow](_tableTag, "synchronization") {
+    def * = (id, created, henkiloOid, hakuOid, hakukohdeOid, status, updated) <> (SynchronizationRow.tupled, SynchronizationRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), Rep.Some(created), Rep.Some(henkiloOid), Rep.Some(hakuOid), Rep.Some(hakukohdeOid), Rep.Some(status), updated).shaped.<>({r=>import r._; _1.map(_=> SynchronizationRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column created SqlType(timestamp) */
+    val created: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("created")
+    /** Database column henkilo_oid SqlType(varchar), Length(255,true) */
+    val henkiloOid: Rep[String] = column[String]("henkilo_oid", O.Length(255,varying=true))
+    /** Database column haku_oid SqlType(varchar), Length(255,true) */
+    val hakuOid: Rep[String] = column[String]("haku_oid", O.Length(255,varying=true))
+    /** Database column hakukohde_oid SqlType(varchar), Length(255,true) */
+    val hakukohdeOid: Rep[String] = column[String]("hakukohde_oid", O.Length(255,varying=true))
+    /** Database column status SqlType(varchar), Length(255,true) */
+    val status: Rep[String] = column[String]("status", O.Length(255,varying=true))
+    /** Database column updated SqlType(timestamp), Default(None) */
+    val updated: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated", O.Default(None))
+
+    /** Foreign key referencing User (database name synchronization_henkilo_oid_fkey) */
+    lazy val userFk = foreignKey("synchronization_henkilo_oid_fkey", Rep.Some(henkiloOid), User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+  }
+  /** Collection-like TableQuery object for table Synchronization */
+  lazy val Synchronization = new TableQuery(tag => new Synchronization(tag))
 
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey

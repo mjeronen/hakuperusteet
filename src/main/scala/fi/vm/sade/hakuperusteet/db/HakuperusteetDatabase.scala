@@ -2,13 +2,13 @@ package fi.vm.sade.hakuperusteet.db
 
 import java.sql
 import java.sql.Timestamp
-import java.util.Date
+import java.util.{Calendar, Date}
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
-import fi.vm.sade.hakuperusteet.db.generated.Tables.{SessionRow, PaymentRow, UserRow, ApplicationObjectRow}
+import fi.vm.sade.hakuperusteet.db.generated.Tables._
 import fi.vm.sade.hakuperusteet.domain.{Session, PaymentStatus, Payment, User, ApplicationObject}
 
 
@@ -68,6 +68,9 @@ case class HakuperusteetDatabase(db: DB) {
 
   def nextOrderNumber() = sql"select nextval('#$schemaName.ordernumber');".as[Int].run.head
 
+  def insertSyncRequest(user: User, ao: ApplicationObject, status: String) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
+    SynchronizationRow(useAutoIncrementId, now, user.personOid.get, ao.hakuOid, ao.hakukohdeOid, status, None)).run
+
   private def paymentToPaymentRow(payment: Payment) =
     PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString, payment.paymCallId)
 
@@ -89,6 +92,8 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def userRowToUser(r: UserRow) =
     User(Some(r.id), r.henkiloOid, r.email, r.firstname, r.lastname, r.birthdate, r.personid, r.idpentityid, r.gender, r.nativeLanguage, r.nationality)
+
+  private def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
 }
 
 object HakuperusteetDatabase extends LazyLogging {
