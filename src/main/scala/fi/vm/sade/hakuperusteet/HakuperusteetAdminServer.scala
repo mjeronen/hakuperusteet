@@ -18,7 +18,7 @@ class HakuperusteetAdminServer extends HakuperusteetServer {
     val resources = new ResourceCollection(Array(
       getClass.getClassLoader.getResource("webapp-common").toExternalForm,
       getClass.getClassLoader.getResource("webapp-admin").toExternalForm
-      ));
+      ))
 
     val context = new WebAppContext()
     context setContextPath ("/hakuperusteetadmin")
