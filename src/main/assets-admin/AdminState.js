@@ -108,7 +108,6 @@ export function initAppState(props) {
         return {...state, ['users']: users}
     }
     function onUpdatePaymentForm(state, payment) {
-        console.log(payment)
         var updatedPayments = _.map(state.payments, (oldP => oldP.id == payment.id ? paymentWithValidationErrors(state, payment) : oldP))
         return {...state, ['payments']: updatedPayments}
     }
@@ -125,7 +124,8 @@ export function initAppState(props) {
         return {...state, [field]: value}
     }
     function onUpdateUser(state, user) {
-        return {...state, ...user.user, ['applicationObjects']: user.applicationObject, ['payments']: user.payments, ['fromServer']: user}
+        const updateduser = user.user.personId ? {...user.user, ['hasPersonId']: true} : {...user.user, ['personId']: "", ['hasPersonId']: false}
+        return {...state, ...updateduser, ['applicationObjects']: user.applicationObject, ['payments']: user.payments, ['fromServer']: {...user, ['user']: updateduser}}
     }
     function onFieldValidation(state, {field, value}) {
         const newValidationErrors = parseNewValidationErrors(state, field, value)
