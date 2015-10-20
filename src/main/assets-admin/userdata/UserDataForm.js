@@ -11,12 +11,16 @@ export function submitUserDataToServer(state) {
         lastName: state.lastName,
         birthDate: state.birthDate,
         personOid: state.personOid,
-        personId: state.personId,
         gender: state.gender,
         nativeLanguage: state.nativeLanguage,
         nationality: state.nationality,
         idpentityid: state.idpentityid
     }
+
+    if (!_.isEmpty(state.personId) && state.hasPersonId) {
+        userData.personId = state.personId
+    }
+
     const promise = Bacon.fromPromise(HttpUtil.post(state.userUpdateUrl, userData))
     promise.onError((error) => {
         const form = document.getElementById('userDataForm')

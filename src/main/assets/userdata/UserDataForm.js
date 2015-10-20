@@ -11,9 +11,9 @@ export function submitUserDataToServer(state) {
     birthDate: state.birthDate,
     gender: state.gender,
     nativeLanguage: state.nativeLanguage,
-    nationality: state.nationality,
+    nationality: state.nationality
   }
-  if (!_.isEmpty(state.personId)) {
+  if (!_.isEmpty(state.personId) && state.hasPersonId) {
     userData.personId = state.personId
   }
   const promise = Bacon.fromPromise(HttpUtil.post(state.properties.userDataUrl, userData))
