@@ -11,7 +11,6 @@ object EmbeddedPostgreSql {
   lazy val config = PostgresConfig.defaultWithDbName("test", "oph", "test")
   lazy val process = PostgresStarter.getDefaultInstance().prepare(config)
 
-
   def startEmbeddedPostgreSql = {
     process.start()
   }
@@ -21,5 +20,4 @@ object EmbeddedPostgreSql {
   def password = s"${config.credentials().password()}"
 
   def configAsMap = Map("hakuperusteet.db.url"-> dbUrl, "hakuperusteet.db.username" -> user, "hakuperusteet.db.password" -> password)
-
 }

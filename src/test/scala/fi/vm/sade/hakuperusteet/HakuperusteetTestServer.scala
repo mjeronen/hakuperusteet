@@ -20,11 +20,12 @@ class HakuperusteetTestServer extends HakuperusteetServer {
 object HakuperusteetTestServer {
   val logger = LoggerFactory.getLogger(this.getClass)
   val isEmbeddedConfig = System.getProperty("embedded", "false") == "true"
+
   /*
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
    */
   def main(args: Array[String]): Unit = {
-    if(isEmbeddedConfig) {
+    if (isEmbeddedConfig) {
       logger.info("Using embedded PostgreSQL")
       ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
       EmbeddedPostgreSql.startEmbeddedPostgreSql

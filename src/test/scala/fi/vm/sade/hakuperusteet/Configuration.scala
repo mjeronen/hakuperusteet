@@ -19,5 +19,4 @@ object Configuration extends LazyLogging {
     .parseFile(conffile)
     .withFallback(ConfigFactory.parseResources("reference.conf"))
     .resolve
-
 }

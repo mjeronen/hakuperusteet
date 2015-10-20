@@ -16,7 +16,7 @@ object HakuperusteetAdminTestServer extends LazyLogging {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer"
    */
   def main(args: Array[String]): Unit = {
-    if(HakuperusteetTestServer.isEmbeddedConfig) {
+    if (HakuperusteetTestServer.isEmbeddedConfig) {
       logger.info("Using embedded PostgreSQL")
       ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
       EmbeddedPostgreSql.startEmbeddedPostgreSql
@@ -34,10 +34,8 @@ object HakuperusteetAdminTestServer extends LazyLogging {
         db.upsertApplicationObject(applicationObject)
       }}
 
-
     val s = new HakuperusteetAdminServer
     s.runServer()
-
   }
 
   private def startMockServer() {
@@ -45,5 +43,4 @@ object HakuperusteetAdminTestServer extends LazyLogging {
     val pio = new ProcessIO(_ => (), stdout => scala.io.Source.fromInputStream(stdout).getLines.foreach(println), _ => ())
     pb.run(pio)
   }
-
 }
