@@ -13,7 +13,7 @@ import org.scalatest.{BeforeAndAfterEach, BeforeAndAfterAll, Matchers, FlatSpec}
 class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers with BeforeAndAfterAll with GlobalExecutionContext {
   behavior of "HakuperusteetDatabase"
 
-  if(HakuperusteetTestServer.isMockConfig) {
+  if(HakuperusteetTestServer.isEmbeddedConfig) {
     logger.info("Using embedded PostgreSQL")
     ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
     EmbeddedPostgreSql.startEmbeddedPostgreSql
