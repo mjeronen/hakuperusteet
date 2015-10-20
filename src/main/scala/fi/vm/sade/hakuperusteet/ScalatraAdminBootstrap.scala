@@ -4,7 +4,7 @@ import java.io.File
 import java.util.{Properties, EnumSet}
 import javax.servlet.{DispatcherType, ServletContext}
 
-import fi.vm.sade.hakuperusteet.admin.AdminServlet
+import fi.vm.sade.hakuperusteet.admin.{Synchronization, AdminServlet}
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase, GlobalExecutionContext}
 import fi.vm.sade.hakuperusteet.koodisto.Koodisto
 import fi.vm.sade.hakuperusteet.tarjonta.Tarjonta
@@ -19,6 +19,8 @@ class ScalatraAdminBootstrap extends LifeCycle with GlobalExecutionContext {
   val languages = Koodisto.initLanguages(config)
   val educations = Koodisto.initBaseEducation(config)
   val tarjonta = Tarjonta.init(config)
+
+  Synchronization(config, database, tarjonta)
 
   override def init(context: ServletContext) {
     context mount(new TarjontaServlet(tarjonta), "/api/v1/tarjonta")

@@ -23,6 +23,8 @@ hakuperusteet.db.username={{hakuperusteet_db_username}}
 hakuperusteet.db.password={{hakuperusteet_db_password}}
 hakuperusteet.db.url=jdbc:postgresql://{{hakuperusteet_db_host}}:{{hakuperusteet_db_port}}/{{hakuperusteet_db_name}}
 
+admin.synchronization.interval = 30 seconds
+
 vetuma.host={{hakuperusteet_vetuma_host}}
 vetuma.success.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/ok
 vetuma.cancel.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/cancel
