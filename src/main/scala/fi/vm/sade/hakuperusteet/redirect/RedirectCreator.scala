@@ -1,5 +1,6 @@
 package fi.vm.sade.hakuperusteet.redirect
 
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -20,4 +21,6 @@ object RedirectCreator {
       ("gender", u.gender), ("nationality", u.nationality), ("hakukohdeOid", e.hakukohdeOid), ("educationLevel", e.educationLevel),
       ("educationCountry", e.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString),
       ("created", new Date().toInstant.getEpochSecond.toString))
+
+  def generatePostBody(params: Map[String, String]) = params.map { case (k, v) => k + "=" + URLEncoder.encode(v, "UTF-8") }.mkString("&")
 }

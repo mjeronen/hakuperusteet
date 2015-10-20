@@ -71,6 +71,10 @@ case class HakuperusteetDatabase(db: DB) {
   def insertSyncRequest(user: User, ao: ApplicationObject, status: String) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
     SynchronizationRow(useAutoIncrementId, now, user.personOid.get, ao.hakuOid, ao.hakukohdeOid, status, None)).run
 
+  def fetchNextSyncIds = sql"""update "synchronization" set "status" = 'active' where id in (select id from "synchronization" where "status" = 'todo' limit 1) returning ( id );""".as[Int].run
+
+  def findSynchronizationRow(id: Int) =  Tables.Synchronization.filter(_.id === id).result.run
+
   private def paymentToPaymentRow(payment: Payment) =
     PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString, payment.paymCallId)
 
