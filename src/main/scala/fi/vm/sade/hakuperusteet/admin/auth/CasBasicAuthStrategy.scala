@@ -22,7 +22,7 @@ class CasBasicAuthStrategy(protected override val app: ScalatraBase, cfg: Config
 
   private def request = app.enrichRequest(app.request)
 
-  val adminhost = cfg.getString("adminhost.url.base")
+  val adminhost = cfg.getString("hakuperusteetadmin.url.base")
   val casClient = new CasClient(cfg.getString("hakuperusteet.cas.url"), org.http4s.client.blaze.defaultClient)
   val ldapClient = new LdapClient(LdapConfig(cfg.getString("cas.ldap.host"),cfg.getString("cas.ldap.userDn"),cfg.getString("cas.ldap.password"),cfg.getInt("cas.ldap.port")))
 
