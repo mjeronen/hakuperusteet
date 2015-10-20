@@ -1,5 +1,5 @@
 host.url.base=https://{{host_oppija}}/hakuperusteet/
-adminhost.url.base=https://{{host_virkailija}}/hakuperusteetadmin/
+hakuperusteetadmin.url.base=https://{{host_virkailija}}/hakuperusteetadmin/
 
 cas.ldap.host={{host_ldap}}
 cas.ldap.userDn={{ldap_manager_userdn}}
@@ -8,6 +8,8 @@ cas.ldap.port=389
 
 hakuperusteet.port.http={{palvelu_portti}}
 hakuperusteet.port.https={{palvelu_portti_https}}
+hakuperusteetadmin.port.http={{palvelu_portti}}
+hakuperusteetadmin.port.https={{palvelu_portti_https}}
 rsa.sign.key={{hakuperusteet_rsa_sign_key}}
 
 hakuperusteet.cas.url=https://{{host_cas}}

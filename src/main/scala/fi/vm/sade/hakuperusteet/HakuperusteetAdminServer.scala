@@ -10,6 +10,10 @@ import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
 
 class HakuperusteetAdminServer extends HakuperusteetServer {
+
+  override def portHttp = props.getInt("hakuperusteetadmin.port.http")
+  override def portHttps = Option(props.getInt("hakuperusteetadmin.port.https")).find(_ != -1)
+
   override def createContext = {
     val resources = new ResourceCollection(Array(
       getClass.getClassLoader.getResource("webapp-common").toExternalForm,

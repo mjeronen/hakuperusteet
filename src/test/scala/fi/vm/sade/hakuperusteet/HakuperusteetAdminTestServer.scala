@@ -15,8 +15,7 @@ object HakuperusteetAdminTestServer {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer"
    */
   def main(args: Array[String]): Unit = {
-    val adminServerOverrides = Map("hakuperusteet.port.http" -> 8084, "hakuperusteet.port.https" -> 18085)
-    ConfigUtil.writeConfigFile(adminServerOverrides ++ EmbeddedPostgreSql.configAsMap)
+    ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
 
     implicit val executor = GlobalExecutionContext.context
     implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor

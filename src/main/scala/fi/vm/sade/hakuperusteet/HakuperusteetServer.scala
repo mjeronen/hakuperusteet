@@ -12,9 +12,11 @@ import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
 
 class HakuperusteetServer {
+
+  def portHttp = props.getInt("hakuperusteet.port.http")
+  def portHttps = Option(props.getInt("hakuperusteet.port.https")).find(_ != -1)
+
   def runServer() {
-    val portHttp = props.getInt("hakuperusteet.port.http")
-    val portHttps = Option(props.getInt("hakuperusteet.port.https")).find(_ != -1)
     val server = JettyUtil.createServerWithContext(portHttp, portHttps, createContext)
     server.start
     server.join
