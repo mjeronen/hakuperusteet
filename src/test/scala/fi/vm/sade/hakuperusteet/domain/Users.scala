@@ -12,10 +12,7 @@ object Users {
       User(None, Some(personOidFromIndex(i)), s"${name}.${lastName}@example.com".toLowerCase, name, lastName, birthDate, None, "google", gender, "AB", "004") }
   }
 
-  private def personOidFromIndex(index: Int) = {
-    f"1.2.246.562.24.${index + 1000}%011d"
-  }
-
+  private def personOidFromIndex(index: Int) = f"1.2.246.562.24.${index + 1000}%011d"
 
   private val MIES = "1"
   private val NAINEN = "2"
@@ -29,5 +26,4 @@ object Users {
   private val lastNames = List("Annilainen", "Ossilainen", "Penttiläinen", "Iljanen", "Simonen", "Kalevinen", "Marjanen")
 
   private def birthDate = Date.from(LocalDate.now().minusYears(20).atStartOfDay(ZoneId.systemDefault()).toInstant())
-
 }
