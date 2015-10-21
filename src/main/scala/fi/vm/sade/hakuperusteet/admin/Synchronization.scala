@@ -19,9 +19,7 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
   val scheduler = Executors.newScheduledThreadPool(1)
   scheduler.scheduleWithFixedDelay(checkTodoSynchronizations, 1, config.getDuration("admin.synchronization.interval", SECONDS), SECONDS)
 
-  def checkTodoSynchronizations = asSimpleRunnable { () =>
-    db.fetchNextSyncIds.foreach( (id) => { db.findSynchronizationRow(id).foreach( (row) => { synchronizeRow(row) }) })
-  }
+  def checkTodoSynchronizations = asSimpleRunnable { () => db.fetchNextSyncIds.foreach(db.findSynchronizationRow(_).foreach(synchronizeRow)) }
 
   private def synchronizeRow(row: Tables.SynchronizationRow) =
     Try { tarjonta.getApplicationSystem(row.hakuOid) } match {
