@@ -28,18 +28,12 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
     }
 
   private def continueWithTarjontaData(row: Tables.SynchronizationRow, as: ApplicationSystem) =
-    db.findUserByOid(row.henkiloOid) match {
-      case Some(u) => continueWithUserData(row, as, u)
-      case _ => handleSyncError(row, "Synchronization userData not found, which is against db constraints!", new RuntimeException)
+    db.findUserByOid(row.henkiloOid).foreach { (u) =>
+      db.findApplicationObjectByHakukohdeOid(u, row.hakukohdeOid)
+        .foreach(synchronizeWithData(row, as, u, db.findPayments(u)))
     }
 
-  def continueWithUserData(row: Tables.SynchronizationRow, as: ApplicationSystem, u: User) =
-    db.findApplicationObjectByHakukohdeOid(u, row.hakukohdeOid) match {
-      case Some(ao) => synchronizeWithData(row, ao, as, u, db.findPayments(u))
-      case _ => handleSyncError(row, "Synchronization ao not found, which is against db constraints!", new RuntimeException)
-    }
-
-  private def synchronizeWithData(row: Tables.SynchronizationRow, ao: ApplicationObject, as: ApplicationSystem, u: User, payments: Seq[Payment]) {
+  private def synchronizeWithData(row: Tables.SynchronizationRow, as: ApplicationSystem, u: User, payments: Seq[Payment])(ao: ApplicationObject) {
     val shouldPay = countries.shouldPay(ao.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
     val formUrl = as.formUrl
