@@ -105,7 +105,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, Some(userData), educations, payments))))
   }
 
-  private def sendEmail(newUser: User): Boolean = {
+  private def sendEmail(newUser: User) = {
     val p = WelcomeValues(newUser.email)
     emailSender.send(newUser.email, "Welcome to opintopolku", EmailTemplate.renderWelcome(p))
   }

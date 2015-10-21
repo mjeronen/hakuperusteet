@@ -8,6 +8,7 @@ import org.http4s.Uri._
 import org.http4s._
 import org.http4s.client.Client
 
+import scala.util.{Failure, Success, Try}
 import scalaz.concurrent.Task
 
 object EmailSender {
@@ -26,12 +27,16 @@ object EmailSender {
 class EmailSender(emailClient: EmailClient) extends LazyLogging {
   implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
 
-  def send(to: String, subject: String, body: String): Boolean = {
+  def send(to: String, subject: String, body: String) = {
     val email = EmailMessage("no-reply@opintopolku.fi", subject, body, isHtml = true)
     val recipients = List(EmailRecipient(to))
     val data = EmailData(email, recipients)
     logger.info(s"Sending email ($subject) to $to")
-    Status.Ok.equals(emailClient.send(data).run.status)
+    Try { emailClient.send(data).run } match {
+      case Success(r) if r.status.code == 200 =>
+      case Success(r) => logger.error(s"Email sending to $to failed with statusCode ${r.status.code}, body ${EntityDecoder.decodeString(r).attemptRun}")
+      case Failure(f) => logger.error(s"Email sending to $to throws", f)
+    }
   }
 }
 
@@ -42,15 +47,7 @@ case class EmailData(email: EmailMessage, recipient: List[EmailRecipient])
 class EmailClient(emailServerUrl: String, client: Client) extends LazyLogging with CasClientUtils {
   implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
 
-  def send(email: EmailData): Task[Response] = client.prepare(req(email)).
-    handle {
-    case e: ParseException =>
-      logger.error(s"emailclient parse error details: ${e.failure.details}", e)
-      throw e
-    case e =>
-      logger.error("emailclient error", e)
-      throw e
-  }
+  def send(email: EmailData): Task[Response] = client.prepare(req(email))
 
   private def req(email: EmailData) = Request(
     method = Method.POST,
