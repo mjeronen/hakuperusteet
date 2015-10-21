@@ -14,21 +14,13 @@ export default class HakuperusteetPage extends React.Component {
         super()
         this.changes = props.controller.pushSearchChange
     }
-
+r
     render() {
         const state = this.props.state
         const controller = this.props.controller
         const users = _.isEmpty(state.users) ? [] : state.users
-        return <div>
-            <Header />
-            <div className="content-area">
-                <div className="sidebar oppija-haku">
-                    <label htmlFor="userSearch">
-                        <span>Opiskelija</span>
-                        <input type="text" id="userSearch" name="userSearch" onChange={this.changes} onBlur={this.changes} maxLength="255" />
-                    </label>
-                    <div className="hakutulokset">
-                        <ul>
+        const oppijaClassName = state.isSearching ? "sidebar oppija-search searching" : "sidebar oppija-search"
+        const results = state.isSearching ? <ul></ul> : <ul>
                         {users.filter(u => {
                             if(_.isEmpty(state.userSearch)) {
                                 return true
@@ -37,10 +29,21 @@ export default class HakuperusteetPage extends React.Component {
                                 return name.indexOf(state.userSearch.toLowerCase()) > -1
                             }
                         }).map((u, i) => {
-                            const selected = u.id == state.id ? "selected" : null
+                            const selected = u.id == state.id ? "selected user" : "user"
                             return <li key={i} className={selected}><a onClick={this.selectUser.bind(this, u)}>{u.firstName}&nbsp;{u.lastName}</a></li>;
                         })}
-                        </ul>
+        </ul>
+
+        return <div>
+            <Header />
+            <div className="content-area">
+                <div className={oppijaClassName}>
+                    <label htmlFor="userSearch">
+                        <span>Opiskelija</span>
+                        <input type="text" id="userSearch" name="userSearch" onChange={this.changes} onBlur={this.changes} maxLength="255" />
+                    </label>
+                    <div className="user-search">
+                        {results}
                     </div>
                 </div>
                 <AdminForm state={state} controller={controller} />

@@ -1,5 +1,9 @@
 const waitIntervalMs = 10
 
+$.expr[':'].textContains = function(a, i, m) {
+  return $(a).text().indexOf(m[3]) > -1
+};
+
 export function S(selector) {
   try {
     if (!testFrame() || !testFrame().jQuery) {
@@ -21,9 +25,35 @@ export function S2(selector) {
   return deferred.promise
 }
 
-function findSelector(selector) {
+export function S3(selector) {
+  var deferred = Q.defer()
+  waitUntil(() => findSelectorExactly(selector)).then(function() {
+    deferred.resolve($(testFrame().document).find(selector))
+  })
+  return deferred.promise
+}
+
+export function findSelector(selector) {
   try {
     return $(testFrame().document).find(selector).length > 0
+  } catch(exception){
+    return false
+  }
+}
+
+export function select(selector) {
+  try {
+    var s = $(testFrame().document).find(selector)
+    return s ? s : []
+  } catch(exception){
+    console.log("Exception when selecting " + selector + ": " + exception)
+    return []
+  }
+}
+
+function findSelectorExactly(selector) {
+  try {
+    return $(testFrame().document).find(selector).length == 1
   } catch(exception){
     return false
   }
@@ -65,6 +95,16 @@ export function waitforMilliseconds(ms) {
 export function hakuperusteetLoaded() {
   try {
     return testFrame().SESSION_INITED_FOR_TESTING === true
+  } catch(exception){
+    return false
+  }
+}
+
+export function hakuperusteetAdminLoaded() {
+  try {
+    var v = $(testFrame().document).find(".user").length > 5
+    waitforMilliseconds(100)
+    return v
   } catch(exception){
     return false
   }
@@ -118,5 +158,43 @@ export function takeScreenshot() {
     var filename = "target/screenshots/" + date.getTime()
     console.log("Taking screenshot " + filename + ".png")
     callPhantom({'screenshot': filename})
+  }
+}
+
+export var wait = {
+  waitIntervalMs: 10,
+  until: function(condition, maxWaitMs) {
+    return function() {
+      if (maxWaitMs == undefined) maxWaitMs = testTimeoutDefault;
+      var deferred = Q.defer()
+      var count = Math.floor(maxWaitMs / wait.waitIntervalMs);
+
+      (function waitLoop(remaining) {
+        if (condition()) {
+          deferred.resolve()
+        } else if (remaining === 0) {
+          const errorStr = "timeout of " + maxWaitMs + "ms in wait.until for condition:\n" + condition
+          console.error(new Error(errorStr))
+          deferred.reject(errorStr)
+        } else {
+          setTimeout(function() {
+            waitLoop(remaining-1)
+          }, wait.waitIntervalMs)
+        }
+      })(count)
+      return deferred.promise
+    }
+  },
+  untilFalse: function(condition) {
+    return wait.until(function() { return !condition()})
+  },
+  forMilliseconds: function(ms) {
+    return function() {
+      var deferred = Q.defer()
+      setTimeout(function() {
+        deferred.resolve()
+      }, ms)
+      return deferred.promise
+    }
   }
 }

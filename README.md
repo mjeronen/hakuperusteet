@@ -108,5 +108,5 @@ To run tests in browser, open following url when HakuperusteetTestServer is runn
 
 To run tests in browser, open following url when HakuperusteetAdminTestServer is running
 
-1. http://localhost:8084/hakuperusteetadmin/spec/testRunner.html
+1. http://localhost:8091/hakuperusteetadmin/spec/testRunner.html
 

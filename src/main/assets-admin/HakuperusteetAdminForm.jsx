@@ -17,10 +17,11 @@ export default class HakuperusteetAdminForm extends React.Component {
         const isUserSelected = state.id ? true : false
         const applicationObjects = _.isEmpty(state.applicationObjects) ? [] : state.applicationObjects
         const payments = _.isEmpty(state.payments) ? [] : state.payments
+        const paymentsTitle = payments.length > 0 ? "Maksut" : "Hakijalla ei ole maksuja"
         if(isUserSelected) {
             return <section className="main-content oppija">
                 <UserDataForm state={state} controller={controller} />
-                <h3>Maksut</h3>
+                <h3>{paymentsTitle}</h3>
                 {payments.map((payment,i) => {
                     return <PaymentForm key={i} state={state} controller={controller} payment={payment}/>
                 })}

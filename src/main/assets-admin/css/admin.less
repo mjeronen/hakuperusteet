@@ -52,7 +52,7 @@
 }
 .userDataFormRow {
 }
-.oppija-haku {
+.oppija-search {
   background-color: @color-lightgray;
   input {
     width: ~"calc(100% - 10px)";
@@ -63,7 +63,7 @@
     margin-top: 22px;
   }
 
-  .hakutulokset {
+  .user-search {
     position: relative;
 
     ul {
@@ -114,7 +114,7 @@
   }
 }
 
-.oppija-haku.searching .hakutulokset {
+.oppija-search.searching .user-search {
   &:before {
     display: block;
     content: '';
@@ -129,6 +129,7 @@
   }
   &:after {
     display: block;
+    background: url("/hakuperusteetadmin/img/loader.gif");
     width: 100px;
     height: 100px;
     content: '';

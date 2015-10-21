@@ -30,6 +30,7 @@ export function changeListeners() {
 }
 
 export function initAppState(props) {
+    document.domain = location.hostname
     const {tarjontaUrl, propertiesUrl, usersUrl, userUpdateUrl, applicationObjectUpdateUrl, paymentUpdateUrl} = props
     const initialState = {
         ['userUpdateUrl']:userUpdateUrl,
@@ -40,19 +41,21 @@ export function initAppState(props) {
     const serverUpdatesBus = new Bacon.Bus()
     const serverEducationUpdatesBus = new Bacon.Bus()
     const serverPaymentUpdatesBus = new Bacon.Bus()
-    const hakukohdeS = Bacon.once("1.2.246.562.20.69046715533")
-    const tarjontaS = hakukohdeS.flatMap(fetchFromTarjonta).toEventStream()
-
     const searchS = Bacon.mergeAll(dispatcher.stream(events.search),Bacon.once("")).skipDuplicates(_.isEqual)
     const fetchUsersFromServerS =
-      searchS.flatMap(search => Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin?search=${search}`)))
+      searchS.flatMapLatest(search => {
+          return Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin?search=${search}`))
+      })
 
     const updateRouteS = Bacon.mergeAll(dispatcher.stream(events.route),Bacon.once(document.location.pathname))
         .map(personOidInUrl)
         .skipDuplicates(_.isEqual)
-        .flatMap(function(uniquePersonOid) {
-            return Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin/${uniquePersonOid}`))
-        }).merge(serverUpdatesBus)
+        .filter(uniquePersonOid => uniquePersonOid ? true : false)
+        .flatMap(uniquePersonOid => Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin/${uniquePersonOid}`)))
+        .merge(serverUpdatesBus)
+
+    const tarjontaS = updateRouteS.flatMap(userdata => Bacon.fromArray(userdata.applicationObject))
+      .map(ao => ao.hakukohdeOid).flatMap(fetchFromTarjonta).toEventStream()
 
     const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
     const fieldValidationS = dispatcher.stream(events.fieldValidation).merge(serverUpdatesBus)
@@ -62,6 +65,7 @@ export function initAppState(props) {
     const stateP = Bacon.update(initialState,
         [propertiesS], onStateInit,
         [fetchUsersFromServerS], onSearchUpdate,
+        [searchS], onSearch,
         [tarjontaS], onTarjontaValue,
         [updateRouteS],onUpdateUser,
         [updateEducationFormS], onUpdateEducationForm,
@@ -87,7 +91,7 @@ export function initAppState(props) {
     });
     educationFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
     serverUpdatesBus.plug(educationFormSubmitS.map(({hakukohdeOid, userdata}) => userdata))
-    serverEducationUpdatesBus.plug(serverUpdatesBus.flatMap(userdata => userdata.applicationObject))
+    serverEducationUpdatesBus.plug(serverUpdatesBus.flatMap(userdata => Bacon.fromArray(userdata.applicationObject)))
 
     const paymentFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("payment_(.*)"))).flatMapLatest(({state, form}) => {
         const paymentId = form.match(new RegExp("payment_(.*)"))[1]
@@ -100,12 +104,14 @@ export function initAppState(props) {
     serverUpdatesBus.plug(paymentFormSubmitS.map(({form, userdata}) => userdata))
     serverPaymentUpdatesBus.plug(serverUpdatesBus.flatMap(userdata => userdata.payments))
 
-
+    function onSearch(state) {
+        return {...state, ['isSearching']: true}
+    }
     function onStateInit(state, properties) {
         return {...state, properties}
     }
     function onSearchUpdate(state, users) {
-        return {...state, ['users']: users}
+        return {...state, ['users']: users, ['isSearching']: false}
     }
     function onUpdatePaymentForm(state, payment) {
         var updatedPayments = _.map(state.payments, (oldP => oldP.id == payment.id ? paymentWithValidationErrors(state, payment) : oldP))
@@ -125,7 +131,8 @@ export function initAppState(props) {
     }
     function onUpdateUser(state, user) {
         const updateduser = user.user.personId ? {...user.user, ['hasPersonId']: true} : {...user.user, ['personId']: "", ['hasPersonId']: false}
-        return {...state, ...updateduser, ['applicationObjects']: user.applicationObject, ['payments']: user.payments, ['fromServer']: {...user, ['user']: updateduser}}
+        const newState = {...state, ...updateduser, ['payments']: user.payments, ['fromServer']: {...user, ['user']: updateduser}}
+        return {...newState, ...updateduser, ['applicationObjects']: user.applicationObject}
     }
     function onFieldValidation(state, {field, value}) {
         const newValidationErrors = parseNewValidationErrors(state, field, value)

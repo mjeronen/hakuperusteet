@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.3/mocha.css" media="all"/>
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.3/mocha.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/chai/3.3.0/chai.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/q.js/1.4.1/q.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script>
+    document.domain = location.hostname
+    var testTimeoutPageLoad = 30000
+    var testTimeoutDefault = 10000
+    mocha.setup({
+      ui: 'bdd',
+      reporter: 'html',
+      timeout: testTimeoutPageLoad
+    })
+  </script>
+  <script src="/hakuperusteetadmin/js/spec.js"></script>
+  <script>
+    var runner = mocha.run()
+    $(document).keyup(function(e) {
+      if(e.keyCode==27) {
+        runner._abort = true
+      }
+    })
+  </script>
+  <iframe id="testframe"></iframe>
+</body>
+</html>
