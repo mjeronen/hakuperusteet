@@ -11,7 +11,7 @@ export default class VetumaStart extends React.Component {
   render() {
     const state = this.props.state
     return <div className="vetumaStart">
-      <p>{translation("vetuma.start.info")}</p>
+      <p dangerouslySetInnerHTML={{__html: translation("vetuma.start.info")}}/>
       <form id="vetumaStart" onSubmit={fetchUrlParamsAndRedirectPost(state.properties.vetumaStartUrl)} method="POST">
         <input type="submit" name="submitVetuma" value={translation("vetuma.start.submit")} />
         <AjaxLoader hide={true} />
