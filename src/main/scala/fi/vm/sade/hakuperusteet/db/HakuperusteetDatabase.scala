@@ -78,7 +78,7 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def updateSyncRequest(row: SynchronizationRow) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(row).run
 
-  def fetchNextSyncIds = sql"update synchronization set status = '#${SynchronizationStatus.active.toString}' where id in (select id from synchronization where status = '#${SynchronizationStatus.todo.toString}' limit 1) returning ( id );".as[Int].run
+  def fetchNextSyncIds = sql"update synchronization set status = '#${SynchronizationStatus.active.toString}' where id in (select id from synchronization where status = '#${SynchronizationStatus.todo.toString}' or status = '#${SynchronizationStatus.error.toString}' order by status desc, created asc limit 1) returning ( id );".as[Int].run
 
   def findSynchronizationRow(id: Int) =  Tables.Synchronization.filter(_.id === id).result.run
 
