@@ -71,6 +71,8 @@ case class HakuperusteetDatabase(db: DB) {
   def insertSyncRequest(user: User, ao: ApplicationObject, status: String) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
     SynchronizationRow(useAutoIncrementId, now, user.personOid.get, ao.hakuOid, ao.hakukohdeOid, status, None)).run
 
+  def updateSyncRequest(row: SynchronizationRow) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(row).run
+
   def fetchNextSyncIds = sql"""update "synchronization" set "status" = 'active' where id in (select id from "synchronization" where "status" = 'todo' limit 1) returning ( id );""".as[Int].run
 
   def findSynchronizationRow(id: Int) =  Tables.Synchronization.filter(_.id === id).result.run
@@ -97,7 +99,7 @@ case class HakuperusteetDatabase(db: DB) {
   private def userRowToUser(r: UserRow) =
     User(Some(r.id), r.henkiloOid, r.email, r.firstname, r.lastname, r.birthdate, r.personid, r.idpentityid, r.gender, r.nativeLanguage, r.nationality)
 
-  private def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
+  def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
 }
 
 object HakuperusteetDatabase extends LazyLogging {
