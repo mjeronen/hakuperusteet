@@ -2,7 +2,7 @@
   "login": {
     "info": {
       "text": {
-        "en": "To get started, please sign in with your google account or with email token."
+        "en": "Before you can continue to the application form, we need to verify if you are required to pay the application fee  of 100 €. <BR> Applicants to Finnish higher education institutions  who are applying based on a qualification completed outside the EU/EEA –area or Switzerland are required to pay an application fee of 100 €. This concerns applicants to both Bachelor's and Master's level studies. The application fee covers all the applications to Finnish higher education institutions that an applicant makes for study programmes that start in the same semester. <BR> The collection of application fees is based on the Universities Act and the Polytechnics Act. The fee is charged due to the administrative expenses caused by the verification work on qualifications completed outside EU/EEA countries or Switzerland and to develop the electronic application system. <BR>If you are required to pay the application fee, it needs to be paid before filling in the application. <BR>The application fee is collected by the Finnish National Board of Education. <BR>To get started, please sign in with your Google account or order a login link to your e-mail."
       }
     },
     "order": {
@@ -10,7 +10,7 @@
         "en": "Order login link to your email."
       },
       "button": {
-        "en": "Order email login token"
+        "en": "Order e-mail login link"
       }
     },
     "logged": {
@@ -30,7 +30,7 @@
         "en": "Opintopolku - Hakuperusteet"
       },
       "text": {
-        "en": "You have not selected any program and therefore you can only see existing applications. In case you want to apply to a new program, please select program from www.studyinfo.fi."
+        "en": "You have not selected any programme and therefore you can only see existing applications. In case you want to apply to a new programme, please select programme from www.studyinfo.fi."
       }
     }
   },
@@ -64,23 +64,23 @@
   "title": {
     "first": {
       "name": {
-        "en": "First name"
+        "en": "Given names"
       }
     },
     "last": {
       "name": {
-        "en": "Last name"
+        "en": "Family name"
       }
     },
     "email": {
-      "en": "Email address"
+      "en": "E-mail address"
     },
     "education": {
       "country": {
-        "en": "Base education country"
+        "en": "Country of the institution which have awarded the degree"
       },
       "level": {
-        "en": "Base education level"
+        "en": "Level of the degree"
       }
     },
     "gender": {
@@ -95,11 +95,11 @@
       }
     },
     "nationality": {
-      "en": "Nationality"
+      "en": "Citizenship"
     },
     "native": {
       "language": {
-        "en": "Native language"
+        "en": "Mother tongue"
       }
     },
     "birth": {
@@ -111,13 +111,13 @@
   "apply": {
     "payment": {
       "required": {
-        "en": "This Master's Program has applying charge of 100 €."
+        "en": "This Programme has applying charge of 100 €."
       },
       "notRequired": {
-        "en": "With EEA-based education you don't need to pay applying charge."
+        "en": "With EEA-based education you don't need to pay application fee."
       },
       "alreadyPaid": {
-        "en": "You have already paid applying charge of 100€."
+        "en": "You have already paid application fee of 100€."
       }
     }
   },
@@ -126,32 +126,32 @@
       "en": "Please enter the following information."
     },
     "personalId": {
-      "en": "I have Finnish social security number"
+      "en": "I have Finnish personal identification code"
     },
     "submit": {
       "en": "Submit"
     },
     "errors": {
       "requiredFirstName": {
-        "en": "First name is required."
+        "en": "Given name is required."
       },
       "requiredLastName": {
-        "en": "Last name is required."
+        "en": "Family name is required."
       },
       "invalidBirthDate": {
         "en": "Insert birth date in correct format."
       },
       "requiredPersonId": {
-        "en": "Insert Social security number in correct format (last 5 characters)."
+        "en": "Insert Personal identification code in correct format (last 5 characters)."
       },
       "requiredGender": {
         "en": "Gender is required."
       },
       "requiredNativeLanguage": {
-        "en": "Native language is required."
+        "en": "Mother tongue is required."
       },
       "requiredNationality": {
-        "en": "Nationality is required."
+        "en": "Citizenship is required."
       }
     }
   },
@@ -160,14 +160,14 @@
       "en": "Please enter your education information for applying to"
     },
     "payment": {
-      "en": "This education here is used only to decide if you need to pay application fee. You can give other educations in application form."
+      "en": "This degree here is used only to decide if you need to pay application fee. You can give other degrees in application."
     },
     "submit": {
       "en": "Submit"
     },
     "errors": {
       "requiredEducationLevel": {
-        "en": "Education level is required."
+        "en": "Level of the degree is required."
       },
       "requiredEducationCountry": {
         "en": "Education country is required."
@@ -177,7 +177,7 @@
   "vetuma": {
     "start": {
       "info": {
-        "en": "You are required to pay application fee of 100€ before continuing to the application form."
+        "en": "You are required to pay application fee of 100€ before continuing to the application. <BR> Payment methods<BR> Credit card (Visa, Visa Debit, Visa Electron, Mastercard, Mastercard Debit)<BR> Finnish internet banking codes"
       },
       "submit": {
         "en": "Continue to payment"
@@ -197,13 +197,13 @@
   },
   "hakulist": {
     "info": {
-      "en": "Continue to application forms with following links."
+      "en": "Continue to applications with following links."
     },
     "empty": {
       "en": "No existing applications found."
     },
     "submit": {
-      "en": "Proceed to application form"
+      "en": "Continue to application"
     }
   }
 }
