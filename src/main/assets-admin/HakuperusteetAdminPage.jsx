@@ -14,7 +14,7 @@ export default class HakuperusteetPage extends React.Component {
         super()
         this.changes = props.controller.pushSearchChange
     }
-r
+
     render() {
         const state = this.props.state
         const controller = this.props.controller
