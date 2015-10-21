@@ -21,7 +21,11 @@ trait CasClientUtils extends LazyLogging {
   def json4sEncoderOf[A <: AnyRef](implicit formats: Formats, mf: Manifest[A]): EntityEncoder[A] = EntityEncoder.stringEncoder(Charset.`UTF-8`).contramap[A](item => write[A](item))
     .withContentType(`Content-Type`(MediaType.`application/json`))
 
-  def json4sOf[A](implicit formats: Formats, mf: Manifest[A]): EntityDecoder[A] = EntityDecoder.decodeBy[A](MediaType.`application/json`) { (msg) =>
-    DecodeResult(EntityDecoder.decodeString(msg)(Charset.`UTF-8`).map(parseJson4s[A]))
+  def json4sOf[A](implicit formats: Formats, mf: Manifest[A]): EntityDecoder[A] = EntityDecoder.decodeBy[A](MediaType.`application/json`) {
+    case r @ Response(status, _, _, _, _) if status.code == 200 => DecodeResult(EntityDecoder.decodeString(r)(Charset.`UTF-8`).map(parseJson4s[A]))
+    case r @ Response(status, _, _, _, _) =>
+      val commonError = s"CAS-client external request failed with status ${status.code}"
+      logger.error(commonError + s", body ${EntityDecoder.decodeString(r).attemptRun}")
+      throw new InvalidResponseException(commonError)
   }
 }

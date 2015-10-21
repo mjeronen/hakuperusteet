@@ -27,15 +27,7 @@ class HenkiloClient(henkiloServerUrl: String, client: Client) extends LazyLoggin
 
   def upsertHenkilo(user: User) = haeHenkilo(user).run
 
-  def haeHenkilo(user: User): Task[Henkilo] = client.prepAs[Henkilo](req(user))(json4sOf[Henkilo]).
-    handle {
-    case e: ParseException =>
-      logger.error(s"parse error details: ${e.failure.details}")
-      throw e
-    case e =>
-      logger.error(s"error: $e")
-      throw e
-  }
+  def haeHenkilo(user: User): Task[Henkilo] = client.prepAs[Henkilo](req(user))(json4sOf[Henkilo])
 
   private def req(user: User) = Request(
     method = Method.POST,
