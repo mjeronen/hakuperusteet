@@ -122,8 +122,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
     write(data)
   }
 
-  private def insertSyncRequests(u: UserData) =
-    u.applicationObject.foreach( (ao) => { db.insertSyncRequest(u.user, ao, "todo") })
+  private def insertSyncRequests(u: UserData) = u.applicationObject.foreach(db.insertSyncRequest(u.user, _))
 
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 }

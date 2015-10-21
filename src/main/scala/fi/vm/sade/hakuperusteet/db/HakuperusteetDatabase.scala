@@ -6,6 +6,7 @@ import java.util.{Calendar, Date}
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
+import fi.vm.sade.hakuperusteet.admin.SynchronizationStatus
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
 import fi.vm.sade.hakuperusteet.db.generated.Tables._
@@ -68,12 +69,16 @@ case class HakuperusteetDatabase(db: DB) {
 
   def nextOrderNumber() = sql"select nextval('#$schemaName.ordernumber');".as[Int].run.head
 
-  def insertSyncRequest(user: User, ao: ApplicationObject, status: String) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
-    SynchronizationRow(useAutoIncrementId, now, user.personOid.get, ao.hakuOid, ao.hakukohdeOid, status, None)).run
+  def insertSyncRequest(user: User, ao: ApplicationObject) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
+    SynchronizationRow(useAutoIncrementId, now, user.personOid.get, ao.hakuOid, ao.hakukohdeOid, SynchronizationStatus.todo.toString, None)).run
 
-  def updateSyncRequest(row: SynchronizationRow) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(row).run
+  def markSyncDone(row: SynchronizationRow) = updateSyncRequest(row.copy(updated = Some(now), status = SynchronizationStatus.done.toString))
 
-  def fetchNextSyncIds = sql"""update "synchronization" set "status" = 'active' where id in (select id from "synchronization" where "status" = 'todo' limit 1) returning ( id );""".as[Int].run
+  def markSyncError(row: SynchronizationRow) = updateSyncRequest(row.copy(updated = Some(now), status = SynchronizationStatus.error.toString))
+
+  private def updateSyncRequest(row: SynchronizationRow) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(row).run
+
+  def fetchNextSyncIds = sql"update synchronization set status = '#${SynchronizationStatus.active.toString}' where id in (select id from synchronization where status = '#${SynchronizationStatus.todo.toString}' limit 1) returning ( id );".as[Int].run
 
   def findSynchronizationRow(id: Int) =  Tables.Synchronization.filter(_.id === id).result.run
 
@@ -99,7 +104,7 @@ case class HakuperusteetDatabase(db: DB) {
   private def userRowToUser(r: UserRow) =
     User(Some(r.id), r.henkiloOid, r.email, r.firstname, r.lastname, r.birthdate, r.personid, r.idpentityid, r.gender, r.nativeLanguage, r.nationality)
 
-  def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
+  private def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
 }
 
 object HakuperusteetDatabase extends LazyLogging {

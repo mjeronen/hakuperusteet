@@ -26,19 +26,19 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
   private def synchronizeRow(row: Tables.SynchronizationRow) =
     Try { tarjonta.getApplicationSystem(row.hakuOid) } match {
       case Success(as) => continueWithTarjontaData(row, as)
-      case Failure(f) => logger.error("Synchronization Tarjonta application system throws", f)
+      case Failure(f) => handleSyncError(row, "Synchronization Tarjonta application system throws", f)
     }
 
   private def continueWithTarjontaData(row: Tables.SynchronizationRow, as: ApplicationSystem) =
     db.findUserByOid(row.henkiloOid) match {
       case Some(u) => continueWithUserData(row, as, u)
-      case _ => logger.error("Synchronization userData not found!")
+      case _ => handleSyncError(row, "Synchronization userData not found, which is against db constraints!", new RuntimeException)
     }
 
   def continueWithUserData(row: Tables.SynchronizationRow, as: ApplicationSystem, u: User) =
     db.findApplicationObjectByHakukohdeOid(u, row.hakukohdeOid) match {
       case Some(ao) => synchronizeWithData(row, ao, as, u, db.findPayments(u))
-      case _ => logger.error("Synchronization ao not found!")
+      case _ => handleSyncError(row, "Synchronization ao not found, which is against db constraints!", new RuntimeException)
     }
 
   private def synchronizeWithData(row: Tables.SynchronizationRow, ao: ApplicationObject, as: ApplicationSystem, u: User, payments: Seq[Payment]) {
@@ -48,7 +48,12 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
     val body = generatePostBody(generateParamMap(signer, u, ao, shouldPay, hasPaid))
     println(formUrl + ":" + body)
 
-    db.updateSyncRequest(row.copy(updated = Some(db.now), status = "done"))
+    db.markSyncDone(row)
+  }
+
+  private def handleSyncError(row: Tables.SynchronizationRow, errorMsg: String, f: Throwable) = {
+    db.markSyncError(row)
+    logger.error(errorMsg, f)
   }
 
   private def asSimpleRunnable(f: () => Unit) = new Runnable() { override def run() { f() } }
@@ -56,4 +61,9 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
 
 object Synchronization {
   def apply(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjonta, countries: Countries, signer: RSASigner) = new Synchronization(config, db, tarjonta, countries, signer)
+}
+
+object SynchronizationStatus extends Enumeration {
+  type SynchronizationStatus = Value
+  val todo, active, done, error = Value
 }
