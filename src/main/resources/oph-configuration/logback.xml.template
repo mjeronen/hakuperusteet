@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/data00/oph/hakuperusteet/logs/hakuperusteet-console.log</file>
+        <file>${user.home}/logs/hakuperusteet-console.log</file>
         <append>true</append>
         <encoder>
             <charset>utf-8</charset>
             <pattern>%d{ISO8601} %-5p { %X{user}} [%t] %-5p %c: %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/data00/oph/hakuperusteet/logs/hakuperusteet-console-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
+            <fileNamePattern>${user.home}/logs/hakuperusteet-console-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>50MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -16,14 +16,14 @@
     </appender>
 
     <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/data00/oph/hakuperusteet/logs/oph-hakuperusteet.log</file>
+        <file>${user.home}/logs/oph-hakuperusteet.log</file>
         <append>true</append>
         <encoder>
             <charset>utf-8</charset>
             <pattern>%d{ISO8601} %-5p { %X{user}} [%t] %-5p %c: %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/data00/oph/hakuperusteet/logs/oph-hakuperusteet-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
+            <fileNamePattern>${user.home}/logs/oph-hakuperusteet-%d{yyyy_MM_dd}-%i.log.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>50MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
