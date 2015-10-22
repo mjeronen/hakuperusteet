@@ -22,6 +22,7 @@ class HakuperusteetTestServer extends HakuperusteetServer {
 object HakuperusteetTestServer {
   val logger = LoggerFactory.getLogger(this.getClass)
   val isEmbeddedConfig = System.getProperty("embedded", "false") == "true"
+  var hakuperusteetTestServer:HakuperusteetTestServer = null
 
   /*
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
@@ -34,8 +35,8 @@ object HakuperusteetTestServer {
     }
     startMockServer()
     startCommandServer()
-    val s = new HakuperusteetTestServer
-    s.runServer()
+    hakuperusteetTestServer = new HakuperusteetTestServer
+    hakuperusteetTestServer.runServer()
     logger.info("Started HakuperusteetTestServer")
   }
 
@@ -61,6 +62,7 @@ object HakuperusteetTestServer {
     flyway.setDataSource(url, user, password)
     flyway.clean
     flyway.migrate
+    hakuperusteetTestServer.restart
   }
 }
 
