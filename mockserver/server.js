@@ -54,7 +54,13 @@ app.post('/ryhmasahkoposti-service/email', function(req, res){
 
 // Authentication-Service
 app.post('/authentication-service/resources/s2s/hakuperusteet', function(req, res){
-  res.send({ "personOid": "1.2.246.562.24.11523238937" });
+  if (req.body.firstName == "Error409") {
+    res.sendStatus(409)
+  } else if (req.body.firstName == "Error500") {
+    res.sendStatus(500)
+  } else {
+    res.send({ "personOid": "1.2.246.562.24.11523238937" });
+  }
 });
 
 // Oppijan-tunnistus
