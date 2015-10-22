@@ -28,7 +28,7 @@ class HakuperusteetServer {
   }
 
   def restart {
-    val idManager: JDBCSessionIdManager = server.getSessionIdManager.asInstanceOf[JDBCSessionIdManager]
+    val idManager = server.getSessionIdManager.asInstanceOf[JDBCSessionIdManager]
     idManager.doStop()
     idManager.doStart()
   }

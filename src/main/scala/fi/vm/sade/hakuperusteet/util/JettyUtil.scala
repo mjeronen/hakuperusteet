@@ -54,12 +54,12 @@ object JettyUtil extends LazyLogging {
 
   def configureJDBCSession(context: WebAppContext, dbUrl: String, user: String, password: String, server: Server): Unit = {
     val idMgr = new JDBCSessionIdManager(server)
-    idMgr.setWorkerName(java.net.InetAddress.getLocalHost().getHostName.split("\\.")(0))
+    idMgr.setWorkerName(java.net.InetAddress.getLocalHost.getHostName.split("\\.")(0))
     idMgr.setDriverInfo("org.postgresql.Driver", dbUrl + "?user=" + user + "&password=" + password)
     idMgr.setScavengeInterval(600)
     server.setSessionIdManager(idMgr)
     val jdbcMgr = new JDBCSessionManager()
-    context.getSessionHandler().setSessionManager(jdbcMgr);
+    context.getSessionHandler.setSessionManager(jdbcMgr)
     jdbcMgr.setSessionIdManager(idMgr)
   }
 }

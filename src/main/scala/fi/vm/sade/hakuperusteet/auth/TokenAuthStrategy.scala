@@ -22,16 +22,14 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
     val token = (json \ "token").extract[Option[String]]
     val idpentityid = (json \ "idpentityid").extract[Option[String]]
     (token, idpentityid) match {
-      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName =>
-        createSession(tokenFromRequest)
+      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName => createSession(tokenFromRequest)
       case _ => None
     }
   }
 
   def createSession(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
-      case Success(Some(email)) =>
-        Some(Session(email, tokenFromRequest, tokenName))
+      case Success(Some(email)) => Some(Session(email, tokenFromRequest, tokenName))
       case Success(None) => None
       case Failure(f) =>
         logger.error("Oppijantunnistus.validateToken error", f)
