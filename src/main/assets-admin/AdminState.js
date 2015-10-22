@@ -9,8 +9,8 @@ import Dispatcher from '../assets/util/Dispatcher'
 import {initChangeListeners} from '../assets/util/ChangeListeners'
 import {initAdminChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from '../assets/util/FieldValidator.js'
-import {parseNewApplicationObjectValidationErrors} from './util/ApplicationObjectValidator.js'
-import {parseNewPaymentValidationErrors} from './util/PaymentValidator.js'
+import {applicationObjectWithValidationErrors} from './util/ApplicationObjectValidator.js'
+import {paymentWithValidationErrors} from './util/PaymentValidator.js'
 import {enableSubmitAndHideBusy} from '../assets/util/HtmlUtils.js'
 
 const dispatcher = new Dispatcher()
@@ -39,8 +39,6 @@ export function initAppState(props) {
     }
     const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
     const serverUpdatesBus = new Bacon.Bus()
-    const serverEducationUpdatesBus = new Bacon.Bus()
-    const serverPaymentUpdatesBus = new Bacon.Bus()
     const searchS = Bacon.mergeAll(dispatcher.stream(events.search),Bacon.once("")).skipDuplicates(_.isEqual)
     const fetchUsersFromServerS =
       searchS.flatMapLatest(search => {
@@ -53,14 +51,12 @@ export function initAppState(props) {
         .filter(uniquePersonOid => uniquePersonOid ? true : false)
         .flatMap(uniquePersonOid => Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin/${uniquePersonOid}`)))
         .merge(serverUpdatesBus)
-
-    const tarjontaS = updateRouteS.flatMap(userdata => Bacon.fromArray(userdata.applicationObject))
-      .map(ao => ao.hakukohdeOid).flatMap(fetchFromTarjonta).toEventStream()
-
+    const updateApplicationObjectS = updateRouteS.flatMap(userdata => Bacon.fromArray(userdata.applicationObject))
+    const tarjontaS = updateApplicationObjectS.map(ao => ao.hakukohdeOid).flatMap(fetchFromTarjonta).toEventStream()
     const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
-    const fieldValidationS = dispatcher.stream(events.fieldValidation).merge(serverUpdatesBus)
-    const updateEducationFormS = dispatcher.stream(events.updateEducationForm).merge(serverEducationUpdatesBus)
-    const updatePaymentFormS = dispatcher.stream(events.updatePaymentForm).merge(serverPaymentUpdatesBus)
+    const fieldValidationS = dispatcher.stream(events.fieldValidation)
+    const updateEducationFormS = dispatcher.stream(events.updateEducationForm)
+    const updatePaymentFormS = dispatcher.stream(events.updatePaymentForm)
 
     const stateP = Bacon.update(initialState,
         [propertiesS], onStateInit,
@@ -75,12 +71,11 @@ export function initAppState(props) {
 
     const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
     const userDataFormSubmitS = formSubmittedS.filter(({form}) => form === 'userDataForm').flatMapLatest(({state}) => submitUserDataToServer(state))
-
+    serverUpdatesBus.plug(userDataFormSubmitS)
     userDataFormSubmitS.onValue((_) => {
         const form = document.getElementById('userDataForm')
         enableSubmitAndHideBusy(form)
     })
-    serverUpdatesBus.plug(userDataFormSubmitS)
 
     const educationFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("educationForm_(.*)"))).flatMapLatest(({state, form}) => {
       const hakukohdeOid = form.match(new RegExp("educationForm_(.*)"))[1]
@@ -89,9 +84,8 @@ export function initAppState(props) {
           return {['form']: form, ['userdata']: userdata}
       })
     });
-    educationFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
     serverUpdatesBus.plug(educationFormSubmitS.map(({hakukohdeOid, userdata}) => userdata))
-    serverEducationUpdatesBus.plug(serverUpdatesBus.flatMap(userdata => Bacon.fromArray(userdata.applicationObject)))
+    educationFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
 
     const paymentFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("payment_(.*)"))).flatMapLatest(({state, form}) => {
         const paymentId = form.match(new RegExp("payment_(.*)"))[1]
@@ -100,9 +94,8 @@ export function initAppState(props) {
             return {['form']: form, ['userdata']: userdata}
         })
     });
-    paymentFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
     serverUpdatesBus.plug(paymentFormSubmitS.map(({form, userdata}) => userdata))
-    serverPaymentUpdatesBus.plug(serverUpdatesBus.flatMap(userdata => userdata.payments))
+    paymentFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
 
     function onSearch(state) {
         return {...state, ['isSearching']: true}
@@ -114,11 +107,19 @@ export function initAppState(props) {
         return {...state, ['users']: users, ['isSearching']: false}
     }
     function onUpdatePaymentForm(state, payment) {
-        var updatedPayments = _.map(state.payments, (oldP => oldP.id == payment.id ? paymentWithValidationErrors(state, payment) : oldP))
+        function decorateWithErrors(pp) {
+            const pFromServer = _.find(state.fromServer.payments, p => p.id == payment.id)
+            return {...paymentWithValidationErrors(_.isMatch(pp, pFromServer) ? withNoChanges(pp) : withChanges(pp))}
+        }
+        var updatedPayments = _.map(state.payments, (oldP => oldP.id == payment.id ? decorateWithErrors(payment) : oldP))
         return {...state, ['payments']: updatedPayments}
     }
     function onUpdateEducationForm(state, newAo) {
-        var updatedAos = _.map(state.applicationObjects, (oldAo => oldAo.id == newAo.id ? applicationObjectWithValidationErrors(state, newAo) : oldAo))
+        function decorateWithErrors(a) {
+            const aoFromServer = _.find(state.fromServer.applicationObject, ao => ao.id == newAo.id)
+            return {...applicationObjectWithValidationErrors(_.isMatch(a, aoFromServer) ? withNoChanges(a) : withChanges(a))}
+        }
+        var updatedAos = _.map(state.applicationObjects, (oldAo => oldAo.id == newAo.id ? decorateWithErrors(newAo) : oldAo))
         return {...state, ['applicationObjects']: updatedAos}
     }
     function onTarjontaValue(state, tarjonta) {
@@ -130,14 +131,15 @@ export function initAppState(props) {
         return {...state, [field]: value}
     }
     function onUpdateUser(state, user) {
-        const updateduser = user.user.personId ? {...user.user, ['hasPersonId']: true} : {...user.user, ['personId']: "", ['hasPersonId']: false}
-        const newState = {...state, ...updateduser, ['payments']: user.payments, ['fromServer']: {...user, ['user']: updateduser}}
-        return {...newState, ...updateduser, ['applicationObjects']: user.applicationObject}
+        const referenceUser = decorateWithHasPersonId(user.user)
+        const fromServer = {['fromServer']: {...user, ['user']: referenceUser}}
+        const payments = {['payments']: _.map(user.payments, withNoChanges)}
+        const applicationObjects = {['applicationObjects']: _.map(user.applicationObject, withNoChanges)}
+        return {...state,...withNoChanges(referenceUser),...payments,...applicationObjects,...fromServer}
     }
     function onFieldValidation(state, {field, value}) {
         const newValidationErrors = parseNewValidationErrors(state, field, value)
-        const validationErrors = {...newValidationErrors, ['noChanges']: _.isMatch(state, state.fromServer.user) ? "required" : null}
-        return {...state, ...{'validationErrors' : validationErrors}}
+        return {...state, ['validationErrors']: {...newValidationErrors, ...validateIfNoChanges(state, state.fromServer.user)}}
     }
     function fetchFromTarjonta(hakukohde) {
         return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
@@ -146,16 +148,20 @@ export function initAppState(props) {
         var match = url.match(new RegExp("oppija/(.*)"))
         return match ? match[1] : null
     }
-    function applicationObjectWithValidationErrors(state, newAo) {
-        const aoFromServer = _.find(state.fromServer.applicationObject, ao => ao.id == newAo.id)
-        const validationErrors = {...parseNewApplicationObjectValidationErrors(newAo), ['noChanges']: _.isMatch(newAo, aoFromServer) ? "required" : null}
-        return {...newAo, ['validationErrors']: validationErrors}
+    // Helper functions
+    function withChanges(obj) {
+        const currentValidationErrors = obj.validationErrors || {}
+        return {...obj, ['validationErrors']: {...currentValidationErrors, ['noChanges']: null}}
     }
-    function paymentWithValidationErrors(state, payment) {
-        const pFromServer = _.find(state.fromServer.payments, p => p.id == payment.id)
-        const validationErrors = {...parseNewPaymentValidationErrors(payment), ['noChanges']: _.isMatch(payment, pFromServer) ? "required" : null}
-        return {...payment, ['validationErrors']: validationErrors}
+    function withNoChanges(obj) {
+        const currentValidationErrors = obj.validationErrors || {}
+        return {...obj, ['validationErrors']: {...currentValidationErrors, ['noChanges']: "required"}}
     }
-
+    function decorateWithHasPersonId(user) {
+        return user.personId ? {...user, ['hasPersonId']: true} : {...user, ['personId']: "", ['hasPersonId']: false}
+    }
+    function validateIfNoChanges(user, referenceUser) {
+        return {['noChanges']: _.isMatch(user, referenceUser) ? "required" : null}
+    }
     return stateP
 }

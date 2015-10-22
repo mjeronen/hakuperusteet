@@ -2,8 +2,10 @@ import _ from 'lodash'
 
 const selectFields = ["status"]
 
-export function parseNewPaymentValidationErrors(state) {
-  return _.reduce(selectFields, (result, field) => ({...result, [field]: validateSelect(state[field])}), {})
+export function paymentWithValidationErrors(payment) {
+  const currentValidationErrors = payment.validationErrors || {}
+  const newValidationErrors = _.reduce(selectFields, (result, field) => ({...result, [field]: validateSelect(payment[field])}), {})
+  return {...payment, ['validationErrors']: {...currentValidationErrors, ...newValidationErrors}}
 }
 
 function validateSelect(value) {

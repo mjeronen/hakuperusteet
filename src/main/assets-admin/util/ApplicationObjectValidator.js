@@ -2,8 +2,10 @@ import _ from 'lodash'
 
 const selectFields = ["educationCountry", "educationLevel"]
 
-export function parseNewApplicationObjectValidationErrors(state) {
-  return _.reduce(selectFields, (result, field) => ({...result, [field]: validateSelect(state[field])}), {})
+export function applicationObjectWithValidationErrors(ao) {
+  const currentValidationErrors = ao.validationErrors || {}
+  const newValidationErrors = _.reduce(selectFields, (result, field) => ({...result, [field]: validateSelect(ao[field])}), {})
+  return {...ao, ['validationErrors']: {...currentValidationErrors, ...newValidationErrors}}
 }
 
 function validateSelect(value) {
