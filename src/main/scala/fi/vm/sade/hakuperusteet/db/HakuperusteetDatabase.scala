@@ -29,15 +29,6 @@ case class HakuperusteetDatabase(db: DB) {
   }
   val useAutoIncrementId = 0
 
-  def findSession(email: String): Option[Session] =
-    Tables.Session.filter(_.email === email).result.headOption.run.map(sessionRowToSession)
-
-  def findSessionByToken(token: String): Option[Session] =
-    Tables.Session.filter(_.token === token).result.headOption.run.map(sessionRowToSession)
-
-  def upsertSession(session: Session): Option[Session] =
-    (Tables.Session returning Tables.Session).insertOrUpdate(sessionToSessionRow(session)).run.map(sessionRowToSession)
-
   def findUser(email: String): Option[User] =
     Tables.User.filter(_.email === email).result.headOption.run.map(userRowToUser)
 
@@ -87,11 +78,6 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def paymentRowToPayment(r: PaymentRow) =
     Payment(Some(r.id), r.henkiloOid, r.tstamp, r.reference, r.orderNumber, r.paymCallId, PaymentStatus.withName(r.status))
-
-  private def sessionToSessionRow(session: Session) =
-    SessionRow(session.id.getOrElse(useAutoIncrementId), session.email, session.token, session.idpentityid)
-
-  private def sessionRowToSession(r: SessionRow) = Session(Some(r.id), r.email, r.token, r.idpentityid)
 
   private def aoRowToAo(r: ApplicationObjectRow) = ApplicationObject(Some(r.id), r.henkiloOid, r.hakukohdeOid, r.hakuOid, r.educationLevel, r.educationCountry)
 

@@ -3,16 +3,18 @@ package fi.vm.sade.hakuperusteet.util
 import ch.qos.logback.access.jetty.RequestLogImpl
 import com.typesafe.scalalogging.LazyLogging
 import org.eclipse.jetty.server._
+import org.eclipse.jetty.server.session.{JDBCSessionIdManager, JDBCSessionManager}
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.webapp.WebAppContext
 
 object JettyUtil extends LazyLogging {
 
-  def createServerWithContext(portHttp: Int, portHttps: Option[Int], context: WebAppContext) = {
+  def createServerWithContext(portHttp: Int, portHttps: Option[Int], context: WebAppContext, dbUrl: String, user: String, password: String) = {
     val server = new Server()
     server.setHandler(context)
     server.setConnectors(createConnectors(portHttp, portHttps, server))
     initRequestLog(server)
+    configureJDBCSession(context, dbUrl, user, password, server)
     server
   }
 
@@ -48,5 +50,16 @@ object JettyUtil extends LazyLogging {
     val https = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(httpsConfig))
     https.setPort(port)
     https
+  }
+
+  def configureJDBCSession(context: WebAppContext, dbUrl: String, user: String, password: String, server: Server): Unit = {
+    val idMgr = new JDBCSessionIdManager(server)
+    idMgr.setWorkerName(java.net.InetAddress.getLocalHost().getHostName.split("\\.")(0))
+    idMgr.setDriverInfo("org.postgresql.Driver", dbUrl + "?user=" + user + "&password=" + password)
+    idMgr.setScavengeInterval(600)
+    server.setSessionIdManager(idMgr)
+    val jdbcMgr = new JDBCSessionManager()
+    context.getSessionHandler().setSessionManager(jdbcMgr);
+    jdbcMgr.setSessionIdManager(idMgr)
   }
 }

@@ -25,7 +25,9 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   val henkiloClient = HenkiloClient.init(config)
   post("/authenticate") {
-    authenticate
+    if(!isAuthenticated) {
+      authenticate
+    }
     failUnlessAuthenticated
     returnUserData
   }
