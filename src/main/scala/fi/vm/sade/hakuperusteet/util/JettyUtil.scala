@@ -1,5 +1,7 @@
 package fi.vm.sade.hakuperusteet.util
 
+import java.security.MessageDigest
+
 import ch.qos.logback.access.jetty.RequestLogImpl
 import com.typesafe.scalalogging.LazyLogging
 import org.eclipse.jetty.server._
@@ -54,7 +56,9 @@ object JettyUtil extends LazyLogging {
 
   def configureJDBCSession(context: WebAppContext, dbUrl: String, user: String, password: String, server: Server): Unit = {
     val idMgr = new JDBCSessionIdManager(server)
-    idMgr.setWorkerName(java.net.InetAddress.getLocalHost.getHostName.split("\\.")(0))
+    val serverName = java.net.InetAddress.getLocalHost.getHostName.split("\\.")(0)
+    val shortMD5ServerName: String = MessageDigest.getInstance("MD5").digest(serverName.getBytes).map("%02x".format(_)).mkString.slice(0,10)
+    idMgr.setWorkerName(shortMD5ServerName)
     idMgr.setDriverInfo("org.postgresql.Driver", dbUrl + "?user=" + user + "&password=" + password)
     idMgr.setScavengeInterval(600)
     server.setSessionIdManager(idMgr)
