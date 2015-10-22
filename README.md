@@ -34,23 +34,33 @@ To start hakuperusteet after Postgres is up, run the following commands:
 
 By default hakuperusteet uses services from Luokka-environment.
 
-### Run using mock configuration
+To start hakuperusteet-admin, run the following commands:
 
-Mock configuration does not have any external dependencies (except Google Authentication, but email one can be used).
-This setup needs a running mock server, which should be started with following commands first:
+1. `npm install`
+2. `./sbt run:admin`
+3. Access hakuperusteet-admin at [https://localhost:18090/hakuperusteetadmin/](https://localhost:18090/hakuperusteetadmin/)
+4. `npm run admin:watch` on separate console to enable front auto compile
+
+### Run using test configuration
+
+Test configuration does not have any external dependencies (except Google Authentication, but email one can be used).
+This setup needs a running mock server, which should be installed with following commands first:
 
 1. `cd mockserver`
 2. `npm install`
-3. `node server.js`
 
-or use nodemon to auto reload on changes
+To run hakuperusteet or hakuperusteet-admin, run the following commands:
 
-1. `npm install -g nodemon`
-2. `nodemon server.js`
+`./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"`
+or
+`./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer"`
 
-Mock configuration is enabled when running the following command:
+Test servers can be accessed from urls:
 
-1. `./sbt run -J-Dmock=true`
+1. Access hakuperusteet at [https://localhost:18081/hakuperusteet/](https://localhost:18081/hakuperusteet/)
+2. Access hakuperusteet-admin at [https://localhost:18091/hakuperusteetadmin/](https://localhost:18091/hakuperusteetadmin/)
+
+By default test setup uses database from Docker. Embedded Postgres can be used with embedded=true env variable. 
 
 ## Configuration
 
@@ -60,10 +70,6 @@ This project has multiple configuration files, which are used for following purp
 
  - Development time configuration file, which uses luokka-environment
 
-### src/main/resources/mockReference.conf
-
- - Development time configuration file, which uses mock server (see below).
-
 ### src/main/resources/oph-configuration/hakuperusteet.properties.template
 
  - This file is the configuration template used with real environments.
@@ -72,10 +78,6 @@ This project has multiple configuration files, which are used for following purp
 
  - This file is used during unit and UI-tests, uses mock server and Postgres. Both mock server and Posgres has different ports
    than in reference.conf above. Unit tests do not use mock server, hence their port numbers are irrelevant.
-
-### src/test/resources/hsqlReference.conf
-
- - This optional config files is used to enable in-memory HSQLDB. Used with UI-tests, because Bamboo does not have Postgres.
 
 ## Build
 
@@ -99,7 +101,7 @@ During development, after schema changes you must regenerate db-classes with com
 
 To run tests in browser, open following url when HakuperusteetTestServer is running
 
-1. http://localhost:8081/hakuperusteet/spec/testRunner.html
+1. [http://localhost:8081/hakuperusteet/spec/testRunner.html](http://localhost:8081/hakuperusteet/spec/testRunner.html)
 
 ## Admin UI-tests
 
@@ -108,5 +110,4 @@ To run tests in browser, open following url when HakuperusteetTestServer is runn
 
 To run tests in browser, open following url when HakuperusteetAdminTestServer is running
 
-1. http://localhost:8091/hakuperusteetadmin/spec/testRunner.html
-
+1. [http://localhost:8091/hakuperusteet/spec/testRunner.html](http://localhost:8091/hakuperusteet/spec/testRunner.html)
