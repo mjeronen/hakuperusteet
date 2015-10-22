@@ -8,9 +8,10 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.Session
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import org.json4s.native.JsonMethods._
+import org.scalatra.Control
 import org.scalatra.servlet.RichRequest
 
-class GoogleBasicAuthStrategy(config: Config, db: HakuperusteetDatabase, googleVerifier: GoogleVerifier) extends SimpleAuth with LazyLogging {
+class GoogleOAuth2Strategy(config: Config, db: HakuperusteetDatabase, googleVerifier: GoogleVerifier) extends SimpleAuth with LazyLogging with Control {
   import fi.vm.sade.hakuperusteet._
   val tokenName = "google"
 
@@ -25,7 +26,7 @@ class GoogleBasicAuthStrategy(config: Config, db: HakuperusteetDatabase, googleV
           Some(Session(emailFromRequest, tokenFromRequest, idpentityidFromSession))
         } else {
           logger.warn(s"Session verify failed for user ${emailFromRequest} with token ${tokenFromRequest}")
-          None
+          halt(401)
         }
       case _ => None
     }

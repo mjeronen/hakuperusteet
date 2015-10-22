@@ -35,7 +35,7 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
       case Success(None) => None
       case Failure(f) =>
         logger.error("Oppijantunnistus.validateToken error", f)
-        halt(500)
+        halt(401)
     }
   }
 }
