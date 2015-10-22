@@ -6,6 +6,7 @@ import org.http4s._
 import org.json4s.Formats
 import org.json4s.native.Serialization._
 
+import scala.util.control.NoStackTrace
 import scalaz.\/._
 import scalaz.concurrent.{Future, Task}
 
@@ -23,9 +24,15 @@ trait CasClientUtils extends LazyLogging {
 
   def json4sOf[A](implicit formats: Formats, mf: Manifest[A]): EntityDecoder[A] = EntityDecoder.decodeBy[A](MediaType.`application/json`) {
     case r @ Response(status, _, _, _, _) if status.code == 200 => DecodeResult(EntityDecoder.decodeString(r)(Charset.`UTF-8`).map(parseJson4s[A]))
+    case r @ Response(status, _, _, _, _) if status.code == 409 => throw new ConflictException(fetchBody(r))
     case r @ Response(status, _, _, _, _) =>
-      val commonError = s"CAS-client external request failed with status ${status.code}"
-      logger.error(commonError + s", body ${EntityDecoder.decodeString(r).attemptRun}")
-      throw new InvalidResponseException(commonError)
+      val body = fetchBody(r)
+      logger.error(s"CAS-client external request failed with status ${status.code}, body $body")
+      throw new ServerException(status.code.toString)
   }
+
+  private def fetchBody[A](r: Response) = EntityDecoder.decodeString(r).attemptRun.getOrElse("")
 }
+
+case class ServerException(msg: String) extends Exception(msg) with NoStackTrace
+case class ConflictException(msg: String) extends Exception(msg) with NoStackTrace

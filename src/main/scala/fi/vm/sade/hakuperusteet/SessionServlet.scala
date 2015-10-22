@@ -8,7 +8,7 @@ import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
-import fi.vm.sade.hakuperusteet.util.{AuditLog, ValidationUtil}
+import fi.vm.sade.hakuperusteet.util.{ConflictException, ServerException, AuditLog, ValidationUtil}
 import fi.vm.sade.utils.validator.HenkilotunnusValidator
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -82,9 +82,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
       case Success(token) =>
         logger.info(s"Sending token to $email with value $token")
         halt(status = 200, body = compact(render(Map("token" -> token))))
-      case Failure(f) =>
-        logger.error("Oppijantunnistus.createToken error", f)
-        halt(status = 500)
+      case Failure(f) => logAndHalt("Oppijantunnistus.createToken error", f)
     }
 
   def createNewUser(session: Session, userData: User) = {
@@ -110,18 +108,18 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     emailSender.send(newUser.email, "Welcome to opintopolku", EmailTemplate.renderWelcome(p))
   }
 
-  def upsertUserToHenkilo(userData: User): User = {
-    val newUser = Try(henkiloClient.upsertHenkilo(userData)) match {
+  def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(userData)) match {
       case Success(u) => userData.copy(personOid = Some(u.personOid))
-      case Failure(t) if t.isInstanceOf[java.net.ConnectException] =>
-        logger.error(s"Henkilopalvelu connection error for email ${userData.email}", t)
-        halt(500)
-      case Failure(t) =>
-        val error = s"Henkilopalvelu upsert failed for email ${userData.email}"
-        logger.error(error, t)
-        renderConflictWithErrors(NonEmptyList[String](error))
+      case Failure(t) if t.isInstanceOf[ConflictException] =>
+        val msg = t.getMessage
+        logger.error(s"Henkilopalvelu conflict (409) for email ${userData.email} with message $msg")
+        renderConflictWithErrors(NonEmptyList[String](msg))
+      case Failure(t) => logAndHalt(s"Henkilopalvelu server error for email ${userData.email}", t)
     }
-    newUser
+
+  private def logAndHalt(msg: String, t: Throwable) = {
+    logger.error(msg, t)
+    halt(status = 500)
   }
 
   def parseUserData(email: String, idpentityid: String, params: Params): ValidationResult[User] = {
