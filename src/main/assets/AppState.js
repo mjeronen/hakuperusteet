@@ -39,13 +39,12 @@ export function initAppState(props) {
   const emailUserS = hashS.filter(isLoginToken).flatMap(initEmailAuthentication)
   const googleUserS = gapiLoading.concat(propertiesS.toProperty()).flatMap(initGoogleAuthentication)
 
-  const credentialsS = Bacon.update({},
-    [sessionS], handleSessionUserEvent,
-    [emailUserS], handleEmailUserEvent,
-    [googleUserS], handleGoogleUserEvent
-  ).skipDuplicates().toEventStream()
+  const sessionOkS = sessionS.filter(isNotEmpty)
+  const noSessionAuthenticateWithGoogle = sessionS.combine(googleUserS, toArray).filter(sessionFromServerEmpty).map(user).filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
+  const noSessionAuthenticateWithEmail = sessionS.combine(emailUserS, toArray).filter(sessionFromServerEmpty).map(user).filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
+  const sessionOkGoogleS = noSessionAuthenticateWithGoogle.filter(isNotEmpty)
 
-  const sessionDataS = credentialsS.filter(isNotEmpty).flatMap(authenticate(authenticationUrl)).doAction(sessionInit)
+  const sessionDataS = sessionOkS.merge(sessionOkGoogleS).merge(noSessionAuthenticateWithEmail).doAction(sessionInit)
   const otherApplicationObjects = sessionDataS.flatMap(applicationObjects).map(".hakukohdeOid").filter(notCurrentHakukohde).toEventStream()
   tarjontaLoadBus.plug(otherApplicationObjects)
 
@@ -59,7 +58,6 @@ export function initAppState(props) {
     [propertiesS, hakukohdeS], onStateInit,
     [tarjontaS], onTarjontaValue,
     [cssEffectsBus], onCssEffectValue,
-    [credentialsS], onCredentialsChange,
     [sessionDataS], onSessionDataFromServer,
     [updateFieldS], onUpdateField,
     [logOutS], onLogOut,
@@ -79,23 +77,6 @@ export function initAppState(props) {
 
   return stateP
 
-  function handleSessionUserEvent(_, newSessionUser) {
-    return newSessionUser
-  }
-
-  function handleGoogleUserEvent(currentUser, newGoogleUser) {
-    if(_.isEmpty(currentUser)) return newGoogleUser
-    if(currentUser.idpentityid === "google" && currentUser.token === newGoogleUser.token) return currentUser
-    if(currentUser.idpentityid === "google") return newGoogleUser
-    return currentUser
-  }
-
-  function handleEmailUserEvent(currentUser, newEmailUser) {
-    if(_.isEmpty(currentUser)) return newEmailUser
-    if(currentUser.idpentityid === "oppijaToken") return newEmailUser
-    return currentUser
-  }
-
   function onStateInit(state, properties, hakukohdeOid) {
     return {...state, properties, hakukohdeOid}
   }
@@ -113,16 +94,12 @@ export function initAppState(props) {
     return {...state, effect}
   }
 
-  function onCredentialsChange(state, credentials) {
-    return {...state, credentials}
-  }
-
   function onUpdateField(state, {field, value}) {
     return {...state, [field]: value}
   }
 
   function onLogOut(state, _) {
-    return {...state, ['credentials']: {}, ['sessionData']: {}}
+    return {...state, ['sessionData']: {}}
   }
 
   function onSessionDataFromServer(state, sessionData) {
@@ -140,6 +117,9 @@ export function initAppState(props) {
     return Bacon.once(currentHash)
   }
   function isNotEmpty(x) { return !_.isEmpty(x) }
+  function toArray(l, r) { return [l, r] }
+  function sessionFromServerEmpty([l, r]) { return _.isEmpty(l) }
+  function user([l, r]) { return r }
   function isCssEffect(x) { return _.startsWith(x, "#/effect/") }
   function toCssEffect(x) { return x.replace("#/effect/", "") }
   function checkGapiStatus() {
@@ -163,7 +143,7 @@ function authenticate(authenticationUrl) {
 }
 
 function sessionFromServer(sessionUrl) {
-  return (user) => Bacon.fromPromise(HttpUtil.get(sessionUrl, user)).doError(sessionInit).skipErrors()
+  return (user) => Bacon.fromPromise(HttpUtil.get(sessionUrl, user)).doError(sessionInit).mapError("")
 }
 
 function removeAuthenticationError(_) {

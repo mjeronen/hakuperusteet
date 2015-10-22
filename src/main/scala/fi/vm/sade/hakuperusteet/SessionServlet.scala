@@ -27,19 +27,12 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   post("/authenticate") {
     authenticate
     failUnlessAuthenticated
-
-    db.findUser(user.email) match {
-      case Some(u) =>
-        val educations = db.findApplicationObjects(u).toList
-        val payments = db.findPayments(u).toList
-        write(SessionData(user, Some(u), educations, payments))
-      case None => write(SessionData(user, None, List.empty, List.empty))
-    }
+    returnUserData
   }
 
   get("/session") {
     failUnlessAuthenticated
-    write(user)
+    returnUserData
   }
 
   post("/logout") {
@@ -69,6 +62,16 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     parseEducationData(userData.personOid.getOrElse(halt(500)), params).bitraverse(
       errors => renderConflictWithErrors(errors),
       education => addNewEducation(user, userData, education))
+  }
+
+  private def returnUserData = {
+    db.findUser(user.email) match {
+      case Some(u) =>
+        val educations = db.findApplicationObjects(u).toList
+        val payments = db.findPayments(u).toList
+        write(SessionData(user, Some(u), educations, payments))
+      case None => write(SessionData(user, None, List.empty, List.empty))
+    }
   }
 
   def parseEmailToken(params: Params): ValidationResult[(String, String)] = {
