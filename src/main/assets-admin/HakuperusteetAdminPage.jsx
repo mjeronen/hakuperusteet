@@ -5,7 +5,6 @@ import '../assets-common/css/hakuperusteet.less'
 import './css/admin.less'
 import './css/props.less'
 
-import Header from './Header.jsx'
 import Footer from '../assets-common/Footer.jsx'
 import AdminForm from './HakuperusteetAdminForm.jsx'
 
@@ -35,7 +34,6 @@ export default class HakuperusteetPage extends React.Component {
         </ul>
 
         return <div>
-            <Header />
             <div className="content-area">
                 <div className={oppijaClassName}>
                     <label htmlFor="userSearch">
