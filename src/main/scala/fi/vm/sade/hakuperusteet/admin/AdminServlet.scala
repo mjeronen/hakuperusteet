@@ -8,7 +8,7 @@ import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.util.{ValidationUtil, AuditLog}
-import fi.vm.sade.hakuperusteet.validation.ApplicationObjectValidator
+import fi.vm.sade.hakuperusteet.validation.{PaymentValidator, UserValidator, ApplicationObjectValidator}
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
@@ -24,8 +24,10 @@ import org.json4s.native.Serialization._
 import scalaz._
 import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
+import java.util.Date
 
-class AdminServlet(val resourcePath: String, protected val cfg: Config, applicationObjectValidator: ApplicationObjectValidator, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging with ValidationUtil {
+class AdminServlet(val resourcePath: String, protected val cfg: Config, userValidator: UserValidator, applicationObjectValidator: ApplicationObjectValidator, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging with ValidationUtil {
+  val paymentValidator = PaymentValidator()
   val staticFileContent = Source.fromURL(getClass.getResource(resourcePath)).mkString
   override def realm: String = "hakuperusteet_admin"
   implicit val formats = fi.vm.sade.hakuperusteet.formatsUI
@@ -75,25 +77,30 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, applicat
   post("/api/v1/admin/user") {
     checkAuthentication
     contentType = "application/json"
-    val newUserData = parse(request.body).extract[User]
-    db.findUserByOid(newUserData.personOid.getOrElse(halt(500))) match {
-      case Some(oldUserData) =>
-        val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
-        Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
-          case Success(_) =>
-            db.upsertUser(updatedUserData)
-            AuditLog.auditAdminPostUserdata(user.oid, updatedUserData)
-            syncAndWriteResponse(updatedUserData)
-          case Failure(t) if t.isInstanceOf[ConnectException] =>
-            logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
-            halt(500)
-          case Failure(t) =>
-            val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
-            logger.error(error, t)
-            renderConflictWithErrors(NonEmptyList[String](error))
+    val params = parse(request.body).extract[Params]
+    userValidator.parseUserData(params).bitraverse(
+      errors => renderConflictWithErrors(errors),
+      newUserData => {
+        db.findUserByOid(newUserData.personOid.getOrElse(halt(500))) match {
+          case Some(oldUserData) =>
+            val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
+            Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
+              case Success(_) =>
+                db.upsertUser(updatedUserData)
+                AuditLog.auditAdminPostUserdata(user.oid, updatedUserData)
+                syncAndWriteResponse(updatedUserData)
+              case Failure(t) if t.isInstanceOf[ConnectException] =>
+                logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
+                halt(500)
+              case Failure(t) =>
+                val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
+                logger.error(error, t)
+                renderConflictWithErrors(NonEmptyList[String](error))
+            }
+          case _ => halt(404)
         }
-      case _ => halt(404)
-    }
+      }
+    )
   }
 
   post("/api/v1/admin/applicationobject") {
@@ -114,11 +121,20 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, applicat
   post("/api/v1/admin/payment") {
     checkAuthentication
     contentType = "application/json"
-    val payment = parse(request.body).extract[Payment]
-    db.upsertPayment(payment)
-    val u = db.findUserByOid(payment.personOid).get
-    AuditLog.auditAdminPayment(user.oid, u, payment)
-    syncAndWriteResponse(u)
+    val params = parse(request.body).extract[Params]
+    paymentValidator.parsePaymentWithoutTimestamp(params).bitraverse(
+      errors => renderConflictWithErrors(errors),
+      partialPayment => {
+        val paymentWithoutTimestamp = partialPayment(new Date())
+        val u = db.findUserByOid(paymentWithoutTimestamp.personOid).get
+        val oldPayment = db.findPaymentByOrderNumber(u, paymentWithoutTimestamp.orderNumber).get
+        val payment = partialPayment(oldPayment.timestamp)
+        db.upsertPayment(payment)
+        AuditLog.auditAdminPayment(user.oid, u, payment)
+        syncAndWriteResponse(u)
+      }
+    )
+
   }
 
   error { case e: Throwable => logger.error("uncaught exception", e) }
