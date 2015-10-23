@@ -1,7 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.tarjonta.{EnrichedApplicationObject, Tarjonta}
+import fi.vm.sade.hakuperusteet.tarjonta.Tarjonta
 import org.json4s._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
@@ -19,8 +19,8 @@ class TarjontaServlet(tarjonta: Tarjonta) extends ScalatraServlet with NativeJso
   get("/:hakukohdeoid") {
     Try { tarjonta.getApplicationObject(params("hakukohdeoid")) } match {
       case Success(ao) =>
-        Try { tarjonta.getApplicationSystem(ao.hakuOid) } match {
-          case Success(as) => write(EnrichedApplicationObject(ao, as))
+        Try { tarjonta.enrichHakukohdeWithHaku(ao) } match {
+          case Success(combined) => write(combined)
           case Failure(f) => logAndHalt(f, params("hakukohdeoid"), Some(ao.hakuOid))
         }
       case Failure(f) => logAndHalt(f, params("hakukohdeoid"), None)

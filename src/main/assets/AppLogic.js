@@ -13,7 +13,7 @@ export function serverError(state) {
 }
 
 export function maksumuuriInUseWithSelectedHakukohdeOid(state) {
-  return _.isEmpty(state.hakukohdeOid) || tarjontaForHakukohdeOid(state, state.hakukohdeOid).as.maksumuuriKaytossa == true
+  return _.isEmpty(state.hakukohdeOid) || tarjontaForHakukohdeOid(state, state.hakukohdeOid).maksumuuriKaytossa == true
 }
 
 export function showLoginInfo(state) {
