@@ -17,8 +17,8 @@ export default class ProgramInfo extends React.Component {
       { !fatalError(state) && _.isEmpty(state.hakukohdeOid) ? <EmptyProgramInfo state={state} controller={controller} /> : null}
       { !fatalError(state) && !_.isEmpty(state.hakukohdeOid) ? <SelectedProgramInfo state={state} controller={controller} /> : null}
       { serverError(state) ? <p className="serverError">{translation("errors.server.pageload")}</p> : null}
-      { !maksumuuriInUseWithSelectedHakukohdeOid(state) ? <p className="serverError">{translation("errors.tarjonta.invalid.hakukohde")}</p> : null}
-      { !hakuForSelectedHakukohdeOidIsOpen(state) ? <p className="serverError">{translation("errors.tarjonta.invalid.hakuaika")}</p> : null}
+      { !maksumuuriInUseWithSelectedHakukohdeOid(state) ? <p className="serverError invalidHakuType">{translation("errors.tarjonta.invalid.hakukohde")}</p> : null}
+      { !hakuForSelectedHakukohdeOidIsOpen(state) ? <p className="serverError invalidHakuPeriod">{translation("errors.tarjonta.invalid.hakuaika")}</p> : null}
     </section>
   }
 }

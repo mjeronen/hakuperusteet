@@ -36,6 +36,17 @@ describe('Page without session - invalid login token', () => {
   it('should show login error message', assertOneFound(".authentication-error"))
 })
 
+describe('Page without session - invalid hakuperiod and maksumuuri not in use', () => {
+  before(openPage("/hakuperusteet/ao/1.2.246.562.20.11111111111", hakuperusteetLoaded))
+  it('should show maksumuuri error', assertOneFound(".invalidHakuType"))
+  it('should show hakuperiod error', assertOneFound(".invalidHakuPeriod"))
+
+  it('should not show userDataForm', assertNotFound("#userDataForm"))
+  it('should not show educationForm', assertNotFound("#educationForm"))
+  it('should not show vetuma start', assertNotFound(".vetumaStart"))
+  it('should not show hakuList', assertNotFound(".hakuList"))
+})
+
 describe('Page with email session - userdata', () => {
   before(resetServer)
   before(openPage("/hakuperusteet/ao/1.2.246.562.20.69046715533/#/token/mochaTestToken", hakuperusteetLoaded))
