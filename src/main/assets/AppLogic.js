@@ -1,7 +1,7 @@
 import {tarjontaForHakukohdeOid} from "./util/TarjontaUtil.js"
 
 export function sessionInit(state) {
-  return !_.isUndefined(state.sessionInit) && state.sessionInit == true
+  return !_.isUndefined(state.sessionInit) && state.sessionInit
 }
 
 export function fatalError(state) {
@@ -9,11 +9,11 @@ export function fatalError(state) {
 }
 
 export function serverError(state) {
-  return !_.isUndefined(state.serverError) && state.serverError == true
+  return !_.isUndefined(state.serverError) && state.serverError
 }
 
 export function maksumuuriInUseWithSelectedHakukohdeOid(state) {
-  return _.isEmpty(state.hakukohdeOid) || tarjontaForHakukohdeOid(state, state.hakukohdeOid).maksumuuriKaytossa == true
+  return _.isEmpty(state.hakukohdeOid) || tarjontaForHakukohdeOid(state, state.hakukohdeOid).maksumuuriKaytossa
 }
 
 export function hakuForSelectedHakukohdeOidIsOpen(state) {
@@ -32,7 +32,7 @@ export function hakuForSelectedHakukohdeOidIsJulkaistu(state) {
   if (_.isEmpty(state.hakukohdeOid)) {
     return true
   } else {
-    return tarjontaForHakukohdeOid(state, state.hakukohdeOid).julkaistu == true
+    return tarjontaForHakukohdeOid(state, state.hakukohdeOid).julkaistu
   }
 }
 
