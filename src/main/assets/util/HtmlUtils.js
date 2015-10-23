@@ -23,5 +23,9 @@ export function enableSubmitAndHideBusyAndShowError(form) {
 
 export function enableSubmitAndHideBusy(form) {
   form.querySelector("input[type=submit]").removeAttribute("disabled");
+  hideBusy(form)
+}
+
+export function hideBusy(form) {
   form.querySelector(".ajax-loader").classList.add("hide")
 }

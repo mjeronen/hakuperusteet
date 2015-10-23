@@ -11,7 +11,7 @@ import {initAdminChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from '../assets/util/FieldValidator.js'
 import {applicationObjectWithValidationErrors} from './util/ApplicationObjectValidator.js'
 import {paymentWithValidationErrors} from './util/PaymentValidator.js'
-import {enableSubmitAndHideBusy} from '../assets/util/HtmlUtils.js'
+import {hideBusy} from '../assets/util/HtmlUtils.js'
 
 const dispatcher = new Dispatcher()
 const events = {
@@ -72,10 +72,7 @@ export function initAppState(props) {
     const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
     const userDataFormSubmitS = formSubmittedS.filter(({form}) => form === 'userDataForm').flatMapLatest(({state}) => submitUserDataToServer(state))
     serverUpdatesBus.plug(userDataFormSubmitS)
-    userDataFormSubmitS.onValue((_) => {
-        const form = document.getElementById('userDataForm')
-        enableSubmitAndHideBusy(form)
-    })
+    userDataFormSubmitS.onValue((_) => hideBusy(document.getElementById('userDataForm')))
 
     const educationFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("educationForm_(.*)"))).flatMapLatest(({state, form}) => {
       const hakukohdeOid = form.match(new RegExp("educationForm_(.*)"))[1]
@@ -85,7 +82,7 @@ export function initAppState(props) {
       })
     });
     serverUpdatesBus.plug(educationFormSubmitS.map(({hakukohdeOid, userdata}) => userdata))
-    educationFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
+    educationFormSubmitS.onValue(({form}) => hideBusy(document.getElementById(form)))
 
     const paymentFormSubmitS = formSubmittedS.filter(({form}) => form.match(new RegExp("payment_(.*)"))).flatMapLatest(({state, form}) => {
         const paymentId = form.match(new RegExp("payment_(.*)"))[1]
@@ -95,7 +92,7 @@ export function initAppState(props) {
         })
     });
     serverUpdatesBus.plug(paymentFormSubmitS.map(({form, userdata}) => userdata))
-    paymentFormSubmitS.onValue(({form}) => enableSubmitAndHideBusy(document.getElementById(form)))
+    paymentFormSubmitS.onValue(({form}) => hideBusy(document.getElementById(form)))
 
     function onSearch(state) {
         return {...state, ['isSearching']: true}
