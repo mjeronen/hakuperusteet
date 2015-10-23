@@ -32,7 +32,7 @@ object HakuperusteetBuild extends Build {
         "\nbuildTtime=" + now
       println("writing buildversion.txt:\n" + buildversionTxt)
 
-      val f: File = file("src/main/resources/webapp/buildversion.txt")
+      val f: File = file("src/main/resources/webapp-common/buildversion.txt")
       IO.write(f, buildversionTxt)
   }
 
