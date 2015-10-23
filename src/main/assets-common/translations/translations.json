@@ -57,6 +57,9 @@
       "invalid": {
         "hakukohde": {
           "en": "This programme does not use application fees."
+        },
+        "hakuaika": {
+          "en": "This programme is not open for applying at the moment."
         }
       }
     }
