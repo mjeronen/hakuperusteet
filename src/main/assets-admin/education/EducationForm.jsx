@@ -33,7 +33,7 @@ export default class EducationForm extends React.Component {
     const levelResult = createSelectOptions(baseEducationOptions)
 
     const name = tarjonta.name
-    const disabled = (validateApplicationObject(ao) && !requiredField(ao, "noChanges")) ? "" : "disabled"
+    const disabled = (validateApplicationObject(ao) && !requiredField(ao, "noChanges")) ? undefined : "disabled"
 
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     const countriesResult = createSelectOptions(countries)

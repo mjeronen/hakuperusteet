@@ -17,7 +17,7 @@ export default class UserDataForm extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
-    const disabled = (validateUserDataForm(state) && !requiredField(state, "noChanges")) ? "" : "disabled"
+    const disabled = (validateUserDataForm(state) && !requiredField(state, "noChanges")) ? undefined : "disabled"
     const languages = _.isUndefined(state.properties) ? [] : state.properties.languages
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     const errors = requiredField(state, "noChanges") ? <div className="userDataFormRow">

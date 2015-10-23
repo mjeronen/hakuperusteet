@@ -29,7 +29,7 @@ export default class PaymentForm extends React.Component {
     const formId = "payment_" + payment.id
     const statusId = "paymentStatus_" + payment.id
 
-    const disabled = (validatePayment(payment) && !requiredField(payment, "noChanges")) ? "" : "disabled"
+    const disabled = (validatePayment(payment) && !requiredField(payment, "noChanges")) ? undefined : "disabled"
     const errors = requiredField(payment, "noChanges") ? <div className="userDataFormRow">
       <span className="error">Lomakkeella ei ole muuttuneita tietoja</span>
     </div> : <div className="userDataFormRow">
