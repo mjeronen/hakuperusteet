@@ -6,7 +6,7 @@ import EmptyProgramInfo from './EmptyProgramInfo.jsx'
 import SelectedProgramInfo from './SelectedProgramInfo.jsx'
 
 import {translation} from '../../assets-common/translations/translations.js'
-import {fatalError, serverError} from '../AppLogic.js'
+import {fatalError, serverError, maksumuuriInUseWithSelectedHakukohdeOid} from '../AppLogic.js'
 import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export default class ProgramInfo extends React.Component {
@@ -17,7 +17,7 @@ export default class ProgramInfo extends React.Component {
       { !fatalError(state) && _.isEmpty(state.hakukohdeOid) ? <EmptyProgramInfo state={state} controller={controller} /> : null}
       { !fatalError(state) && !_.isEmpty(state.hakukohdeOid) ? <SelectedProgramInfo state={state} controller={controller} /> : null}
       { serverError(state) ? <p className="serverError">{translation("errors.server.pageload")}</p> : null}
-      { fatalError(state) ? <p className="serverError">{translation("errors.tarjonta.invalid.hakukohde")}</p> : null}
+      { !maksumuuriInUseWithSelectedHakukohdeOid(state) ? <p className="serverError">{translation("errors.tarjonta.invalid.hakukohde")}</p> : null}
     </section>
   }
 }
