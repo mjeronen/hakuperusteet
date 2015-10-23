@@ -7,7 +7,7 @@ import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
-import fi.vm.sade.hakuperusteet.domain.{ApplicationObjects, Users}
+import fi.vm.sade.hakuperusteet.domain.{ApplicationObjects, Users, Payments}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import org.flywaydb.core.Flyway
 import slick.util.AsyncExecutor
@@ -39,12 +39,14 @@ object HakuperusteetAdminTestServer extends LazyLogging {
     HakuperusteetTestServer.cleanDB()
     val db = HakuperusteetDatabase.init(Configuration.props)
 
-    val userAndApplication = Users.generateUsers.map(u => (u, ApplicationObjects.generateApplicationObject(u)))
-    userAndApplication.foreach{case (user, applicationObjects) =>
+    val userAndApplication = Users.generateUsers.map(u =>
+      (u, ApplicationObjects.generateApplicationObject(u), Payments.generatePayments(u)))
+    userAndApplication.foreach{case (user, applicationObjects, payments) =>
       val u = db.findUser(user.email)
       if(u.isEmpty) {
         db.upsertUser(user)
         applicationObjects.foreach(db.upsertApplicationObject)
+        payments.foreach(db.upsertPayment)
       }}
   }
 
