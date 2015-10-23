@@ -52,7 +52,7 @@ object HakuperusteetTestServer {
     server.setExecutor(null)
     server.start
   }
-
+  def restart(): Unit = hakuperusteetTestServer.restart
   def cleanDB(): Unit = {
     val config = Configuration.props
     val url = config.getString("hakuperusteet.db.url")
@@ -62,7 +62,6 @@ object HakuperusteetTestServer {
     flyway.setDataSource(url, user, password)
     flyway.clean
     flyway.migrate
-    hakuperusteetTestServer.restart
   }
 }
 
@@ -71,6 +70,7 @@ class ResetHandler() extends HttpHandler {
   implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
   override def handle(t: HttpExchange) = {
     HakuperusteetTestServer.cleanDB()
+    HakuperusteetTestServer.restart()
     val response = "OK"
     t.getResponseHeaders.add("Access-Control-Allow-Origin", "*")
     t.sendResponseHeaders(200, response.length)
