@@ -10,7 +10,7 @@ hakuperusteet.port.http={{palvelu_portti}}
 hakuperusteet.port.https={{palvelu_portti_https}}
 hakuperusteetadmin.port.http={{palvelu_portti}}
 hakuperusteetadmin.port.https={{palvelu_portti_https}}
-rsa.sign.key={{hakuperusteet_rsa_sign_key}}
+rsa.sign.key={{app_path}}/rsaSignKey.der
 
 hakuperusteet.cas.url=https://{{host_cas}}
 hakuperusteet.user={{hakuperusteet_cas_user}}
