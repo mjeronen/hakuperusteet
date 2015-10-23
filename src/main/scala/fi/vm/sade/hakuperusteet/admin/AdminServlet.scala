@@ -5,9 +5,10 @@ import java.net.ConnectException
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.admin.auth.CasAuthenticationSupport
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
-import fi.vm.sade.hakuperusteet.domain.{Payment, ApplicationObject, UserData, User}
+import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
-import fi.vm.sade.hakuperusteet.util.AuditLog
+import fi.vm.sade.hakuperusteet.util.{ValidationUtil, AuditLog}
+import fi.vm.sade.hakuperusteet.validation.ApplicationObjectValidator
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
@@ -20,8 +21,11 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.JsonDSL._
 import org.json4s.native.Serialization._
+import scalaz._
+import scalaz.syntax.applicative._
+import scalaz.syntax.validation._
 
-class AdminServlet(val resourcePath: String, protected val cfg: Config, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging {
+class AdminServlet(val resourcePath: String, protected val cfg: Config, applicationObjectValidator: ApplicationObjectValidator, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging with ValidationUtil {
   val staticFileContent = Source.fromURL(getClass.getResource(resourcePath)).mkString
   override def realm: String = "hakuperusteet_admin"
   implicit val formats = fi.vm.sade.hakuperusteet.formatsUI
@@ -95,11 +99,16 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
   post("/api/v1/admin/applicationobject") {
     checkAuthentication
     contentType = "application/json"
-    val ao = parse(request.body).extract[ApplicationObject]
-    db.upsertApplicationObject(ao)
-    val u = db.findUserByOid(ao.personOid).get
-    AuditLog.auditAdminPostEducation(user.oid, u, ao)
-    syncAndWriteResponse(u)
+    val params = parse(request.body).extract[Params]
+    applicationObjectValidator.parseApplicationObject(params).bitraverse(
+      errors => renderConflictWithErrors(errors),
+      education => {
+        db.upsertApplicationObject(education)
+        val u = db.findUserByOid(education.personOid).get
+        AuditLog.auditAdminPostEducation(user.oid, u, education)
+        syncAndWriteResponse(u)
+      }
+    )
   }
 
   post("/api/v1/admin/payment") {
@@ -119,7 +128,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, db: Haku
   private def syncAndWriteResponse(u: User) = {
     val data = fetchUserData(u)
     insertSyncRequests(data)
-    write(data)
+    halt(status = 200, body = write(data))
   }
 
   private def insertSyncRequests(u: UserData) = u.applicationObject.foreach(db.insertSyncRequest(u.user, _))

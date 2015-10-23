@@ -19,6 +19,10 @@ trait ValidationUtil {
 
   def parseOptional(key: String)(params: Params) = params.get(key) match { case e => e.successNel }
 
+  def parseOptionalInt(key: String)(params: Params) = params.get(key) match { case Some(i) => Try(Option(i.toInt).successNel).recover{
+    case e => e.getMessage.failureNel
+  }.get}
+
   def parseLocalDate(input: String): ValidationResult[LocalDate] =
     Try(LocalDate.parse(input, DateTimeFormatter.ofPattern("ddMMyyyy")).successNel).recover {
       case e => e.getMessage.failureNel

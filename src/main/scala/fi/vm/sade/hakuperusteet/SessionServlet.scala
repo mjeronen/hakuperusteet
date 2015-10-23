@@ -9,6 +9,7 @@ import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.{ConflictException, ServerException, AuditLog, ValidationUtil}
+import fi.vm.sade.hakuperusteet.validation.ApplicationObjectValidator
 import fi.vm.sade.utils.validator.HenkilotunnusValidator
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -20,7 +21,7 @@ import scalaz._
 import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
 
-class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, countries: Countries, languages: Languages, educations: Educations, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) with ValidationUtil {
+class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, countries: Countries, languages: Languages, applicationObjectValidator: ApplicationObjectValidator, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) with ValidationUtil {
   case class UserDataResponse(field: String, value: SessionData)
 
   val henkiloClient = HenkiloClient.init(config)
@@ -61,9 +62,10 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     failUnlessAuthenticated
     val params = parse(request.body).extract[Params]
     val userData = userDataFromSession
-    parseEducationData(userData.personOid.getOrElse(halt(500)), params).bitraverse(
+    applicationObjectValidator.parseApplicationObjectWithoutPersonOid(params).bitraverse(
       errors => renderConflictWithErrors(errors),
-      education => addNewEducation(user, userData, education))
+      education => addNewEducation(user, userData, education(userData.personOid.getOrElse(halt(500))))
+    )
   }
 
   private def returnUserData = {
@@ -140,15 +142,6 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     }
   }
 
-  def parseEducationData(personOid: String, params: Params): ValidationResult[ApplicationObject] = {
-    (parseNonEmpty("hakukohdeOid")(params)
-      |@| parseNonEmpty("hakuOid")(params)
-      |@| parseExists("educationLevel")(params).flatMap(validateEducationLevel)
-      |@| parseExists("educationCountry")(params).flatMap(validateCountry)
-      ) { (hakukohdeOid, hakuOid, educationLevel, educationCountry) =>
-      ApplicationObject(None, personOid, hakukohdeOid, hakuOid, educationLevel, educationCountry)
-    }
-  }
   private def validateGender(gender: String): ValidationResult[String] =
     if (gender == "1" || gender == "2") gender.successNel
     else  s"gender value $gender is invalid".failureNel
@@ -160,10 +153,6 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   private def validateCountry(nationality: String): ValidationResult[String] =
     if (countries.countries.map(_.id).contains(nationality)) nationality.successNel
     else s"unknown country $nationality".failureNel
-
-  private def validateEducationLevel(educationLevel: String): ValidationResult[String] =
-    if (educations.educations.map(_.id).contains(educationLevel)) educationLevel.successNel
-    else s"unknown educationLevel $educationLevel".failureNel
 
   def parseOptionalPersonalId(params: Params): ValidationResult[Option[String]] =
     (params.get("birthDate"), params.get("personId")) match {
