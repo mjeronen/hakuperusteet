@@ -5,7 +5,7 @@ export function sessionInit(state) {
 }
 
 export function fatalError(state) {
-  return serverError(state) || !maksumuuriInUseWithSelectedHakukohdeOid(state) || !hakuForSelectedHakukohdeOidIsOpen(state)
+  return serverError(state) || !maksumuuriInUseWithSelectedHakukohdeOid(state) || !hakuForSelectedHakukohdeOidIsOpen(state) || !hakuForSelectedHakukohdeOidIsJulkaistu(state)
 }
 
 export function serverError(state) {
@@ -25,6 +25,14 @@ export function hakuForSelectedHakukohdeOidIsOpen(state) {
     const endDate = new Date(t.endDate)
     const now = new Date()
     return (startDate < now) && (now < endDate)
+  }
+}
+
+export function hakuForSelectedHakukohdeOidIsJulkaistu(state) {
+  if (_.isEmpty(state.hakukohdeOid)) {
+    return true
+  } else {
+    return tarjontaForHakukohdeOid(state, state.hakukohdeOid).julkaistu == true
   }
 }
 

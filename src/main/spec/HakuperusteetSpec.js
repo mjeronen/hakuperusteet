@@ -40,6 +40,7 @@ describe('Page without session - invalid hakuperiod and maksumuuri not in use', 
   before(openPage("/hakuperusteet/ao/1.2.246.562.20.11111111111", hakuperusteetLoaded))
   it('should show maksumuuri error', assertOneFound(".invalidHakuType"))
   it('should show hakuperiod error', assertOneFound(".invalidHakuPeriod"))
+  it('should show julkaistu error', assertOneFound(".invalidJulkaistu"))
 
   it('should not show userDataForm', assertNotFound("#userDataForm"))
   it('should not show educationForm', assertNotFound("#educationForm"))
