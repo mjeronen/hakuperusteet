@@ -52,6 +52,13 @@
       "invalid": {
         "en": "Invalid authentication credentials."
       }
+    },
+    "tarjonta": {
+      "invalid": {
+        "hakukohde": {
+          "en": "This programme does not use application fees."
+        }
+      }
     }
   },
   "success": {
