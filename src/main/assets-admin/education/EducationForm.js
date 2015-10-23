@@ -8,7 +8,7 @@ export function submitEducationDataToServer(state, ao, form) {
   const educationData = {
     id: ao.id,
     personOid: state.personOid,
-    hakuOid: tarjontaForHakukohdeOid(state, state.hakukohdeOid).hakuOid,
+    hakuOid: tarjontaForHakukohdeOid(state, ao.hakukohdeOid).hakuOid,
     hakukohdeOid: ao.hakukohdeOid,
     educationLevel: ao.educationLevel,
     educationCountry: ao.educationCountry
