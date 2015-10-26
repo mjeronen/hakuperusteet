@@ -21,14 +21,16 @@ export default class HakuperusteetPage extends React.Component {
     const controller = this.props.controller
     return <div>
       <Header />
-      <ProgramInfo state={state} />
-      <Session state={state} controller={controller} />
-      { showUserDataForm(state) ? <UserDataForm state={state} controller={controller} /> : null}
-      { showEducationForm(state) ? <EducationForm state={state} controller={controller} /> : null}
-      { showVetumaStart(state) ? <VetumaStart state={state} /> : null}
-      { showHakuList(state) ? <HakuList state={state} /> : null}
-      <VetumaResultWrapper state={state}/>
-      <Footer />
+      <div className="content">
+        <ProgramInfo state={state} />
+        <Session state={state} controller={controller} />
+        { showUserDataForm(state) ? <UserDataForm state={state} controller={controller} /> : null}
+        { showEducationForm(state) ? <EducationForm state={state} controller={controller} /> : null}
+        { showVetumaStart(state) ? <VetumaStart state={state} /> : null}
+        { showHakuList(state) ? <HakuList state={state} /> : null}
+        <VetumaResultWrapper state={state}/>
+        <Footer />
+      </div>
     </div>
   }
 }

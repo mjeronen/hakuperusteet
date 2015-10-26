@@ -1,13 +1,17 @@
 @import "fonts";
 
+@pageWidth: 1160px;
+@minWidth: 500px;
+
 @formLeftColumnWidth: 200px;
 @formLabelWidth: 175px;
 @formLabelPadding: 25px;
-@marginLeft: 15%;
 
 body {
   margin: 0;
   background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
 }
 
 .hide {
@@ -27,21 +31,34 @@ body {
   display: block;
 }
 
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  & > div, & > section, & > footer {
+    min-width: @minWidth;
+    width: @pageWidth;
+    max-width: @pageWidth;
+  }
+}
+
 #header {
   width: 100%;
   height: 90px;
   background-color: #149ECB;
-  border: 0;
-  margin: 0;
-  img {
-    margin-left: @marginLeft;
-    border: none;
-    padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .headerContent {
+    min-width: @minWidth;
+    width: @pageWidth;
+    max-width: @pageWidth;
   }
 }
 
 #session {
-  margin-left: @marginLeft;
   .googleAuthentication {
     padding: 20px 0 20px 0;
     #logout {
@@ -98,14 +115,12 @@ p {
 }
 
 #program-info {
-  margin-left: @marginLeft;
   border-bottom: 1px solid #e6e6e6;
   margin-bottom: 20px;
 }
 
 #userDataForm {
   p {
-    margin-left: @marginLeft;
     padding-bottom: 10px;
   }
 }
@@ -174,7 +189,6 @@ p {
 
 #educationForm {
   p {
-    margin-left: @marginLeft;
     padding-bottom: 10px;
   }
 }
@@ -225,17 +239,8 @@ select {
   border-radius: 0;
 }
 
-.vetumaStart {
-  margin-left: @marginLeft;
-}
-
 .vetumaResult {
   .Font(14px);
-  margin-left: @marginLeft;
-}
-
-.hakuList {
-  margin-left: @marginLeft;
 }
 
 .vetuma-result-enter {
@@ -263,10 +268,10 @@ select {
 }
 
 footer {
-  margin: 25px 0 0 @marginLeft;
   border: 1px solid #dddddd;
   overflow: auto;
   padding: 9px 0;
+  margin-bottom: 10px;
   .footer-logo {
     display: inline-block;
     width: 50%;
