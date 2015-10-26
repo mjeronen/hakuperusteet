@@ -5,7 +5,6 @@ import '../assets-common/css/hakuperusteet.less'
 import './css/admin.less'
 import './css/props.less'
 
-import Footer from '../assets-common/Footer.jsx'
 import AdminForm from './HakuperusteetAdminForm.jsx'
 
 export default class HakuperusteetPage extends React.Component {
@@ -46,8 +45,6 @@ export default class HakuperusteetPage extends React.Component {
                 </div>
                 <AdminForm state={state} controller={controller} />
             </div>
-
-            <Footer />
         </div>
     }
 
