@@ -128,7 +128,7 @@ export function initAppState(props) {
         return {...state, [field]: value}
     }
     function onUpdateUser(state, user) {
-        const referenceUser = decorateWithHasPersonId(user.user)
+        const referenceUser = withPartialPersonId(decorateWithHasPersonId(user.user))
         const fromServer = {['fromServer']: {...user, ['user']: referenceUser}}
         const payments = {['payments']: _.map(user.payments, withNoChanges)}
         const applicationObjects = {['applicationObjects']: _.map(user.applicationObject, withNoChanges)}
@@ -146,6 +146,10 @@ export function initAppState(props) {
         return match ? match[1] : null
     }
     // Helper functions
+    function withPartialPersonId(obj) {
+        const HETU_LEN = 11
+        return obj.personId.length == HETU_LEN ? {...obj, ['personId']: obj.personId.substring(HETU_LEN - 5, HETU_LEN)} : obj
+    }
     function withChanges(obj) {
         const currentValidationErrors = obj.validationErrors || {}
         return {...obj, ['validationErrors']: {...currentValidationErrors, ['noChanges']: null}}
