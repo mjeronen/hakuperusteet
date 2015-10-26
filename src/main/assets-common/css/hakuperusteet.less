@@ -3,9 +3,9 @@
 @pageWidth: 1160px;
 @minWidth: 500px;
 
-@formLeftColumnWidth: 200px;
 @formLabelWidth: 175px;
 @formLabelPadding: 25px;
+@formLeftColumnWidth: @formLabelWidth + @formLabelPadding;
 
 body {
   margin: 0;
@@ -36,7 +36,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  & > div, & > section, & > footer {
+  & > div, & > section, & > footer, & > form {
     min-width: @minWidth;
     width: @pageWidth;
     max-width: @pageWidth;
@@ -126,21 +126,13 @@ p {
 }
 
 .userDataFormRow {
-  margin-left: 10%;
   min-height: 50px;
-  p {
-    margin-left: @formLeftColumnWidth;
-  }
-  .serverError {
-    margin-left: @formLeftColumnWidth;
-  }
   .error {
-    margin-left: @formLeftColumnWidth;
     .FontError(14px);
     display: block;
+    margin-left: @formLeftColumnWidth;
   }
   .info {
-    margin-left: @formLeftColumnWidth;
     display: block;
     padding-bottom: 10px;
   }
@@ -150,15 +142,12 @@ p {
   input {
     vertical-align: top;
   }
-  input[type=submit] {
-    margin-left: @formLeftColumnWidth;
-  }
   input[type=checkbox] {
     display: inline-block;
-    margin-left: @formLeftColumnWidth;
     width: 17px;
     height: 17px;
     border: 1px solid #999290;
+    margin-left: @formLeftColumnWidth;
   }
   label {
     width: @formLabelWidth;
@@ -170,7 +159,7 @@ p {
     text-align: left;
   }
   .ssnLabel {
-    width: 260px;
+    width: 300px;
     text-align: left;
     padding-right: 0;
   }
@@ -184,6 +173,9 @@ p {
     .Font(12px);
     color: #d0d0d0;
     padding-left: 10px;
+  }
+  input[type=submit] {
+    margin-left: @formLeftColumnWidth;
   }
 }
 
