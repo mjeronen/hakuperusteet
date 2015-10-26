@@ -1,7 +1,8 @@
 import {expect, done} from 'chai'
-import {resetServer, openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S, S2} from './testUtil.js'
+import {resetServer, openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S, S2, directLogout} from './testUtil.js'
 
 describe('Page without session', () => {
+  before(directLogout)
   before(openPage("/hakuperusteet", hakuperusteetLoaded))
 
   it('should show Google login button', assertOneFound(".googleAuthentication.login"))

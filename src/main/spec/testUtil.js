@@ -193,3 +193,9 @@ export var wait = {
     }
   }
 }
+
+export function directLogout() {
+  var deferred = Q.defer()
+  $.post("http://localhost:8081/hakuperusteet/api/v1/session/logout", (_) => { deferred.resolve() })
+  return deferred.promise
+}
