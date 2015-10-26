@@ -8,16 +8,27 @@ import org.scalatra.auth.strategy.BasicAuthSupport
 import org.scalatra.auth.{ScentryConfig, ScentrySupport}
 
 object CasSessionDB {
-  val db = new java.util.concurrent.ConcurrentHashMap[String,CasSession]()
+  private val db = new java.util.concurrent.ConcurrentHashMap[String,CasSession]()
 
+  def insert(session: CasSession) = {
+    db.put(session.ticket, session)
+  }
+
+  def get(ticket: String) = {
+    db.get(ticket)
+  }
+
+  def invalidate(ticket:String) = {
+    db.remove(ticket)
+  }
 }
 
 trait CasAuthenticationSupport extends ScentrySupport[CasSession] with BasicAuthSupport[CasSession] { self: AdminServlet =>
   override abstract def initialize(config: ConfigT) = super.initialize(config)
   protected val scentryConfig = (new ScentryConfig {}).asInstanceOf[ScentryConfiguration]
 
-  protected def fromSession = { case username: String => CasSessionDB.db.get(username) }
-  protected def toSession = { case usr: CasSession => usr.username }
+  protected def fromSession = { case ticket: String => CasSessionDB.get(ticket) }
+  protected def toSession = { case usr: CasSession => usr.ticket }
 
   override protected def registerAuthStrategies = {
     scentry.register("CAS", app => new CasBasicAuthStrategy(app, cfg))

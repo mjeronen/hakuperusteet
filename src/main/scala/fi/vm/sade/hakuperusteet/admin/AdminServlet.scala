@@ -3,7 +3,8 @@ package fi.vm.sade.hakuperusteet.admin
 import java.net.ConnectException
 
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.admin.auth.CasAuthenticationSupport
+import fi.vm.sade.hakuperusteet.admin.auth.{CasSessionDB, CasAuthenticationSupport}
+import fi.vm.sade.hakuperusteet.auth.JavaEESessionAuthentication
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
@@ -13,9 +14,10 @@ import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
 import com.typesafe.config.Config
-
+import scala.collection.JavaConversions._
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
+import scala.xml.Utility
 import scalaz.NonEmptyList
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -48,6 +50,20 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
     checkAuthentication
     contentType = "text/html"
     staticFileContent
+  }
+  post("/") {
+    val logoutRequest = params.getOrElse("logoutRequest",halt(500))
+    Utility.trim(scala.xml.XML.loadString(logoutRequest)) match {
+      case <samlp:LogoutRequest><saml:NameID>{nameID}</saml:NameID><samlp:SessionIndex>{ticket}</samlp:SessionIndex></samlp:LogoutRequest> => {
+        CasSessionDB.invalidate(s"${ticket}")
+        logger.debug(s"Ticket ${ticket} invalidated!")
+        halt(200)
+      }
+      case _ => {
+        logger.error(s"Invalid logout request: ${logoutRequest}")
+        halt(500, "Invalid logout request!")
+      }
+    }
   }
   get("/oppija/*") {
     checkAuthentication
