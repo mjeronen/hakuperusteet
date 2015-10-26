@@ -15,7 +15,7 @@ import org.scalatra.LifeCycle
 
 class ScalatraBootstrap extends LifeCycle with GlobalExecutionContext {
   val config = Configuration.props
-  val database = HakuperusteetDatabase.init(config)
+  val database = HakuperusteetDatabase.database
   val verifier = GoogleVerifier.init(config)
   val signer = RSASigner.init(config)
   val countries = Koodisto.initCountries(config)

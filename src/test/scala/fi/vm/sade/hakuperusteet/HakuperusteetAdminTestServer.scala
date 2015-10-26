@@ -34,10 +34,8 @@ object HakuperusteetAdminTestServer extends LazyLogging {
   }
   private def initDB() = {
     // Generate test data
-    implicit val executor = GlobalExecutionContext.context
-    implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
+    val db = HakuperusteetDatabase.database
     HakuperusteetTestServer.cleanDB()
-    val db = HakuperusteetDatabase.init(Configuration.props)
 
     val userAndApplication = Users.generateUsers.map(u =>
       (u, ApplicationObjects.generateApplicationObject(u), Payments.generatePayments(u)))
@@ -60,8 +58,6 @@ object HakuperusteetAdminTestServer extends LazyLogging {
   private def startCommandServer() {
     val server = HttpServer.create(new InetSocketAddress(9000), 0)
     server.createContext("/testoperation/reset", new HttpHandler() {
-      implicit val executor = GlobalExecutionContext.context
-      implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
       override def handle(t: HttpExchange) = {
         initDB()
         val response = "OK"

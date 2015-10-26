@@ -19,24 +19,10 @@ class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers 
     EmbeddedPostgreSql.startEmbeddedPostgreSql
   }
 
-  val config = Configuration.props
-  val db = HakuperusteetDatabase.init(config)
+  val db = HakuperusteetDatabase.database
 
   override def beforeAll() = {
-    clearDatabase()
-  }
-
-  private def clearDatabase() {
-    val url = config.getString("hakuperusteet.db.url")
-    val user = config.getString("hakuperusteet.db.username")
-    val password = config.getString("hakuperusteet.db.password")
-    val flyway = new Flyway
-    flyway.setLocations("filesystem:src/main/resources/db/migration")
-    flyway.setDataSource(url, user, password)
-    flyway.setSchemas(HakuperusteetDatabase.schemaName)
-    flyway.setValidateOnMigrate(false)
-    flyway.clean
-    flyway.migrate
+    HakuperusteetTestServer.cleanDB()
   }
 
   it should "should create new session" in {

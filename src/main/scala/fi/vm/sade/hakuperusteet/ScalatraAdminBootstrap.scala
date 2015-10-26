@@ -16,7 +16,7 @@ import scala.io.Source
 
 class ScalatraAdminBootstrap extends LifeCycle with GlobalExecutionContext {
   val config = Configuration.props
-  val database = HakuperusteetDatabase.init(config)
+  val database = HakuperusteetDatabase.database
   val countries = Koodisto.initCountries(config)
   val languages = Koodisto.initLanguages(config)
   val educations = Koodisto.initBaseEducation(config)

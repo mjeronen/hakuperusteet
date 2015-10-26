@@ -6,6 +6,7 @@ import java.util.{Calendar, Date}
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
+import fi.vm.sade.hakuperusteet.Configuration
 import fi.vm.sade.hakuperusteet.admin.SynchronizationStatus
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
@@ -96,6 +97,9 @@ case class HakuperusteetDatabase(db: DB) {
 object HakuperusteetDatabase extends LazyLogging {
   type DB = PostgresDriver.backend.DatabaseDef
   val schemaName = "public"
+  val database = init(Configuration.props)(GlobalExecutionContext.asyncExecutor)
+
+  def initDatabase() = database
 
   def init(config: Config)(implicit executor: AsyncExecutor): HakuperusteetDatabase = {
     val url = config.getString("hakuperusteet.db.url")

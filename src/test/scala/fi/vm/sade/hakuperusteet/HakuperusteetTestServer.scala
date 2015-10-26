@@ -2,6 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import java.io.File
 import java.net.InetSocketAddress
+import java.sql.DriverManager
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
 import com.typesafe.config.Config
@@ -22,7 +23,6 @@ class HakuperusteetTestServer extends HakuperusteetServer {
 object HakuperusteetTestServer {
   val logger = LoggerFactory.getLogger(this.getClass)
   val isEmbeddedConfig = System.getProperty("embedded", "false") == "true"
-  var hakuperusteetTestServer:HakuperusteetTestServer = null
 
   /*
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
@@ -35,8 +35,7 @@ object HakuperusteetTestServer {
     }
     startMockServer()
     startCommandServer()
-    hakuperusteetTestServer = new HakuperusteetTestServer
-    hakuperusteetTestServer.runServer()
+    new HakuperusteetTestServer().runServer()
     logger.info("Started HakuperusteetTestServer")
   }
 
@@ -52,25 +51,29 @@ object HakuperusteetTestServer {
     server.setExecutor(null)
     server.start
   }
-  def restart(): Unit = hakuperusteetTestServer.restart
+
   def cleanDB(): Unit = {
     val config = Configuration.props
     val url = config.getString("hakuperusteet.db.url")
     val user = config.getString("hakuperusteet.db.username")
     val password = config.getString("hakuperusteet.db.password")
-    val flyway = new Flyway
-    flyway.setDataSource(url, user, password)
-    flyway.clean
-    flyway.migrate
+    val jdbcConnection = DriverManager.getConnection(url, user, password)
+    val dbmd = jdbcConnection.getMetaData()
+    val rs = dbmd.getTables(null, "public", "%", Array("TABLE"))
+    try {
+      Array("application_object", "payment", "synchronization","user","jettysessionids","jettysessions")
+        .foreach(name => jdbcConnection.createStatement.execute("DELETE from \"" + name + "\";"))
+    } catch {
+      case e: Exception => {
+        e.printStackTrace()
+      }
+    }
   }
 }
 
 class ResetHandler() extends HttpHandler {
-  implicit val executor = GlobalExecutionContext.context
-  implicit val asyncExecutor: AsyncExecutor = GlobalExecutionContext.asyncExecutor
   override def handle(t: HttpExchange) = {
     HakuperusteetTestServer.cleanDB()
-    HakuperusteetTestServer.restart()
     val response = "OK"
     t.getResponseHeaders.add("Access-Control-Allow-Origin", "*")
     t.sendResponseHeaders(200, response.length)

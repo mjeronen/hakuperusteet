@@ -2,9 +2,8 @@ package fi.vm.sade.hakuperusteet
 
 import fi.vm.sade.hakuperusteet.Configuration._
 import fi.vm.sade.hakuperusteet.HakuperusteetServer._
+import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.util.JettyUtil
-import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.server.session.JDBCSessionIdManager
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.util.resource.ResourceCollection
 import org.eclipse.jetty.webapp.WebAppContext
@@ -12,8 +11,6 @@ import org.scalatra.servlet.ScalatraListener
 import org.slf4j.LoggerFactory
 
 class HakuperusteetServer {
-  private var server:Server = null
-
   def portHttp = props.getInt("hakuperusteet.port.http")
   def portHttps = Option(props.getInt("hakuperusteet.port.https")).find(_ != -1)
 
@@ -21,16 +18,11 @@ class HakuperusteetServer {
     val dbUrl = props.getString("hakuperusteet.db.url")
     val user = props.getString("hakuperusteet.db.username")
     val password = props.getString("hakuperusteet.db.password")
-    server = JettyUtil.createServerWithContext(portHttp, portHttps, createContext, dbUrl, user, password)
+    HakuperusteetDatabase.initDatabase()
+    val server = JettyUtil.createServerWithContext(portHttp, portHttps, createContext, dbUrl, user, password)
     server.start
     server.join
     logger.info(s"Using ports $portHttp and $portHttps")
-  }
-
-  def restart {
-    val idManager = server.getSessionIdManager.asInstanceOf[JDBCSessionIdManager]
-    idManager.doStop()
-    idManager.doStart()
   }
 
   def createContext = {
