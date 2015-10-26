@@ -3,7 +3,7 @@ package fi.vm.sade.hakuperusteet.admin
 import java.net.ConnectException
 
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.admin.auth.{CasSessionDB, CasAuthenticationSupport}
+import fi.vm.sade.hakuperusteet.admin.auth.{CasLogout, CasSessionDB, CasAuthenticationSupport}
 import fi.vm.sade.hakuperusteet.auth.JavaEESessionAuthentication
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.domain._
@@ -53,17 +53,14 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
   }
   post("/") {
     val logoutRequest = params.getOrElse("logoutRequest",halt(500))
-    Utility.trim(scala.xml.XML.loadString(logoutRequest)) match {
-      case <samlp:LogoutRequest><saml:NameID>{nameID}</saml:NameID><samlp:SessionIndex>{ticket}</samlp:SessionIndex></samlp:LogoutRequest> => {
-        CasSessionDB.invalidate(s"${ticket}")
-        logger.debug(s"Ticket ${ticket} invalidated!")
-        halt(200)
-      }
-      case _ => {
+    CasLogout.parseTicketFromLogoutRequest(logoutRequest) match {
+      case Some(ticket) => CasSessionDB.invalidate(ticket)
+      case None => {
         logger.error(s"Invalid logout request: ${logoutRequest}")
         halt(500, "Invalid logout request!")
       }
     }
+    halt(200)
   }
   get("/oppija/*") {
     checkAuthentication
@@ -96,26 +93,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
     val params = parse(request.body).extract[Params]
     userValidator.parseUserData(params).bitraverse(
       errors => renderConflictWithErrors(errors),
-      newUserData => {
-        db.findUserByOid(newUserData.personOid.getOrElse(halt(500))) match {
-          case Some(oldUserData) =>
-            val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
-            Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
-              case Success(_) =>
-                db.upsertUser(updatedUserData)
-                AuditLog.auditAdminPostUserdata(user.oid, updatedUserData)
-                syncAndWriteResponse(updatedUserData)
-              case Failure(t) if t.isInstanceOf[ConnectException] =>
-                logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
-                halt(500)
-              case Failure(t) =>
-                val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
-                logger.error(error, t)
-                renderConflictWithErrors(NonEmptyList[String](error))
-            }
-          case _ => halt(404)
-        }
-      }
+      newUserData => saveUserData(newUserData)
     )
   }
 
@@ -154,6 +132,27 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
   }
 
   error { case e: Throwable => logger.error("uncaught exception", e) }
+
+  private def saveUserData(newUserData: User) = {
+    db.findUserByOid(newUserData.personOid.getOrElse(halt(500))) match {
+      case Some(oldUserData) =>
+        val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
+        Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
+          case Success(_) =>
+            db.upsertUser(updatedUserData)
+            AuditLog.auditAdminPostUserdata(user.oid, updatedUserData)
+            syncAndWriteResponse(updatedUserData)
+          case Failure(t) if t.isInstanceOf[ConnectException] =>
+            logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
+            halt(500)
+          case Failure(t) =>
+            val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
+            logger.error(error, t)
+            renderConflictWithErrors(NonEmptyList[String](error))
+        }
+      case _ => halt(404)
+    }
+  }
 
   private def fetchUserData(u: User): UserData = UserData(u, db.findApplicationObjects(u), db.findPayments(u))
 
