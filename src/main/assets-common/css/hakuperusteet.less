@@ -241,19 +241,17 @@ select {
 .vetuma-result-enter {
   opacity: 0.01;
   transition: opacity 1s ease-in;
-}
-
-.vetuma-result-enter.vetuma-result-enter-active {
-  opacity: 1;
+  &.vetuma-result-enter-active {
+    opacity: 1;
+  }
 }
 
 .vetuma-result-leave {
   opacity: 1;
-}
-
-.vetuma-result-leave.vetuma-result-leave-active {
-  opacity: 0.01;
-  transition: opacity .9s ease-in;
+  &.vetuma-result-leave-active {
+    opacity: 0.01;
+    transition: opacity .9s ease-in;
+  }
 }
 
 .loginerror-result-appear {
