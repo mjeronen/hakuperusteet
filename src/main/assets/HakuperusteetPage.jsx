@@ -8,7 +8,7 @@ import {showUserDataForm, showEducationForm, showVetumaStart, showHakuList} from
 import Header from './Header.jsx'
 import Session from './session/Session.jsx'
 import ProgramInfo from './programinfo/ProgramInfo.jsx'
-import Footer from '../assets-common/Footer.jsx'
+import Footer from './Footer.jsx'
 import VetumaResultWrapper from './vetuma/VetumaResultWrapper.jsx'
 import UserDataForm from './userdata/UserDataForm.jsx'
 import EducationForm from './education/EducationForm.jsx'
