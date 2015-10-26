@@ -18,10 +18,6 @@ export default class EducationForm extends React.Component {
     this.changes = props.controller.pushEducationFormChanges
   }
 
-  componentDidMount() {
-    this.changes(this.props.applicationObject)
-  }
-
   render() {
     const state = this.props.state
     const controller = this.props.controller

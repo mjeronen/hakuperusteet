@@ -14,7 +14,6 @@ export default class EducationLevel extends React.Component {
 
   componentDidMount() {
     if (_.isEmpty(this.props.state[this.id])) this.changes({ target: { id: this.id, value: "" }})
-    else this.changes({ target: { id: this.id, value: this.props.state[this.id] }})
   }
 
   render() {
@@ -25,7 +24,7 @@ export default class EducationLevel extends React.Component {
     const result = createSelectOptions(baseEducationOptions)
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>{translation("title.education.level") + " *"}</label>
-      <select id={this.id} onChange={this.changes} onBlur={this.changes}>
+      <select id={this.id} onChange={this.changes} onBlur={this.changes} value={this.props.state[this.id]}>
         {result}
       </select>
       </div>

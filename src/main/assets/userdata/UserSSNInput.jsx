@@ -15,9 +15,6 @@ export default class UserSSNInput extends React.Component {
     if (_.isEmpty(this.props.state[this.id])) {
       this.changes({ target: { id: this.id, value: "" }})
       this.checkedChanges({ target: { id: "hasPersonId", checked: false }})
-    } else {
-      this.changes({ target: { id: this.id, value: this.props.state[this.id] }})
-      this.checkedChanges({ target: { id: "hasPersonId", checked: true }})
     }
   }
 

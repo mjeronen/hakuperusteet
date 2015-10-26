@@ -25,14 +25,6 @@ export function S2(selector) {
   return deferred.promise
 }
 
-export function S3(selector) {
-  var deferred = Q.defer()
-  waitUntil(() => findSelectorExactly(selector)).then(function() {
-    deferred.resolve($(testFrame().document).find(selector))
-  })
-  return deferred.promise
-}
-
 export function findSelector(selector) {
   try {
     return $(testFrame().document).find(selector).length > 0
@@ -100,20 +92,29 @@ export function hakuperusteetLoaded() {
   }
 }
 
-export function hakuperusteetAdminLoaded() {
-  try {
-    var v = $(testFrame().document).find(".user").length > 5
-    waitforMilliseconds(100)
-    return v
-  } catch(exception){
-    return false
+export function pageLoaded(s) {
+  return function() {
+    try {
+      var v = s($(testFrame().document)) //.find(s).length == 1
+      waitforMilliseconds(100)
+      return v
+    } catch (exception) {
+      return false
+    }
   }
 }
-
 export function testFrame() {
   return $("#testframe").get(0).contentWindow
 }
-
+export function waitUntilPredicate(predicate) {
+  return waitUntil(function () {return predicate() }, testTimeoutPageLoad
+  ).then(function () {
+      window.uiError = null
+      testFrame().onerror = function (err) {
+        window.uiError = err;
+      } // Hack: force mocha to fail on unhandled exceptions
+    })
+}
 export function openPage(path, predicate) {
   if (!predicate) {
     predicate = function() { return testFrame().jQuery }
@@ -126,13 +127,7 @@ export function openPage(path, predicate) {
       $(this).contents().find("head")[0].appendChild(jquery)
     })
     $("#testframe").replaceWith(newTestFrame)
-    return waitUntil(function () {return predicate() }, testTimeoutPageLoad
-    ).then(function () {
-      window.uiError = null
-      testFrame().onerror = function (err) {
-        window.uiError = err;
-      } // Hack: force mocha to fail on unhandled exceptions
-    })
+    return waitUntilPredicate(predicate)
   }
 }
 

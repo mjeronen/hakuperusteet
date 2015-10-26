@@ -10,9 +10,6 @@ export default class UserDataInput extends React.Component {
 
   componentDidMount() {
     if (_.isEmpty(this.props.state[this.name])) this.changes({ target: { id: this.name, value: "" }})
-    else {
-      this.changes({ target: { id: this.name, value: this.props.state[this.name] }})
-    }
   }
 
   render() {
