@@ -1,7 +1,6 @@
 @import "fonts";
 
-@pageWidth: 1160px;
-@minWidth: 500px;
+@pageWidth: 800px;
 
 @formLabelWidth: 175px;
 @formLabelPadding: 25px;
@@ -37,8 +36,6 @@ body {
   align-items: center;
   justify-content: center;
   & > div, & > section, & > footer, & > form {
-    min-width: @minWidth;
-    width: @pageWidth;
     max-width: @pageWidth;
   }
 }
@@ -52,13 +49,21 @@ body {
   align-items: center;
   justify-content: center;
   .headerContent {
-    min-width: @minWidth;
     width: @pageWidth;
-    max-width: @pageWidth;
+  }
+}
+
+@media all and (max-width: @pageWidth) {
+  #header {
+    align-items: flex-start;
+  }
+  .content {
+    align-items: flex-start;
   }
 }
 
 #session {
+  min-width: @pageWidth;
   .googleAuthentication {
     padding: 20px 0 20px 0;
     #logout {
@@ -260,6 +265,7 @@ select {
 }
 
 footer {
+  min-width: @pageWidth;
   border: 1px solid #dddddd;
   overflow: auto;
   padding: 9px 0;
