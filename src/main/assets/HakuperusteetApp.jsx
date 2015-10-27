@@ -18,7 +18,7 @@ appState
     const getReactComponent = function(state) {
       return <HakuperusteetPage controller={changeListeners()} state={state} />
     }
-    console.log("Updating UI with state:", state)
+//    console.log("Updating UI with state:", state)
     try {
       React.render(getReactComponent(state), document.getElementById('app'))
     } catch (e) {

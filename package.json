@@ -38,7 +38,7 @@
     "mocha": "^2.2.5",
     "mocha-jsdom": "^0.5.0",
     "mocha-junit-reporter": "^1.5.0",
-    "mocha-phantomjs": "4.0.0",
+    "mocha-phantomjs": "4.0.1",
     "phantomjs": "1.9.17",
     "react-tools": "^0.13.2",
     "style-loader": "^0.12.3",
@@ -53,6 +53,8 @@
     "build": "UGLIFY=false webpack -p",
     "watch": "webpack -d --progress --colors --watch",
     "admin:build": "UGLIFY=false webpack -p --config webpack.config.admin.js",
-    "admin:watch": "webpack -d --progress --colors --watch --config webpack.config.admin.js"
+    "admin:watch": "webpack -d --progress --colors --watch --config webpack.config.admin.js",
+    "test-ui": "mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8081/hakuperusteet/spec/testRunner.html",
+    "test-admin-ui": "mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8091/hakuperusteetadmin/spec/testRunner.html"
   }
 }
