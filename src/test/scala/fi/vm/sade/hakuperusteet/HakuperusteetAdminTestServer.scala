@@ -4,13 +4,10 @@ import java.io.File
 import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
-import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObjects, Users, Payments}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
-import org.flywaydb.core.Flyway
-import slick.util.AsyncExecutor
 
 import scala.sys.process.{Process, ProcessIO}
 
@@ -34,7 +31,7 @@ object HakuperusteetAdminTestServer extends LazyLogging {
   }
   private def initDB() = {
     // Generate test data
-    val db = HakuperusteetDatabase.database
+    val db = HakuperusteetDatabase.init(Configuration.props, GlobalExecutionContext.asyncExecutor)
     HakuperusteetTestServer.cleanDB()
 
     val userAndApplication = Users.generateUsers.map(u =>

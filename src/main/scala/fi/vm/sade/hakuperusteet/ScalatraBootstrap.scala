@@ -2,7 +2,6 @@ package fi.vm.sade.hakuperusteet
 
 import javax.servlet.ServletContext
 
-import fi.vm.sade.hakuperusteet.admin.AdminServlet
 import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.email.EmailSender
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
@@ -13,9 +12,9 @@ import fi.vm.sade.hakuperusteet.tarjonta.Tarjonta
 import fi.vm.sade.hakuperusteet.validation.{UserValidator, ApplicationObjectValidator}
 import org.scalatra.LifeCycle
 
-class ScalatraBootstrap extends LifeCycle with GlobalExecutionContext {
+class ScalatraBootstrap extends LifeCycle {
   val config = Configuration.props
-  val database = HakuperusteetDatabase.database
+  val database = HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)
   val verifier = GoogleVerifier.init(config)
   val signer = RSASigner.init(config)
   val countries = Koodisto.initCountries(config)

@@ -1,8 +1,6 @@
 package fi.vm.sade.hakuperusteet
 
-import java.io.File
-import java.util.{Properties, EnumSet}
-import javax.servlet.{DispatcherType, ServletContext}
+import javax.servlet.ServletContext
 
 import fi.vm.sade.hakuperusteet.admin.{Synchronization, AdminServlet}
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase, GlobalExecutionContext}
@@ -10,13 +8,11 @@ import fi.vm.sade.hakuperusteet.koodisto.Koodisto
 import fi.vm.sade.hakuperusteet.rsa.RSASigner
 import fi.vm.sade.hakuperusteet.tarjonta.Tarjonta
 import fi.vm.sade.hakuperusteet.validation.{UserValidator, ApplicationObjectValidator}
-import org.scalatra.{ScalatraServlet, LifeCycle}
+import org.scalatra.LifeCycle
 
-import scala.io.Source
-
-class ScalatraAdminBootstrap extends LifeCycle with GlobalExecutionContext {
+class ScalatraAdminBootstrap extends LifeCycle {
   val config = Configuration.props
-  val database = HakuperusteetDatabase.database
+  val database = HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)
   val countries = Koodisto.initCountries(config)
   val languages = Koodisto.initLanguages(config)
   val educations = Koodisto.initBaseEducation(config)

@@ -2,9 +2,9 @@ package fi.vm.sade.hakuperusteet.db
 
 import fi.vm.sade.hakuperusteet.Configuration
 
-object CodeGenerator extends App with GlobalExecutionContext {
+object CodeGenerator extends App {
   private val config = Configuration.props
-  HakuperusteetDatabase.initDatabase()
+  HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)
 
   slick.codegen.SourceCodeGenerator.main(Array(
     "slick.driver.PostgresDriver",

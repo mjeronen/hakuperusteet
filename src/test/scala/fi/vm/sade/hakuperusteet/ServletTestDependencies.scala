@@ -7,9 +7,9 @@ import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.koodisto._
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 
-trait ServletTestDependencies extends GlobalExecutionContext {
+trait ServletTestDependencies {
   val config = Configuration.props
-  val database = HakuperusteetDatabase.database
+  val database = HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)
   val verifier = new DummyVerifier
   val countries = Countries(List.empty[SimplifiedCode], List.empty)
   val languages = Languages(List.empty[SimplifiedCode])

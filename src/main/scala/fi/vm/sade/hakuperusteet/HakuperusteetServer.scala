@@ -2,7 +2,7 @@ package fi.vm.sade.hakuperusteet
 
 import fi.vm.sade.hakuperusteet.Configuration._
 import fi.vm.sade.hakuperusteet.HakuperusteetServer._
-import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
+import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.util.JettyUtil
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.util.resource.ResourceCollection
@@ -18,7 +18,7 @@ class HakuperusteetServer {
     val dbUrl = props.getString("hakuperusteet.db.url")
     val user = props.getString("hakuperusteet.db.username")
     val password = props.getString("hakuperusteet.db.password")
-    HakuperusteetDatabase.initDatabase()
+    HakuperusteetDatabase.init(props, GlobalExecutionContext.asyncExecutor)
     val server = JettyUtil.createServerWithContext(portHttp, portHttps, createContext, dbUrl, user, password)
     server.start
     server.join

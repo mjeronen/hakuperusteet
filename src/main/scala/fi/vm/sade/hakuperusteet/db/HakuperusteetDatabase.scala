@@ -97,11 +97,8 @@ case class HakuperusteetDatabase(db: DB) {
 object HakuperusteetDatabase extends LazyLogging {
   type DB = PostgresDriver.backend.DatabaseDef
   val schemaName = "public"
-  val database = init(Configuration.props)(GlobalExecutionContext.asyncExecutor)
 
-  def initDatabase() = database
-
-  def init(config: Config)(implicit executor: AsyncExecutor): HakuperusteetDatabase = {
+  def init(config: Config, executor: AsyncExecutor): HakuperusteetDatabase = {
     val url = config.getString("hakuperusteet.db.url")
     val user = config.getString("hakuperusteet.db.username")
     val password = config.getString("hakuperusteet.db.password")

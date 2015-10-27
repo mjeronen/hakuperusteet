@@ -5,14 +5,9 @@ import java.net.InetSocketAddress
 import java.sql.DriverManager
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
-import com.typesafe.config.Config
-import fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer._
-import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import org.eclipse.jetty.webapp.WebAppContext
-import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
-import slick.util.AsyncExecutor
 
 import scala.sys.process.{Process, ProcessIO}
 
