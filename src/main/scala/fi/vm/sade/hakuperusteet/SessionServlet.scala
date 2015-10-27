@@ -3,23 +3,19 @@ package fi.vm.sade.hakuperusteet
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Session, SessionData, User}
-import fi.vm.sade.hakuperusteet.email.{EmailTemplate, WelcomeValues, EmailSender}
+import fi.vm.sade.hakuperusteet.email.{EmailSender, EmailTemplate, WelcomeValues}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
-import fi.vm.sade.hakuperusteet.koodisto.{Educations, Languages, Countries}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
-import fi.vm.sade.hakuperusteet.util.{ConflictException, ServerException, AuditLog, ValidationUtil}
-import fi.vm.sade.hakuperusteet.validation.{UserValidator, ApplicationObjectValidator}
-import fi.vm.sade.utils.validator.HenkilotunnusValidator
+import fi.vm.sade.hakuperusteet.util.{AuditLog, ConflictException, ValidationUtil}
+import fi.vm.sade.hakuperusteet.validation.{ApplicationObjectValidator, UserValidator}
+import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.native.JsonMethods._
-import org.json4s.JsonDSL._
 import org.json4s.native.Serialization._
 
 import scala.util.{Failure, Success, Try}
 import scalaz._
-import scalaz.syntax.applicative._
-import scalaz.syntax.validation._
 
 class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, userValidator: UserValidator, applicationObjectValidator: ApplicationObjectValidator, emailSender: EmailSender) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) with ValidationUtil {
   case class UserDataResponse(field: String, value: SessionData)
@@ -124,6 +120,4 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     logger.error(msg, t)
     halt(status = 500)
   }
-
-
 }
