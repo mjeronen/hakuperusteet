@@ -63,7 +63,6 @@ body {
 }
 
 #session {
-  min-width: @pageWidth;
   .googleAuthentication {
     padding: 20px 0 20px 0;
     #logout {
@@ -71,11 +70,17 @@ body {
       vertical-align: top;
       padding-top: 23px;
     }
+    &.session {
+      min-width: @pageWidth;
+    }
   }
   .emailAuthentication {
     input[type=submit] {
       margin: 15px 5px 15px 116px;
       display: inline-block;
+    }
+    &.session {
+      min-width: @pageWidth;
     }
     p {
       display: inline-block;
