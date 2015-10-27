@@ -37,6 +37,7 @@ body {
   justify-content: center;
   & > div, & > section, & > footer, & > form {
     max-width: @pageWidth;
+    align-items: flex-start;
   }
 }
 
@@ -130,6 +131,7 @@ p {
 }
 
 #userDataForm {
+  width: @pageWidth;
   p {
     padding-bottom: 10px;
   }
@@ -190,6 +192,7 @@ p {
 }
 
 #educationForm {
+  width: @pageWidth;
   p {
     padding-bottom: 10px;
   }
@@ -267,6 +270,10 @@ select {
   &.loginerror-result-appear-active {
     opacity: 1;
   }
+}
+
+.hakuList {
+  width: @pageWidth;
 }
 
 footer {
