@@ -87,7 +87,7 @@
     },
     "education": {
       "country": {
-        "en": "Country of the institution which have awarded the degree"
+        "en": "Country of the institution which has awarded the degree"
       },
       "level": {
         "en": "Level of the degree"
@@ -114,17 +114,17 @@
     },
     "birth": {
       "date": {
-        "en": "Birth Date"
+        "en": "Date of birth"
       }
     }
   },
   "apply": {
     "payment": {
       "required": {
-        "en": "This Programme has applying charge of 100 €."
+        "en": "You are required to pay the application fee of 100€."
       },
       "notRequired": {
-        "en": "With EEA-based education you don't need to pay application fee."
+        "en": "Your degree is from an EU/EEA country and you are not required to pay the application fee."
       },
       "alreadyPaid": {
         "en": "You have already paid application fee of 100€."
@@ -133,7 +133,7 @@
   },
   "userdataform": {
     "info": {
-      "en": "Please enter the following information."
+      "en": "Please enter the following information exactly as in your passport (with capital initials, no capslock)."
     },
     "personalId": {
       "en": "I have Finnish personal identification code"
@@ -149,7 +149,7 @@
         "en": "Family name is required."
       },
       "invalidBirthDate": {
-        "en": "Insert birth date in correct format."
+        "en": "Insert date of birth in correct format."
       },
       "requiredPersonId": {
         "en": "Insert Personal identification code in correct format (last 5 characters)."
@@ -170,7 +170,7 @@
       "en": "Please enter your education information for applying to"
     },
     "payment": {
-      "en": "This degree here is used only to decide if you need to pay application fee. You can give other degrees in application."
+      "en": "This information is used only to define if you need to pay the application fee. On the application form you can give additional information about your educational background."
     },
     "submit": {
       "en": "Submit"
@@ -180,14 +180,14 @@
         "en": "Level of the degree is required."
       },
       "requiredEducationCountry": {
-        "en": "Education country is required."
+        "en": "Country of the institution is required."
       }
     }
   },
   "vetuma": {
     "start": {
       "info": {
-        "en": "<p>You are required to pay <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100€ before continuing to the application.</p><h2>Payment methods</h2><p>Credit card (Visa, Visa Debit, Visa Electron, Mastercard, Mastercard Debit)</p><p>Finnish internet banking codes</p>"
+        "en": "<p>You are required to pay <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100€ before continuing to the application. The application fee is collected by the Finnish National Board of Education (Opetushallitus).</p><h2>Payment methods</h2><p>Credit card (Visa, Visa Debit, Visa Electron, Mastercard, Mastercard Debit)</p><p>Finnish internet banking codes</p>"
       },
       "submit": {
         "en": "Continue to payment"
@@ -201,7 +201,7 @@
         "en": "Payment error."
       },
       "ok": {
-        "en": "Payment successful."
+        "en": "Thank you, your payment has been received."
       }
     }
   },

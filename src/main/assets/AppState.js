@@ -89,7 +89,7 @@ export function initAppState(props) {
 
   function onCssEffectValue(state, effect) {
     if (effect !== "") {
-      Bacon.once("").take(1).delay(3000).onValue((x) => cssEffectsBus.push(x))
+      Bacon.once("").take(1).delay(15000).onValue((x) => cssEffectsBus.push(x))
     }
     return {...state, effect}
   }

@@ -26,7 +26,7 @@ export default class UserSSNInput extends React.Component {
         <input type="checkbox" name="hasPersonId" id="hasPersonId" onChange={this.checkedChanges} checked={checked} />
         <label htmlFor="personId" className="ssnLabel">{translation("userdataform.personalId")}</label>
         <input type="text" id={this.id} name="personId" onChange={this.changes} onBlur={this.changes} disabled={disabled} maxLength="5" value={this.props.state[this.id]}/>
-        <span className="fieldFormatInfo">xxxxx</span>
+        <span className="fieldFormatInfo">(e.g. -043A)</span>
       </div>
   }
 

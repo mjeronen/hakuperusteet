@@ -32,11 +32,11 @@ vetuma.error.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/erro
 vetuma.shared.secret={{hakuperusteet_vetuma_shared_secret}}
 vetuma.shared.ap={{hakuperusteet_vetuma_shared_ap}}
 vetuma.shared.rcvid={{hakuperusteet_vetuma_shared_rcvid}}
-vetuma.app.name=Hakumaksu Syksy 2015
+vetuma.app.name=Application fee
 vetuma.amount={{hakuperusteet_vetuma_amount}}
-vetuma.msg.buyer=Hakumaksu Syksy 2015
-vetuma.msg.seller=Hakumaksu Syksy 2015
-vetuma.msg.form=Hakumaksu Syksy 2015
+vetuma.msg.buyer=Application fee
+vetuma.msg.seller=Application fee
+vetuma.msg.form=Application fee
 
 hakumaksu.valid.until=31.12.2015
 
