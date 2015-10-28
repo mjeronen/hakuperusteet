@@ -143,10 +143,16 @@
     },
     "errors": {
       "requiredFirstName": {
-        "en": "Given name is required."
+        "en": "Given names is required."
+      },
+      "invalidFirstName": {
+        "en": "Given names contains illegal characters."
       },
       "requiredLastName": {
         "en": "Family name is required."
+      },
+      "invalidLastName": {
+        "en": "Family name contains illegal characters."
       },
       "invalidBirthDate": {
         "en": "Insert date of birth in correct format."

@@ -39,8 +39,8 @@ function validatePersonId(hasPersonId, value) {
 }
 
 function validateField(field, value) {
-  if (field == "firstName") return validateNonEmptyTextField(value)
-  if (field == "lastName") return validateNonEmptyTextField(value)
+  if (field == "firstName") return validateNonEmptyTextField(value).concat(validateNameField(value))
+  if (field == "lastName") return validateNonEmptyTextField(value).concat(validateNameField(value))
   if (field == "birthDate") return validateBirthDate(value)
   if (field == "personId") return validatePersonId(value)
   if (field == "gender") return validateGender(value)
@@ -53,6 +53,11 @@ function validateField(field, value) {
 
 function validateNonEmptyTextField(value) {
   return (_.isEmpty(value)) ? ["required"] : []
+}
+
+function validateNameField(value) {
+  const latin1Subset = /^$|^[a-zA-ZÀ-ÖØ-öø-ÿ]$|^[a-zA-ZÀ-ÖØ-öø-ÿ'][a-zA-ZÀ-ÖØ-öø-ÿ ,-.']*(?:[a-zA-ZÀ-ÖØ-öø-ÿ.']+$)$/;
+  return latin1Subset.test(value) ? [] : ["invalid"]
 }
 
 function validateBirthDate(value) {
