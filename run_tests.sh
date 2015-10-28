@@ -15,7 +15,7 @@ function finish {
 
 trap finish EXIT
 
-./sbt test
+./sbt clean compile admin:compile test
 
 ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" &
 PID=$!
