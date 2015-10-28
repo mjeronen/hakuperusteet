@@ -85,6 +85,40 @@ ALTER SEQUENCE education_id_seq OWNED BY application_object.id;
 
 
 --
+-- Name: jettysessionids; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE jettysessionids (
+    id character varying(120) NOT NULL
+);
+
+
+ALTER TABLE jettysessionids OWNER TO postgres;
+
+--
+-- Name: jettysessions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE jettysessions (
+    rowid character varying(120) NOT NULL,
+    sessionid character varying(120),
+    contextpath character varying(60),
+    virtualhost character varying(60),
+    lastnode character varying(60),
+    accesstime bigint,
+    lastaccesstime bigint,
+    createtime bigint,
+    cookietime bigint,
+    lastsavedtime bigint,
+    expirytime bigint,
+    maxinterval bigint,
+    map bytea
+);
+
+
+ALTER TABLE jettysessions OWNER TO postgres;
+
+--
 -- Name: ordernumber; Type: SEQUENCE; Schema: public; Owner: oph
 --
 
@@ -158,24 +192,27 @@ CREATE TABLE schema_version (
 ALTER TABLE schema_version OWNER TO postgres;
 
 --
--- Name: session; Type: TABLE; Schema: public; Owner: oph; Tablespace: 
+-- Name: synchronization; Type: TABLE; Schema: public; Owner: oph; Tablespace: 
 --
 
-CREATE TABLE session (
+CREATE TABLE synchronization (
     id integer NOT NULL,
-    email character varying(255) NOT NULL,
-    token text NOT NULL,
-    idpentityid character varying(255) NOT NULL
+    created timestamp without time zone NOT NULL,
+    henkilo_oid character varying(255) NOT NULL,
+    haku_oid character varying(255) NOT NULL,
+    hakukohde_oid character varying(255) NOT NULL,
+    status character varying(255) NOT NULL,
+    updated timestamp without time zone
 );
 
 
-ALTER TABLE session OWNER TO oph;
+ALTER TABLE synchronization OWNER TO oph;
 
 --
--- Name: session_id_seq; Type: SEQUENCE; Schema: public; Owner: oph
+-- Name: synchronization_id_seq; Type: SEQUENCE; Schema: public; Owner: oph
 --
 
-CREATE SEQUENCE session_id_seq
+CREATE SEQUENCE synchronization_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -183,13 +220,13 @@ CREATE SEQUENCE session_id_seq
     CACHE 1;
 
 
-ALTER TABLE session_id_seq OWNER TO oph;
+ALTER TABLE synchronization_id_seq OWNER TO oph;
 
 --
--- Name: session_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: oph
+-- Name: synchronization_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: oph
 --
 
-ALTER SEQUENCE session_id_seq OWNED BY session.id;
+ALTER SEQUENCE synchronization_id_seq OWNED BY synchronization.id;
 
 
 --
@@ -252,7 +289,7 @@ ALTER TABLE ONLY payment ALTER COLUMN id SET DEFAULT nextval('payment_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: oph
 --
 
-ALTER TABLE ONLY session ALTER COLUMN id SET DEFAULT nextval('session_id_seq'::regclass);
+ALTER TABLE ONLY synchronization ALTER COLUMN id SET DEFAULT nextval('synchronization_id_seq'::regclass);
 
 
 --
@@ -279,6 +316,22 @@ ALTER TABLE ONLY "user"
 
 
 --
+-- Name: jettysessionids_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY jettysessionids
+    ADD CONSTRAINT jettysessionids_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: jettysessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY jettysessions
+    ADD CONSTRAINT jettysessions_pkey PRIMARY KEY (rowid);
+
+
+--
 -- Name: payment_pkey; Type: CONSTRAINT; Schema: public; Owner: oph; Tablespace: 
 --
 
@@ -295,19 +348,11 @@ ALTER TABLE ONLY schema_version
 
 
 --
--- Name: session_email; Type: CONSTRAINT; Schema: public; Owner: oph; Tablespace: 
+-- Name: synchronization_pkey; Type: CONSTRAINT; Schema: public; Owner: oph; Tablespace: 
 --
 
-ALTER TABLE ONLY session
-    ADD CONSTRAINT session_email UNIQUE (email);
-
-
---
--- Name: session_pkey; Type: CONSTRAINT; Schema: public; Owner: oph; Tablespace: 
---
-
-ALTER TABLE ONLY session
-    ADD CONSTRAINT session_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY synchronization
+    ADD CONSTRAINT synchronization_pkey PRIMARY KEY (id);
 
 
 --
@@ -331,6 +376,20 @@ ALTER TABLE ONLY "user"
 --
 
 CREATE INDEX education_henkilo_oid_hakukohde_oid_idx ON application_object USING btree (henkilo_oid, hakukohde_oid);
+
+
+--
+-- Name: idx_jettysessions_expiry; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_jettysessions_expiry ON jettysessions USING btree (expirytime);
+
+
+--
+-- Name: idx_jettysessions_session; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX idx_jettysessions_session ON jettysessions USING btree (sessionid, contextpath);
 
 
 --
@@ -376,13 +435,6 @@ CREATE INDEX schema_version_vr_idx ON schema_version USING btree (version_rank);
 
 
 --
--- Name: session_email_idx; Type: INDEX; Schema: public; Owner: oph; Tablespace: 
---
-
-CREATE INDEX session_email_idx ON session USING btree (email);
-
-
---
 -- Name: user_email_idx; Type: INDEX; Schema: public; Owner: oph; Tablespace: 
 --
 
@@ -403,6 +455,14 @@ ALTER TABLE ONLY application_object
 
 ALTER TABLE ONLY payment
     ADD CONSTRAINT payment_henkilo_oid_fkey FOREIGN KEY (henkilo_oid) REFERENCES "user"(henkilo_oid);
+
+
+--
+-- Name: synchronization_henkilo_oid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: oph
+--
+
+ALTER TABLE ONLY synchronization
+    ADD CONSTRAINT synchronization_henkilo_oid_fkey FOREIGN KEY (henkilo_oid) REFERENCES "user"(henkilo_oid);
 
 
 --
