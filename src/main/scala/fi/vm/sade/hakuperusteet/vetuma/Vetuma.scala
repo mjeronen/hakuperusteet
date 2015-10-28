@@ -36,16 +36,17 @@ case class Vetuma(sharedSecret: String, ap: String, rcvid: String, timestamp: Da
 
 object Vetuma extends LazyLogging {
 
-  def apply(config: Config, payment: Payment, language: String): Vetuma = {
+  def apply(config: Config, payment: Payment, language: String, hakukohdeOid: Option[String]): Vetuma = {
+    val q = hakukohdeOid.map(ao => s"?ao=$ao").getOrElse("")
     Vetuma(
       config.getString("vetuma.shared.secret"),
       config.getString("vetuma.shared.ap"),
       config.getString("vetuma.shared.rcvid"),
       payment.timestamp,
       language,
-      config.getString("vetuma.success.url"),
-      config.getString("vetuma.cancel.url"),
-      config.getString("vetuma.error.url"),
+      config.getString("vetuma.success.url") + q,
+      config.getString("vetuma.cancel.url") + q,
+      config.getString("vetuma.error.url") + q,
       config.getString("vetuma.app.name"),
       config.getString("vetuma.amount"),
       payment.reference,

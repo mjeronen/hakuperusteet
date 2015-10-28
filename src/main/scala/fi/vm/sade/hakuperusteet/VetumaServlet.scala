@@ -17,7 +17,15 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
 
   get("/openvetuma") {
     failUnlessAuthenticated
+    createVetuma(None)
+  }
 
+  get("/openvetuma/:hakukohdeoid") {
+    failUnlessAuthenticated
+    createVetuma(Some(params("hakukohdeoid")))
+  }
+
+  private def createVetuma(hakukohdeOid: Option[String]) = {
     val userData = userDataFromSession
     val language = "en"
     val referenceNumber = referenceNumberFromPersonOid(userData.personOid.getOrElse(halt(500)))
@@ -26,25 +34,27 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val payment = Payment(None, userData.personOid.get, new Date(), referenceNumber, orderNro, paymCallId, PaymentStatus.started)
     val paymentWithId = db.upsertPayment(payment).getOrElse(halt(500))
     AuditLog.auditPayment(userData, paymentWithId)
-    write(Map("url" -> config.getString("vetuma.host"), "params" -> Vetuma(config, paymentWithId, language).toParams))
+    write(Map("url" -> config.getString("vetuma.host"), "params" -> Vetuma(config, paymentWithId, language, hakukohdeOid).toParams))
   }
 
   post("/return/ok") {
-    val url = config.getString("host.url.base") + "#/effect/VetumaResultOk"
+    val url = config.getString("host.url.base") + parseOriginalHakukohdeOid + "#/effect/VetumaResultOk"
     handleReturn(url, PaymentStatus.ok)
   }
 
   post("/return/cancel") {
-    val url = config.getString("host.url.base") + "#/effect/VetumaResultCancel"
+    val url = config.getString("host.url.base") + parseOriginalHakukohdeOid +  "#/effect/VetumaResultCancel"
     handleReturn(url, PaymentStatus.cancel)
   }
 
   post("/return/error") {
-    val url = config.getString("host.url.base") + "#/effect/VetumaResultError"
+    val url = config.getString("host.url.base") + parseOriginalHakukohdeOid + "#/effect/VetumaResultError"
     handleReturn(url, PaymentStatus.error)
   }
 
   def referenceNumberFromPersonOid(personOid: String) = personOid.split("\\.").toList.last
+
+  private def parseOriginalHakukohdeOid = params.get("ao").map(ao => s"ao/$ao").getOrElse("")
 
   private def handleReturn(url: Oid, status: PaymentStatus) {
     val macParams = createMacParams
