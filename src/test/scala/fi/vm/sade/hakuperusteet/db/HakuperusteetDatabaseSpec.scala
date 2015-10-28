@@ -3,19 +3,12 @@ package fi.vm.sade.hakuperusteet.db
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.util.ConfigUtil
-import fi.vm.sade.hakuperusteet.{HakuperusteetTestServer, EmbeddedPostgreSql, Configuration}
+import fi.vm.sade.hakuperusteet.{OptionalEmbeddedDB, HakuperusteetTestServer, Configuration}
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
 import org.scalatest.{BeforeAndAfterAll, Matchers, FlatSpec}
 
-class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers with BeforeAndAfterAll {
+class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers with BeforeAndAfterAll with OptionalEmbeddedDB {
   behavior of "HakuperusteetDatabase"
-
-  if(HakuperusteetTestServer.isEmbeddedConfig) {
-    logger.info("Using embedded PostgreSQL")
-    ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
-    EmbeddedPostgreSql.startEmbeddedPostgreSql
-  }
 
   val config = Configuration.props
   val db = HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)

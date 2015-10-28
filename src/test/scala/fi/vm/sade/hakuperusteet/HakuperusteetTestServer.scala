@@ -2,13 +2,14 @@ package fi.vm.sade.hakuperusteet
 
 import java.io.File
 import java.net.InetSocketAddress
-import java.sql.DriverManager
+import java.sql.{Connection, DriverManager}
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
 
+import scala.collection.mutable.ListBuffer
 import scala.sys.process.{Process, ProcessIO}
 
 class HakuperusteetTestServer extends HakuperusteetServer {
@@ -47,17 +48,28 @@ object HakuperusteetTestServer {
     server.start
   }
 
+  private def getTables(jdbcConnection: Connection) = {
+    val tables = new ListBuffer[String]()
+    val dbmd = jdbcConnection.getMetaData()
+    val rs = dbmd.getTables(null, "public", "%", Array("TABLE"))
+    while (rs.next()) {
+      tables += rs.getString("TABLE_NAME")
+    }
+    tables.toList
+  }
+
   def cleanDB(): Unit = {
     val config = Configuration.props
     val url = config.getString("hakuperusteet.db.url")
     val user = config.getString("hakuperusteet.db.username")
     val password = config.getString("hakuperusteet.db.password")
     val jdbcConnection = DriverManager.getConnection(url, user, password)
-    val dbmd = jdbcConnection.getMetaData()
-    val rs = dbmd.getTables(null, "public", "%", Array("TABLE"))
+    val tables = getTables(jdbcConnection)
     try {
       Array("synchronization", "application_object", "payment", "user","jettysessionids","jettysessions")
-        .foreach(name => jdbcConnection.createStatement.execute("DELETE from \"" + name + "\";"))
+        .foreach(name => if(tables.contains(name)){
+          jdbcConnection.createStatement.execute("DELETE from \"" + name + "\";")
+        })
     } catch {
       case e: Exception => {
         e.printStackTrace()

@@ -7,7 +7,7 @@ import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.koodisto._
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 
-trait ServletTestDependencies {
+trait ServletTestDependencies extends OptionalEmbeddedDB {
   val config = Configuration.props
   val database = HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)
   val verifier = new DummyVerifier
