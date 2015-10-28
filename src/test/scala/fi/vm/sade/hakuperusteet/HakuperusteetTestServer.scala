@@ -56,7 +56,7 @@ object HakuperusteetTestServer {
     val dbmd = jdbcConnection.getMetaData()
     val rs = dbmd.getTables(null, "public", "%", Array("TABLE"))
     try {
-      Array("application_object", "payment", "synchronization","user","jettysessionids","jettysessions")
+      Array("synchronization", "application_object", "payment", "user","jettysessionids","jettysessions")
         .foreach(name => jdbcConnection.createStatement.execute("DELETE from \"" + name + "\";"))
     } catch {
       case e: Exception => {
