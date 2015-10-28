@@ -50,9 +50,9 @@
   "scripts": {
     "build": "UGLIFY=false webpack -p",
     "watch": "webpack -d --progress --colors --watch",
+    "test-ui": "mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8081/hakuperusteet/spec/testRunner.html",
     "admin:build": "UGLIFY=false webpack -p --config webpack.config.admin.js",
     "admin:watch": "webpack -d --progress --colors --watch --config webpack.config.admin.js",
-    "test-ui": "mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8081/hakuperusteet/spec/testRunner.html",
-    "test-admin-ui": "mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8091/hakuperusteetadmin/spec/testRunner.html"
+    "admin:test-ui": "mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8091/hakuperusteetadmin/spec/testRunner.html"
   }
 }

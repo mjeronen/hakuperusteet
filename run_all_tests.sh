@@ -15,9 +15,12 @@ trap finish EXIT
 
 npm install
 
-./sbt test -J-Dembedded=true
+./sbt clean compile admin:compile test -J-Dembedded=true
 
-./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true &
+npm run build
+npm run admin:build
+
+./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true -J-Dmock=true &
 PID=$!
 while ! nc -z localhost 8081; do
   sleep 1
@@ -29,4 +32,4 @@ while ! nc -z localhost 8091; do
   sleep 1
 done
 ADMIN=$!
-npm run test-admin-ui
+npm run admin:test-ui
