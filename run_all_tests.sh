@@ -15,7 +15,7 @@ trap finish EXIT
 
 npm install
 
-./sbt clean compile admin:compile test
+./sbt test -J-Dembedded=true
 
 ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true &
 PID=$!
