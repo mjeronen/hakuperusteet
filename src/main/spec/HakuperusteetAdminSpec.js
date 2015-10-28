@@ -9,7 +9,7 @@ describe('Admin UI front', () => {
   })
   describe('Modifying user data', () => {
     before(openPage("/hakuperusteetadmin/oppija/1.2.246.562.24.00000001000", pageLoaded(form => form.find("input[value='Annilainen']").length == 1)))
-    it('should change name', setField("#firstName", "Emmi_" + getRandomNumber()))
+    it('should change name', setField("#firstName", "Emmi " + getRandomName()))
     it('should change mother tongue', setField("#nativeLanguage", "AB"))
     it('submit should be enabled', assertSubmitEnabled("#userDataForm"))
     it('click submit should post changes', clickField("#userDataForm input[name='submit']"))
@@ -35,9 +35,14 @@ describe('Admin UI front', () => {
 function escape(str) {
   return (str+'').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
 };
+function getRandomName() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-function getRandomNumber() {
-  return Math.floor((Math.random() * 1000000) + 1);
+  for( var i=0; i < 7; i++ )
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }
 
 function assertSubmitDisabled(form) { return () => S2(form + " input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
