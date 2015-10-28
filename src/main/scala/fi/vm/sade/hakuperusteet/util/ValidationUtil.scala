@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter
 
 import fi.vm.sade.hakuperusteet._
 import fi.vm.sade.utils.validator.HenkilotunnusValidator
+import fi.vm.sade.utils.validator.InputNameValidator
 
 import scala.util.Try
 import scalaz._
@@ -19,6 +20,9 @@ trait ValidationUtil {
 
   def parseNonEmpty(key: String)(params: Params) = parseExists(key)(params)
     .flatMap(a => if (a.nonEmpty) a.successNel else s"Parameter $key is empty".failureNel)
+
+  def parseValidName(key: String)(params: Params) = parseNonEmpty(key)(params)
+    .flatMap(a => InputNameValidator.validate(a))
 
   def parseOptional(key: String)(params: Params) = params.get(key) match { case e => e.successNel }
 
