@@ -102,6 +102,7 @@ object HakuperusteetDatabase extends LazyLogging {
     val url = config.getString("hakuperusteet.db.url")
     val user = config.getString("hakuperusteet.db.username")
     val password = config.getString("hakuperusteet.db.password")
+    logger.info("Database url: " + url)
     migrateSchema(url, user, password)
     HakuperusteetDatabase(Database.forURL(url = url, user = user, password = password, executor = executor))
   }
