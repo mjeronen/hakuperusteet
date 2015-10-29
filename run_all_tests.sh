@@ -23,7 +23,7 @@ echo "********************* ./sbt test"
 
 echo "********************* npm run test-ui"
 
-./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true -J-Dmock=true &
+./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true &
 PID=$!
 while ! nc -z localhost 8081; do
   sleep 1

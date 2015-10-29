@@ -1,24 +1,28 @@
 package fi.vm.sade.hakuperusteet
 
-import java.nio.charset.StandardCharsets
-import java.nio.file.{StandardOpenOption, Files}
-
 import ru.yandex.qatools.embed.postgresql.PostgresStarter
-import ru.yandex.qatools.embed.postgresql.config.{AbstractPostgresConfig, PostgresConfig}
-import ru.yandex.qatools.embed.postgresql.distribution.Version.Main._
+import ru.yandex.qatools.embed.postgresql.config.PostgresConfig
 
 object EmbeddedPostgreSql {
 
-  lazy val config = PostgresConfig.defaultWithDbName("test", "oph", "test")
-  lazy val process = PostgresStarter.getDefaultInstance().prepare(config)
+  private val config = PostgresConfig.defaultWithDbName("test", "oph", "test")
+  private val process = PostgresStarter.getDefaultInstance().prepare(config)
+  private val started = startEmbeddedPostgreSql
 
-  def startEmbeddedPostgreSql = {
-    process.start()
+  def ensureDatabaseStarted() = {
+    started
   }
 
-  def dbUrl = s"jdbc:postgresql://${config.net().host()}:${config.net().port()}/${config.storage().dbName()}"
-  def user = s"${config.credentials().username()}"
-  def password = s"${config.credentials().password()}"
+  private def startEmbeddedPostgreSql = {
+    process.start()
+    sys addShutdownHook {
+      process.stop()
+    }
+    true
+  }
 
+  private def dbUrl = s"jdbc:postgresql://${config.net().host()}:${config.net().port()}/${config.storage().dbName()}"
+  private def user = s"${config.credentials().username()}"
+  private def password = s"${config.credentials().password()}"
   def configAsMap = Map("hakuperusteet.db.url"-> dbUrl, "hakuperusteet.db.user" -> user, "hakuperusteet.db.password" -> password)
 }

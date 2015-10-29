@@ -24,7 +24,7 @@ object HakuperusteetTestServer {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
    */
   def main(args: Array[String]): Unit = {
-    OptionalEmbeddedDB.embeddedDB
+    OptionalEmbeddedDB.ensureEmbeddedIsStartedIfNeeded()
     startMockServer()
     startCommandServer()
     new HakuperusteetTestServer().runServer()

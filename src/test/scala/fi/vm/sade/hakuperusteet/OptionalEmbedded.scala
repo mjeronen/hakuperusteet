@@ -4,17 +4,19 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 
 object OptionalEmbeddedDB {
-  val embeddedDB = initEmbedded
-  def initEmbedded = {
+  private val embeddedDB = initEmbedded
+  private def initEmbedded = {
     if(HakuperusteetTestServer.isEmbeddedConfig) {
       ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
-      EmbeddedPostgreSql.startEmbeddedPostgreSql
+      EmbeddedPostgreSql.ensureDatabaseStarted()
       val config = Configuration.props
       HakuperusteetDatabase.init(config)
     }
+    true
   }
+  def ensureEmbeddedIsStartedIfNeeded() = embeddedDB
 }
 
 trait OptionalEmbeddedDB {
-  OptionalEmbeddedDB.embeddedDB
+  OptionalEmbeddedDB.ensureEmbeddedIsStartedIfNeeded()
 }
