@@ -103,8 +103,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   }
 
   private def sendEmail(newUser: User) = {
-    val p = WelcomeValues(newUser.email)
-    emailSender.send(newUser.email, "Welcome to opintopolku", EmailTemplate.renderWelcome(p))
+    val p = WelcomeValues(newUser.fullName)
+    emailSender.send(newUser.email, "Studyinfo - Registration successful", EmailTemplate.renderWelcome(p))
   }
 
   def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(userData)) match {

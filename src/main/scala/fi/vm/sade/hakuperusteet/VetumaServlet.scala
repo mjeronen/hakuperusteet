@@ -82,8 +82,8 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     List(p("RCVID"), p("TIMESTMP"), p("SO"), p("LG"), p("RETURL"), p("CANURL"), p("ERRURL"), p("PAYID"), p("REF"), p("ORDNR"), p("PAID"), p("STATUS"))
   }
 
-  private def sendReceipt(userData: User, payment: Payment): Unit = {
-    val p = ReceiptValues(config.getString("hakumaksu.valid.until"), config.getString("vetuma.amount"), payment.reference)
-    emailSender.send(userData.email, "Payment receipt", EmailTemplate.renderReceipt(p))
+  private def sendReceipt(userData: User, payment: Payment) = {
+    val p = ReceiptValues(userData.fullName, "NordSecMob", config.getString("vetuma.amount"), payment.reference)
+    emailSender.send(userData.email, "Studyinfo: Your payment has been received", EmailTemplate.renderReceipt(p))
   }
 }

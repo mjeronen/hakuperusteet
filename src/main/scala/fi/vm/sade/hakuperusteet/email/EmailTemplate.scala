@@ -25,5 +25,5 @@ object EmailTemplate {
   }
 }
 
-case class WelcomeValues(email: String)
-case class ReceiptValues(validForallSimilarApplicationsUntil: String, amount: String, reference: String)
+case class WelcomeValues(fullName: String)
+case class ReceiptValues(fullName: String, applicationObjectName: String, amount: String, reference: String)

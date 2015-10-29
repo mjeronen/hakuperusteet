@@ -38,8 +38,6 @@ vetuma.msg.buyer=Application fee
 vetuma.msg.seller=Application fee
 vetuma.msg.form=Application fee
 
-hakumaksu.valid.until=31.12.2015
-
 cookie.domain={{host_oppija}}
 
 koodisto.countries.url=https://{{host_virkailija}}/koodisto-service/rest/codeelement/codes/maatjavaltiot2/1?onlyValidKoodis=false

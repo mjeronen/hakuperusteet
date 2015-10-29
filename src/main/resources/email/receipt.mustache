@@ -30,19 +30,18 @@
     ul.dash li:before { display: inline-block; content: "-"; width: 1em; margin-left: -1em;}.footer { font-size: 90%; position: running(footer);}
     .footer .heading { width: 100%;}.footer div { float: left; width: 30mm;}
     </style>
-    <title>Payment receipt</title>
+    <title>Dear {{fullName}}</title>
 </head>
 <body>
-    <div class="sisalto">
-    <p></p>
-    <p>Payment type: Charge for applying</p>
-    <p>Aalto Nordsec</p>
-    <p>This payment is valid for all similar applications until</p>
-    <p>{{validForallSimilarApplicationsUntil}}</p>
-    <br/>
-    <br/>
-    <p>Payment amount {{amount}} €.</p>
-    <p>Payment reference number {{reference}} €.</p>
-    </div>
+  <div class="sisalto">
+    <p>
+      We have received your payment of the application fee of {{amount}}€ with reference number {{reference}}.
+      The payment covers all the applications that you make for study programmes that begin in the same semester as {{applicationObjectName}}.
+      Please note that Finnish higher education institutions usually only have two semesters, the autumn and the spring semester.
+    </p>
+    <p>
+      This is an automatically generated email, please do not reply.
+    </p>
+  </div>
 </body>
 </html>
