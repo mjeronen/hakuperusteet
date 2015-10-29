@@ -18,9 +18,9 @@ object RedirectCreator {
   def paramSequence(u: User, shouldPay: Boolean, hasPaid: Boolean, e: ApplicationObject) =
     Seq(("personOid", u.personOid.get), ("email", u.email), ("firstName", u.firstName), ("lastName", u.lastName),
       ("birthDate", new SimpleDateFormat("ddMMyyyy").format(u.birthDate)), ("personId", u.personId.getOrElse("")),
-      ("gender", u.gender), ("nationality", u.nationality), ("hakukohdeOid", e.hakukohdeOid), ("educationLevel", e.educationLevel),
-      ("educationCountry", e.educationCountry), ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString),
-      ("created", new Date().toInstant.getEpochSecond.toString))
+      ("gender", u.gender), ("nationality", u.nationality), ("nativeLanguage", u.nativeLanguage),
+      ("hakukohdeOid", e.hakukohdeOid), ("educationLevel", e.educationLevel), ("educationCountry", e.educationCountry),
+      ("shouldPay", shouldPay.toString), ("hasPaid", hasPaid.toString), ("created", new Date().toInstant.getEpochSecond.toString))
 
   def generatePostBody(params: Map[String, String]) = params.map { case (k, v) => k + "=" + URLEncoder.encode(v, "UTF-8") }.mkString("&")
 }
