@@ -24,11 +24,7 @@ object HakuperusteetTestServer {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"
    */
   def main(args: Array[String]): Unit = {
-    if (isEmbeddedConfig) {
-      logger.info("Using embedded PostgreSQL")
-      ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
-      EmbeddedPostgreSql.startEmbeddedPostgreSql
-    }
+    OptionalEmbeddedDB.embeddedDB
     startMockServer()
     startCommandServer()
     new HakuperusteetTestServer().runServer()

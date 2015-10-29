@@ -17,11 +17,7 @@ object HakuperusteetAdminTestServer extends LazyLogging {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer"
    */
   def main(args: Array[String]): Unit = {
-    if (HakuperusteetTestServer.isEmbeddedConfig) {
-      logger.info("Using embedded PostgreSQL")
-      ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
-      EmbeddedPostgreSql.startEmbeddedPostgreSql
-    }
+    OptionalEmbeddedDB.embeddedDB
     startMockServer()
     startCommandServer()
     initDB()
