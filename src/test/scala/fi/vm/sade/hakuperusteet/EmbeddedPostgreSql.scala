@@ -4,11 +4,12 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.{StandardOpenOption, Files}
 
 import ru.yandex.qatools.embed.postgresql.PostgresStarter
-import ru.yandex.qatools.embed.postgresql.config.PostgresConfig
+import ru.yandex.qatools.embed.postgresql.config.{AbstractPostgresConfig, PostgresConfig}
+import ru.yandex.qatools.embed.postgresql.distribution.Version.Main._
 
 object EmbeddedPostgreSql {
 
-  lazy val config = PostgresConfig.defaultWithDbName("test", "oph", "test")
+  lazy val config = new PostgresConfig(PRODUCTION, new AbstractPostgresConfig.Net, new AbstractPostgresConfig.Storage("test"), new AbstractPostgresConfig.Timeout(45000), new AbstractPostgresConfig.Credentials("oph", "test"));
   lazy val process = PostgresStarter.getDefaultInstance().prepare(config)
 
   def startEmbeddedPostgreSql = {
