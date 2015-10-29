@@ -2,15 +2,15 @@
   "login": {
     "info": {
       "text": {
-        "en": "<p>Before you can continue to the application form, we need to verify if you are required to pay the <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100 €.</p><p>Applicants to Finnish higher education institutions who are applying based on a qualification completed outside the EU/EEA –area or Switzerland are required to pay an application fee of 100 €. This concerns applicants to both Bachelor's and Master's level studies. The application fee covers all the applications to Finnish higher education institutions that an applicant makes for study programmes that start in the same semester.</p><p>The collection of application fees is based on the Universities Act and the Polytechnics Act. The fee is charged due to the administrative expenses caused by the verification work on qualifications completed outside EU/EEA countries or Switzerland and to develop the electronic application system.</p><p>If you are required to pay the application fee, it needs to be paid before filling in the application.</p><p>The application fee is collected by the Finnish National Board of Education.</p><p>To get started, please sign in with your Google account or order a login link to your e-mail.</p>"
+        "en": "<p>Before you can continue to the application form, we need to verify if you are required to pay the <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100 €.</p><p>Applicants to Finnish higher education institutions who are applying based on a qualification completed outside the EU/EEA –area or Switzerland are required to pay an application fee of 100 €. This concerns applicants to both Bachelor's and Master's level studies. The application fee covers all the applications to Finnish higher education institutions that an applicant makes for study programmes that start in the same semester.</p><p>The collection of application fees is based on the Universities Act and the Polytechnics Act. The fee is charged due to the administrative expenses caused by the verification work on qualifications completed outside EU/EEA countries or Switzerland and to develop the electronic application system.</p><p>If you are required to pay the application fee, it needs to be paid before filling in the application.</p><p>The application fee is collected by the Finnish National Board of Education.</p><p>To get started, please sign in with your Google account or order a login link to your email.</p>"
       }
     },
     "order": {
       "link": {
-        "en": "Order login link to your email."
+        "en": "Order a login link to your email."
       },
       "button": {
-        "en": "Order e-mail login link"
+        "en": "Order email login link"
       }
     },
     "logged": {
@@ -27,10 +27,10 @@
   "programinfo": {
     "empty": {
       "title": {
-        "en": "Opintopolku - Hakuperusteet"
+        "en": "Studyinfo - Application fee portal"
       },
       "text": {
-        "en": "You have not selected any programme and therefore you can only see existing applications. In case you want to apply to a new programme, please select programme from www.studyinfo.fi."
+        "en": "You have not selected any programme and therefore you can only see existing applications. In case you want to apply to a new programme, please select a programme from www.studyinfo.fi."
       }
     }
   },
@@ -83,11 +83,11 @@
       }
     },
     "email": {
-      "en": "E-mail address"
+      "en": "Email address"
     },
     "education": {
       "country": {
-        "en": "Country of the institution which has awarded the degree"
+        "en": "Country of the institution that has awarded the degree"
       },
       "level": {
         "en": "Level of the degree"
@@ -127,16 +127,16 @@
         "en": "Your degree is from an EU/EEA country and you are not required to pay the application fee."
       },
       "alreadyPaid": {
-        "en": "You have already paid application fee of 100€."
+        "en": "You have already paid the application fee of 100€."
       }
     }
   },
   "userdataform": {
     "info": {
-      "en": "Please enter the following information exactly as in your passport (with capital initials, no capslock)."
+      "en": "Please enter the following information exactly as on your passport (with capital initials, no capslock)."
     },
     "personalId": {
-      "en": "I have Finnish personal identification code"
+      "en": "I have a Finnish personal identification code"
     },
     "submit": {
       "en": "Submit"
@@ -193,7 +193,7 @@
   "vetuma": {
     "start": {
       "info": {
-        "en": "<p>You are required to pay <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100€ before continuing to the application. The application fee is collected by the Finnish National Board of Education (Opetushallitus). The application fee is based on the Universities Act and the Polytechnics Act. The application fee is non-refundable.</p><h2>Payment methods</h2><p>Credit card (Visa, Visa Debit, Visa Electron, Mastercard, Mastercard Debit)</p><p>Finnish internet banking codes</p>"
+        "en": "<p>You are required to pay the <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100€ before continuing to the application. The application fee is collected by the Finnish National Board of Education (Opetushallitus). The application fee is based on the Universities Act and the Polytechnics Act. The application fee is non-refundable.</p><h2>Payment methods</h2><p>Credit card (Visa, Visa Debit, Visa Electron, Mastercard, Mastercard Debit)</p><p>Finnish online banking credentials</p>"
       },
       "submit": {
         "en": "Continue to payment"
@@ -201,7 +201,7 @@
     },
     "result": {
       "cancel": {
-        "en": "Payment canceled."
+        "en": "Payment cancelled."
       },
       "error": {
         "en": "Payment error."
@@ -213,7 +213,7 @@
   },
   "hakulist": {
     "info": {
-      "en": "Continue to applications with following links."
+      "en": "Continue to applications with the following links."
     },
     "empty": {
       "en": "No existing applications found."
