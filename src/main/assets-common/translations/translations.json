@@ -176,7 +176,7 @@
       "en": "Please enter your education information for applying to"
     },
     "payment": {
-      "en": "This information is used only to define if you need to pay the application fee. On the application form you can give additional information about your educational background."
+      "en": "This information is used only to define if you need to pay the application fee. On the application form you can give additional information about your educational background. Submitting false information may result in termination of your application process."
     },
     "submit": {
       "en": "Submit"
@@ -193,7 +193,7 @@
   "vetuma": {
     "start": {
       "info": {
-        "en": "<p>You are required to pay <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100€ before continuing to the application. The application fee is collected by the Finnish National Board of Education (Opetushallitus).</p><h2>Payment methods</h2><p>Credit card (Visa, Visa Debit, Visa Electron, Mastercard, Mastercard Debit)</p><p>Finnish internet banking codes</p>"
+        "en": "<p>You are required to pay <a href='https://studyinfo.fi/wp2/en/higher-education/application-fee/'>application fee</a> of 100€ before continuing to the application. The application fee is collected by the Finnish National Board of Education (Opetushallitus). The application fee is based on the Universities Act and the Polytechnics Act. The application fee is non-refundable.</p><h2>Payment methods</h2><p>Credit card (Visa, Visa Debit, Visa Electron, Mastercard, Mastercard Debit)</p><p>Finnish internet banking codes</p>"
       },
       "submit": {
         "en": "Continue to payment"
