@@ -78,6 +78,7 @@ object HakuperusteetBuild extends Build {
         "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
         "com.typesafe.slick" %% "slick" % slickVersion,
         "com.typesafe.slick" %% "slick-codegen" % slickVersion,
+        "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
         "org.flywaydb" % "flyway-core" % "3.2.1",
         "com.google.api-client" % "google-api-client" % "1.20.0",
         "org.apache.httpcomponents" % "fluent-hc" % "4.5",

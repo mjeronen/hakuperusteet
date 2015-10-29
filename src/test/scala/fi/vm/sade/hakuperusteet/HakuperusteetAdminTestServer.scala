@@ -5,7 +5,7 @@ import java.net.InetSocketAddress
 
 import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
+import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObjects, Users, Payments}
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 
@@ -31,7 +31,7 @@ object HakuperusteetAdminTestServer extends LazyLogging {
   }
   private def initDB() = {
     // Generate test data
-    val db = HakuperusteetDatabase.init(Configuration.props, GlobalExecutionContext.asyncExecutor)
+    val db = HakuperusteetDatabase.init(Configuration.props)
     HakuperusteetTestServer.cleanDB()
 
     val userAndApplication = Users.generateUsers.map(u =>

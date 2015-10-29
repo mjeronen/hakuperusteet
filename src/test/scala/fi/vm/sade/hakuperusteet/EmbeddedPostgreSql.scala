@@ -19,5 +19,5 @@ object EmbeddedPostgreSql {
   def user = s"${config.credentials().username()}"
   def password = s"${config.credentials().password()}"
 
-  def configAsMap = Map("hakuperusteet.db.url"-> dbUrl, "hakuperusteet.db.username" -> user, "hakuperusteet.db.password" -> password)
+  def configAsMap = Map("hakuperusteet.db.url"-> dbUrl, "hakuperusteet.db.user" -> user, "hakuperusteet.db.password" -> password)
 }

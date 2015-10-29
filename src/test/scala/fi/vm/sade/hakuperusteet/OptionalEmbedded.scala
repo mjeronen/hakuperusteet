@@ -1,6 +1,6 @@
 package fi.vm.sade.hakuperusteet
 
-import fi.vm.sade.hakuperusteet.db.{GlobalExecutionContext, HakuperusteetDatabase}
+import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.util.ConfigUtil
 
 object OptionalEmbeddedDB {
@@ -10,7 +10,7 @@ object OptionalEmbeddedDB {
       ConfigUtil.writeConfigFile(EmbeddedPostgreSql.configAsMap)
       EmbeddedPostgreSql.startEmbeddedPostgreSql
       val config = Configuration.props
-      HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)
+      HakuperusteetDatabase.init(config)
     }
   }
 }

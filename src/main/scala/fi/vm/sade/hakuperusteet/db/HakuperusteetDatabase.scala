@@ -98,13 +98,13 @@ object HakuperusteetDatabase extends LazyLogging {
   type DB = PostgresDriver.backend.DatabaseDef
   val schemaName = "public"
 
-  def init(config: Config, executor: AsyncExecutor): HakuperusteetDatabase = {
+  def init(config: Config): HakuperusteetDatabase = {
     val url = config.getString("hakuperusteet.db.url")
-    val user = config.getString("hakuperusteet.db.username")
+    val user = config.getString("hakuperusteet.db.user")
     val password = config.getString("hakuperusteet.db.password")
     logger.info("Database url: " + url)
     migrateSchema(url, user, password)
-    HakuperusteetDatabase(Database.forURL(url = url, user = user, password = password, executor = executor))
+    HakuperusteetDatabase(Database.forConfig("hakuperusteet.db", config))
   }
 
   private def migrateSchema(url: String, user: String, password: String) = {

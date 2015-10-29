@@ -11,7 +11,7 @@ class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers 
   behavior of "HakuperusteetDatabase"
 
   val config = Configuration.props
-  val db = HakuperusteetDatabase.init(config, GlobalExecutionContext.asyncExecutor)
+  val db = HakuperusteetDatabase.init(config)
 
   override def beforeAll() = {
     HakuperusteetTestServer.cleanDB()

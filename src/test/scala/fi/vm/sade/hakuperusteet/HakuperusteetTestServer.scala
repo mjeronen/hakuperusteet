@@ -61,7 +61,7 @@ object HakuperusteetTestServer {
   def cleanDB(): Unit = {
     val config = Configuration.props
     val url = config.getString("hakuperusteet.db.url")
-    val user = config.getString("hakuperusteet.db.username")
+    val user = config.getString("hakuperusteet.db.user")
     val password = config.getString("hakuperusteet.db.password")
     val jdbcConnection = DriverManager.getConnection(url, user, password)
     val tables = getTables(jdbcConnection)

@@ -16,12 +16,18 @@ hakuperusteet.cas.url=https://{{host_cas}}
 hakuperusteet.user={{hakuperusteet_cas_user}}
 hakuperusteet.password={{hakuperusteet_cas_password}}
 
-hakuperusteet.db.host=hakuperusteetdb
-hakuperusteet.db.port=5432
-hakuperusteet.db.name=hakuperusteet
-hakuperusteet.db.username={{hakuperusteet_db_username}}
-hakuperusteet.db.password={{hakuperusteet_db_password}}
-hakuperusteet.db.url=jdbc:postgresql://{{hakuperusteet_db_host}}:{{hakuperusteet_db_port}}/{{hakuperusteet_db_name}}
+hakuperusteet.db {
+  host = "hakuperusteetdb"
+  port = 5432
+  name = "hakuperusteet"
+  user = {{hakuperusteet_db_username}}
+  password = {{hakuperusteet_db_password}}
+  url = jdbc:postgresql://{{hakuperusteet_db_host}}:{{hakuperusteet_db_port}}/{{hakuperusteet_db_name}}
+  numThreads = 20
+  queueSize = 10000
+  registerMbeans = true
+  initializationFailFast = true
+}
 
 admin.synchronization.interval = 30 seconds
 
