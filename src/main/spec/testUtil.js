@@ -199,3 +199,17 @@ export function directLogout() {
   $.post("http://localhost:8081/hakuperusteet/api/v1/session/logout", (_) => { deferred.resolve() })
   return deferred.promise
 }
+
+export function focusAndBlur(elem) {
+  triggerEvent(elem.first(), "focus")
+  triggerEvent(elem.first(), "blur")
+}
+export function click(elem) {
+  triggerEvent(elem.first(), "click")
+}
+
+function triggerEvent(element, eventName) {
+  const evt = testFrame().document.createEvent('HTMLEvents');
+  evt.initEvent(eventName, true, true);
+  element[0].dispatchEvent(evt);
+}

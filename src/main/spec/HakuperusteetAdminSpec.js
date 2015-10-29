@@ -1,5 +1,5 @@
 import {expect, done} from 'chai'
-import {resetServer, openPage, pageLoaded, S, S2, select, wait} from './testUtil.js'
+import {resetServer, openPage, pageLoaded, S, S2, select, wait, focusAndBlur, click} from './testUtil.js'
 
 describe('Admin UI front', () => {
   before(openPage("/hakuperusteetadmin", pageLoaded(form => form.find(".user").length == 7)))
@@ -52,7 +52,8 @@ function expectToBeDisabled(e) { expect($(e).attr("disabled")).to.equal("disable
 function expectToBeEnabled(e) { expect($(e).attr("disabled")).to.equal(undefined) }
 
 function setVal(val) { return (e) => {
-  $(e).focus().val(val).focus().blur().change()
+  $(e).val(val)
+  focusAndBlur($(e))
 }}
 function setField(field, val, altval) {
   return wait.until(() => {
@@ -62,7 +63,8 @@ function setField(field, val, altval) {
       if(e.val() == val) {
         val = altval ? altval : val
       }
-      e.focus().val(val).focus().blur().change()
+      e.val(val)
+      focusAndBlur(e)
     }
     return ok
 })}
@@ -70,7 +72,7 @@ function clickField(field) {
   return wait.until(() => {
     const e = select(field)
     if(e.length == 1 && e.attr("disabled") === undefined) {
-      e[0].click()
+      click(e)
       return true
     } else {
       return false
