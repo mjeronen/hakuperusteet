@@ -28,7 +28,7 @@ class ScalatraBootstrap extends LifeCycle {
 
   override def init(context: ServletContext) {
     context mount(new IndexServlet, "/ao")
-    context mount(new VetumaServlet(config, database, oppijanTunnistus, verifier, emailSender), "/api/v1/vetuma")
+    context mount(new VetumaServlet(config, database, oppijanTunnistus, verifier, emailSender, tarjonta), "/api/v1/vetuma")
     context mount(new TarjontaServlet(tarjonta), "/api/v1/tarjonta")
     context mount(new PropertiesServlet(config, countries, languages, educations), "/api/v1/properties")
     context mount(new SessionServlet(config, database, oppijanTunnistus, verifier, userValidator, applicationObjectValidator, emailSender), "/api/v1/session")
