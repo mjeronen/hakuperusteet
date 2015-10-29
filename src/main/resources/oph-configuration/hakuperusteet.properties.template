@@ -23,6 +23,7 @@ hakuperusteet.db {
   user = {{hakuperusteet_db_username}}
   password = {{hakuperusteet_db_password}}
   url = jdbc:postgresql://{{hakuperusteet_db_host}}:{{hakuperusteet_db_port}}/{{hakuperusteet_db_name}}
+  connectionPool = HikariCP
   numThreads = 20
   queueSize = 10000
   registerMbeans = true
