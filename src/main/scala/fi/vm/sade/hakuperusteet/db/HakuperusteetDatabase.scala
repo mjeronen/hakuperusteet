@@ -6,7 +6,6 @@ import java.util.{Calendar, Date}
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.Configuration
 import fi.vm.sade.hakuperusteet.admin.SynchronizationStatus
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
@@ -16,7 +15,6 @@ import fi.vm.sade.hakuperusteet.domain.{Session, PaymentStatus, Payment, User, A
 
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
-import slick.util.AsyncExecutor
 import org.flywaydb.core.Flyway
 
 import scala.concurrent.duration.Duration
@@ -97,14 +95,23 @@ case class HakuperusteetDatabase(db: DB) {
 object HakuperusteetDatabase extends LazyLogging {
   type DB = PostgresDriver.backend.DatabaseDef
   val schemaName = "public"
+  val inited = scala.collection.mutable.HashMap.empty[Config, HakuperusteetDatabase]
 
   def init(config: Config): HakuperusteetDatabase = {
-    val url = config.getString("hakuperusteet.db.url")
-    val user = config.getString("hakuperusteet.db.user")
-    val password = config.getString("hakuperusteet.db.password")
-    logger.info("Database url: " + url)
-    migrateSchema(url, user, password)
-    HakuperusteetDatabase(Database.forConfig("hakuperusteet.db", config))
+    this.synchronized {
+      val url = config.getString("hakuperusteet.db.url")
+      val user = config.getString("hakuperusteet.db.user")
+      val password = config.getString("hakuperusteet.db.password")
+      if(!inited.contains(config)) {
+        if(inited.nonEmpty) {
+          throw new IllegalArgumentException("You're doing it wrong. For some reason DB config has changed.");
+        }
+        migrateSchema(url, user, password)
+        val db = HakuperusteetDatabase(Database.forConfig("hakuperusteet.db", config))
+        inited += (config -> db)
+      }
+      inited(config)
+    }
   }
 
   private def migrateSchema(url: String, user: String, password: String) = {
