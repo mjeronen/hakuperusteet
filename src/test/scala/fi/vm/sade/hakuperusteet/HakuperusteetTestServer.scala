@@ -60,8 +60,8 @@ object HakuperusteetTestServer {
     val user = config.getString("hakuperusteet.db.user")
     val password = config.getString("hakuperusteet.db.password")
     val jdbcConnection = DriverManager.getConnection(url, user, password)
-    val tables = getTables(jdbcConnection)
     try {
+      val tables = getTables(jdbcConnection)
       Array("synchronization", "application_object", "payment", "user","jettysessionids","jettysessions")
         .foreach(name => if(tables.contains(name)){
           jdbcConnection.createStatement.execute("DELETE from \"" + name + "\";")
@@ -70,6 +70,8 @@ object HakuperusteetTestServer {
       case e: Exception => {
         e.printStackTrace()
       }
+    } finally {
+      jdbcConnection.close()
     }
   }
 }
