@@ -10,7 +10,10 @@ export default class VetumaStart extends React.Component {
 
   render() {
     const state = this.props.state
-    const vetumaStartUrl = state.properties.vetumaStartUrl + (_.isEmpty(state.hakukohdeOid) ?  "" : "/" + state.hakukohdeOid)
+    const vetumaStartUrl = state.properties.vetumaStartUrl
+      + (_.isEmpty(state.hakukohdeOid) ?  "" : "/" + state.hakukohdeOid)
+      + "?href=" + encodeURIComponent(location.href.replace(/ao.*/, ""))
+
     return <div className="vetumaStart">
       <p dangerouslySetInnerHTML={{__html: translation("vetuma.start.info")}}/>
       <form id="vetumaStart" onSubmit={fetchUrlParamsAndRedirectPost( vetumaStartUrl)} method="POST">

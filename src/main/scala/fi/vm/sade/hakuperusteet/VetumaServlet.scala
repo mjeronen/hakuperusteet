@@ -25,8 +25,10 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
 
   get("/openvetuma/:hakukohdeoid") {
     failUnlessAuthenticated
-    createVetuma(Some(params("hakukohdeoid")))
+    createVetuma(params.get("hakukohdeoid"))
   }
+
+  private def getHref = params.get("href").getOrElse(halt(409))
 
   private def createVetuma(hakukohdeOid: Option[String]) = {
     val userData = userDataFromSession
@@ -37,27 +39,27 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val payment = Payment(None, userData.personOid.get, new Date(), referenceNumber, orderNro, paymCallId, PaymentStatus.started)
     val paymentWithId = db.upsertPayment(payment).getOrElse(halt(500))
     AuditLog.auditPayment(userData, paymentWithId)
-    write(Map("url" -> config.getString("vetuma.host"), "params" -> Vetuma(config, paymentWithId, language, hakukohdeOid).toParams))
+    write(Map("url" -> config.getString("vetuma.host"), "params" -> Vetuma(config, paymentWithId, language, getHref, hakukohdeOid).toParams))
   }
 
   post("/return/ok") {
     val hash = "#/effect/VetumaResultOk"
-    handleReturn(hash, params.get("ao"), PaymentStatus.ok)
+    handleReturn(hash, params.get("href").getOrElse(halt(500)), params.get("ao"), PaymentStatus.ok)
   }
 
   post("/return/cancel") {
     val hash = "#/effect/VetumaResultCancel"
-    handleReturn(hash, params.get("ao"), PaymentStatus.cancel)
+    handleReturn(hash, params.get("href").getOrElse(halt(500)), params.get("ao"), PaymentStatus.cancel)
   }
 
   post("/return/error") {
     val hash = "#/effect/VetumaResultError"
-    handleReturn(hash, params.get("ao"), PaymentStatus.error)
+    handleReturn(hash, params.get("href").getOrElse(halt(500)), params.get("ao"), PaymentStatus.error)
   }
 
   def referenceNumberFromPersonOid(personOid: String) = personOid.split("\\.").toList.last
 
-  private def handleReturn(hash: Oid, hakukohdeOid: Option[String], status: PaymentStatus) {
+  private def handleReturn(hash: Oid, href: String, hakukohdeOid: Option[String], status: PaymentStatus) {
     val macParams = createMacParams
     val expectedMac = params.getOrElse("MAC", "")
     if (!Vetuma.verifyReturnMac(config.getString("vetuma.shared.secret"), macParams, expectedMac)) halt(409)
@@ -71,14 +73,14 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
         if (status == PaymentStatus.ok) {
           sendReceipt(userData, hakukohdeOid, paymentOk)
         }
-        halt(status = 303, headers = Map("Location" -> createUrl(hash, hakukohdeOid)))
+        halt(status = 303, headers = Map("Location" -> createUrl(href, hash, hakukohdeOid)))
       case None =>
         // todo: handle this
-        halt(status = 303, headers = Map("Location" -> createUrl(hash, hakukohdeOid)))
+        halt(status = 303, headers = Map("Location" -> createUrl(href, hash, hakukohdeOid)))
     }
   }
 
-  private def createUrl(hash: Oid, hakukohdeOid: Option[String]) = config.getString("host.url.base") + hakukohdeOid.map(ao => s"ao/$hakukohdeOid").getOrElse("") + hash
+  private def createUrl(href: String, hash: Oid, hakukohdeOid: Option[String]) = href + hakukohdeOid.map(ao => s"ao/$ao").getOrElse("") + hash
 
   private def createMacParams = {
     def p(name: String) = params.getOrElse(name, "")

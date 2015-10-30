@@ -31,9 +31,9 @@ hakuperusteet.db.initializationFailFast=true
 admin.synchronization.interval= 30 seconds
 
 vetuma.host={{hakuperusteet_vetuma_host}}
-vetuma.success.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/ok
-vetuma.cancel.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/cancel
-vetuma.error.url=https://{{host_oppija}}/hakuperusteet/api/v1/vetuma/return/error
+vetuma.success.url="api/v1/vetuma/return/ok"
+vetuma.cancel.url="api/v1/vetuma/return/cancel"
+vetuma.error.url="api/v1/vetuma/return/error"
 vetuma.shared.secret={{hakuperusteet_vetuma_shared_secret}}
 vetuma.shared.ap={{hakuperusteet_vetuma_shared_ap}}
 vetuma.shared.rcvid={{hakuperusteet_vetuma_shared_rcvid}}
