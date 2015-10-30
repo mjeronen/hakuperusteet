@@ -11,7 +11,7 @@ import org.json4s.native.Serialization._
 case class SimplifiedCode(id: String, name: String)
 
 case class Countries(countries: List[SimplifiedCode], eeaCountries: List[String]) {
-  def shouldPay(educationCountry: String) = !eeaCountries.contains(educationCountry)
+  def shouldPay(educationCountry: String) = !(eeaCountries ++ List("756")).contains(educationCountry)
 }
 case class Languages(languages: List[SimplifiedCode])
 case class Educations(educations: List[SimplifiedCode])
