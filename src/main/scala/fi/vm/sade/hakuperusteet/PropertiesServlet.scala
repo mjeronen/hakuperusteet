@@ -29,7 +29,7 @@ class PropertiesServlet(config: Config, countries: Countries, languages: Languag
       "vetumaStartUrl" -> "/hakuperusteet/api/v1/vetuma/openvetuma",
       "formRedirectUrl" -> "/hakuperusteet/api/v1/form/redirect",
       "countries" -> countries.countries,
-      "eeaCountries" -> countries.eeaCountries,
+      "eeaCountries" -> (countries.eeaCountries ++ List("756")), //todo: fix Switzerland
       "languages" -> languages.languages,
       "baseEducation" -> educations.educations,
       "googleAuthenticationClientId" -> config.getString("google.authentication.client.id"),
