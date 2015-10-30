@@ -14,16 +14,19 @@ function finish {
 trap finish EXIT
 
 npm install
-npm run build
-npm run admin:build
 
 echo "********************* ./sbt test"
 
 ./sbt clean compile admin:compile test -J-Dembedded=true
 
+echo "********************* npm run build*"
+
+npm run build
+npm run admin:build
+
 echo "********************* npm run test-ui"
 
-./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true &
+./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true -J-Dmock=true &
 PID=$!
 while ! nc -z localhost 8081; do
   sleep 1

@@ -17,7 +17,7 @@ object HakuperusteetAdminTestServer extends LazyLogging {
    * ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer"
    */
   def main(args: Array[String]): Unit = {
-    OptionalEmbeddedDB.ensureEmbeddedIsStartedIfNeeded()
+    DBSupport.ensureEmbeddedIsStartedIfNeeded()
     startMockServer()
     startCommandServer()
     initDB()

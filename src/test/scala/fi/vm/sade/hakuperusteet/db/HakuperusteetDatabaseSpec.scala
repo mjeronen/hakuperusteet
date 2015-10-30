@@ -3,11 +3,11 @@ package fi.vm.sade.hakuperusteet.db
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.{OptionalEmbeddedDB, HakuperusteetTestServer, Configuration}
+import fi.vm.sade.hakuperusteet.{DBSupport, HakuperusteetTestServer, Configuration}
 import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
 import org.scalatest.{BeforeAndAfterAll, Matchers, FlatSpec}
 
-class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers with BeforeAndAfterAll with OptionalEmbeddedDB {
+class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers with BeforeAndAfterAll with DBSupport {
   behavior of "HakuperusteetDatabase"
 
   val config = Configuration.props
