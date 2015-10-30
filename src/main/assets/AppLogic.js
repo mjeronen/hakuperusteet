@@ -13,7 +13,8 @@ export function serverError(state) {
 }
 
 export function maksumuuriInUseWithSelectedHakukohdeOid(state) {
-  return _.isEmpty(state.hakukohdeOid) || tarjontaForHakukohdeOid(state, state.hakukohdeOid).maksumuuriKaytossa
+  //return _.isEmpty(state.hakukohdeOid) || tarjontaForHakukohdeOid(state, state.hakukohdeOid).maksumuuriKaytossa
+  return true // hard coded to test prod
 }
 
 export function hakuForSelectedHakukohdeOidIsOpen(state) {
@@ -24,7 +25,8 @@ export function hakuForSelectedHakukohdeOidIsOpen(state) {
     const startDate = new Date(t.startDate)
     const endDate = new Date(t.endDate)
     const now = new Date()
-    return (startDate < now) && (now < endDate)
+    //return (startDate < now) && (now < endDate)
+    return true // hard coded to test prod
   }
 }
 
@@ -32,7 +34,8 @@ export function hakuForSelectedHakukohdeOidIsJulkaistu(state) {
   if (_.isEmpty(state.hakukohdeOid)) {
     return true
   } else {
-    return tarjontaForHakukohdeOid(state, state.hakukohdeOid).julkaistu
+    //return tarjontaForHakukohdeOid(state, state.hakukohdeOid).julkaistu
+    return true // hard coded to test prod
   }
 }
 
