@@ -59,7 +59,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
 
   def referenceNumberFromPersonOid(personOid: String) = personOid.split("\\.").toList.last
 
-  private def handleReturn(hash: Oid, href: String, hakukohdeOid: Option[String], status: PaymentStatus) {
+  private def handleReturn(hash: String, href: String, hakukohdeOid: Option[String], status: PaymentStatus) {
     val macParams = createMacParams
     val expectedMac = params.getOrElse("MAC", "")
     if (!Vetuma.verifyReturnMac(config.getString("vetuma.shared.secret"), macParams, expectedMac)) halt(409)
@@ -80,7 +80,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     }
   }
 
-  private def createUrl(href: String, hash: Oid, hakukohdeOid: Option[String]) = href + hakukohdeOid.map(ao => s"ao/$ao").getOrElse("") + hash
+  private def createUrl(href: String, hash: String, hakukohdeOid: Option[String]) = href + hakukohdeOid.map(ao => s"ao/$ao").getOrElse("") + hash
 
   private def createMacParams = {
     def p(name: String) = params.getOrElse(name, "")
