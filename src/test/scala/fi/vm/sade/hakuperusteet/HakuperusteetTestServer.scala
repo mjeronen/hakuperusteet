@@ -5,7 +5,6 @@ import java.net.InetSocketAddress
 import java.sql.{Connection, DriverManager}
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
-import fi.vm.sade.hakuperusteet.util.ConfigUtil
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
 
@@ -31,9 +30,9 @@ object HakuperusteetTestServer {
     logger.info("Started HakuperusteetTestServer")
   }
 
-  private def startMockServer() {
+  def startMockServer() {
     val pb = Process(Seq("node", "server.js"), new File("./mockserver/"), "PORT" -> "3001", "LDAP_PORT" -> "1390")
-    val pio = new ProcessIO(_ => (), stdout => scala.io.Source.fromInputStream(stdout).getLines.foreach(println), _ => ())
+    val pio = new ProcessIO(_ => (), stdout => scala.io.Source.fromInputStream(stdout).getLines.foreach(println), stderr => scala.io.Source.fromInputStream(stderr).getLines.foreach(println))
     pb.run(pio)
   }
 
