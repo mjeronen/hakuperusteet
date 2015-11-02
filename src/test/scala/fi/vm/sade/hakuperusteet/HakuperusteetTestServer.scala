@@ -33,7 +33,10 @@ object HakuperusteetTestServer {
   def startMockServer() {
     val pb = Process(Seq("node", "server.js"), new File("./mockserver/"), "PORT" -> "3001", "LDAP_PORT" -> "1390")
     val pio = new ProcessIO(_ => (), stdout => scala.io.Source.fromInputStream(stdout).getLines.foreach(println), stderr => scala.io.Source.fromInputStream(stderr).getLines.foreach(println))
-    pb.run(pio)
+    val started = pb.run(pio)
+    sys addShutdownHook {
+      started.destroy()
+    }
   }
 
   private def startCommandServer() {
