@@ -1,5 +1,5 @@
 import {expect, done} from 'chai'
-import {resetServer, openPage, pageLoaded, S, S2, select, wait, focusAndBlur, click} from './testUtil.js'
+import {openPage, pageLoaded, S, S2, select, wait, focusAndBlur, click} from './testUtil.js'
 
 describe('Admin UI front', () => {
   before(openPage("/hakuperusteetadmin", pageLoaded(form => form.find(".user").length == 7)))

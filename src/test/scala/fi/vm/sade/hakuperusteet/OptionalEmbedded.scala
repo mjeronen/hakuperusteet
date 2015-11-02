@@ -44,6 +44,6 @@ object DBSupport {
 }
 
 trait DBSupport {
-  DBSupport.ensureEmbeddedIsStartedIfNeeded()
   CleanShutdown.scheduleShutdown()
+  DBSupport.ensureEmbeddedIsStartedIfNeeded()
 }

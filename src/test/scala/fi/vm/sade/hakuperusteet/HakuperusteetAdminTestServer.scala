@@ -17,7 +17,7 @@ object HakuperusteetAdminTestServer extends LazyLogging {
   def main(args: Array[String]): Unit = {
     HakuperusteetTestServer.startMockServer()
     DBSupport.ensureEmbeddedIsStartedIfNeeded()
-    startCommandServer()
+//    startCommandServer()
     initDB()
 
     val s = new HakuperusteetAdminServer

@@ -4,10 +4,10 @@ set -e
 
 function finish {
   if [ -n "$PID" ]; then
-    kill -9 $PID;
+    kill -SIGTERM $PID;
   fi
   if [ -n "$ADMIN" ]; then
-    kill -9 $ADMIN;
+    kill -SIGTERM $ADMIN;
   fi
 }
 
@@ -18,7 +18,7 @@ npm install
 
 echo "********************* ./sbt test"
 
-./sbt clean compile admin:compile test -J-Dembedded=true
+./sbt clean compile admin:compile test:compile test -J-Dembedded=true
 
 echo "********************* npm run build*"
 
@@ -27,18 +27,20 @@ npm run admin:build
 
 echo "********************* npm run test-ui"
 
-./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true -J-Dmock=true &
+./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer" -J-Dembedded=true &
 PID=$!
 while ! nc -z localhost 8081; do
   sleep 1
 done
 npm run test-ui
+kill -SIGTERM $PID;
+PID=""
 
 echo "********************* npm run admin:test-ui"
 
 ./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetAdminTestServer" -J-Dembedded=true &
+ADMIN=$!
 while ! nc -z localhost 8091; do
   sleep 1
 done
-ADMIN=$!
 npm run admin:test-ui

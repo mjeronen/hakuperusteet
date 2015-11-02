@@ -16,5 +16,6 @@ object EmbeddedPostgreSql {
 
   def stop = {
     process.stop
+    exec.stop()
   }
 }
