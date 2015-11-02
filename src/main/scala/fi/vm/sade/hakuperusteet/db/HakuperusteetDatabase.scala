@@ -23,8 +23,6 @@ import scala.concurrent.Await
 case class HakuperusteetDatabase(db: DB) {
   import HakuperusteetDatabase._
 
-  def getDB = db
-
   implicit class RunAndAwait[R](r: slick.dbio.DBIOAction[R, slick.dbio.NoStream, Nothing]) {
     def run: R = Await.result(db.run(r), Duration.Inf)
   }
@@ -116,9 +114,7 @@ object HakuperusteetDatabase extends LazyLogging {
     }
   }
 
-  def close = {
-    inited.values.foreach( db => db.getDB.close)
-  }
+  def close = inited.values.foreach(_.db.close)
 
   private def migrateSchema(url: String, user: String, password: String) = {
     try {
