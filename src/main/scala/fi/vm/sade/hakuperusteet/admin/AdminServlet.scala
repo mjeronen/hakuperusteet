@@ -3,7 +3,8 @@ package fi.vm.sade.hakuperusteet.admin
 import java.net.ConnectException
 
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.admin.auth.{CasLogout, CasSessionDB, CasAuthenticationSupport}
+import fi.vm.sade.hakuperusteet.admin.auth.{CasSessionDB, CasAuthenticationSupport}
+import fi.vm.sade.utils.cas.CasLogout
 import fi.vm.sade.hakuperusteet.auth.JavaEESessionAuthentication
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
 import fi.vm.sade.hakuperusteet.domain._
