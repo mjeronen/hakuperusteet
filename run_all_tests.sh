@@ -14,6 +14,7 @@ function finish {
 trap finish EXIT
 
 npm install
+(cd mockserver && npm install && pwd)
 
 echo "********************* ./sbt test"
 
