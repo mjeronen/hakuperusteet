@@ -1,7 +1,8 @@
 import {expect, done} from 'chai'
-import {openPage, pageLoaded, S, S2, select, wait, focusAndBlur, click} from './testUtil.js'
+import {commandServer, openPage, pageLoaded, S, S2, select, wait, focusAndBlur, click} from './testUtil.js'
 
 describe('Admin UI front', () => {
+  before(commandServer.resetAdmin)
   before(openPage("/hakuperusteetadmin", pageLoaded(form => form.find(".user").length == 7)))
   describe('Search functionality', () => {
     it('insert should be able to filter with email', setField("#userSearch", "anni.annilainen@example.com"))

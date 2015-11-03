@@ -5,6 +5,8 @@ import java.net.InetSocketAddress
 import java.sql.{Connection, DriverManager}
 
 import com.sun.net.httpserver.{HttpServer, HttpExchange, HttpHandler}
+import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
+import fi.vm.sade.hakuperusteet.domain.{Payments, ApplicationObjects, Users}
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
 
@@ -26,11 +28,21 @@ object HakuperusteetTestServer {
     startMockServer()
     DBSupport.ensureEmbeddedIsStartedIfNeeded()
     startCommandServer()
-    new HakuperusteetTestServer().runServer()
-    logger.info("Started HakuperusteetTestServer")
+    val server: HakuperusteetTestServer = new HakuperusteetTestServer()
+    val adminServer: HakuperusteetAdminServer = new HakuperusteetAdminServer()
+    logger.info("Starting HakuperusteetServer (http: " + server.portHttp + " https: " + server.portHttps + ")")
+    logger.info("Starting HakuperusteetAdminServer (http: " + adminServer.portHttp + " https: " + adminServer.portHttps + ")")
+    new Thread() {
+      override def run() = {
+        Thread.sleep(1000) // Jetty's JDBC Session creates its database tables automatically. This wait prevents race condition between the two servers
+        adminServer.runServer()
+      }
+    }.start()
+    server.runServer()
   }
 
   def startMockServer() {
+    logger.info("Starting mockserver (http: 3001 ldap: 1390)")
     val pb = Process(Seq("node", "server.js"), new File("./mockserver/"), "PORT" -> "3001", "LDAP_PORT" -> "1390")
     val pio = new ProcessIO(_ => (), stdout => scala.io.Source.fromInputStream(stdout).getLines.foreach(println), stderr => scala.io.Source.fromInputStream(stderr).getLines.foreach(println))
     val started = pb.run(pio)
@@ -40,8 +52,10 @@ object HakuperusteetTestServer {
   }
 
   private def startCommandServer() {
+    logger.info("Starting CommandServer (http: 8000)")
     val server = HttpServer.create(new InetSocketAddress(8000), 0)
-    server.createContext("/testoperation/reset", new ResetHandler())
+    server.createContext("/testoperation/reset", new ResetDatabase())
+    server.createContext("/testoperation/resetAdmin", new ResetDatabaseForAdminTests())
     server.setExecutor(null)
     server.start
   }
@@ -78,14 +92,39 @@ object HakuperusteetTestServer {
   }
 }
 
-class ResetHandler() extends HttpHandler {
+class ResetDatabase() extends HttpHandler {
   override def handle(t: HttpExchange) = {
     HakuperusteetTestServer.cleanDB()
+    okResponse(t)
+  }
+
+  def okResponse(t: HttpExchange): Unit = {
     val response = "OK"
     t.getResponseHeaders.add("Access-Control-Allow-Origin", "*")
     t.sendResponseHeaders(200, response.length)
     val os = t.getResponseBody
     os.write(response.getBytes)
     os.close()
+  }
+}
+
+class ResetDatabaseForAdminTests extends ResetDatabase {
+  override def handle(t: HttpExchange) = {
+    super.handle(t)
+    populateUsers
+  }
+
+  private def populateUsers: Unit = {
+    val db = HakuperusteetDatabase.init(Configuration.props)
+    val userAndApplication = Users.generateUsers.map(u =>
+      (u, ApplicationObjects.generateApplicationObject(u), Payments.generatePayments(u)))
+    userAndApplication.foreach { case (user, applicationObjects, payments) =>
+      val u = db.findUser(user.email)
+      if (u.isEmpty) {
+        db.upsertUser(user)
+        applicationObjects.foreach(db.upsertApplicationObject)
+        payments.foreach(db.upsertPayment)
+      }
+    }
   }
 }

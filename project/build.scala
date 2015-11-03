@@ -127,8 +127,6 @@ object HakuperusteetBuild extends Build {
           run <<= runTask(fullClasspath, mainClass, runner in run),
           assemblyJarName := Name.toLowerCase + "admin" + "-" + Version + "-assembly.jar",
           mainClass := Some("fi.vm.sade.hakuperusteet.HakuperusteetAdminServer"),
-          npmBuildTask := { "npm run admin:build" !},
-          compile <<= (compile in Compile) dependsOn npmBuildTask,
           assemblyExcludedJars in assembly := {
             val cp = (fullClasspath in assembly).value
             cp filter {_.data.getName == "guava-jdk5-13.0.jar"}

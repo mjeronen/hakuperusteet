@@ -2,13 +2,15 @@ const outputDir = "./target/scala-2.11/classes/"
 
 module.exports = {
   entry: {
-    app: "./src/main/assets/HakuperusteetApp.jsx",
-    spec: "./src/main/spec/HakuperusteetSpec.js"
+    "webapp/js/app": "./src/main/assets/HakuperusteetApp.jsx",
+    "webapp/js/spec": "./src/main/spec/HakuperusteetSpec.js",
+    "webapp-admin/js/admin": "./src/main/assets-admin/HakuperusteetAdminApp.jsx",
+    "webapp-admin/js/spec": "./src/main/spec/HakuperusteetAdminSpec.js"
   },
   output: {
     path: outputDir,
-    filename: "webapp/js/[name].js",
-    sourceMapFilename: "js/[name].map.json"
+    filename: "[name].js",
+    sourceMapFilename: "[name].map.json"
   },
   module: {
     loaders: [

@@ -1,8 +1,9 @@
 import {expect, done} from 'chai'
-import {resetServer, openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S, S2, directLogout} from './testUtil.js'
+import {commandServer, openPage, hakuperusteetLoaded, testFrame, logout, takeScreenshot, S, S2, directLogout} from './testUtil.js'
 
 describe('Page without session', () => {
   before(directLogout)
+  before(commandServer.reset)
   before(openPage("/hakuperusteet", hakuperusteetLoaded))
 
   it('should show Google login button', assertOneFound(".googleAuthentication.login"))
@@ -50,7 +51,7 @@ describe('Page without session - invalid hakuperiod and maksumuuri not in use', 
 })
 
 describe('Page with email session - userdata', () => {
-  before(resetServer)
+  before(commandServer.reset)
   before(openPage("/hakuperusteet/ao/1.2.246.562.20.69046715533/#/token/mochaTestToken", hakuperusteetLoaded))
 
   it('should show email as loggedIn user', assertOneFound(".loggedInAs"))

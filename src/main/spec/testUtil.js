@@ -141,10 +141,17 @@ export function logout() {
   })
 }
 
-export function resetServer() {
-  var deferred = Q.defer()
-  $.get("http://localhost:8000/testoperation/reset", (_) => { deferred.resolve() })
-  return deferred.promise
+function httpGetPromise(url) {
+  return function() {
+    var deferred = Q.defer()
+    $.get(url, (_) => { deferred.resolve() })
+    return deferred.promise
+  }
+}
+
+export const commandServer = {
+  reset: httpGetPromise("http://localhost:8000/testoperation/reset"),
+  resetAdmin: httpGetPromise("http://localhost:8000/testoperation/resetAdmin")
 }
 
 export function takeScreenshot() {
