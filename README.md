@@ -95,8 +95,8 @@ During development, after schema changes you must regenerate db-classes with com
 ## UI-tests
 
 1. `./sbt "test:run-main fi.vm.sade.hakuperusteet.HakuperusteetTestServer"`
-2. `./node_modules/.bin/mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8081/hakuperusteet/spec/testRunner.html`
-2. `./node_modules/.bin/mocha-phantomjs --ignore-resource-errors --setting webSecurityEnabled=false http://localhost:8091/hakuperusteetadmin/spec/testRunner.html`
+2. `npm run test-ui`
+3. `npm run admin:test-ui`
 
 To run tests in browser, open following url when HakuperusteetTestServer is running
 
