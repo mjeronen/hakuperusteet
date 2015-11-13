@@ -41,7 +41,7 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
     val shouldPay = countries.shouldPay(ao.educationCountry)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
     val formUrl = as.formUrl
-    val body = generatePostBody(generateParamMap(signer, u, ao, shouldPay, hasPaid))
+    val body = generatePostBody(generateParamMap(signer, u, ao, shouldPay, hasPaid, admin = true))
     logger.info(s"Synching row id ${row.id}, matching fake operation: " + createCurl(formUrl, body))
     Try { doPost(formUrl, body) } match {
       case Success(response) => handlePostSuccess(row, response)
