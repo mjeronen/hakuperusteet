@@ -4,6 +4,7 @@ import java.net.ConnectException
 
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.admin.auth.{CasSessionDB, CasAuthenticationSupport}
+import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.utils.cas.CasLogout
 import fi.vm.sade.hakuperusteet.auth.JavaEESessionAuthentication
 import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
@@ -15,6 +16,7 @@ import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
 import com.typesafe.config.Config
+import org.scalatra.json.NativeJsonSupport
 import scala.collection.JavaConversions._
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
@@ -28,8 +30,10 @@ import scalaz._
 import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
 import java.util.Date
+import org.scalatra.swagger.{SwaggerSupport, Swagger}
 
-class AdminServlet(val resourcePath: String, protected val cfg: Config, userValidator: UserValidator, applicationObjectValidator: ApplicationObjectValidator, db: HakuperusteetDatabase) extends ScalatraServlet with CasAuthenticationSupport with LazyLogging with ValidationUtil {
+class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanTunnistus: OppijanTunnistus, userValidator: UserValidator, applicationObjectValidator: ApplicationObjectValidator, db: HakuperusteetDatabase)(implicit val swagger: Swagger) extends ScalatraServlet with SwaggerRedirect with CasAuthenticationSupport with LazyLogging with ValidationUtil with SwaggerSupport {
+  override protected def applicationDescription: String = "Admin API"
   val paymentValidator = PaymentValidator()
   val staticFileContent = Source.fromURL(getClass.getResource(resourcePath)).mkString
   override def realm: String = "hakuperusteet_admin"
@@ -52,6 +56,24 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
     contentType = "text/html"
     staticFileContent
   }
+
+  post("/api/v1/admin/haku-app") {
+    checkAuthentication
+    val applicationAndUser = parse(request.body).extract[ApplicationAndUser]
+    val hakemusOid = applicationAndUser.hakemusOid
+    if(hakemusOid.isEmpty) {
+      halt(500, "HakemusOid is mandatory!")
+    }
+    userValidator.parseUserData(applicationAndUser.user).bitraverse(
+      errors => renderConflictWithErrors(errors),
+      newUserData => {
+        val userData = saveUserData(newUserData)
+        oppijanTunnistus.createToken(newUserData.email, "")
+        halt(status = 200, body = write(userData))
+      }
+    )
+  }
+
   post("/") {
     val logoutRequest = params.getOrElse("logoutRequest",halt(500))
     CasLogout.parseTicketFromLogoutRequest(logoutRequest) match {
@@ -63,13 +85,20 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
     }
     halt(200)
   }
+
   get("/oppija/*") {
     checkAuthentication
     contentType = "text/html"
     staticFileContent
   }
 
-  get("/api/v1/admin") {
+  val getUsers =
+    (apiOperation[List[User]]("getUsers")
+      summary "Search users"
+      notes "Search users by name or email."
+      parameter queryParam[Option[String]]("search").description("Search term"))
+
+  get("/api/v1/admin", operation(getUsers)) {
     checkAuthentication
     contentType = "application/json"
     val search = params.getOrElse("search", halt(400)).toLowerCase()
@@ -94,7 +123,9 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
     val params = parse(request.body).extract[Params]
     userValidator.parseUserData(params).bitraverse(
       errors => renderConflictWithErrors(errors),
-      newUserData => saveUserData(newUserData)
+      newUserData => {
+        halt(status = 200, body = write(saveUserData(newUserData)))
+      }
     )
   }
 
@@ -108,7 +139,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
         db.upsertApplicationObject(education)
         val u = db.findUserByOid(education.personOid).get
         AuditLog.auditAdminPostEducation(user.oid, u, education)
-        syncAndWriteResponse(u)
+        halt(status = 200, body = write(syncAndWriteResponse(u)))
       }
     )
   }
@@ -126,7 +157,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
         val payment = partialPayment(oldPayment.timestamp)
         db.upsertPayment(payment)
         AuditLog.auditAdminPayment(user.oid, u, payment)
-        syncAndWriteResponse(u)
+        halt(status = 200, body = write(syncAndWriteResponse(u)))
       }
     )
 
@@ -160,7 +191,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, userVali
   private def syncAndWriteResponse(u: User) = {
     val data = fetchUserData(u)
     insertSyncRequests(data)
-    halt(status = 200, body = write(data))
+    data
   }
 
   private def insertSyncRequests(u: UserData) = u.applicationObject.foreach(db.insertSyncRequest(u.user, _))
