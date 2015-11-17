@@ -26,7 +26,8 @@ trait ValidationUtil {
 
   def parseOptional(key: String)(params: Params) = params.get(key) match { case e => e.successNel }
 
-  def parseOptionalInt(key: String)(params: Params) = (params.get(key): @unchecked) match { case Some(i) => Try(Option(i.toInt).successNel).recover{
+  def parseOptionalInt(key: String)(params: Params) = (params.get(key): @unchecked) match {  case None => None.successNel
+  case Some(i) => Try(Option(i).map(_.toInt).successNel).recover{
     case e => e.getMessage.failureNel
   }.get}
 

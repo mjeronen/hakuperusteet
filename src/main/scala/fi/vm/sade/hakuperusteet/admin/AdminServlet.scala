@@ -67,7 +67,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
     userValidator.parseUserData(applicationAndUser.user).bitraverse(
       errors => renderConflictWithErrors(errors),
       newUserData => {
-        val userData = saveUserData(newUserData)
+        val userData = upsertAndAudit(newUserData)
         oppijanTunnistus.createToken(newUserData.email, "")
         halt(status = 200, body = write(userData))
       }
@@ -165,23 +165,30 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
 
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
+  private def upsertAndAudit(userData: User) = {
+    db.upsertUser(userData)
+    AuditLog.auditAdminPostUserdata(user.oid, userData)
+    syncAndWriteResponse(userData)
+  }
+
+  private def saveUpdatedUserData(updatedUserData: User) = {
+    Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
+      case Success(_) => upsertAndAudit(updatedUserData)
+      case Failure(t) if t.isInstanceOf[ConnectException] =>
+        logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
+        halt(500, body = "admin-Henkilopalvelu connection error")
+      case Failure(t) =>
+        val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
+        logger.error(error, t)
+        renderConflictWithErrors(NonEmptyList[String](error))
+    }
+  }
+
   private def saveUserData(newUserData: User) = {
-    db.findUserByOid(newUserData.personOid.getOrElse(halt(500))) match {
+    db.findUserByOid(newUserData.personOid.getOrElse(halt(500, body = "PersonOid is mandatory"))) match {
       case Some(oldUserData) =>
         val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
-        Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
-          case Success(_) =>
-            db.upsertUser(updatedUserData)
-            AuditLog.auditAdminPostUserdata(user.oid, updatedUserData)
-            syncAndWriteResponse(updatedUserData)
-          case Failure(t) if t.isInstanceOf[ConnectException] =>
-            logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
-            halt(500)
-          case Failure(t) =>
-            val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
-            logger.error(error, t)
-            renderConflictWithErrors(NonEmptyList[String](error))
-        }
+        saveUpdatedUserData(updatedUserData)
       case _ => halt(404)
     }
   }
