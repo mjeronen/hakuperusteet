@@ -2,9 +2,12 @@ package fi.vm.sade.hakuperusteet
 
 import fi.vm.sade.hakuperusteet.validation.{UserValidator, ApplicationObjectValidator}
 import org.json4s.native.JsonMethods._
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import org.scalatra.test.scalatest.ScalatraSuite
 
+@RunWith(classOf[JUnitRunner])
 class SessionServletSpec extends FunSuite with ScalatraSuite with ServletTestDependencies {
   override val port = 8081
 

@@ -1,9 +1,12 @@
 package fi.vm.sade.hakuperusteet
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import org.scalatra.test.scalatest.ScalatraSuite
 import org.json4s.native.JsonMethods._
 
+@RunWith(classOf[JUnitRunner])
 class PropertiesServletSpec extends FunSuite with ScalatraSuite with ServletTestDependencies {
   val s = new PropertiesServlet(config, countries, languages, educations)
   addServlet(s, "/*")
