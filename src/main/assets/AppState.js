@@ -34,6 +34,7 @@ export function initAppState(props) {
   const tarjontaLoadBus = new Bacon.Bus()
   const propertiesS = Bacon.fromPromise(HttpUtil.get(propertiesUrl))
   const hakukohdeS = tarjontaLoadBus.merge(Bacon.once(parseAoId())).toProperty()
+  const hakemusS = tarjontaLoadBus.merge(Bacon.once(parseAppId())).toProperty()
   const tarjontaS = hakukohdeS.filter(isNotEmpty).flatMap(fetchFromTarjonta).toEventStream()
 
   const hashS = propertiesS.flatMap(locationHash).filter(isNotEmpty)
@@ -58,7 +59,7 @@ export function initAppState(props) {
   const changeLangS = dispatcher.stream(events.changeLang)
 
   const stateP = Bacon.update(initialState,
-    [propertiesS, hakukohdeS], onStateInit,
+    [propertiesS, hakukohdeS, hakemusS], onStateInit,
     [tarjontaS], onTarjontaValue,
     [cssEffectsBus], onCssEffectValue,
     [sessionDataS], onSessionDataFromServer,
@@ -81,8 +82,8 @@ export function initAppState(props) {
 
   return stateP
 
-  function onStateInit(state, properties, hakukohdeOid) {
-    return {...state, properties, hakukohdeOid}
+  function onStateInit(state, properties, hakukohdeOid, hakemusOid) {
+    return {...state, properties, hakukohdeOid, hakemusOid}
   }
 
   function onTarjontaValue(state, tarjonta) {
@@ -136,6 +137,10 @@ export function initAppState(props) {
     else return new Bacon.End()
   }
   function skipLoadingMessages(x) { return x != "loading" }
+  function parseAppId() {
+    const hakemusOid = /\/hakuperusteet\/app\/([0-9\.]*)\/?$/
+    return hakemusOid.test(location.pathname) ? hakemusOid.exec(location.pathname).pop() : ""
+  }
   function parseAoId() {
     const aoid = /\/hakuperusteet\/ao\/([0-9\.]*)\/?$/
     return aoid.test(location.pathname) ? aoid.exec(location.pathname).pop() : ""
