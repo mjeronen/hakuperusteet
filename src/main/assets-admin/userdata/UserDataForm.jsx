@@ -31,8 +31,8 @@ export default class UserDataForm extends React.Component {
         <label>{translation("title.email")}</label>
         <span>{state.email}</span>
       </div>
-      <UserDataInput name="firstName" title={translation("title.first.name")} state={state} controller={controller} />
-      <UserDataInput name="lastName" title={translation("title.last.name")} state={state} controller={controller} />
+      <UserDataInput name="firstName" translation="title.first.name" required={true} state={state} controller={controller} />
+      <UserDataInput name="lastName" translation="title.last.name" required={true} state={state} controller={controller} />
       <UserBirthDateInput state={state} controller={controller} />
       <UserSSNInput state={state} controller={controller} />
       <Gender state={state} controller={controller} />

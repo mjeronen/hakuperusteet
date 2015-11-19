@@ -102,3 +102,7 @@ To run tests in browser, open following url when HakuperusteetTestServer is runn
 
 1. [http://localhost:8081/hakuperusteet/spec/testRunner.html](http://localhost:8081/hakuperusteet/spec/testRunner.html)
 2. [http://localhost:8091/hakuperusteetadmin/spec/testRunner.html](http://localhost:8091/hakuperusteetadmin/spec/testRunner.html)
+
+## Test urls
+
+* http://localhost:8081/hakuperusteet/ao/1.2.246.562.20.31077988074# <- payment page for AMK

@@ -20,7 +20,7 @@ export default class HakuperusteetPage extends React.Component {
     const state = this.props.state
     const controller = this.props.controller
     return <div>
-      <Header />
+      <Header controller={controller} />
       <div className="content">
         <ProgramInfo state={state} />
         <Session state={state} controller={controller} />

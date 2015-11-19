@@ -34,13 +34,21 @@ export function initChangeListeners(dispatcher, events) {
   function logOut() {
     dispatcher.push(events.logOut, {})
   }
+
+  function changeLang(lang) {
+    return () => {
+      dispatcher.push(events.changeLang, {lang: lang})
+    }
+  }
+
   return {
     pushChangeAndValidation: pushChangeAndValidation,
     valueChanges: valueChanges,
     checkedChanges: checkedChanges,
     radioChanges: radioChanges,
     formSubmits: formSubmits,
-    logOut: logOut
+    logOut: logOut,
+    changeLang: changeLang
   }
 }
 

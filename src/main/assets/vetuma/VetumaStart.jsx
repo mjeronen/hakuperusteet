@@ -15,7 +15,7 @@ export default class VetumaStart extends React.Component {
       + "?href=" + encodeURIComponent(location.href.replace(/ao.*/, ""))
 
     return <div className="vetumaStart">
-      <p dangerouslySetInnerHTML={{__html: translation("vetuma.start.info")}}/>
+      <div dangerouslySetInnerHTML={{__html: translation("vetuma.start.info")}}/>
       <form id="vetumaStart" onSubmit={fetchUrlParamsAndRedirectPost( vetumaStartUrl)} method="POST">
         <input type="submit" name="submitVetuma" value={translation("vetuma.start.submit")} />
         <AjaxLoader hide={true} />

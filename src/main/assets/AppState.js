@@ -9,13 +9,15 @@ import {initChangeListeners} from './util/ChangeListeners'
 import {parseNewValidationErrors} from './util/FieldValidator.js'
 import {submitUserDataToServer} from './userdata/UserDataForm.js'
 import {submitEducationDataToServer} from './education/EducationForm.js'
+import {resolveLang, setLang} from '../assets-common/translations/translations.js'
 
 const dispatcher = new Dispatcher()
 const events = {
   updateField: 'updateField',
   submitForm: 'submitForm',
   fieldValidation: 'fieldValidation',
-  logOut: 'logOut'
+  logOut: 'logOut',
+  changeLang: 'changeLang'
 }
 
 export function changeListeners() {
@@ -53,6 +55,7 @@ export function initAppState(props) {
   const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
   const fieldValidationS = dispatcher.stream(events.fieldValidation)
   const logOutS = dispatcher.stream(events.logOut)
+  const changeLangS = dispatcher.stream(events.changeLang)
 
   const stateP = Bacon.update(initialState,
     [propertiesS, hakukohdeS], onStateInit,
@@ -61,7 +64,8 @@ export function initAppState(props) {
     [sessionDataS], onSessionDataFromServer,
     [updateFieldS], onUpdateField,
     [logOutS], onLogOut,
-    [fieldValidationS], onFieldValidation)
+    [fieldValidationS], onFieldValidation,
+    [changeLangS], onChangeLang)
 
   const formSubmittedS = stateP.sampledBy(dispatcher.stream(events.submitForm), (state, form) => ({state, form}))
 
@@ -100,6 +104,11 @@ export function initAppState(props) {
 
   function onLogOut(state, _) {
     return {...state, ['sessionData']: {}}
+  }
+
+  function onChangeLang(state, {field, lang}) {
+    setLang(lang)
+    return {...state, ['lang']: lang}
   }
 
   function onSessionDataFromServer(state, sessionData) {
