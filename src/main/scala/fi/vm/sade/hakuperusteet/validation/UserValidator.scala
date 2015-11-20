@@ -21,7 +21,7 @@ case class UserValidator(countries: Countries, languages: Languages) extends Val
       |@| parseExists("nativeLanguage")(params).flatMap(validateNativeLanguage)
       |@| parseExists("nationality")(params).flatMap(validateCountry)
       ) { (firstName, lastName, birthDate, personId, gender, nativeLanguage, nationality) =>
-      User(None, None, _:String, firstName, lastName, java.sql.Date.valueOf(birthDate), personId, _:String, gender, nativeLanguage, nationality)
+      User(None, None, _:String, Some(firstName), Some(lastName), Some(java.sql.Date.valueOf(birthDate)), personId, _:String, Some(gender), Some(nativeLanguage), Some(nationality))
     }
   }
 
@@ -38,7 +38,7 @@ case class UserValidator(countries: Countries, languages: Languages) extends Val
       |@| parseExists("nativeLanguage")(params).flatMap(validateNativeLanguage)
       |@| parseExists("nationality")(params).flatMap(validateCountry)
       ) { (id, personOid, email, firstName, lastName, birthDate, personId, idpentityid, gender, nativeLanguage, nationality) =>
-      User(id, personOid, email, firstName, lastName, java.sql.Date.valueOf(birthDate), personId, idpentityid, gender, nativeLanguage, nationality)
+      User(id, personOid, email, Some(firstName), Some(lastName), Some(java.sql.Date.valueOf(birthDate)), personId, idpentityid, Some(gender), Some(nativeLanguage), Some(nationality))
     }
   }
 

@@ -120,8 +120,8 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
 
   private def userToUserRow(u: User): (Tables.UserRow, Tables.UserDetailsRow) = {
     val id = u.id.getOrElse(useAutoIncrementId)
-    (UserRow(id, u.personOid, u.email, u.idpentityid), UserDetailsRow(id, u.firstName,
-      u.lastName, u.gender, new sql.Date(u.birthDate.getTime), u.personId, u.nativeLanguage, u.nationality))
+    (UserRow(id, u.personOid, u.email, u.idpentityid), UserDetailsRow(id, u.firstName.get,
+      u.lastName.get, u.gender.get, new sql.Date(u.birthDate.get.getTime), u.personId, u.nativeLanguage.get, u.nationality.get))
   }
 
   private def userRowToUser(u: (Tables.UserRow, Option[Tables.UserDetailsRow])) = {
@@ -133,7 +133,7 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   }
 
   private def userRowAndDetailsToUser(r: Tables.UserRow, d: Tables.UserDetailsRow): User =
-   User(Some(r.id), r.henkiloOid, r.email, d.firstname, d.lastname, d.birthdate, d.personid, r.idpentityid, d.gender, d.nativeLanguage, d.nationality)
+   User(Some(r.id), r.henkiloOid, r.email, Some(d.firstname), Some(d.lastname), Some(d.birthdate), d.personid, r.idpentityid, Some(d.gender), Some(d.nativeLanguage), Some(d.nationality))
 
   private def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
 }
