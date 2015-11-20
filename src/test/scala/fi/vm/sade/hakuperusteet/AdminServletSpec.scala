@@ -38,33 +38,4 @@ class AdminServletSpec extends FunSuite with ScalatraSuite with ServletTestDepen
     }
   }
 
-  test("Haku-app API") {
-    val validUser = Map("email" -> "jojdjd@adsdasads2.fi",
-    "firstName" -> "qweqweqwe",
-    "lastName" -> "qweqw",
-    "birthDate" -> "17111995",
-    "personId" -> "-9278",
-    "idpentityid" -> "oppijaToken",
-    "gender" -> "1",
-    "nativeLanguage" -> "AK",
-    "nationality" -> "032")
-    val invalidUser = Map(
-      "firstName" -> "qweqweqwe",
-      "lastName" -> "qweqw",
-      "birthDate" -> "17111995",
-      "personId" -> "-9278",
-      "idpentityid" -> "oppijaToken",
-      "gender" -> "1",
-      "nativeLanguage" -> "AK",
-      "nationality" -> "032")
-    post("/api/v1/admin/haku-app", write(ApplicationAndUser(validUser, ""))) {
-      status should equal (500)
-    }
-    post("/api/v1/admin/haku-app", write(ApplicationAndUser(validUser, "hakemusOid"))) {
-      status should equal (200)
-    }
-    post("/api/v1/admin/haku-app", write(ApplicationAndUser(invalidUser, "hakemusOid"))) {
-      status should equal (409) // <- validation error
-    }
-  }
 }

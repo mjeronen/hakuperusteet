@@ -57,23 +57,6 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
     staticFileContent
   }
 
-  post("/api/v1/admin/haku-app") {
-    checkAuthentication
-    val applicationAndUser = parse(request.body).extract[ApplicationAndUser]
-    val hakemusOid = applicationAndUser.hakemusOid
-    if(hakemusOid.isEmpty) {
-      halt(500, "HakemusOid is mandatory!")
-    }
-    userValidator.parseUserData(applicationAndUser.user).bitraverse(
-      errors => renderConflictWithErrors(errors),
-      newUserData => {
-        val userData = upsertAndAudit(newUserData)
-        oppijanTunnistus.createToken(newUserData.email, "")
-        halt(status = 200, body = write(userData))
-      }
-    )
-  }
-
   post("/") {
     val logoutRequest = params.getOrElse("logoutRequest",halt(500))
     CasLogout.parseTicketFromLogoutRequest(logoutRequest) match {
