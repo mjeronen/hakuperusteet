@@ -10,17 +10,21 @@ import fi.vm.sade.hakuperusteet.admin.SynchronizationStatus
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
 import fi.vm.sade.hakuperusteet.db.generated.Tables._
-import fi.vm.sade.hakuperusteet.domain.{Session, PaymentStatus, Payment, User, ApplicationObject}
+import fi.vm.sade.hakuperusteet.domain.ApplicationObject
+import fi.vm.sade.hakuperusteet.domain.Payment
+import fi.vm.sade.hakuperusteet.domain.User
+import fi.vm.sade.hakuperusteet.domain._
 
 
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
 import org.flywaydb.core.Flyway
+import slick.lifted
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
-case class HakuperusteetDatabase(db: DB) {
+case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   import HakuperusteetDatabase._
 
   implicit class RunAndAwait[R](r: slick.dbio.DBIOAction[R, slick.dbio.NoStream, Nothing]) {
@@ -28,16 +32,43 @@ case class HakuperusteetDatabase(db: DB) {
   }
   val useAutoIncrementId = 0
 
-  def findUser(email: String): Option[User] =
-    Tables.User.filter(_.email === email).result.headOption.run.map(userRowToUser)
+  def findUser(email: String): Option[User] = {
+    // join Tables.UserDetails on (_.id === _.id)
+    (Tables.User.filter(_.email === email) joinLeft Tables.UserDetails on (_.id === _.id)).result.headOption.run.map(userRowToUser)
+  }
 
   def findUserByOid(henkiloOid: String): Option[User] =
-    Tables.User.filter(_.henkiloOid === henkiloOid).result.headOption.run.map(userRowToUser)
+    (Tables.User.filter(_.henkiloOid === henkiloOid) joinLeft Tables.UserDetails on (_.id === _.id)).result.headOption.run.map(userRowToUser)
 
-  def allUsers: Seq[User] = Tables.User.sortBy(_.firstname.asc).result.run.map(userRowToUser)
+  def allUsers: Seq[User] = (Tables.User joinLeft Tables.UserDetails on (_.id === _.id)).result.run.map(userRowToUser)
 
-  def upsertUser(user: User): Option[User] =
-    (Tables.User returning Tables.User).insertOrUpdate(userToUserRow(user)).run.map(userRowToUser)
+  def upsertPartialUser(partialUser: User): Option[User] = {
+    val upsertedUser = (Tables.User returning Tables.User).insertOrUpdate(partialUserToUserRow(partialUser)).run
+    upsertedUser match {
+      case Some(r) => Some(User.partialUser(Some(r.id), r.henkiloOid, r.email, r.idpentityid))
+      case None => None
+    }
+  }
+
+  def upsertUser(user: User): Option[User] = {
+    val (u,d) = userToUserRow(user)
+    try {
+      val upsertedUser = (Tables.User returning Tables.User).insertOrUpdate(u).run
+      upsertedUser match {
+        case Some(newUser) => {
+          val withCopiedId = d.copy(id = newUser.id)
+          val upsertedUserDetails = (Tables.UserDetails returning Tables.UserDetails).insertOrUpdate(withCopiedId).run
+          Some(userRowToUser(newUser,upsertedUserDetails))
+        }
+        case None => None
+      }
+    } catch {
+      case e : Throwable => {
+        logger.error("No hu hu", e)
+        throw e
+      }
+    }
+  }
 
   def findApplicationObjects(user: User): Seq[ApplicationObject] =
     Tables.ApplicationObject.filter(_.henkiloOid === user.personOid).result.run.map(aoRowToAo)
@@ -82,12 +113,27 @@ case class HakuperusteetDatabase(db: DB) {
 
   private def aoToAoRow(e: ApplicationObject) = ApplicationObjectRow(e.id.getOrElse(useAutoIncrementId), e.personOid, e.hakukohdeOid, e.educationLevel, e.educationCountry, e.hakuOid)
 
-  private def userToUserRow(u: User): Tables.UserRow =
-    UserRow(u.id.getOrElse(useAutoIncrementId), u.personOid, u.email, u.idpentityid, u.firstName,
-      u.lastName, u.gender, new sql.Date(u.birthDate.getTime), u.personId, u.nativeLanguage, u.nationality)
+  private def partialUserToUserRow(u: User): Tables.UserRow = {
+    val id = u.id.getOrElse(useAutoIncrementId)
+    UserRow(id, u.personOid, u.email, u.idpentityid)
+  }
 
-  private def userRowToUser(r: UserRow) =
-    User(Some(r.id), r.henkiloOid, r.email, r.firstname, r.lastname, r.birthdate, r.personid, r.idpentityid, r.gender, r.nativeLanguage, r.nationality)
+  private def userToUserRow(u: User): (Tables.UserRow, Tables.UserDetailsRow) = {
+    val id = u.id.getOrElse(useAutoIncrementId)
+    (UserRow(id, u.personOid, u.email, u.idpentityid), UserDetailsRow(id, u.firstName,
+      u.lastName, u.gender, new sql.Date(u.birthDate.getTime), u.personId, u.nativeLanguage, u.nationality))
+  }
+
+  private def userRowToUser(u: (Tables.UserRow, Option[Tables.UserDetailsRow])) = {
+    val r = u._1
+    (u._2) match {
+      case Some(details) => userRowAndDetailsToUser(r, details)
+      case _ => User.partialUser(Some(r.id), r.henkiloOid, r.email, r.idpentityid)
+    }
+  }
+
+  private def userRowAndDetailsToUser(r: Tables.UserRow, d: Tables.UserDetailsRow): User =
+   User(Some(r.id), r.henkiloOid, r.email, d.firstname, d.lastname, d.birthdate, d.personid, r.idpentityid, d.gender, d.nativeLanguage, d.nationality)
 
   private def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
 }
