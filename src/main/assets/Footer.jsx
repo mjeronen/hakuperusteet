@@ -1,15 +1,18 @@
 import React from 'react'
 
+import {resolveLang, translation} from '../assets-common/translations/translations.js'
+
 export default class Footer extends React.Component {
   render() {
+    const lang = resolveLang()
     return <footer>
       <div>
         <div className="footer-logo">
-          <a href="http://www.oph.fi/english" title="Finnish National Board of Education"><img alt="Finnish National Board of Education" src="/hakuperusteet/img/OPH_logo-en.png" /></a>
+          <a href={translation("footer.oph.link")} title={translation("footer.oph.title")}><img alt={translation("footer.oph.title")} src={"/hakuperusteet/img/OPH_logo-" + lang + ".png"} /></a>
           <div className="info"><a href="mailto:applicationfee@studyinfo.fi">applicationfee@studyinfo.fi</a></div>
         </div>
         <div className="footer-logo">
-          <a href="http://www.minedu.fi/OPM/?lang=en" title="Ministry of Education and Culture"><img alt="Ministry of Education and Culture" src="/hakuperusteet/img/OKM_logo-en.png" /></a>
+          <a href={translation("footer.okm.link")} title={translation("footer.okm.title")}><img alt={translation("footer.okm.title")} src={"/hakuperusteet/img/OKM_logo-" + lang + ".png"} /></a>
         </div>
       </div>
     </footer>

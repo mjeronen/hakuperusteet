@@ -4,8 +4,7 @@ import Flatten from 'flat'
 import * as translations from './translations.json'
 const flatTrans = Flatten(translations)
 
-export function translation(key) {
-    const lang = resolveLang()
+export function translation(key, lang = resolveLang()) {
     const fullKey = key + "." + lang
     const trans = flatTrans[fullKey]
     if (_.isEmpty(trans)) {

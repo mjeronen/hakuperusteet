@@ -1,32 +1,22 @@
 import React from 'react'
 
-import {resolveLang} from '../assets-common/translations/translations.js'
+import {resolveLang, translation} from '../assets-common/translations/translations.js'
 
 export default class Header extends React.Component {
   render() {
     const controller = this.props.controller;
     const lang = resolveLang();
-    const langLinks = [];
-    var langLink1, langLink2;
-    if(lang!=="en") {
-      langLinks.push(<li><a href="#" onClick={controller.changeLang("en")}>In English</a></li>)
-    }
-    if(lang!=="sv") {
-      langLinks.push(<li><a href="#" onClick={controller.changeLang("sv")}>På svenska</a></li>)
-    }
-    if(lang!=="fi") {
-      langLinks.push(<li><a href="#" onClick={controller.changeLang("fi")}>Suomeksi</a></li>)
-    }
-    [langLink1, langLink2] = langLinks;
+    const langLinks = ["en", "sv", "fi"].
+        filter((s)=> s !== lang).
+        map((s, i) => <li key={i}><a href="#" onClick={controller.changeLang(s)}>{translation("header.changeLang", s)}</a></li>)
 
     return <section id="header">
       <div className="headerContent">
-        <a href="https://studyinfo.fi/wp2/en/"><img src="/hakuperusteet/img/opintopolku_large-en.png" /></a>
+        <a href="/"><img src={"/hakuperusteet/img/opintopolku_large-"+lang+".png"} /></a>
       </div>
       <div className="languageSelector">
         <ul>
-          {langLink1}
-          {langLink2}
+          {langLinks}
         </ul>
       </div>
     </section>
