@@ -77,7 +77,7 @@ object HakuperusteetTestServer {
     val jdbcConnection = DriverManager.getConnection(url, user, password)
     try {
       val tables = getTables(jdbcConnection)
-      Array("synchronization", "application_object", "payment", "user","jettysessionids","jettysessions")
+      Array("synchronization", "application_object", "payment", "user_details", "user" ,"jettysessionids","jettysessions")
         .foreach(name => if(tables.contains(name)){
           jdbcConnection.createStatement.execute("DELETE from \"" + name + "\";")
         })

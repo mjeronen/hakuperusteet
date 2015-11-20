@@ -92,11 +92,18 @@ app.get('/oppijan-tunnistus/api/v1/token/:token', function(req, res){
   if (token == "mochaTestToken") {
     res.send({ "valid" : true, "email" : "mochatest@example.com"});
   } else {
-    var email = oppijanTunnistusEmails[token]
-    if(email) {
-      res.send({ "valid" : true, "email" : email});
-    } else {
-      res.send({ "valid" : false });
+    if(token == "hakuApp") {
+      res.send({ "valid" : true, "email" : "hakuapp@example.com", "metadata" : {
+        "hakemusOid" : "1.2.3.4",
+        "personOid" : "2.3.4.5"
+      }});
+      } else {
+      var email = oppijanTunnistusEmails[token]
+      if(email) {
+        res.send({ "valid" : true, "email" : email});
+      } else {
+        res.send({ "valid" : false });
+      }
     }
   }
 });

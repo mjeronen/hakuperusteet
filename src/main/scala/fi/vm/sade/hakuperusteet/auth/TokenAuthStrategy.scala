@@ -10,7 +10,7 @@ import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.json4s.native.JsonMethods._
 import org.scalatra.Control
 import org.scalatra.servlet.RichRequest
-
+import fi.vm.sade.hakuperusteet.domain.User
 import scala.util.{Failure, Success, Try}
 
 class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends SimpleAuth with LazyLogging with Control {
@@ -29,7 +29,11 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
 
   def createSession(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
-      case Success(Some(email)) => Some(Session(email, tokenFromRequest, tokenName))
+      case Success(Some((email, Some(metadata)))) => {
+        db.upsertPartialUser(User.partialUser(None, Some(metadata.personOid), email, tokenName))
+        Some(Session(email, tokenFromRequest, tokenName))
+      }
+      case Success(Some((email, None))) => Some(Session(email, tokenFromRequest, tokenName))
       case Success(None) => None
       case Failure(f) =>
         logger.error("Oppijantunnistus.validateToken error", f)
