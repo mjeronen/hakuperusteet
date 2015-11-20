@@ -330,7 +330,7 @@ trait Tables {
   lazy val User = new TableQuery(tag => new User(tag))
 
   /** Entity class storing rows of table UserDetails
-   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param id Database column id SqlType(int4), PrimaryKey
    *  @param firstname Database column firstname SqlType(varchar), Length(255,true)
    *  @param lastname Database column lastname SqlType(varchar), Length(255,true)
    *  @param gender Database column gender SqlType(varchar), Length(255,true)
@@ -350,8 +350,8 @@ trait Tables {
     /** Maps whole row to an option. Useful for outer joins. */
     def ? = (Rep.Some(id), Rep.Some(firstname), Rep.Some(lastname), Rep.Some(gender), Rep.Some(birthdate), personid, Rep.Some(nativeLanguage), Rep.Some(nationality)).shaped.<>({r=>import r._; _1.map(_=> UserDetailsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7.get, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
-    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
-    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column id SqlType(int4), PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.PrimaryKey)
     /** Database column firstname SqlType(varchar), Length(255,true) */
     val firstname: Rep[String] = column[String]("firstname", O.Length(255,varying=true))
     /** Database column lastname SqlType(varchar), Length(255,true) */

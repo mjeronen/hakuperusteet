@@ -64,7 +64,7 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
       }
     } catch {
       case e : Throwable => {
-        logger.error("No hu hu", e)
+        logger.error("Upserting user failed!", e)
         throw e
       }
     }

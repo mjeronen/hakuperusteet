@@ -1,6 +1,6 @@
 CREATE TABLE "user_details"
 (
-  id serial PRIMARY KEY,
+  id integer PRIMARY KEY,
   firstname character varying(255) NOT NULL,
   lastname character varying(255) NOT NULL,
   gender character varying(255) NOT NULL,
