@@ -8,7 +8,8 @@ import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization._
 
-case class SimplifiedCode(id: String, name: String)
+case class SimplifiedCode(id: String, names: List[SimplifiedLangValue])
+case class SimplifiedLangValue(lang: String, name: String)
 
 case class Countries(countries: List[SimplifiedCode], eeaCountries: List[String]) {
   def shouldPay(educationCountry: String) = !(eeaCountries ++ List("756")).contains(educationCountry)
@@ -29,9 +30,8 @@ object Koodisto {
   private def eeaCountries(p: Config) = read[Valtioryhma](urlToString(p.getString("koodisto.eea.countries.url")))
 
   private def simplifyAndSort(koodit: List[Koodi]) = koodit.filter(l => l.metadata.exists(_.kieli.equals("EN")))
-    .map(c => SimplifiedCode(c.koodiArvo,c.metadata.find(_.kieli.equals("EN")).get.nimi))
-    .sortWith((c0,c1) => c0.name.compareTo(c1.name) < 0)
-
+    .map(c => SimplifiedCode(c.koodiArvo,c.metadata.map( m => SimplifiedLangValue(m.kieli.toLowerCase(), m.nimi))))
+    .sortWith((c0,c1) => c0.id.compareTo(c1.id) < 0)
 }
 
 private case class Metadata(nimi: String, kieli: String)

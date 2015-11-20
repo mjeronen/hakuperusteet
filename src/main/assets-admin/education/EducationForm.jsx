@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import {tarjontaForHakukohdeOid} from "../../assets/util/TarjontaUtil.js"
 
-import {createSelectOptions} from '../../assets/util/HtmlUtils.js'
+import {createSelectOptions, mapKoodistoByLang} from '../../assets/util/HtmlUtils.js'
 import HttpUtil from '../../assets/util/HttpUtil'
 import AjaxLoader from '../util/AjaxLoader.jsx'
 
@@ -26,13 +26,13 @@ export default class EducationForm extends React.Component {
     const tarjonta = tarjontaForHakukohdeOid(state, ao.hakukohdeOid)
     const baseEducationsForCurrent = tarjonta.baseEducations
     const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
-    const levelResult = createSelectOptions(baseEducationOptions)
+    const levelResult = createSelectOptions(mapKoodistoByLang(baseEducationOptions, resolveLang()))
 
     const name = tarjonta.name
     const disabled = (validateApplicationObject(ao) && !requiredField(ao, "noChanges")) ? undefined : "disabled"
 
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
-    const countriesResult = createSelectOptions(countries)
+    const countriesResult = createSelectOptions(mapKoodistoByLang(countries, resolveLang()))
 
 
     const errors = requiredField(ao, "noChanges") ? <div className="userDataFormRow">

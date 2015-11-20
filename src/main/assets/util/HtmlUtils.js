@@ -10,6 +10,10 @@ export function createSelectOptions(data) {
   return result
 }
 
+export function mapKoodistoByLang(list, lang) {
+  return list.map((k) => {return {id: k.id, name: k.names.filter((n)=> n.lang == lang).map((n) => n.name)[0]}})
+}
+
 export function disableSubmitAndShowBusy(form) {
   form.querySelector("input[type=submit]").setAttribute("disabled", "disabled");
   form.querySelector(".ajax-loader").classList.remove("hide")
