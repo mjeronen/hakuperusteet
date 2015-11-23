@@ -8,12 +8,23 @@ import {translation} from '../../assets-common/translations/translations.js'
 
 export default class VetumaStart extends React.Component {
 
+  prepareVetumaUrl(state) {
+    const createVetumaUrlPostfix = function() {
+      if(_.isEmpty(state.hakukohdeOid)) {
+        return _.isEmpty(state.hakemusOid) ? "" : "/" + state.hakemusOid + "/with_hakemus"
+      } else {
+        return "/" + state.hakukohdeOid
+      }
+      return "";
+    }
+
+    return state.properties.vetumaStartUrl + createVetumaUrlPostfix()
+      + "?href=" + encodeURIComponent(location.href.replace(/ao.*/, "").replace(/app.*/, ""))
+  }
+
   render() {
     const state = this.props.state
-    const vetumaStartUrl = state.properties.vetumaStartUrl
-      + (_.isEmpty(state.hakukohdeOid) ?  "" : "/" + state.hakukohdeOid)
-      + "?href=" + encodeURIComponent(location.href.replace(/ao.*/, ""))
-
+    const vetumaStartUrl = this.prepareVetumaUrl(state)
     return <div className="vetumaStart">
       <div dangerouslySetInnerHTML={{__html: translation("vetuma.start.info")}}/>
       <form id="vetumaStart" onSubmit={fetchUrlParamsAndRedirectPost( vetumaStartUrl)} method="POST">

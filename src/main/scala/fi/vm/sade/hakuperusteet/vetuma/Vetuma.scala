@@ -36,8 +36,8 @@ case class Vetuma(sharedSecret: String, ap: String, rcvid: String, timestamp: Da
 
 object Vetuma extends LazyLogging {
 
-  def apply(config: Config, payment: Payment, language: String, href: String, hakukohdeOid: Option[String]): Vetuma = {
-    val q = s"?href=$href" + hakukohdeOid.map(ao => s"&ao=$ao").getOrElse("")
+  def apply(config: Config, payment: Payment, language: String, href: String, params: String): Vetuma = {
+    val q = s"?href=$href$params"
     val returnUrl = s"$href${config.getString("vetuma.success.url")}$q"
     val cancelUrl = s"$href${config.getString("vetuma.cancel.url")}$q"
     val errorUrl = s"$href${config.getString("vetuma.error.url")}$q"

@@ -19,8 +19,9 @@ case class PaymentValidator() extends ValidationUtil {
       |@| parseNonEmpty("orderNumber")(params)
       |@| parseNonEmpty("paymCallId")(params)
       |@| parsePaymentStatus("status")(params)
-      ) { (id, personOid, reference, orderNumber, paymCallId, status) =>
-      Payment(id, personOid, _:Date, reference, orderNumber, paymCallId, status)
+      |@| parseOptional("hakemusOid")(params)
+      ) { (id, personOid, reference, orderNumber, paymCallId, status, hakemusOid) =>
+      Payment(id, personOid, _:Date, reference, orderNumber, paymCallId, status, hakemusOid)
     }
   }
 
