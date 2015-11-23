@@ -10,6 +10,8 @@ function finish {
 
 trap finish EXIT
 
+echo "Running all hakuperuste tests"
+
 npm install
 (cd mockserver && npm install && pwd)
 
@@ -29,3 +31,5 @@ npm run test-ui
 
 echo "********************* npm run admin:test-ui"
 npm run admin:test-ui
+
+echo "ALL TESTS OK!"
