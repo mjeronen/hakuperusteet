@@ -21,7 +21,7 @@ export default class SelectedProgramInfo extends React.Component {
         <div>
           <h1>{providerName}</h1>
           <h1>{name}</h1>
-          <p dangerouslySetInnerHTML={{__html: description}}/>
+          <div dangerouslySetInnerHTML={{__html: description}}/>
         </div>
       }
     </div>
