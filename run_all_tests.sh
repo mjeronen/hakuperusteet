@@ -6,6 +6,7 @@ function finish {
   if [ -n "$PID" ]; then
     kill -SIGTERM $PID;
   fi
+  echo "********************* Finished run_all_tests.sh"
 }
 
 trap finish EXIT
@@ -35,4 +36,4 @@ npm run test-ui
 echo "********************* npm run admin:test-ui"
 npm run admin:test-ui
 
-echo "ALL TESTS OK!"
+echo "********************* ALL TESTS OK!"
