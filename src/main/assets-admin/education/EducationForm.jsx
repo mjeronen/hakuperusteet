@@ -9,7 +9,7 @@ import AjaxLoader from '../util/AjaxLoader.jsx'
 
 import {requiredField} from '../../assets/util/FieldValidator.js'
 import {validateApplicationObject} from '../util/ApplicationObjectValidator.js'
-import {translation} from '../../assets-common/translations/translations.js'
+import {translation, resolveLang} from '../../assets-common/translations/translations.js'
 
 
 export default class EducationForm extends React.Component {
