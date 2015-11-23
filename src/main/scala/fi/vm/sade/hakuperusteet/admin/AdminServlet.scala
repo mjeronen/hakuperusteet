@@ -1,36 +1,28 @@
 package fi.vm.sade.hakuperusteet.admin
 
 import java.net.ConnectException
+import java.util.Date
 
+import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import fi.vm.sade.hakuperusteet.admin.auth.{CasSessionDB, CasAuthenticationSupport}
-import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
-import fi.vm.sade.utils.cas.CasLogout
-import fi.vm.sade.hakuperusteet.auth.JavaEESessionAuthentication
-import fi.vm.sade.hakuperusteet.db.{HakuperusteetDatabase}
+import fi.vm.sade.hakuperusteet.admin.auth.{CasAuthenticationSupport, CasSessionDB}
+import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
-import fi.vm.sade.hakuperusteet.util.{ValidationUtil, AuditLog}
-import fi.vm.sade.hakuperusteet.validation.{PaymentValidator, UserValidator, ApplicationObjectValidator}
+import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
+import fi.vm.sade.hakuperusteet.util.{AuditLog, ValidationUtil}
+import fi.vm.sade.hakuperusteet.validation.{ApplicationObjectValidator, PaymentValidator, UserValidator}
+import fi.vm.sade.utils.cas.CasLogout
+import org.json4s.JsonDSL._
+import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
-import com.typesafe.config.Config
-import org.scalatra.json.NativeJsonSupport
-import scala.collection.JavaConversions._
+import org.scalatra.swagger.{Swagger, SwaggerSupport}
+
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
-import scala.xml.Utility
-import scalaz.NonEmptyList
-import org.json4s._
-import org.json4s.native.JsonMethods._
-import org.json4s.JsonDSL._
-import org.json4s.native.Serialization._
-import scalaz._
-import scalaz.syntax.applicative._
-import scalaz.syntax.validation._
-import java.util.Date
-import org.scalatra.swagger.{SwaggerSupport, Swagger}
+import scalaz.{NonEmptyList, _}
 
 class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanTunnistus: OppijanTunnistus, userValidator: UserValidator, applicationObjectValidator: ApplicationObjectValidator, db: HakuperusteetDatabase)(implicit val swagger: Swagger) extends ScalatraServlet with SwaggerRedirect with CasAuthenticationSupport with LazyLogging with ValidationUtil with SwaggerSupport {
   override protected def applicationDescription: String = "Admin API"
@@ -41,7 +33,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   val host = cfg.getString("hakuperusteet.cas.url")
   val henkiloClient = HenkiloClient.init(cfg)
 
-  def checkAuthentication = {
+  def checkAuthentication() = {
     authenticate
     failUnlessAuthenticated
 
@@ -52,7 +44,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   }
 
   get("/") {
-    checkAuthentication
+    checkAuthentication()
     contentType = "text/html"
     staticFileContent
   }
@@ -70,7 +62,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   }
 
   get("/oppija/*") {
-    checkAuthentication
+    checkAuthentication()
     contentType = "text/html"
     staticFileContent
   }
@@ -82,15 +74,15 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
       parameter queryParam[Option[String]]("search").description("Search term"))
 
   get("/api/v1/admin", operation(getUsers)) {
-    checkAuthentication
+    checkAuthentication()
     contentType = "application/json"
-    val search = params.getOrElse("search", halt(400)).toLowerCase()
+    val search = params.getOrElse("search", halt(400)).toLowerCase
     // TODO What do we want to search here? Do optimized query when search terms are decided!
-    write(db.allUsers.filter(u => search.isEmpty || u.email.toLowerCase().contains(search) || (u.firstName + " " + u.lastName).toLowerCase().contains(search)))
+    write(db.allUsers.filter(u => search.isEmpty || u.email.toLowerCase.contains(search) || (u.firstName + " " + u.lastName).toLowerCase.contains(search)))
   }
 
   get("/api/v1/admin/:personoid") {
-    checkAuthentication
+    checkAuthentication()
     contentType = "application/json"
     val personOid = params("personoid")
     val user = db.findUserByOid(personOid)
@@ -101,7 +93,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   }
 
   post("/api/v1/admin/user") {
-    checkAuthentication
+    checkAuthentication()
     contentType = "application/json"
     val params = parse(request.body).extract[Params]
     userValidator.parseUserData(params).bitraverse(
@@ -113,7 +105,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   }
 
   post("/api/v1/admin/applicationobject") {
-    checkAuthentication
+    checkAuthentication()
     contentType = "application/json"
     val params = parse(request.body).extract[Params]
     applicationObjectValidator.parseApplicationObject(params).bitraverse(
@@ -128,7 +120,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   }
 
   post("/api/v1/admin/payment") {
-    checkAuthentication
+    checkAuthentication()
     contentType = "application/json"
     val params = parse(request.body).extract[Params]
     paymentValidator.parsePaymentWithoutTimestamp(params).bitraverse(
