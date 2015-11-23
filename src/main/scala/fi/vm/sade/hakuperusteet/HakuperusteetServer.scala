@@ -20,8 +20,8 @@ class HakuperusteetServer {
     val password = props.getString("hakuperusteet.db.password")
     HakuperusteetDatabase.init(props)
     val server = JettyUtil.createServerWithContext(portHttp, portHttps, createContext, dbUrl, user, password)
-    server.start
-    server.join
+    server.start()
+    server.join()
     logger.info(s"Using ports $portHttp and $portHttps")
   }
 
@@ -31,7 +31,7 @@ class HakuperusteetServer {
       getClass.getClassLoader.getResource("webapp-common").toExternalForm,
       getClass.getClassLoader.getResource("webapp").toExternalForm
     ))
-    context setContextPath ("/hakuperusteet/")
+    context.setContextPath("/hakuperusteet/")
     context.setBaseResource(resources)
     context.setInitParameter(ScalatraListener.LifeCycleKey, classOf[ScalatraBootstrap].getCanonicalName)
     context.addEventListener(new ScalatraListener)
