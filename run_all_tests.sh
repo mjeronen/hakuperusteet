@@ -10,9 +10,12 @@ function finish {
 
 trap finish EXIT
 
-echo "Running all hakuperuste tests"
+echo "********************* Running all hakuperuste tests"
 
+echo "********************* npm install for hakuperusteet"
 npm install
+
+echo "********************* npm install for hakuperusteet mockserver"
 (cd mockserver && npm install && pwd)
 
 echo "********************* ./sbt test"
