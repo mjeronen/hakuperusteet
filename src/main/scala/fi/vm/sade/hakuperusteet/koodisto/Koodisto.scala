@@ -1,7 +1,5 @@
 package fi.vm.sade.hakuperusteet.koodisto
 
-import java.net.URL
-
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.util.HttpUtil._
 import org.json4s.NoTypeHints
@@ -29,9 +27,8 @@ object Koodisto {
   private def countries(p: Config) = simplifyAndSort(read[List[Koodi]](urlToString(p.getString("koodisto.countries.url"))))
   private def eeaCountries(p: Config) = read[Valtioryhma](urlToString(p.getString("koodisto.eea.countries.url")))
 
-  private def simplifyAndSort(koodit: List[Koodi]) = koodit.filter(l => l.metadata.exists(_.kieli.equals("EN")))
-    .map(c => SimplifiedCode(c.koodiArvo,c.metadata.map( m => SimplifiedLangValue(m.kieli.toLowerCase(), m.nimi))))
-    .sortWith((c0,c1) => c0.id.compareTo(c1.id) < 0)
+  private def simplifyAndSort(koodit: List[Koodi]) = koodit.filter(l => l.metadata.exists((m) => List("EN", "FI", "SV").contains(m.kieli)))
+    .map(c => SimplifiedCode(c.koodiArvo,c.metadata.map( m => SimplifiedLangValue(m.kieli.toLowerCase, m.nimi))))
 }
 
 private case class Metadata(nimi: String, kieli: String)

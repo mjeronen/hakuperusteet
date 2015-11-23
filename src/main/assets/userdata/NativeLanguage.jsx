@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {createSelectOptions, mapKoodistoByLang} from '../util/HtmlUtils.js'
+import {createSelectOptions, mapAndSortKoodistoByLang} from '../util/HtmlUtils.js'
 import {translation, resolveLang} from '../../assets-common/translations/translations.js'
 
 export default class NativeLanguage extends React.Component {
@@ -17,7 +17,7 @@ export default class NativeLanguage extends React.Component {
   render() {
     const languages = _.isEmpty(this.props.languages) ? {} : this.props.languages
     const selected = _.isEmpty(this.props.state) ? null : this.props.state[this.id]
-    const result = createSelectOptions(mapKoodistoByLang(languages, resolveLang()))
+    const result = createSelectOptions(mapAndSortKoodistoByLang(languages, resolveLang()))
 
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>{translation("title.native.language")  + " *"}</label>

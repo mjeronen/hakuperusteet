@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import {createSelectOptions, mapKoodistoByLang} from '../util/HtmlUtils.js'
+import {createSelectOptions, mapAndSortKoodistoByLang} from '../util/HtmlUtils.js'
 import {translation, resolveLang} from '../../assets-common/translations/translations.js'
 
 export default class EducationCountry extends React.Component {
@@ -17,7 +17,7 @@ export default class EducationCountry extends React.Component {
 
   render() {
     const countries = _.isEmpty(this.props.countries) ? {} : this.props.countries
-    const result = createSelectOptions(mapKoodistoByLang(countries, resolveLang()))
+    const result = createSelectOptions(mapAndSortKoodistoByLang(countries, resolveLang()))
 
     return <div className="userDataFormRow">
         <label htmlFor={this.id}>{translation("title.education.country") + " *"}</label>

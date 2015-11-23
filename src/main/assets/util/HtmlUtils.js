@@ -10,8 +10,20 @@ export function createSelectOptions(data) {
   return result
 }
 
-export function mapKoodistoByLang(list, lang) {
-  return list.map((k) => {return {id: k.id, name: k.names.filter((n)=> n.lang == lang).map((n) => n.name)[0]}})
+export function mapAndSortKoodistoByLang(list, lang) {
+  function findNameByLang(k, l) {
+    return k.names.
+        filter((n) => n.lang == l).
+        map((n) => n.name)[0];
+  }
+
+  return list.map((koodi) => {
+    var value = findNameByLang(koodi, lang) || findNameByLang(koodi, "en") || findNameByLang(koodi, "fi") || findNameByLang(koodi, "sv");
+    return {
+      id: koodi.id,
+      name: value
+    }
+  }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function disableSubmitAndShowBusy(form) {
