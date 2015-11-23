@@ -39,7 +39,6 @@ To start hakuperusteet-admin, run the following commands:
 1. `npm install`
 2. `./sbt run:admin`
 3. Access hakuperusteet-admin at [https://localhost:18090/hakuperusteetadmin/](https://localhost:18090/hakuperusteetadmin/)
-4. `npm run admin:watch` on separate console to enable front auto compile
 
 ### Run using test configuration
 
