@@ -6,16 +6,18 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.Session
+import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.json4s.native.JsonMethods._
 import org.scalatra.Control
 import org.scalatra.servlet.RichRequest
 import fi.vm.sade.hakuperusteet.domain.User
+import TokenAuthStrategy.tokenName
 import scala.util.{Failure, Success, Try}
 
 class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends SimpleAuth with LazyLogging with Control {
   import fi.vm.sade.hakuperusteet._
-  val tokenName = "oppijaToken"
+  val henkiloClient = HenkiloClient.init(config)
 
   def authenticate(request: HttpServletRequest): Option[Session] = {
     val json = parse(RichRequest(request).body)
@@ -30,7 +32,9 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
   def createSession(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
       case Success(Some((email, Some(metadata)))) => {
-        db.upsertPartialUser(User.partialUser(None, Some(metadata.personOid), email, tokenName))
+        val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, tokenName)
+        upsertIdpEntity(partialUser)
+        db.upsertPartialUser(partialUser)
         Some(Session(email, tokenFromRequest, tokenName))
       }
       case Success(Some((email, None))) => Some(Session(email, tokenFromRequest, tokenName))
@@ -40,4 +44,15 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
         halt(401)
     }
   }
+  
+  def upsertIdpEntity(user: User): Unit = {
+    Try(henkiloClient.upsertIdpEntity(user)) match {
+      case Success(h) =>
+      case Failure(f) => halt(500)
+    }
+  }
+}
+
+object TokenAuthStrategy {
+  val tokenName = "oppijaToken"
 }
