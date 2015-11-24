@@ -10,20 +10,23 @@ class KoodistoSpec extends FlatSpec with Matchers {
 
   val countries = Countries(List(finland, sweden, usa), List("fi", "sv"))
 
+  val discretionaryEducationCode = "106"
+  val regularEducationCode = "100"
+
   it should "require payment when regular base education and from USA" in {
-    countries.shouldPay("us", "100") shouldEqual(true)
-  }
-
-  it should "not require payment when regular base education and from Finland" in {
-    countries.shouldPay("fi", "100") shouldEqual(false)
-  }
-
-  it should "not require payment when discretionary base education and from Finland" in {
-    countries.shouldPay("fi", "100") shouldEqual(false)
+    countries.shouldPay("us", regularEducationCode) shouldEqual(true)
   }
 
   it should "not require payment when discretionary base education and from USA" in {
-    countries.shouldPay("fi", "100") shouldEqual(false)
+    countries.shouldPay("us", discretionaryEducationCode) shouldEqual(false)
+  }
+
+  it should "not require payment when regular base education and from Finland" in {
+    countries.shouldPay("fi", regularEducationCode) shouldEqual(false)
+  }
+
+  it should "not require payment when discretionary base education and from Finland" in {
+    countries.shouldPay("fi", discretionaryEducationCode) shouldEqual(false)
   }
 
 }
