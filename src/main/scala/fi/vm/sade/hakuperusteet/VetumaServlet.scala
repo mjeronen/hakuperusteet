@@ -95,7 +95,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
 
   private def fetchNameFromTarjonta(hakukohdeOid: String) =
     Try { tarjonta.getApplicationObject(hakukohdeOid) } match {
-      case Success(ao) => Some(ao.name)
+      case Success(ao) => Some(ao.name.en.get) // TODO APO what if en not defined?
       case Failure(f) =>  None
     }
 }

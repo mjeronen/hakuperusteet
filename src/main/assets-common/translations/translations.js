@@ -15,6 +15,10 @@ export function translation(key, lang = resolveLang()) {
     }
 }
 
+export function resolveMap(map) {
+    return map[resolveLang()] || map["en"] || map["fi"] || map["sv"]
+}
+
 export function setLang(val) {
     document.cookie="i18next="+val+"; path=/";
 }
