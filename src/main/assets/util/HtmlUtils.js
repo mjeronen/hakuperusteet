@@ -1,12 +1,14 @@
 import React from 'react'
 import _ from 'lodash'
 
+import * as translation from '../../assets-common/translations/translations.js'
+
 export function createSelectOptions(data) {
-  const emptyOptions = [{ id: "", name: "Loading..."}]
+  const emptyOptions = [{ id: "", name: "..."}]
   const dataJson = _.isEmpty(data) ? emptyOptions : data
   var toOptions = function (item) { return <option value={item.id} key={item.id}>{item.name}</option> }
   const result = dataJson.map(toOptions)
-  result.unshift(<option value="" key="-">{"Choose..."}</option>)
+  result.unshift(<option value="" key="-">{translation.translation("ui.choose")+"..."}</option>)
   return result
 }
 

@@ -362,5 +362,12 @@
       "fi":"Suomeksi",
       "sv":"På svenska"
     }
+  },
+  "ui": {
+    "choose": {
+      "en": "Choose",
+      "fi": "Valitse",
+      "sv": "Välj"
+    }
   }
 }
