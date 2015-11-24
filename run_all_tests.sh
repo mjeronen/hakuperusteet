@@ -2,10 +2,16 @@
 
 set -e
 
-function finish {
+function killTestServer {
   if [ -n "$PID" ]; then
     kill -SIGTERM $PID;
+    sleep 5
   fi
+  PID=""
+}
+
+function finish {
+  killTestServer
   echo "********************* Finished run_all_tests.sh"
 }
 
@@ -36,4 +42,5 @@ npm run test-ui
 echo "********************* npm run admin:test-ui"
 npm run admin:test-ui
 
+killTestServer
 echo "********************* ALL TESTS OK!"

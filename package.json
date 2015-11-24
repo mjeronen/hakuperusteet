@@ -35,7 +35,6 @@
     "jquery": "^2.1.4",
     "q": "^1.4.1",
     "mocha": "^2.2.5",
-    "mocha-jsdom": "^1.0.0",
     "mocha-junit-reporter": "^1.5.0",
     "mocha-phantomjs": "4.0.1",
     "react-tools": "^0.13.2",
