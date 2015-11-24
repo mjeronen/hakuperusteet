@@ -225,6 +225,21 @@ describe('Page with email session - no new ao but two existing', () => {
   it('should show hakuList', assertOneFound(".hakuList"))
 })
 
+describe('Haku-application landing page', () => {
+  before(openPage("/hakuperusteet/app/1.2.3#/token/hakuApp", hakuperusteetLoaded))
+
+  it('should show email as loggedIn user', assertOneFound(".loggedInAs"))
+  it('should not show userDataForm', assertNotFound("#userDataForm"))
+  it('should not show educationForm', assertNotFound("#educationForm"))
+  it('should show vetuma start', assertOneFound(".vetumaStart"))
+  it('should not show alreadyPaid', assertNotFound(".alreadyPaid"))
+
+  describe('Submit vetumaForm', () => {
+    it('click submit should go to vetuma and return back with successful payment', clickField("input[name='submitVetuma']"))
+    it('should show successful payment as result', assertOneFound(".vetumaResult"))
+    it('should show already paid', assertOneFound(".alreadyPaid"))
+  })
+})
 
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
 function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
