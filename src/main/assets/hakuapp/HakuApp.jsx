@@ -17,7 +17,7 @@ export default class HakuApp extends React.Component {
     return <section id="haku-app">
       { hasEmailSession(state) ? <EmailSession state={state} controller={controller} /> : null}
       { showVetumaStartForHakemus(state) ? <VetumaStart state={state} /> : null }
-      { hasValidPayment(state) ? <div className="vetumaStart"><p>{translation("apply.payment.alreadyPaid")}</p></div> : null }
+      { hasValidPayment(state) ? <div className="alreadyPaid"><p>{translation("apply.payment.alreadyPaid")}</p></div> : null }
     </section>
   }
 }
