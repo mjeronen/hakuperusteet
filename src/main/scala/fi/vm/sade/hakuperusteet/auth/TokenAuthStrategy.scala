@@ -46,9 +46,12 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
   }
   
   def upsertIdpEntity(user: User): Unit = {
-    Try(henkiloClient.upsertIdpEntity(user)) match {
+    Try(henkiloClient.upsertIdpEntity(user).run) match {
       case Success(h) =>
-      case Failure(f) => halt(500)
+      case Failure(f) => {
+        logger.error("henkiloClient.upsertIdpEntity error inserting idp entity for user: " + user, f)
+        halt(500)
+      }
     }
   }
 }
