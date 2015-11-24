@@ -34,7 +34,7 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
       case Success(Some((email, Some(metadata)))) => {
         val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, tokenName)
         upsertIdpEntity(partialUser)
-        db.upsertPartialUser(partialUser)
+        db.findUser(email).getOrElse(db.upsertPartialUser(partialUser))
         Some(Session(email, tokenFromRequest, tokenName))
       }
       case Success(Some((email, None))) => Some(Session(email, tokenFromRequest, tokenName))
