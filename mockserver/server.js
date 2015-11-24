@@ -44,7 +44,17 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(function(req, res, next) { res.setHeader("Content-Type", "application/json"); return next(); });
 
 // Koodisto-Service
-app.use(express.static(__dirname + '/static'));
+var fs        = require('fs');
+var publicdir = __dirname + '/static';
+app.use(function(req, res, next) {
+  var file = publicdir + req.path + '.json';
+  fs.exists(file, function(exists) {
+    if (exists)
+      req.url += '.json';
+    next();
+  });
+});
+app.use(express.static(publicdir));
 
 // Ryhmasahkoposti-Service
 app.post('/ryhmasahkoposti-service/email', function(req, res){

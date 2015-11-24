@@ -1,0 +1,89 @@
+{
+  "accessRights": {},
+  "result": {
+    "modified": 1433832742951,
+    "modifiedBy": "1.2.246.562.24.21928143170",
+    "oid": "1.2.246.562.20.31077988074",
+    "version": 5,
+    "hakukohteenNimet": {
+      "kieli_sv": "",
+      "kieli_en": "Tradenomi (AMK) LiiketalousEnglish",
+      "kieli_fi": "Tradenomi (AMK), liiketalous, monimuotototeutus / Pietarsaari"
+    },
+    "tarjoajaNimet": {
+      "fi": "Centria-ammattikorkeakoulu, Kokkola-Pietarsaaren yksikkö, Pietarsaari",
+      "en": "Centria University of Applied Sciences"
+    },
+    "koulutusmoduuliToteutusTarjoajatiedot": {
+      "1.2.246.562.17.48075829126": {
+        "tarjoajaOids": [
+          "1.2.246.562.10.24981747314"
+        ]
+      }
+    },
+    "tarjoajaOids": [
+      "1.2.246.562.10.24981747314"
+    ],
+    "hakuOid": "1.2.246.562.29.80171652938",
+    "hakuaikaId": "579942",
+    "hakukelpoisuusvaatimusUris": [
+      "pohjakoulutusvaatimuskorkeakoulut_100"
+    ],
+    "opintoOikeusUris": [],
+    "hakukohdeKoulutusOids": [
+      "1.2.246.562.17.48075829126"
+    ],
+    "alinHyvaksyttavaKeskiarvo": 0.0,
+    "alinValintaPistemaara": 0,
+    "ylinValintapistemaara": 0,
+    "aloituspaikatLkm": 15,
+    "edellisenVuodenHakijatLkm": 0,
+    "valintojenAloituspaikatLkm": 0,
+    "tila": "JULKAISTU",
+    "koulutusAsteTyyppi": "KORKEAKOULUTUS",
+    "toteutusTyyppi": "KORKEAKOULUTUS",
+    "koulutusmoduuliTyyppi": "TUTKINTO",
+    "lisatiedot": {
+      "kieli_sv": "",
+      "kieli_en": "",
+      "kieli_fi": ""
+    },
+    "valintaperusteKuvaukset": {
+      "kieli_fi": "<p><b><i>Opiskelijavalinta</i></b></p> <p>Hakijat voidaan valita kahdella eri tavalla (ks. valintaperustesuosituksen yleinen osa):</p> <p><b>Jono 1: Valintatapa 4</b> Valintakoe- ja työkokemuspisteiden perusteella</p> <p>Valintakoe      70 pistettä</p> <p>Työkokemus   30 pistettä</p> <p>Yhteensä        100 pistettä</p> <p> </p> <p><b>Jono 2: Valintatapa 3 </b>Valintakokeesta saatavan pistemäärän perusteella</p> <p> </p> <p>Valintakoe      70 pistettä</p> <p><i>Ammattikorkeakoulut määrittelevät hakokohdekohtaisesti, kuinka monta aloituspaikkaa osoittavat kumpaankin jonoon käyttäessään molempia jonoja. Hakijalle on annettava selkeä kuva siitä, käyttääkö ammattikorkeakoulu todellisuudessa näitä molempia jonoja. Valintatapajonoista täytetään ensin jono 1 ja sitten jono 2. Jos jommastakummasta jonosta vapautuu paikka, otetaan tilalle uusi hakija samasta jonosta</i>.</p> <p><b><i>Valintakoe</i></b></p> <p>Ammattikorkeakoulun valintakokeisiin kutsutaan kaikki hakukelpoiset hakijat. Valintakokeesta on saatava vähintään 28 pistettä (maks. 70 pistettä). Valintakoetulos on voimassa kyseisen haun ajan. Mikäli jokin koulutus poikkeaa tästä, se on mainittu alla ko. koulutuksen kohdalla. Ammattikorkeakoulut tekevät yhteistyötä, jossa samaan valintakoeryhmään kuuluvat koulutukset hyväksyvät sellaisenaan toisessa ammattikorkeakoulussa suoritetun valintakokeen.</p> <ol> <li><b> Liiketalouden koulutus</b> <ul> <li><b>Liiketalouden koulutuksen</b> valintakoeryhmän valtakunnalliset valintakokeet järjestetään syksyn yhteishaussa ke 28.10.2015 klo 12.00. Valtakunnallisessa liiketalouden koulutuksen valintakokeessa on kolme osaa: kirjoitelma tai haastattelu (30 p.), ennakkoaineistoon pohjautuvat monivalintatehtävät (20 p.) ja loogista päättelyä ja matemaattista osaamista mittaava osa (20 p.). Ennakkoaineisto julkaistaan jokaisen valtakunnallista koetta käyttävän ammattikorkeakoulun Internet-sivuilla syksyn haussa 28.9.- 28.10.2015 Aineisto ei saa olla mukana koetilanteessa. Kirjallinen koe kestää kaksi tuntia, mutta kokeeseen on varattava aikaa mahdollisine haastatteluineen 3 - 6 tuntia.</li> <li>Liiketalouden koulutukseen kuuluvaa <b>pk-yrittäjyyden koulutus</b> tarjotaan Seinäjoen ammattikorkeakoulussa. Siihen voi hakea syksyn yhteishaussa osallistumalla liiketalouden valtakunnalliseen valintakokeeseen (ks. kohta 1) ja se kuuluu samaan valintakoeryhmään liiketalouden koulutusten kanssa.</li> </ul> </li> <li><b>Liiketoiminnan logistiikan</b> koulutuksen monimuototeutus tarjotaan kevään yhteishaussa Lahden ammattikorkeakoulussa ja siihen voi hakea osallistumalla liiketalouden valtakunnalliseen valintakokeeseen (ks. kohta 1) ja se kuuluu samaan valintakoeryhmään liiketalouden koulutusten kanssa.</li> <li><b>Tietojenkäsittelyn koulutuksen</b> valintakoe on syksyn yhteishaussa to 29.10.2015 klo 12.00. Ennakkoaineisto julkaistaan jokaisen valtakunnallista koetta käyttävän ammattikorkeakoulun Internet-sivuilla syksyn haussa 29.9.2015 – 29.10.2015. Aineisto ei saa olla mukana valintakokeessa. Valintakokeessa mitataan kaikille yhteisellä kirjallisella osuudella loogisen ajattelun ja ongelmanratkaisun taitoa (maks. 20 p.) sekä ennakkoaineistoon pohjautuen uuden tiedon omaksumista (maks. 30 p.). Kirjallisen osion lisäksi valintakokeessa mitataan motivaatiota ja soveltuvuutta alalle (maks. 20 p.), tämän osion jokainen valintakokeen järjestävä korkeakoulu toteuttaa parhaaksi katsomallaan tavalla esim. esseenä, haastatteluna tai näiden yhdistelmänä tai muulla sopivaksi katsomallaan tavalla. Motivaatiota ja soveltuvuutta mittaavasta osiosta on hakijan saatava vähintään 8 pistettä. Voidakseen tulla valituksi on hakijan saatava koko valintakokeesta vähintään 25 pistettä. Korkeakoulut julkaisevat omilla hakusivuillaan tarkemmat tiedot motivaatiota ja suuntautumista mittaavan osion muodosta.</li> </ol>"
+    },
+    "hakukelpoisuusVaatimusKuvaukset": {
+      "kieli_sv": "",
+      "kieli_en": "",
+      "kieli_fi": ""
+    },
+    "kaytetaanJarjestelmanValintaPalvelua": true,
+    "kaytetaanHaunPaattymisenAikaa": false,
+    "kaytetaanHakukohdekohtaistaHakuaikaa": false,
+    "hakukohteenLiitteet": [],
+    "yhteystiedot": [],
+    "liitteidenToimitusOsoite": {
+      "version": 0,
+      "osoiterivi1": "Talonpojankatu 2B",
+      "postinumero": "posti_67100",
+      "postinumeroArvo": "67100",
+      "postitoimipaikka": "KOKKOLA"
+    },
+    "valintakokeet": [],
+    "valintaPerusteKuvausTunniste": 2137166,
+    "kaksoisTutkinto": false,
+    "opetusKielet": [
+      "kieli_fi"
+    ],
+    "valintaPerusteKuvausKielet": [
+      "kieli_fi"
+    ],
+    "soraKuvausKielet": [],
+    "painotettavatOppiaineet": [],
+    "hakuMenettelyKuvaukset": {},
+    "peruutusEhdotKuvaukset": {},
+    "ryhmaliitokset": [],
+    "organisaatioRyhmaOids": [],
+    "ylioppilastutkintoAntaaHakukelpoisuuden": true
+  },
+  "status": "OK"
+}
