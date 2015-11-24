@@ -10,7 +10,12 @@ case class SimplifiedCode(id: String, names: List[SimplifiedLangValue])
 case class SimplifiedLangValue(lang: String, name: String)
 
 case class Countries(countries: List[SimplifiedCode], eeaCountries: List[String]) {
-  def shouldPay(educationCountry: String) = !(eeaCountries ++ List("756")).contains(educationCountry)
+  def shouldPay(educationCountry: String, educationLevel: String) : Boolean = {
+    val isDiscretionaryEducationLevel = educationLevel == "106"
+    val isEeaCountryOrSwitzerland = (eeaCountries ++ List("756")).contains(educationCountry)
+
+    !(isEeaCountryOrSwitzerland || isDiscretionaryEducationLevel)
+  }
 }
 case class Languages(languages: List[SimplifiedCode])
 case class Educations(educations: List[SimplifiedCode])

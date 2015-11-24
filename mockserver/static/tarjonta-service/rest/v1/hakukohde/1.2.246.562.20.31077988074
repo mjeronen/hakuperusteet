@@ -27,7 +27,8 @@
         "hakuOid": "1.2.246.562.29.80171652938",
         "hakuaikaId": "579942",
         "hakukelpoisuusvaatimusUris": [
-            "pohjakoulutusvaatimuskorkeakoulut_100"
+            "pohjakoulutusvaatimuskorkeakoulut_100",
+            "pohjakoulutusvaatimuskorkeakoulut_106"
         ],
         "opintoOikeusUris": [],
         "hakukohdeKoulutusOids": [

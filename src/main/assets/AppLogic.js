@@ -102,14 +102,15 @@ function hasEducationForSelectedHakukohdeOid(state) {
   return !_.isEmpty(state.sessionData.applicationObject) && _.some(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
 }
 
-function paymentRequiredWithCurrentHakukohdeOid(state) {
-  const educationForCurrentHakukohdeOid = _.find(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid })
-  if (_.isEmpty(educationForCurrentHakukohdeOid)) {
+export function paymentRequiredWithCurrentHakukohdeOid(state) {
+  const educationForCurrentHakukohdeOid = _.defaults({}, state, _.find(state.sessionData.applicationObject, (e) => { return e.hakukohdeOid == state.hakukohdeOid }))
+  if (!educationForCurrentHakukohdeOid.educationCountry) {
     return false
   } else {
     const eeaCountries = (state.properties && state.properties.eeaCountries) ? state.properties.eeaCountries : []
     const isEeaCountry = _.contains(eeaCountries, educationForCurrentHakukohdeOid.educationCountry)
-    return !isEeaCountry
+    const isDiscretionaryEducationLevel = educationForCurrentHakukohdeOid.educationLevel === '106'
+    return !(isEeaCountry || isDiscretionaryEducationLevel)
   }
 }
 

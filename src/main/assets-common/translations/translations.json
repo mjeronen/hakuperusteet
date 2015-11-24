@@ -180,6 +180,11 @@
         "fi": "Tutkintosi on myönnetty EU/ETA-maassa eikä sinun tarvitse maksaa hakijamaksua.",
         "sv": "Eftersom du har en examen från ett EU/EES-land behöver du inte betala ansökningsavgiften."
       },
+      "notRequiredHasDiscretionaryEducationLevel": {
+        "en": "You are not required to pay the application fee because of your degree level.",
+        "fi": "Tutkinnon tasosi perusteella sinun ei tarvitse maksaa hakijamaksua.",
+        "sv": "Du behöver inte betala ansökningsavgiften på basen av din examens nivå."
+      },
       "alreadyPaid": {
         "en": "You have already paid the application fee of 100€.",
         "fi": "Olet jo maksanut hakijamaksun 100€",

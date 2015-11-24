@@ -129,6 +129,19 @@ describe('Page with email session - educationdata', () => {
     it('noPaymentRequired should be hidden', assertNotFound(".noPaymentRequired"))
     it('alreadyPaid should be hidden', assertNotFound(".alreadyPaid"))
 
+    it('select educationLevel discretionary', setField("#educationLevel", "106"))
+    it('noPaymentRequired should be visible', assertOneFound(".noPaymentRequired"))
+    it('paymentRequired should be hidden', assertNotFound(".paymentRequired"))
+    it('alreadyPaid should be hidden', assertNotFound(".alreadyPaid"))
+
+    it('select educationLevel discretionary', setField("#educationLevel", "116"))
+    it('select educationCountry - Solomin Islands', setField("#educationCountry", "090"))
+    it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', assertNotFound("#educationForm .error"))
+    it('paymentRequired should be visible', assertOneFound(".paymentRequired"))
+    it('noPaymentRequired should be hidden', assertNotFound(".noPaymentRequired"))
+    it('alreadyPaid should be hidden', assertNotFound(".alreadyPaid"))
+
     describe('Submit educationForm', () => {
       it('click submit should post educationdata', clickField("input[name='submit']"))
       it('should show vetuma startpage after submit', assertOneFound(".vetumaStart"))
