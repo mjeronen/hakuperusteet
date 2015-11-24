@@ -73,6 +73,8 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     }
   }
 
+  private def cookieToLang = cookies.get("i18next").filter(lang => List("en","fi","sv").contains(lang)).getOrElse("en")
+
   private def handlePaymentWhenThereIsNoReferenceToPayment(hash: String, href:String) = {
     // todo: handle case when payment completes (with some status) but there's no reference to that payment in DB
     halt(status = 303, headers = Map("Location" -> createUrl(href, hash, None)))
@@ -82,7 +84,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     db.upsertPayment(paymentWithSomeStatus)
     AuditLog.auditPayment(userData, paymentWithSomeStatus )
     if (status == PaymentStatus.ok) {
-      //sendReceipt(userData, hakukohdeOid, paymentWithSomeStatus )
+      sendReceipt(userData, paymentWithSomeStatus, cookieToLang)
     }
     val url = href + s"app/$hakemusOid$hash"
     halt(status = 303, headers = Map("Location" -> url))
@@ -92,7 +94,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     db.upsertPayment(paymentWithSomeStatus)
     AuditLog.auditPayment(userData, paymentWithSomeStatus )
     if (status == PaymentStatus.ok) {
-      sendReceipt(userData, hakukohdeOid, paymentWithSomeStatus )
+      sendReceipt(userData, paymentWithSomeStatus, cookieToLang)
     }
     halt(status = 303, headers = Map("Location" -> createUrl(href, hash, hakukohdeOid)))
   }
@@ -119,10 +121,9 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     List(p("RCVID"), p("TIMESTMP"), p("SO"), p("LG"), p("RETURL"), p("CANURL"), p("ERRURL"), p("PAYID"), p("REF"), p("ORDNR"), p("PAID"), p("STATUS"))
   }
 
-  private def sendReceipt(userData: User, hakukohdeOid: Option[String], payment: Payment) = {
-    val name = hakukohdeOid.flatMap(fetchNameFromTarjonta).getOrElse("this")
-    val p = ReceiptValues(userData.fullName, name, config.getString("vetuma.amount"), payment.reference)
-    emailSender.send(userData.email, "Studyinfo: Your payment has been received", EmailTemplate.renderReceipt(p))
+  private def sendReceipt(userData: User, payment: Payment, lang: String) = {
+    val p = ReceiptValues(userData.fullName, config.getString("vetuma.amount"), payment.reference)
+    emailSender.send(userData.email, EmailTemplate.receiptTitles.get(lang).get, EmailTemplate.renderReceipt(p, lang))
   }
 
   private def fetchNameFromTarjonta(hakukohdeOid: String) =
