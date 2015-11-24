@@ -18,11 +18,9 @@ trait JavaEESessionAuthentication { self: HakuperusteetServlet =>
   }
 
   def authenticate() = {
-    if(!isAuthenticated) { // TODO APO REMOVE when front calls authenticate only when needed
-      val matchedSessions: List[Session] = List(new GoogleOAuth2Strategy(configuration, db, googleVerifier), new TokenAuthStrategy(configuration, db, oppijanTunnistus)).flatMap(_.authenticate(request))
-      if(matchedSessions.nonEmpty) {
-        request.getSession.setAttribute(sessionAuthKey, matchedSessions.head)
-      }
+    val matchedSessions: List[Session] = List(new TokenAuthStrategy(configuration, db, oppijanTunnistus), new GoogleOAuth2Strategy(configuration, db, googleVerifier)).flatMap(_.authenticate(request))
+    if(matchedSessions.nonEmpty) {
+      request.getSession.setAttribute(sessionAuthKey, matchedSessions.head)
     }
   }
 

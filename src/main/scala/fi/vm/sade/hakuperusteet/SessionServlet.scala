@@ -1,6 +1,7 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
+import fi.vm.sade.hakuperusteet.auth.TokenAuthStrategy
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Session, SessionData, User}
 import fi.vm.sade.hakuperusteet.email.{EmailSender, EmailTemplate, WelcomeValues}
@@ -22,7 +23,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   val henkiloClient = HenkiloClient.init(config)
   post("/authenticate") {
-    if(!isAuthenticated) {
+    if(!isAuthenticated || TokenAuthStrategy.hasTokenInRequest(request)) {
       authenticate
     }
     failUnlessAuthenticated

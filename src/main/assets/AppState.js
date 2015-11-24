@@ -44,7 +44,7 @@ export function initAppState(props) {
 
   const sessionOkS = sessionS.filter(isNotEmpty)
   const noSessionAuthenticateWithGoogle = sessionS.combine(googleUserS, toArray).filter(sessionFromServerEmpty).map(user).filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
-  const noSessionAuthenticateWithEmail = sessionS.combine(emailUserS, toArray).filter(sessionFromServerEmpty).map(user).filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
+  const noSessionAuthenticateWithEmail = sessionS.combine(emailUserS, toArray).map(user).filter(isNotEmpty).flatMap(authenticate(authenticationUrl))
   const sessionOkGoogleS = noSessionAuthenticateWithGoogle.filter(isNotEmpty)
 
   const sessionDataS = sessionOkS.merge(sessionOkGoogleS).merge(noSessionAuthenticateWithEmail).doAction(sessionInit)

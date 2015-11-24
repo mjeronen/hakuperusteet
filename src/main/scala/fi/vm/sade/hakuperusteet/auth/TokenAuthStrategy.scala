@@ -57,5 +57,8 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
 }
 
 object TokenAuthStrategy {
+  import fi.vm.sade.hakuperusteet._
   val tokenName = "oppijaToken"
+
+  def hasTokenInRequest(request: HttpServletRequest) = Try((parse(RichRequest(request).body) \ "token").extract[Option[String]].isDefined).getOrElse(false)
 }
