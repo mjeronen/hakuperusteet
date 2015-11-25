@@ -23,7 +23,7 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
     val token = (json \ "token").extract[Option[String]]
     val idpentityid = (json \ "idpentityid").extract[Option[String]]
     (token, idpentityid) match {
-      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == IDPEntityId.oppijaToken => createSession(tokenFromRequest)
+      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == IDPEntityId.oppijaToken.toString => createSession(tokenFromRequest)
       case _ => None
     }
   }
