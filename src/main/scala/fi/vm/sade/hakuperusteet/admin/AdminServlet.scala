@@ -73,6 +73,20 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
       notes "Search users by name or email."
       parameter queryParam[Option[String]]("search").description("Search term"))
 
+  registerModel(org.scalatra.swagger.Model(
+    id = "User",
+    name = "User",
+    qualifiedName = None,
+    description = None,
+    properties = List(
+      "id" -> org.scalatra.swagger.ModelProperty(
+        `type` = org.scalatra.swagger.DataType.String,
+        position = 0,
+        required = false,
+        description = None)
+    )
+  ))
+
   get("/api/v1/admin", operation(getUsers)) {
     checkAuthentication()
     contentType = "application/json"
