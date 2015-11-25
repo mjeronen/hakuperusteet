@@ -34,21 +34,15 @@ case class FindOrCreateUser(id: Option[Int], personOid: Option[String], email: S
                             idpEntitys: List[IDP], gender: String, nativeLanguage: String, nationality: String)
 
 object FindOrCreateUser {
-  private def validateUserObject(user: User) = {
-    def validateOptionalField[T](fieldName: String, value: Option[T]) = if (value.isEmpty)
-      throw new IllegalArgumentException(s"$fieldName is missing from user $user")
-    validateOptionalField("firstName", user.firstName)
-    validateOptionalField("lastName", user.lastName)
-    validateOptionalField("birthDate", user.birthDate)
-    validateOptionalField("gender", user.gender)
-    validateOptionalField("nativeLanguage", user.nativeLanguage)
-    validateOptionalField("nationality", user.nationality)
-  }
   def apply(user: User): FindOrCreateUser = {
-    validateUserObject(user)
-    FindOrCreateUser(user.id, user.personOid, user.email, user.firstName.get,
-      user.lastName.get, user.birthDate.get, user.personId, List(IDP(user.idpentityid, user.email)),
-      user.gender.get, user.nativeLanguage.get, user.nationality.get)
+    def getOrError[T](fieldName: String, value: Option[T]) = value match {
+      case Some(v) => v
+      case None => throw new IllegalArgumentException(s"$fieldName is missing from user $user")
+    }
+    FindOrCreateUser(user.id, user.personOid, user.email, getOrError("firstName", user.firstName),
+      getOrError("lastName", user.lastName), getOrError("birthDate", user.birthDate), user.personId,
+      List(IDP(user.idpentityid, user.email)), getOrError("gender", user.gender),
+      getOrError("nativeLanguage", user.nativeLanguage), getOrError("nationality", user.nationality))
   }
 }
 
