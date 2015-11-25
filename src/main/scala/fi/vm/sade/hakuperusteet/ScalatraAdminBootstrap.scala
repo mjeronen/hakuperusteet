@@ -25,7 +25,7 @@ class ScalatraAdminBootstrap extends LifeCycle {
   val signer = RSASigner.init(config)
   val applicationObjectValidator = ApplicationObjectValidator(countries, educations)
   val userValidator = UserValidator(countries, languages)
-  Synchronization(config, database, tarjonta, countries, signer)
+  Synchronization(config, database, tarjonta, countries, signer).start
 
   override def init(context: ServletContext) {
     context mount(new TarjontaServlet(tarjonta), "/api/v1/tarjonta")

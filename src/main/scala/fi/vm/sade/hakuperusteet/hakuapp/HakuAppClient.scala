@@ -26,10 +26,16 @@ object HakuAppClient {
 class HakuAppClient(hakuAppServerUrl: String, client: Client) extends LazyLogging with CasClientUtils {
   import fi.vm.sade.hakuperusteet._
 
-  def updateHakemusWithPaymentStatus(hakemusOid: String, status: PaymentState) = client.prepare(req(hakemusOid, status)).run
+  def url(hakemusOid: String) = {
+    val p = path(hakemusOid)
+    s"$hakuAppServerUrl$p"
+  }
+  def path(hakemusOid: String) = s"/haku-app/applications/$hakemusOid/updatePaymentStatus"
+
+  def updateHakemusWithPaymentState(hakemusOid: String, status: PaymentState) = client.prepare(req(hakemusOid, status)).run
 
   private def req(hakemusOid: String, paymentStatus: PaymentState) = Request(
     method = Method.POST,
-    uri = resolve(urlToUri(hakuAppServerUrl), Uri(path = s"/haku-app/applications/$hakemusOid/updatePaymentStatus"))
+    uri = resolve(urlToUri(hakuAppServerUrl), Uri(path = path(hakemusOid)))
   ).withBody(PaymentUpdate(paymentStatus))(json4sEncoderOf[PaymentUpdate])
 }

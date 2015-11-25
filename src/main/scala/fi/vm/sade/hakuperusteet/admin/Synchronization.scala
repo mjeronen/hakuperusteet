@@ -9,6 +9,7 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.db.generated.Tables
 import fi.vm.sade.hakuperusteet.domain.PaymentState.PaymentState
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
+import fi.vm.sade.hakuperusteet.domain.PaymentUpdate
 import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.hakuapp.HakuAppClient
 import fi.vm.sade.hakuperusteet.koodisto.Countries
@@ -20,13 +21,18 @@ import org.apache.http.client.fluent.{Response, Request}
 import org.apache.http.entity.ContentType
 import org.http4s
 import scala.util.control.Exception._
+import org.json4s.JsonDSL._
+import org.json4s._
+import org.json4s.native.JsonMethods._
+import org.json4s.native.Serialization._
 
 import scala.util.{Failure, Success, Try}
 
 class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjonta, countries: Countries, signer: RSASigner) extends LazyLogging {
+  import fi.vm.sade.hakuperusteet._
   val hakuAppClient = HakuAppClient.init(config)
   val scheduler = Executors.newScheduledThreadPool(1)
-  scheduler.scheduleWithFixedDelay(checkTodoSynchronizations, 1, config.getDuration("admin.synchronization.interval", SECONDS), SECONDS)
+  def start = scheduler.scheduleWithFixedDelay(checkTodoSynchronizations, 1, config.getDuration("admin.synchronization.interval", SECONDS), SECONDS)
 
   def checkTodoSynchronizations = asSimpleRunnable { () =>
       db.findSynchronizationRequests.foreach(syncs => {
@@ -44,7 +50,9 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
       case Some(payment) => paymentStatusToPaymentState(payment.status)
       case _ => None
     }) match {
-      case Some(state) => Try { hakuAppClient.updateHakemusWithPaymentStatus(row.hakemusOid, state) } match {
+      case Some(state) => Try {
+        logger.info(s"Synching row id ${row.id} with Haku-App, matching fake operation: " + createCurl(hakuAppClient.url(row.hakemusOid), write(PaymentUpdate(state))))
+        hakuAppClient.updateHakemusWithPaymentState(row.hakemusOid, state) } match {
         case Success(r) => handleHakuAppPostSuccess(row, state, r)
         case Failure(f) => handleSyncError(row.id, "Synchronization to Haku-App throws", f)
       }
