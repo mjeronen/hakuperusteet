@@ -4,8 +4,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import fi.vm.sade.hakuperusteet._
-import fi.vm.sade.utils.validator.HenkilotunnusValidator
-import fi.vm.sade.utils.validator.InputNameValidator
+import fi.vm.sade.hakuperusteet.domain.IDPEntityId
+import fi.vm.sade.hakuperusteet.domain.IDPEntityId.IDPEntityId
+import fi.vm.sade.utils.validator.{HenkilotunnusValidator, InputNameValidator}
 
 import scala.util.Try
 import scalaz._
@@ -51,4 +52,6 @@ trait ValidationUtil {
       case _ => None.successNel
     }
 
+  def parseIDPEntityId(params: Params): ValidationResult[IDPEntityId] = parseNonEmpty("idpentityid")(params) flatMap
+    (name => Try(IDPEntityId withName name) map (_.successNel) getOrElse (s"invalid idpentityid $name".failureNel))
 }

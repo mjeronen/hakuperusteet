@@ -1,14 +1,11 @@
 package fi.vm.sade.hakuperusteet.validation
 
+import fi.vm.sade.hakuperusteet.domain.{IDPEntityId, User}
+import fi.vm.sade.hakuperusteet.koodisto.{Countries, Languages}
 import fi.vm.sade.hakuperusteet.util.ValidationUtil
 
-import fi.vm.sade.hakuperusteet.domain.User
-import fi.vm.sade.hakuperusteet.domain.User._
-import fi.vm.sade.hakuperusteet.koodisto.{Languages, Countries}
-import scalaz._
 import scalaz.syntax.applicative._
 import scalaz.syntax.validation._
-import fi.vm.sade.hakuperusteet.util.{ValidationUtil}
 
 case class UserValidator(countries: Countries, languages: Languages) extends ValidationUtil {
 
@@ -21,7 +18,9 @@ case class UserValidator(countries: Countries, languages: Languages) extends Val
       |@| parseExists("nativeLanguage")(params).flatMap(validateNativeLanguage)
       |@| parseExists("nationality")(params).flatMap(validateCountry)
       ) { (firstName, lastName, birthDate, personId, gender, nativeLanguage, nationality) =>
-      User(None, None, _:String, Some(firstName), Some(lastName), Some(java.sql.Date.valueOf(birthDate)), personId, _:String, Some(gender), Some(nativeLanguage), Some(nationality))
+      (email: String, idpEntityId: String) => User(None, None, email, Some(firstName), Some(lastName),
+        Some(java.sql.Date.valueOf(birthDate)), personId, IDPEntityId.withName(idpEntityId),
+        Some(gender), Some(nativeLanguage), Some(nationality))
     }
   }
 
@@ -33,7 +32,7 @@ case class UserValidator(countries: Countries, languages: Languages) extends Val
       |@| parseValidName("lastName")(params)
       |@| parseExists("birthDate")(params).flatMap(parseLocalDate)
       |@| parseOptionalPersonalId(params)
-      |@| parseNonEmpty("idpentityid")(params)
+      |@| parseIDPEntityId(params)
       |@| parseExists("gender")(params).flatMap(validateGender)
       |@| parseExists("nativeLanguage")(params).flatMap(validateNativeLanguage)
       |@| parseExists("nationality")(params).flatMap(validateCountry)

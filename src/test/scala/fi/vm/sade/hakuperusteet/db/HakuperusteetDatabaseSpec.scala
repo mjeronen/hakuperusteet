@@ -4,7 +4,7 @@ import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.{DBSupport, HakuperusteetTestServer, Configuration}
-import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.domain.{IDPEntityId, User, PaymentStatus, Payment}
 import org.scalatest.{BeforeAndAfterAll, Matchers, FlatSpec}
 
 class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers with BeforeAndAfterAll with DBSupport {
@@ -18,7 +18,7 @@ class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers 
   }
 
   it should "should create new session" in {
-    val user = new User(None, Some("personOid.1.1.1"), "", Some(""), Some(""), Some(new Date()), None, "", Some(""), Some(""), Some(""))
+    val user = new User(None, Some("personOid.1.1.1"), "", Some(""), Some(""), Some(new Date()), None, IDPEntityId.oppijaToken, Some(""), Some(""), Some(""))
     db.upsertUser(user)
 
     db.findPayments(user).length shouldEqual 0

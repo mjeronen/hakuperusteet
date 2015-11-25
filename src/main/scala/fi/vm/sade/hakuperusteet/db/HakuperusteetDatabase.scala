@@ -2,7 +2,7 @@ package fi.vm.sade.hakuperusteet.db
 
 import java.sql
 import java.sql.Timestamp
-import java.util.{Calendar, Date}
+import java.util.Calendar
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
@@ -10,19 +10,13 @@ import fi.vm.sade.hakuperusteet.admin.SynchronizationStatus
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase.DB
 import fi.vm.sade.hakuperusteet.db.generated.Tables
 import fi.vm.sade.hakuperusteet.db.generated.Tables._
-import fi.vm.sade.hakuperusteet.domain.ApplicationObject
-import fi.vm.sade.hakuperusteet.domain.Payment
-import fi.vm.sade.hakuperusteet.domain.User
-import fi.vm.sade.hakuperusteet.domain._
-
-
+import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Payment, User, _}
+import org.flywaydb.core.Flyway
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
-import org.flywaydb.core.Flyway
-import slick.lifted
 
-import scala.concurrent.duration.Duration
 import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   import HakuperusteetDatabase._
@@ -45,7 +39,7 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   def upsertPartialUser(partialUser: User): Option[User] = {
     val upsertedUser = (Tables.User returning Tables.User).insertOrUpdate(partialUserToUserRow(partialUser)).run
     upsertedUser match {
-      case Some(r) => Some(User.partialUser(Some(r.id), r.henkiloOid, r.email, r.idpentityid))
+      case Some(r) => Some(User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid)))
       case None => None
     }
   }
@@ -115,12 +109,12 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
 
   private def partialUserToUserRow(u: User): Tables.UserRow = {
     val id = u.id.getOrElse(useAutoIncrementId)
-    UserRow(id, u.personOid, u.email, u.idpentityid)
+    UserRow(id, u.personOid, u.email, u.idpentityid.toString)
   }
 
   private def userToUserRow(u: User): (Tables.UserRow, Tables.UserDetailsRow) = {
     val id = u.id.getOrElse(useAutoIncrementId)
-    (UserRow(id, u.personOid, u.email, u.idpentityid), UserDetailsRow(id, u.firstName.get,
+    (UserRow(id, u.personOid, u.email, u.idpentityid.toString), UserDetailsRow(id, u.firstName.get,
       u.lastName.get, u.gender.get, new sql.Date(u.birthDate.get.getTime), u.personId, u.nativeLanguage.get, u.nationality.get))
   }
 
@@ -128,12 +122,12 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
     val r = u._1
     (u._2) match {
       case Some(details) => userRowAndDetailsToUser(r, details)
-      case _ => User.partialUser(Some(r.id), r.henkiloOid, r.email, r.idpentityid)
+      case _ => User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid))
     }
   }
 
   private def userRowAndDetailsToUser(r: Tables.UserRow, d: Tables.UserDetailsRow): User =
-   User(Some(r.id), r.henkiloOid, r.email, Some(d.firstname), Some(d.lastname), Some(d.birthdate), d.personid, r.idpentityid, Some(d.gender), Some(d.nativeLanguage), Some(d.nationality))
+   User(Some(r.id), r.henkiloOid, r.email, Some(d.firstname), Some(d.lastname), Some(d.birthdate), d.personid, IDPEntityId.withName(r.idpentityid), Some(d.gender), Some(d.nativeLanguage), Some(d.nationality))
 
   private def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
 }

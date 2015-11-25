@@ -1,18 +1,16 @@
 package fi.vm.sade
 
 import java.text.SimpleDateFormat
-import java.time.{LocalDateTime, ZoneId, LocalDate, Instant}
 import java.time.format.DateTimeFormatter
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneId}
+import java.util.{Date, TimeZone}
 
-import fi.vm.sade.hakuperusteet.domain.PaymentStatus
+import fi.vm.sade.hakuperusteet.domain.IDPEntityId.IDPEntityId
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
-import org.json4s.DefaultJsonFormats._
-
-import org.json4s.{DefaultFormats, CustomSerializer}
-import java.util.{TimeZone, Date}
-
-import org.json4s.JsonAST.{JInt, JValue, JString, JNull}
+import fi.vm.sade.hakuperusteet.domain._
+import org.json4s.JsonAST.{JInt, JNull, JString}
 import org.json4s.native.Serialization
+import org.json4s.{CustomSerializer, DefaultFormats}
 
 package object hakuperusteet {
   type Oid = String
@@ -41,7 +39,12 @@ package object hakuperusteet {
     )
   )
 
-  val formatsHenkilo = Serialization.formats(org.json4s.NoTypeHints) + DateSerializer
+  case object IDPEntityIdSerializer extends CustomSerializer[IDPEntityId](format => (
+    { case JString(name) => IDPEntityId.withName(name) },
+    { case idpEntityId: IDPEntityId => JString(idpEntityId.toString) })
+  )
+
+  val formatsHenkilo = Serialization.formats(org.json4s.NoTypeHints) + DateSerializer + IDPEntityIdSerializer
 
   val formatsUI = new DefaultFormats {
     override def dateFormatter = {
@@ -49,14 +52,14 @@ package object hakuperusteet {
       df.setTimeZone(TimeZone.getDefault)
       df
     }
-  } + UiDateSerializer + PaymentStatusSerializer
+  } + UiDateSerializer + PaymentStatusSerializer + IDPEntityIdSerializer
 
   case object PaymentStatusSerializer extends CustomSerializer[PaymentStatus](format => (
     { case JString(s) => PaymentStatus.withName(s) },
     { case x: PaymentStatus => JString(x.toString) })
   )
 
-  implicit val formats = org.json4s.DefaultFormats + PaymentStatusSerializer
+  implicit val formats = org.json4s.DefaultFormats + PaymentStatusSerializer + IDPEntityIdSerializer
   val UIDateFormatter = DateTimeFormatter.ofPattern("ddMMyyyy")
   val personIdDateFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
