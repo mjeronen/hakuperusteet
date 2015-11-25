@@ -38,7 +38,7 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
     val henkiloClient = new HenkiloClient(virkailijaUrl, client)
 
     val emptyUser = User(None, None,"", Some(""), Some(""), Some(new Date()), None, IDPEntityId.oppijaToken, Some(""), Some(""), Some(""))
-    val henkilo:Henkilo = henkiloClient.haeHenkilo(emptyUser).run
+    val henkilo:Henkilo = henkiloClient.upsertHenkilo(FindOrCreateUser(emptyUser))
 
     henkilo.personOid shouldEqual "1.2.3.4"
 

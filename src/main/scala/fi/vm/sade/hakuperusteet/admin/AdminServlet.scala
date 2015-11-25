@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.admin.auth.{CasAuthenticationSupport, CasSessionDB}
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain._
-import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
+import fi.vm.sade.hakuperusteet.henkilo.{FindOrCreateUser, HenkiloClient}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.{AuditLog, ValidationUtil}
 import fi.vm.sade.hakuperusteet.validation.{ApplicationObjectValidator, PaymentValidator, UserValidator}
@@ -147,11 +147,14 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   }
 
   private def saveUpdatedUserData(updatedUserData: User) = {
-    Try(henkiloClient.upsertHenkilo(updatedUserData)) match {
+    Try(henkiloClient.upsertHenkilo(FindOrCreateUser(updatedUserData))) match {
       case Success(_) => upsertAndAudit(updatedUserData)
       case Failure(t) if t.isInstanceOf[ConnectException] =>
         logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)
         halt(500, body = "admin-Henkilopalvelu connection error")
+      case Failure(t) if t.isInstanceOf[IllegalArgumentException] =>
+        logger.error("error parsing user", t)
+        halt(500, body = t.getMessage)
       case Failure(t) =>
         val error = s"admin-Henkilopalvelu upsert failed for email ${updatedUserData.email}"
         logger.error(error, t)

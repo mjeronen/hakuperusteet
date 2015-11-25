@@ -5,14 +5,13 @@ import javax.servlet.http.HttpServletRequest
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.Session
+import fi.vm.sade.hakuperusteet.domain.{IDPEntityId, Session, User}
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.json4s.native.JsonMethods._
 import org.scalatra.Control
 import org.scalatra.servlet.RichRequest
-import fi.vm.sade.hakuperusteet.domain.User
-import TokenAuthStrategy.tokenName
+
 import scala.util.{Failure, Success, Try}
 
 class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus) extends SimpleAuth with LazyLogging with Control {
@@ -24,7 +23,7 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
     val token = (json \ "token").extract[Option[String]]
     val idpentityid = (json \ "idpentityid").extract[Option[String]]
     (token, idpentityid) match {
-      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == tokenName => createSession(tokenFromRequest)
+      case (Some(tokenFromRequest), Some(idpentityidFromSession)) if idpentityidFromSession == IDPEntityId.oppijaToken => createSession(tokenFromRequest)
       case _ => None
     }
   }
@@ -32,12 +31,12 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
   def createSession(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
       case Success(Some((email, Some(metadata)))) => {
-        val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, tokenName)
+        val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, IDPEntityId.oppijaToken)
         upsertIdpEntity(partialUser)
         db.findUser(email).getOrElse(db.upsertPartialUser(partialUser))
-        Some(Session(email, tokenFromRequest, tokenName))
+        Some(Session(email, tokenFromRequest, IDPEntityId.oppijaToken.toString))
       }
-      case Success(Some((email, None))) => Some(Session(email, tokenFromRequest, tokenName))
+      case Success(Some((email, None))) => Some(Session(email, tokenFromRequest, IDPEntityId.oppijaToken.toString))
       case Success(None) => None
       case Failure(f) =>
         logger.error("Oppijantunnistus.validateToken error", f)
@@ -58,7 +57,6 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
 
 object TokenAuthStrategy {
   import fi.vm.sade.hakuperusteet._
-  val tokenName = "oppijaToken"
 
   def hasTokenInRequest(request: HttpServletRequest) = Try((parse(RichRequest(request).body) \ "token").extract[Option[String]].isDefined).getOrElse(false)
 }
