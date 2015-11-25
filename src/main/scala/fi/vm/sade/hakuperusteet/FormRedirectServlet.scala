@@ -29,18 +29,19 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
     val userData = userDataFromSession
     val hakukohdeOid = params.get("hakukohdeOid").getOrElse(halt(409))
     val applicationObjectForThisHakukohde = db.findApplicationObjectByHakukohdeOid(userDataFromSession, hakukohdeOid).getOrElse(halt(409))
+    val educationLevel = Some(applicationObjectForThisHakukohde.educationLevel).getOrElse(halt(409))
     Try { tarjonta.getApplicationSystem(applicationObjectForThisHakukohde.hakuOid) } match {
-      case Success(as) => doRedirect(userData, applicationObjectForThisHakukohde, as)
+      case Success(as) => doRedirect(userData, applicationObjectForThisHakukohde, as, educationLevel)
       case Failure(f) =>
         logger.error("FormRedirectServlet throws", f)
         halt(500)
     }
   }
 
-  def doRedirect(userData: User, applicationObjectForThisHakukohde: ApplicationObject, as: ApplicationSystem): String = {
+  def doRedirect(userData: User, applicationObjectForThisHakukohde: ApplicationObject, as: ApplicationSystem, educationLevel : String): String = {
     val formUrl = as.formUrl
     val payments = db.findPayments(userData)
-    val shouldPay = countries.shouldPay(applicationObjectForThisHakukohde.educationCountry)
+    val shouldPay = countries.shouldPay(applicationObjectForThisHakukohde.educationCountry, educationLevel)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
     write(Map("url" -> formUrl, "params" -> RedirectCreator.generateParamMap(signer, userData, applicationObjectForThisHakukohde, shouldPay, hasPaid)))
   }

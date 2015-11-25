@@ -38,7 +38,7 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
     }
 
   private def synchronizeWithData(row: Tables.SynchronizationRow, as: ApplicationSystem, u: User, payments: Seq[Payment])(ao: ApplicationObject) {
-    val shouldPay = countries.shouldPay(ao.educationCountry)
+    val shouldPay = countries.shouldPay(ao.educationCountry, ao.educationLevel)
     val hasPaid = payments.exists(_.status.equals(PaymentStatus.ok))
     val formUrl = as.formUrl
     val body = generatePostBody(generateParamMap(signer, u, ao, shouldPay, hasPaid, admin = true))
