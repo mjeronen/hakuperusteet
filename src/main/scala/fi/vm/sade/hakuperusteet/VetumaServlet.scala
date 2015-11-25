@@ -4,10 +4,11 @@ import java.util.Date
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.PaymentStatus.PaymentStatus
-import fi.vm.sade.hakuperusteet.domain.{User, PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus._
+import fi.vm.sade.hakuperusteet.domain.{PaymentState, User, PaymentStatus, Payment}
 import fi.vm.sade.hakuperusteet.email.{ReceiptValues, EmailTemplate, EmailSender}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
+import fi.vm.sade.hakuperusteet.hakuapp.HakuAppClient
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.tarjonta.Tarjonta
 import fi.vm.sade.hakuperusteet.util.AuditLog
@@ -18,6 +19,12 @@ import scala.util.{Failure, Success, Try}
 
 class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus: OppijanTunnistus, verifier: GoogleVerifier, emailSender: EmailSender, tarjonta: Tarjonta) extends HakuperusteetServlet(config, db, oppijanTunnistus, verifier) {
 
+  get("/openvetuma/:hakemusoid/with_hakemus") {
+    failUnlessAuthenticated
+    val hakemusOid = params.get("hakemusoid").map(app => s"&app=$app")
+    createVetumaWithHref(getHref, hakemusOid)
+  }
+
   get("/openvetuma") {
     failUnlessAuthenticated
     createVetumaWithHref(getHref, None)
@@ -27,12 +34,6 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     failUnlessAuthenticated
     val hakukohdeOid = params.get("hakukohdeoid").map(ao => s"&ao=$ao")
     createVetumaWithHref(getHref, hakukohdeOid)
-  }
-
-  get("/openvetuma/:hakemusoid/with_hakemus") {
-    failUnlessAuthenticated
-    val hakemusOid = params.get("hakemusoid").map(app => s"&app=$app")
-    createVetumaWithHref(getHref, hakemusOid)
   }
 
   private def getHref = params.get("href").getOrElse(halt(409))
@@ -82,10 +83,11 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
   private def handleHakuAppPayment(hakemusOid: String)(hash: String, href: String, userData: User, p: Payment, status: PaymentStatus) = {
     val paymentWithSomeStatus = p.copy(status = status, hakemusOid = Some(hakemusOid))
     db.upsertPayment(paymentWithSomeStatus)
-    AuditLog.auditPayment(userData, paymentWithSomeStatus )
-    if (status == PaymentStatus.ok) {
+    AuditLog.auditPayment(userData, paymentWithSomeStatus)
+    if(status == PaymentStatus.ok) {
       sendReceipt(userData, paymentWithSomeStatus, cookieToLang)
     }
+    db.insertPaymentSyncRequest(userData, paymentWithSomeStatus)
     val url = href + s"app/$hakemusOid$hash"
     halt(status = 303, headers = Map("Location" -> url))
   }

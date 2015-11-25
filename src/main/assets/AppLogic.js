@@ -78,7 +78,7 @@ export function showHakuList(state) {
 }
 
 export function hasValidPayment(state) {
-  return _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
+  return state.sessionData && _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
 }
 
 export function showVetumaResultOk(state) {

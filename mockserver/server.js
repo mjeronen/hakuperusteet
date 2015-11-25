@@ -43,6 +43,20 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // Default Content-Type to Application/Json
 app.use(function(req, res, next) { res.setHeader("Content-Type", "application/json"); return next(); });
 
+// Haku-App
+app.post('/haku-app/applications/:oid/updatePaymentStatus', function(req, res){
+  var oid = req.params.oid
+  console.log("Updating hakemus " + oid + " with payment status: " + JSON.stringify(req.body))
+  var paymentStatus = req.body.paymentStatus
+  var acceptedPaymentStatus = ["NOTIFIED", "OK", "NOT_OK"]
+  if(acceptedPaymentStatus.indexOf(paymentStatus) !== -1) {
+    res.send({});
+  } else {
+    console.log("Invalid payment status " + paymentStatus)
+    res.sendStatus(500)
+  }
+});
+
 // Koodisto-Service
 var fs        = require('fs');
 var publicdir = __dirname + '/static';
@@ -72,7 +86,15 @@ app.post('/authentication-service/resources/s2s/hakuperusteet', function(req, re
     res.send({ "personOid": "1.2.246.562.24.11523238937" });
   }
 });
-
+app.post('/authentication-service/resources/s2s/hakuperusteet/idp', function(req, res){
+  if (req.body.firstName == "Error409") {
+    res.sendStatus(409)
+  } else if (req.body.firstName == "Error500") {
+    res.sendStatus(500)
+  } else {
+    res.send({ "personOid": "1.2.246.562.24.11523238937" });
+  }
+});
 // Oppijan-tunnistus
 var oppijanTunnistusEmails = {}
 app.post('/oppijan-tunnistus/api/v1/token', function(req, res){

@@ -73,6 +73,9 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   def upsertApplicationObject(applicationObject: ApplicationObject) =
     (Tables.ApplicationObject returning Tables.ApplicationObject).insertOrUpdate(aoToAoRow(applicationObject)).run.map(aoRowToAo)
 
+  def findPaymentByHenkiloOidAndHakemusOid(henkiloOid: String, hakemusOid: String): Option[Payment] =
+    Tables.Payment.filter(_.henkiloOid === henkiloOid).filter(_.hakemusOid === hakemusOid).sortBy(_.tstamp.desc).result.headOption.run.map(paymentRowToPayment)
+
   def findPaymentByOrderNumber(user: User, orderNumber: String): Option[Payment] =
     Tables.Payment.filter(_.henkiloOid === user.personOid).filter(_.orderNumber === orderNumber).sortBy(_.tstamp.desc).result.headOption.run.map(paymentRowToPayment)
 
@@ -85,9 +88,16 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   def nextOrderNumber() = sql"select nextval('#$schemaName.ordernumber');".as[Int].run.head
 
   def insertSyncRequest(user: User, ao: ApplicationObject) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
-    SynchronizationRow(useAutoIncrementId, now, user.personOid.get, ao.hakuOid, ao.hakukohdeOid, SynchronizationStatus.todo.toString, None)).run
+    SynchronizationRow(useAutoIncrementId, now, user.personOid.get, Some(ao.hakuOid), Some(ao.hakukohdeOid), SynchronizationStatus.todo.toString, None, None)).run
+
+  def insertPaymentSyncRequest(user:User, payment: Payment) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
+    SynchronizationRow(useAutoIncrementId, now, user.personOid.get, None, None, SynchronizationStatus.todo.toString, None, payment.hakemusOid)).run
+
+  def markSyncDone(id: Int): Unit = findSynchronizationRow(id).foreach(markSyncDone)
 
   def markSyncDone(row: SynchronizationRow) = updateSyncRequest(row.copy(updated = Some(now), status = SynchronizationStatus.done.toString))
+
+  def markSyncError(id: Int): Unit = findSynchronizationRow(id).foreach(markSyncError)
 
   def markSyncError(row: SynchronizationRow) = updateSyncRequest(row.copy(updated = Some(now), status = SynchronizationStatus.error.toString))
 
@@ -95,10 +105,26 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
 
   def fetchNextSyncIds = sql"update synchronization set status = '#${SynchronizationStatus.active.toString}' where id in (select id from synchronization where status = '#${SynchronizationStatus.todo.toString}' or status = '#${SynchronizationStatus.error.toString}' order by status desc, created asc limit 1) returning ( id );".as[Int].run
 
-  def findSynchronizationRow(id: Int) =  Tables.Synchronization.filter(_.id === id).result.run
+  def findSynchronizationRequests: Seq[Option[SyncRequest]] = fetchNextSyncIds.flatMap(findSynchronizationRow(_).map(r =>
+    convertApplicationObjectSyncRequest(r).orElse(convertHakuAppSyncRequest(r))
+  ))
+
+  private def convertApplicationObjectSyncRequest(row: SynchronizationRow) = {
+    (row.hakuOid,row.hakukohdeOid) match {
+      case (Some(hakuOid), Some(hakukohdeOid)) => Some(ApplicationObjectSyncRequest(row.id,row.henkiloOid, hakuOid,hakukohdeOid))
+      case _ => None
+    }
+  }
+  private def convertHakuAppSyncRequest(row: SynchronizationRow) = {
+    (row.hakemusOid) match {
+      case Some(hakemusOid) => Some(HakuAppSyncRequest(row.id, row.henkiloOid,hakemusOid))
+      case _ => None
+    }
+  }
+  def findSynchronizationRow(id: Int) = Tables.Synchronization.filter(_.id === id).result.run
 
   private def paymentToPaymentRow(payment: Payment) =
-    PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString, payment.paymCallId)
+    PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString, payment.paymCallId, payment.hakemusOid)
 
   private def paymentRowToPayment(r: PaymentRow) =
     Payment(Some(r.id), r.henkiloOid, r.tstamp, r.reference, r.orderNumber, r.paymCallId, PaymentStatus.withName(r.status), r.hakemusOid)

@@ -254,21 +254,22 @@ trait Tables {
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param created Database column created SqlType(timestamp)
    *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true)
-   *  @param hakuOid Database column haku_oid SqlType(varchar), Length(255,true)
-   *  @param hakukohdeOid Database column hakukohde_oid SqlType(varchar), Length(255,true)
+   *  @param hakuOid Database column haku_oid SqlType(varchar), Length(255,true), Default(None)
+   *  @param hakukohdeOid Database column hakukohde_oid SqlType(varchar), Length(255,true), Default(None)
    *  @param status Database column status SqlType(varchar), Length(255,true)
-   *  @param updated Database column updated SqlType(timestamp), Default(None) */
-  case class SynchronizationRow(id: Int, created: java.sql.Timestamp, henkiloOid: String, hakuOid: String, hakukohdeOid: String, status: String, updated: Option[java.sql.Timestamp] = None)
+   *  @param updated Database column updated SqlType(timestamp), Default(None)
+   *  @param hakemusOid Database column hakemus_oid SqlType(varchar), Length(255,true), Default(None) */
+  case class SynchronizationRow(id: Int, created: java.sql.Timestamp, henkiloOid: String, hakuOid: Option[String] = None, hakukohdeOid: Option[String] = None, status: String, updated: Option[java.sql.Timestamp] = None, hakemusOid: Option[String] = None)
   /** GetResult implicit for fetching SynchronizationRow objects using plain SQL queries */
-  implicit def GetResultSynchronizationRow(implicit e0: GR[Int], e1: GR[java.sql.Timestamp], e2: GR[String], e3: GR[Option[java.sql.Timestamp]]): GR[SynchronizationRow] = GR{
+  implicit def GetResultSynchronizationRow(implicit e0: GR[Int], e1: GR[java.sql.Timestamp], e2: GR[String], e3: GR[Option[String]], e4: GR[Option[java.sql.Timestamp]]): GR[SynchronizationRow] = GR{
     prs => import prs._
-    SynchronizationRow.tupled((<<[Int], <<[java.sql.Timestamp], <<[String], <<[String], <<[String], <<[String], <<?[java.sql.Timestamp]))
+    SynchronizationRow.tupled((<<[Int], <<[java.sql.Timestamp], <<[String], <<?[String], <<?[String], <<[String], <<?[java.sql.Timestamp], <<?[String]))
   }
   /** Table description of table synchronization. Objects of this class serve as prototypes for rows in queries. */
   class Synchronization(_tableTag: Tag) extends Table[SynchronizationRow](_tableTag, "synchronization") {
-    def * = (id, created, henkiloOid, hakuOid, hakukohdeOid, status, updated) <> (SynchronizationRow.tupled, SynchronizationRow.unapply)
+    def * = (id, created, henkiloOid, hakuOid, hakukohdeOid, status, updated, hakemusOid) <> (SynchronizationRow.tupled, SynchronizationRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(created), Rep.Some(henkiloOid), Rep.Some(hakuOid), Rep.Some(hakukohdeOid), Rep.Some(status), updated).shaped.<>({r=>import r._; _1.map(_=> SynchronizationRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(created), Rep.Some(henkiloOid), hakuOid, hakukohdeOid, Rep.Some(status), updated, hakemusOid).shaped.<>({r=>import r._; _1.map(_=> SynchronizationRow.tupled((_1.get, _2.get, _3.get, _4, _5, _6.get, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -276,17 +277,19 @@ trait Tables {
     val created: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("created")
     /** Database column henkilo_oid SqlType(varchar), Length(255,true) */
     val henkiloOid: Rep[String] = column[String]("henkilo_oid", O.Length(255,varying=true))
-    /** Database column haku_oid SqlType(varchar), Length(255,true) */
-    val hakuOid: Rep[String] = column[String]("haku_oid", O.Length(255,varying=true))
-    /** Database column hakukohde_oid SqlType(varchar), Length(255,true) */
-    val hakukohdeOid: Rep[String] = column[String]("hakukohde_oid", O.Length(255,varying=true))
+    /** Database column haku_oid SqlType(varchar), Length(255,true), Default(None) */
+    val hakuOid: Rep[Option[String]] = column[Option[String]]("haku_oid", O.Length(255,varying=true), O.Default(None))
+    /** Database column hakukohde_oid SqlType(varchar), Length(255,true), Default(None) */
+    val hakukohdeOid: Rep[Option[String]] = column[Option[String]]("hakukohde_oid", O.Length(255,varying=true), O.Default(None))
     /** Database column status SqlType(varchar), Length(255,true) */
     val status: Rep[String] = column[String]("status", O.Length(255,varying=true))
     /** Database column updated SqlType(timestamp), Default(None) */
     val updated: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated", O.Default(None))
+    /** Database column hakemus_oid SqlType(varchar), Length(255,true), Default(None) */
+    val hakemusOid: Rep[Option[String]] = column[Option[String]]("hakemus_oid", O.Length(255,varying=true), O.Default(None))
 
     /** Foreign key referencing ApplicationObject (database name synchronization_henkilo_oid_fkey1) */
-    lazy val applicationObjectFk = foreignKey("synchronization_henkilo_oid_fkey1", (henkiloOid, hakukohdeOid), ApplicationObject)(r => (r.henkiloOid, r.hakukohdeOid), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    lazy val applicationObjectFk = foreignKey("synchronization_henkilo_oid_fkey1", (henkiloOid, hakukohdeOid), ApplicationObject)(r => (r.henkiloOid, Rep.Some(r.hakukohdeOid)), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
     /** Foreign key referencing User (database name synchronization_henkilo_oid_fkey) */
     lazy val userFk = foreignKey("synchronization_henkilo_oid_fkey", Rep.Some(henkiloOid), User)(r => r.henkiloOid, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
