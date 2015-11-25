@@ -18,7 +18,7 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization._
 import org.scalatra.ScalatraServlet
-import org.scalatra.swagger.{Swagger, SwaggerSupport}
+import org.scalatra.swagger.{AllowableValues, DataType, ModelProperty, Swagger, SwaggerSupport}
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
@@ -67,27 +67,75 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
     staticFileContent
   }
 
-  val getUsers =
-    (apiOperation[List[User]]("getUsers")
-      summary "Search users"
-      notes "Search users by name or email."
-      parameter queryParam[Option[String]]("search").description("Search term"))
-
   registerModel(org.scalatra.swagger.Model(
     id = "User",
     name = "User",
     qualifiedName = None,
     description = None,
     properties = List(
-      "id" -> org.scalatra.swagger.ModelProperty(
-        `type` = org.scalatra.swagger.DataType.String,
+      "id" -> ModelProperty(
+        `type` = DataType.String,
         position = 0,
+        required = false,
+        description = None),
+      "personOid" -> ModelProperty(
+        `type` = DataType.String,
+        position = 1,
+        required = false,
+        description = None),
+      "email" -> ModelProperty(
+        `type` = DataType.String,
+        position = 2,
+        required = true,
+        description = None),
+      "firstName" -> ModelProperty(
+        `type` = DataType.String,
+        position = 3,
+        required = false,
+        description = None),
+      "lastName" -> ModelProperty(
+        `type` = DataType.String,
+        position = 4,
+        required = false,
+        description = None),
+      "birthDate" -> ModelProperty(
+        `type` = DataType.Date,
+        position = 5,
+        required = false,
+        description = None),
+      "personId" -> ModelProperty(
+        `type` = DataType.String,
+        position = 6,
+        required = false,
+        description = None),
+      "idpentityid" -> ModelProperty(
+        `type` = DataType.String,
+        allowableValues = AllowableValues(List("google", "oppijaToken")),
+        position = 7,
+        required = true,
+        description = None),
+      "gender" -> ModelProperty(
+        `type` = DataType.String,
+        position = 8,
+        required = false,
+        description = None),
+      "nativeLanguage" -> ModelProperty(
+        `type` = DataType.String,
+        position = 9,
+        required = false,
+        description = None),
+      "nationality" -> ModelProperty(
+        `type` = DataType.String,
+        position = 10,
         required = false,
         description = None)
     )
   ))
 
-  get("/api/v1/admin", operation(getUsers)) {
+  get("/api/v1/admin", operation(apiOperation[List[User]]("getUsers")
+    summary "Search users"
+    notes "Search users by name or email."
+    parameter queryParam[Option[String]]("search").description("Search term"))) {
     checkAuthentication()
     contentType = "application/json"
     val search = params.getOrElse("search", halt(400)).toLowerCase
