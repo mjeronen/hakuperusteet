@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.admin.auth.{CasAuthenticationSupport, CasSessionDB}
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain._
-import fi.vm.sade.hakuperusteet.henkilo.{FindOrCreateUser, HenkiloClient}
+import fi.vm.sade.hakuperusteet.henkilo.{HenkiloClient, IfGoogleAddEmailIDP}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.{AuditLog, ValidationUtil}
 import fi.vm.sade.hakuperusteet.validation.{ApplicationObjectValidator, PaymentValidator, UserValidator}
@@ -147,7 +147,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   }
 
   private def saveUpdatedUserData(updatedUserData: User) = {
-    Try(henkiloClient.upsertHenkilo(FindOrCreateUser(updatedUserData))) match {
+    Try(henkiloClient.upsertHenkilo(IfGoogleAddEmailIDP(updatedUserData))) match {
       case Success(_) => upsertAndAudit(updatedUserData)
       case Failure(t) if t.isInstanceOf[ConnectException] =>
         logger.error(s"admin-Henkilopalvelu connection error for email ${updatedUserData.email}", t)

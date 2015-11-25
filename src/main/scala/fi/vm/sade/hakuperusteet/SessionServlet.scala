@@ -6,7 +6,7 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Session, SessionData, User}
 import fi.vm.sade.hakuperusteet.email.{EmailSender, EmailTemplate, WelcomeValues}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
-import fi.vm.sade.hakuperusteet.henkilo.{FindOrCreateUser, HenkiloClient}
+import fi.vm.sade.hakuperusteet.henkilo.{HenkiloClient, IfGoogleAddEmailIDP}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.{AuditLog, ConflictException, ValidationUtil}
 import fi.vm.sade.hakuperusteet.validation.{ApplicationObjectValidator, UserValidator}
@@ -108,7 +108,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     emailSender.send(newUser.email, "Studyinfo - Registration successful", EmailTemplate.renderWelcome(p))
   }
 
-  def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(FindOrCreateUser(userData))) match {
+  def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(IfGoogleAddEmailIDP(userData))) match {
       case Success(u) => userData.copy(personOid = Some(u.personOid))
       case Failure(t) if t.isInstanceOf[ConflictException] =>
         val msg = t.getMessage

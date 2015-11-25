@@ -52,6 +52,16 @@ object FindOrCreateUser {
   }
 }
 
+object IfGoogleAddEmailIDP {
+  def apply(user: User) = {
+    val u = FindOrCreateUser(user)
+    u.copy(idpEntitys = user.idpentityid match {
+      case IDPEntityId.google => IDP(IDPEntityId.oppijaToken, user.email) +: u.idpEntitys
+      case IDPEntityId.oppijaToken => u.idpEntitys
+    })
+  }
+}
+
 class HenkiloClient(henkiloServerUrl: String, client: Client) extends LazyLogging with CasClientUtils {
   implicit val formats = fi.vm.sade.hakuperusteet.formatsHenkilo
 
