@@ -47,12 +47,12 @@ app.use(function(req, res, next) { res.setHeader("Content-Type", "application/js
 app.post('/haku-app/applications/:oid/updatePaymentStatus', function(req, res){
   var oid = req.params.oid
   console.log("Updating hakemus " + oid + " with payment status: " + JSON.stringify(req.body))
-  var paymentStatus = req.body.paymentStatus
-  var acceptedPaymentStatus = ["NOTIFIED", "OK", "NOT_OK"]
-  if(acceptedPaymentStatus.indexOf(paymentStatus) !== -1) {
+  var paymentState = req.body.paymentState
+  var acceptedPaymentStates = ["NOTIFIED", "OK", "NOT_OK"]
+  if(acceptedPaymentStates.indexOf(paymentState) !== -1) {
     res.send({});
   } else {
-    console.log("Invalid payment status " + paymentStatus)
+    console.log("Invalid payment state " + paymentState)
     res.sendStatus(500)
   }
 });
