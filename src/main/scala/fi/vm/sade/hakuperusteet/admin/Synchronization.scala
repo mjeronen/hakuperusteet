@@ -73,12 +73,16 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
 
   private def handleHakuAppPostSuccess(row: HakuAppSyncRequest, state: PaymentState, response: http4s.Response): Unit = {
     val statusCode = response.status.code
-    if (statusCode == 200) {
-      logger.info(s"Synced row id ${row.id} with Haku-App, henkiloOid ${row.henkiloOid}, hakemusOid ${row.hakemusOid} and payment state ${state}")
-      db.markSyncDone(row.id)
-    } else {
-      logger.error(s"Synchronization error with statuscode $statusCode")
-      db.markSyncError(row.id)
+    statusCode match {
+      case 200 =>
+        logger.info(s"Synced row id ${row.id} with Haku-App, henkiloOid ${row.henkiloOid}, hakemusOid ${row.hakemusOid} and payment state ${state}")
+        db.markSyncDone(row.id)
+      case 403 =>
+        logger.info(s"Tried to sync row id ${row.id} with Haku-App, henkiloOid ${row.henkiloOid}, hakemusOid ${row.hakemusOid} and payment state ${state} but the user is no longer liable for payment.")
+        db.markSyncDone(row.id)
+      case _ =>
+        logger.error(s"Synchronization error with statuscode $statusCode")
+        db.markSyncError(row.id)
     }
   }
 
