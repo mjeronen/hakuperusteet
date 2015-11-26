@@ -6,7 +6,7 @@ import org.json4s.jackson.JsonMethods._
 object Translate {
   val strings = loadStrings
 
-  def apply(key: String, lang: String) = strings(key + "." + lang)
+  def apply(keys: String*) = strings(keys.mkString("."))
 
   def flattenKeysAndValues(json: Map[String, Any]): Map[String, Any] = {
     json.flatMap { case (k, v) => v match {
