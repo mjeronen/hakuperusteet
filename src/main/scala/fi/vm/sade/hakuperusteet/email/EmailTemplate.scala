@@ -7,23 +7,17 @@ import collection.JavaConversions._
 
 object EmailTemplate {
   private val welcomeTemplate: Mustache = compileMustache("/email/welcome.mustache")
-  private val receiptTemplates = Map("fi" -> compileMustache("/email/receipt_fi.mustache"),
-    "en" -> compileMustache("/email/receipt_en.mustache"),
-    "sv" -> compileMustache("/email/receipt_sv.mustache"))
-  val receiptTitles = Map("en" -> "Studyinfo: Your payment has been received",
-    "fi" -> "Opintopolku - maksu vastaanotettu",
-    "sv" -> "Studieinfo - betalningen har mottagits")
+  private val receiptTemplate: Mustache = compileMustache("/email/receipt.mustache")
 
-  def renderWelcome(values: WelcomeValues) = {
+  def renderWelcome(values: WelcomeValues, lang: String) = {
     val sw = new StringWriter()
-    welcomeTemplate.execute(sw, mapAsJavaMap(Translate.getMap("email.welcome","en") ++ Map("values" ->  values)))
+    welcomeTemplate.execute(sw, mapAsJavaMap(Translate.getMap("email.welcome",lang) ++ Map("values" ->  values)))
     sw.toString
   }
 
   def renderReceipt(values: ReceiptValues, lang: String) = {
     val sw = new StringWriter()
-    receiptTemplates.getOrElse(lang,
-      throw new RuntimeException(s"Email receipt with unknown lanuage $lang! Supported languages are 'fi','sv' and 'en'.")).execute(sw, values)
+    receiptTemplate.execute(sw, mapAsJavaMap(Translate.getMap("email.receipt",lang) ++ Map("values" ->  values)))
     sw.toString
   }
 

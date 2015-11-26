@@ -2,12 +2,42 @@
   "email": {
     "welcome": {
       "fi": {
+        "title": "opintopolku - Rekisteröinti onnistui",
         "dear": "Hei",
         "txt": "<p>Rekisteröinti onnistui. TODO: APO Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
       },
       "en": {
+        "title": "opintopolku - Rekisteröinti onnistui",
         "dear": "Dear",
         "txt": "<p>Your registration was successful. Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
+      },
+      "sv": {
+        "title": "opintopolku - Rekisteröinti onnistui",
+        "dear": "Dear",
+        "txt": "<p>Your registration was successful. Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
+      }
+    },
+    "receipt": {
+      "fi": {
+        "title": "Opintopolku - maksu vastaanotettu",
+        "dear": "Hei",
+        "txt1": "<p>Olemme vastaanottaneet hakemuksen käsittelymaksun ",
+        "txt2": "€. Maksun viitenumero on ",
+        "txt3": ". Samalla maksulla voit hakea muihinkin syyslukukaudella 2016 alkaviin koulutuksiin. Maksu on voimassa lukukauden ajan. Huomaa, että suomalaisissa korkeakouluissa on yleensä vain kaksi lukukautta, syyslukukausi ja kevätlukukausi.</p><p>Älä vastaa tähän viestiin - viesti on lähetetty automaattisesti.</p>"
+      },
+      "en": {
+        "title": "Studyinfo: Your payment has been received",
+        "dear": "Dear",
+        "txt1": "<p>We have received your payment of the application fee of ",
+        "txt2": "€ with payment reference number ",
+        "txt3": ". The application fee covers all the applications that you make for study programmes that begin in the autumn semester 2016.Please note that Finnish higher education institutions usually have only two semesters, the autumn and the spring semester.</p><p>This is an automatically generated email, please do not reply.</p>"
+      },
+      "sv": {
+        "title": "Studieinfo - betalningen har mottagits",
+        "dear": "Dear",
+        "txt1": "<p>Vi har mottagit ansökans behandlingsavgift på ",
+        "txt2": "€. Betalningens referensnummer är ",
+        "txt3": ". The application fee covers all the applications that you make for study programmes that begin in the autumn semester 2016.Please note that Finnish higher education institutions usually have only two semesters, the autumn and the spring semester.</p><p>This is an automatically generated email, please do not reply.</p>"
       }
     }
   },

@@ -8,7 +8,7 @@ import fi.vm.sade.hakuperusteet.email.{EmailSender, EmailTemplate, WelcomeValues
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.{HenkiloClient, IfGoogleAddEmailIDP}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
-import fi.vm.sade.hakuperusteet.util.{AuditLog, ConflictException, ValidationUtil}
+import fi.vm.sade.hakuperusteet.util.{Translate, AuditLog, ConflictException, ValidationUtil}
 import fi.vm.sade.hakuperusteet.validation.{ApplicationObjectValidator, UserValidator}
 import org.json4s.JsonDSL._
 import org.json4s._
@@ -105,7 +105,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   private def sendEmail(newUser: User) = {
     val p = WelcomeValues(newUser.fullName)
-    emailSender.send(newUser.email, "Studyinfo - Registration successful", EmailTemplate.renderWelcome(p))
+    emailSender.send(newUser.email, Translate("email.welcome.",getUserLang(newUser),".title"), EmailTemplate.renderWelcome(p, getUserLang(newUser)))
   }
 
   def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(IfGoogleAddEmailIDP(userData))) match {

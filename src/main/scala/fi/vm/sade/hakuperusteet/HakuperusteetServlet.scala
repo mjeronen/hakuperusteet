@@ -4,6 +4,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.auth.JavaEESessionAuthentication
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
+import fi.vm.sade.hakuperusteet.domain.User
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import org.scalatra.ScalatraServlet
@@ -14,6 +15,15 @@ class HakuperusteetServlet(val configuration: Config, val db: HakuperusteetDatab
   def userDataFromSession = db.findUser(user.email).getOrElse(halt(500))
 
   def cookieToLang = cookies.get("i18next").filter(lang => List("en","fi","sv").contains(lang)).getOrElse("en")
+
+  def getUserLang(userData: User): String = {
+    var lang = userData.uiLang
+    if (!List("en","fi","sv").contains(lang)){
+      lang = "en"
+    }
+    lang
+  }
+
 
   before() {
     contentType = "application/json"
