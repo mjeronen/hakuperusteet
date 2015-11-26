@@ -12,7 +12,7 @@ object RedirectCreator {
   def generateParamMap(signer: RSASigner, userData: User, educationForThisHakukohde: ApplicationObject, shouldPay: Boolean, hasPaid: Boolean, admin: Boolean = false) = {
     val seq = paramSequence(userData, shouldPay, hasPaid, educationForThisHakukohde, admin)
     val signature = signer.signData(seq.map(_._2).mkString(""))
-    (seq.toList ++ List(("signature", signature))).toMap
+    (seq.toList ++ List(("signature", signature), ("lang", userData.uiLang))).toMap
   }
 
   private def isAdminRequest(admin: Boolean) =
