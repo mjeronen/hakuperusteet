@@ -191,6 +191,7 @@ object HakuperusteetDatabase extends LazyLogging {
       flyway.migrate
     } catch {
       case e: Exception => logger.error("Migration failure", e)
+        System.exit(1)
     }
   }
 }
