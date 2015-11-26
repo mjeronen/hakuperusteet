@@ -63,6 +63,8 @@ object HakuperusteetBuild extends Build {
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-auth" % ScalatraVersion,
         "org.scalatra" %% "scalatra-json" % ScalatraVersion,
+        "org.webjars" % "swagger-ui" % "2.1.8-M1",
+        "org.scalatra" %% "scalatra-swagger" % ScalatraVersion,
         "ch.qos.logback" % "logback-classic" % "1.1.3",
         "ch.qos.logback" % "logback-access" % "1.1.3",
         "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
@@ -82,8 +84,8 @@ object HakuperusteetBuild extends Build {
         "org.flywaydb" % "flyway-core" % "3.2.1",
         "com.google.api-client" % "google-api-client" % "1.20.0",
         "org.apache.httpcomponents" % "fluent-hc" % "4.5",
-        "fi.vm.sade" %% "scala-cas" % "0.2.0-SNAPSHOT",
-        "fi.vm.sade" %% "scala-utils-validator" % "0.2.0-SNAPSHOT",
+        "fi.vm.sade" %% "scala-cas" % "0.3.0-SNAPSHOT",
+        "fi.vm.sade" %% "scala-utils-validator" % "0.3.0-SNAPSHOT",
         "fi.vm.sade" %% "scala-security" % "0.2.0-SNAPSHOT" exclude("org.scalatra", "scalatra-json_2.11") exclude("org.scalatra", "scalatra_2.11"),
         "fi.vm.sade" % "auditlogger" % "5.0.0-SNAPSHOT",
         "org.scalatest" %% "scalatest" % "2.2.4" % "test",
@@ -125,6 +127,8 @@ object HakuperusteetBuild extends Build {
         Seq(
           test in assembly := {},
           run <<= runTask(fullClasspath, mainClass, runner in run),
+          libraryDependencies ++= Seq(
+          ),
           assemblyJarName := Name.toLowerCase + "admin" + "-" + Version + "-assembly.jar",
           mainClass := Some("fi.vm.sade.hakuperusteet.HakuperusteetAdminServer"),
           assemblyExcludedJars in assembly := {

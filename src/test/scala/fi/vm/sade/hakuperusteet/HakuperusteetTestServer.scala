@@ -34,7 +34,7 @@ object HakuperusteetTestServer {
     logger.info("Starting HakuperusteetAdminServer (http: " + adminServer.portHttp + " https: " + adminServer.portHttps + ")")
     new Thread() {
       override def run() = {
-        Thread.sleep(1000) // Jetty's JDBC Session creates its database tables automatically. This wait prevents race condition between the two servers
+        Thread.sleep(2500) // Jetty's JDBC Session creates its database tables automatically. This wait prevents race condition between the two servers
         adminServer.runServer()
       }
     }.start()
@@ -77,7 +77,7 @@ object HakuperusteetTestServer {
     val jdbcConnection = DriverManager.getConnection(url, user, password)
     try {
       val tables = getTables(jdbcConnection)
-      Array("synchronization", "application_object", "payment", "user","jettysessionids","jettysessions")
+      Array("synchronization", "application_object", "payment", "user_details", "user" ,"jettysessionids","jettysessions")
         .foreach(name => if(tables.contains(name)){
           jdbcConnection.createStatement.execute("DELETE from \"" + name + "\";")
         })

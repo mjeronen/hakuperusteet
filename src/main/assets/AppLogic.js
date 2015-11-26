@@ -59,12 +59,14 @@ export function showUserDataForm(state) {
 export function showEducationForm(state) {
   return !fatalError(state) && hasUserData(state) && hasSelectedHakukohde(state) && !hasEducationForSelectedHakukohdeOid(state)
 }
-
+function hasNoValidPayment(state) {
+  return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
+}
+export function showVetumaStartForHakemus(state) {
+  return !fatalError(state) && hasUserData(state) && hasNoValidPayment(state)
+}
 export function showVetumaStart(state) {
-  function hasNoValidPayment() {
-    return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
-  }
-  return !fatalError(state) && hasUserData(state) && hasNoValidPayment() && (
+  return !fatalError(state) && hasUserData(state) && hasNoValidPayment(state) && (
       (!hasSelectedHakukohde(state) && paymentRequired(state)) ||
       (hasEducationForSelectedHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state)))
 }
@@ -76,7 +78,7 @@ export function showHakuList(state) {
 }
 
 export function hasValidPayment(state) {
-  return _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
+  return state.sessionData && _.some(state.sessionData.payment, function(p) { return p.status == "ok"})
 }
 
 export function showVetumaResultOk(state) {

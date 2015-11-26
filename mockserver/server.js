@@ -43,6 +43,20 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // Default Content-Type to Application/Json
 app.use(function(req, res, next) { res.setHeader("Content-Type", "application/json"); return next(); });
 
+// Haku-App
+app.post('/haku-app/applications/:oid/updatePaymentStatus', function(req, res){
+  var oid = req.params.oid
+  console.log("Updating hakemus " + oid + " with payment status: " + JSON.stringify(req.body))
+  var paymentState = req.body.paymentState
+  var acceptedPaymentStates = ["NOTIFIED", "OK", "NOT_OK"]
+  if(acceptedPaymentStates.indexOf(paymentState) !== -1) {
+    res.send({});
+  } else {
+    console.log("Invalid payment state " + paymentState)
+    res.sendStatus(500)
+  }
+});
+
 // Koodisto-Service
 var fs        = require('fs');
 var publicdir = __dirname + '/static';
@@ -72,7 +86,15 @@ app.post('/authentication-service/resources/s2s/hakuperusteet', function(req, re
     res.send({ "personOid": "1.2.246.562.24.11523238937" });
   }
 });
-
+app.post('/authentication-service/resources/s2s/hakuperusteet/idp', function(req, res){
+  if (req.body.firstName == "Error409") {
+    res.sendStatus(409)
+  } else if (req.body.firstName == "Error500") {
+    res.sendStatus(500)
+  } else {
+    res.send({ "personOid": "1.2.246.562.24.11523238937" });
+  }
+});
 // Oppijan-tunnistus
 var oppijanTunnistusEmails = {}
 app.post('/oppijan-tunnistus/api/v1/token', function(req, res){
@@ -90,13 +112,20 @@ app.get('/oppijan-tunnistus/api/v1/token/:token', function(req, res){
   var token = req.params.token
   console.log("Verifying token " + token)
   if (token == "mochaTestToken") {
-    res.send({ "valid" : true, "email" : "mochatest@example.com"});
+    res.send({ "valid" : true, "email" : "mochatest@example.com", "lang" : "fi"});
   } else {
-    var email = oppijanTunnistusEmails[token]
-    if(email) {
-      res.send({ "valid" : true, "email" : email});
-    } else {
-      res.send({ "valid" : false });
+    if(token == "hakuApp") {
+      res.send({ "valid" : true, "email" : "hakuapp@example.com", "lang" : "fi", "metadata" : {
+        "hakemusOid" : "1.2.3.4",
+        "personOid" : "2.3.4.5"
+      }});
+      } else {
+      var email = oppijanTunnistusEmails[token]
+      if(email) {
+        res.send({ "valid" : true, "email" : email, "lang" : "fi"});
+      } else {
+        res.send({ "valid" : false});
+      }
     }
   }
 });

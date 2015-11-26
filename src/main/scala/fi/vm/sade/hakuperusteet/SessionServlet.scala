@@ -1,11 +1,12 @@
 package fi.vm.sade.hakuperusteet
 
 import com.typesafe.config.Config
+import fi.vm.sade.hakuperusteet.auth.TokenAuthStrategy
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Session, SessionData, User}
 import fi.vm.sade.hakuperusteet.email.{EmailSender, EmailTemplate, WelcomeValues}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
-import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
+import fi.vm.sade.hakuperusteet.henkilo.{HenkiloClient, IfGoogleAddEmailIDP}
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.{AuditLog, ConflictException, ValidationUtil}
 import fi.vm.sade.hakuperusteet.validation.{ApplicationObjectValidator, UserValidator}
@@ -22,7 +23,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   val henkiloClient = HenkiloClient.init(config)
   post("/authenticate") {
-    if(!isAuthenticated) {
+    if(!isAuthenticated || TokenAuthStrategy.hasTokenInRequest(request)) {
       authenticate
     }
     failUnlessAuthenticated
@@ -107,17 +108,19 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     emailSender.send(newUser.email, "Studyinfo - Registration successful", EmailTemplate.renderWelcome(p))
   }
 
-  def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(userData)) match {
+  def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(IfGoogleAddEmailIDP(userData))) match {
       case Success(u) => userData.copy(personOid = Some(u.personOid))
       case Failure(t) if t.isInstanceOf[ConflictException] =>
         val msg = t.getMessage
         logger.error(s"Henkilopalvelu conflict (409) for email ${userData.email} with message $msg")
         renderConflictWithErrors(NonEmptyList[String](msg))
+      case Failure(t) if t.isInstanceOf[IllegalArgumentException] =>
+        logAndHalt("error parsing user", t)
       case Failure(t) => logAndHalt(s"Henkilopalvelu server error for email ${userData.email}", t)
     }
 
   private def logAndHalt(msg: String, t: Throwable) = {
     logger.error(msg, t)
-    halt(status = 500)
+    halt(status = 500, body = compact(render("errors" -> List(t.getMessage))))
   }
 }

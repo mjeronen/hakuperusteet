@@ -11,8 +11,8 @@ trait ServletTestDependencies extends DBSupport {
   val config = Configuration.props
   val database = HakuperusteetDatabase.init(config)
   val verifier = new DummyVerifier
-  val countries = Countries(List.empty[SimplifiedCode], List.empty)
-  val languages = Languages(List.empty[SimplifiedCode])
+  val countries = Countries(List(SimplifiedCode("032",List(SimplifiedLangValue("fi","032")))), List.empty)
+  val languages = Languages(List(SimplifiedCode("AK",List(SimplifiedLangValue("fi","AK")))))
   val educations = Educations(List.empty[SimplifiedCode])
   val oppijanTunnistus = new DummyOppijanTunnistus(config)
   val emailSender = EmailSender.init(config)

@@ -3,17 +3,15 @@ package fi.vm.sade.hakuperusteet.henkilo
 import java.net.URLEncoder
 import java.util.Date
 
-import fi.vm.sade.hakuperusteet.domain.User
-import fi.vm.sade.hakuperusteet.domain.Henkilo
-import org.http4s.Uri._
+import fi.vm.sade.hakuperusteet.domain.{Henkilo, IDPEntityId, User}
+import fi.vm.sade.utils.cas.{CasAuthenticatingClient, CasClient, CasParams}
 import org.http4s.client.Client
 import org.http4s.dsl._
 import org.http4s.headers.{Location, `Set-Cookie`}
 import org.http4s.{Uri, _}
 import org.scalatest.{FlatSpec, Matchers}
 
-import fi.vm.sade.utils.cas.{CasClient, CasAuthenticatingClient, CasParams}
-import scalaz.concurrent.{Future, Task}
+import scalaz.concurrent.Task
 
 class HenkiloClientSpec extends FlatSpec with Matchers {
   val virkailijaUrl = "https://localhost"
@@ -29,7 +27,7 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
       override def prepare(req: Request): Task[Response] = req match {
         case req@ POST -> Root / "authentication-service" / "resources" / "s2s" / "hakuperusteet" =>
           casMock.addStep("valid session")
-          Ok("""{"personOid":"1.2.3.4","email":"","firstName":"","lastName":"","birthDate":1440742941926,"gender":null,"nationality":"FI","idpentityid":"","educationLevel":""}""")
+          Ok("""{"personOid":"1.2.3.4","email":"","firstName":"","lastName":"","birthDate":1440742941926,"gender":null,"nationality":"FI","idpentityid":"oppijaToken","educationLevel":""}""")
         case _ =>
           casMock.addStep("invalid request")
           NotFound()
@@ -39,8 +37,8 @@ class HenkiloClientSpec extends FlatSpec with Matchers {
       CasParams("/authentication-service", "foo", "bar"), mock)
     val henkiloClient = new HenkiloClient(virkailijaUrl, client)
 
-    val emptyUser = User(None, None,"", "", "", new Date(), None, "", "", "", "")
-    val henkilo:Henkilo = henkiloClient.haeHenkilo(emptyUser).run
+    val emptyUser = User(None, None,"", Some(""), Some(""), Some(new Date()), None, IDPEntityId.oppijaToken, Some(""), Some(""), Some(""))
+    val henkilo:Henkilo = henkiloClient.upsertHenkilo(FindOrCreateUser(emptyUser))
 
     henkilo.personOid shouldEqual "1.2.3.4"
 

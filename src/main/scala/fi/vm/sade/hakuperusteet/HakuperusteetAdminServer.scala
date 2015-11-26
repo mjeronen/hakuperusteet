@@ -17,7 +17,8 @@ class HakuperusteetAdminServer extends HakuperusteetServer {
   override def createContext = {
     val resources = new ResourceCollection(Array(
       getClass.getClassLoader.getResource("webapp-common").toExternalForm,
-      getClass.getClassLoader.getResource("webapp-admin").toExternalForm
+      getClass.getClassLoader.getResource("webapp-admin").toExternalForm,
+      getClass.getClassLoader.getResource("META-INF/resources/webjars").toExternalForm
       ))
 
     val context = new WebAppContext()
