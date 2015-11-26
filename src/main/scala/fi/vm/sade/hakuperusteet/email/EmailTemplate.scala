@@ -2,6 +2,8 @@ package fi.vm.sade.hakuperusteet.email
 
 import java.io.{StringWriter, StringReader}
 import com.github.mustachejava.{Mustache, DefaultMustacheFactory}
+import fi.vm.sade.hakuperusteet.util.Translate
+import collection.JavaConversions._
 
 object EmailTemplate {
   private val welcomeTemplate: Mustache = compileMustache("/email/welcome.mustache")
@@ -11,9 +13,10 @@ object EmailTemplate {
   val receiptTitles = Map("en" -> "Studyinfo: Your payment has been received",
     "fi" -> "Opintopolku - maksu vastaanotettu",
     "sv" -> "Studieinfo - betalningen har mottagits")
+
   def renderWelcome(values: WelcomeValues) = {
     val sw = new StringWriter()
-    welcomeTemplate.execute(sw, values)
+    welcomeTemplate.execute(sw, mapAsJavaMap(Translate.getMap("email.welcome","en") ++ Map("values" ->  values)))
     sw.toString
   }
 

@@ -4,8 +4,12 @@ import fi.vm.sade.hakuperusteet.util.Translate
 import org.scalatest.{FlatSpec, Matchers}
 
 class TranslationSpec extends FlatSpec with Matchers {
+  it should "Get translated text" in {
+    Translate("test", "testi", "fi") shouldEqual "powpow!"
+    Translate("test.testi", "fi") shouldEqual "powpow!"
+  }
 
-  it should "require payment when regular base education and from USA" in {
-    Translate("pow.zap", "fi") shouldEqual "powpow!"
+  it should "Get translation map" in {
+    Translate.get("test", "testi") shouldEqual Map("fi" -> "powpow!")
   }
 }

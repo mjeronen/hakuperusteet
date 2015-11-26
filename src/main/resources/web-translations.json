@@ -1,0 +1,19 @@
+{
+  "email": {
+    "welcome": {
+      "fi": {
+        "dear": "Hei",
+        "txt": "<p>Rekisteröinti onnistui. TODO: APO Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
+      },
+      "en": {
+        "dear": "Dear",
+        "txt": "<p>Your registration was successful. Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
+      }
+    }
+  },
+  "test": {
+    "testi": {
+      "fi": "powpow!"
+    }
+  }
+}

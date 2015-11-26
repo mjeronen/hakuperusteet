@@ -4,25 +4,25 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 object Translate {
-  val strings = loadStrings
+  val map = loadMap
 
-  def apply(keys: String*) = strings(keys.mkString("."))
-
-  def flattenKeysAndValues(json: Map[String, Any]): Map[String, Any] = {
-    json.flatMap { case (k, v) => v match {
-      case json1: Map[String, Any] =>
-        flattenKeysAndValues(json1).map { case (fk, fv) => (k + "." + fk, fv) }.toList
-      case _ =>
-        List((k, v))
-    }
+  def navigate(map: Map[String, Any], keys: Seq[String]): Any = {
+    if(keys.size == 1) {
+      map(keys.head)
+    } else {
+      navigate(map(keys.head).asInstanceOf[Map[String, Any]], keys.tail)
     }
   }
 
-  def loadStrings: Map[String, String] = {
+  def get(keys: String*) = navigate(map, keys.flatMap((k) => k.split("\\.")))
+
+  def getMap(keys: String*) = navigate(map, keys.flatMap((k) => k.split("\\."))).asInstanceOf[Map[String, Any]]
+
+  def apply(keys: String*) = navigate(map, keys.flatMap((k) => k.split("\\."))).toString
+
+  def loadMap: Map[String, Any] = {
     implicit val formats = org.json4s.DefaultFormats
     val file = io.Source.fromInputStream(getClass.getResourceAsStream("/web-translations.json")).mkString
-    val map: Map[String, Any] = parse(file).extract[Map[String, Any]]
-    val flattenedMap: Map[String, Any] = flattenKeysAndValues(map)
-    flattenedMap.map { case (k, v) => (k, v.toString) }
+    parse(file).extract[Map[String, Any]]
   }
 }
