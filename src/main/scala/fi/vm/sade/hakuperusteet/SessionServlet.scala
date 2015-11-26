@@ -44,7 +44,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     val params = parse(request.body).extract[Params]
     userValidator.parseEmailToken(params).bitraverse(
       errors => renderConflictWithErrors(errors),
-      res => orderEmailToken(res._1, res._2))
+      res => orderEmailToken(res._1, res._2, cookieToLang))
   }
 
   post("/userData") {
@@ -52,7 +52,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     val params = parse(request.body).extract[Params]
     userValidator.parseUserDataWithoutEmailAndIdpentityid(params).bitraverse(
       errors => renderConflictWithErrors(errors),
-      partialUserData => createNewUser(user, partialUserData(user.email, user.idpentityid)))
+      partialUserData => createNewUser(user, partialUserData(user.email, user.idpentityid, cookieToLang)))
   }
 
   post("/educationData") {
@@ -77,8 +77,8 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   def renderConflictWithErrors(errors: NonEmptyList[String]) = halt(status = 409, body = compact(render("errors" -> errors.list)))
 
-  def orderEmailToken(email: String, hakukohdeOid: String) =
-    Try(oppijanTunnistus.createToken(email, hakukohdeOid)) match {
+  def orderEmailToken(email: String, hakukohdeOid: String, uiLang: String) =
+    Try(oppijanTunnistus.createToken(email, hakukohdeOid, uiLang)) match {
       case Success(token) =>
         logger.info(s"Sending token to $email with value $token")
         halt(status = 200, body = compact(render(Map("token" -> token))))

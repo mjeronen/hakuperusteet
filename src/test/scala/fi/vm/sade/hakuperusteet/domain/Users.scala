@@ -10,7 +10,7 @@ object Users {
     val userData = (firstNameGenderAndPersonIDs zip lastNames) zipWithIndex
 
     userData.map{ case (((name, gender, personId), lastName), i) =>
-      User(None, Some(personOidFromIndex(i)), s"${name}.${lastName}@example.com".toLowerCase, Some(name), Some(lastName), Some(birthDate), Option(personId), IDPEntityId.google, Some(gender), Some("AB"), Some("004")) }
+      User(None, Some(personOidFromIndex(i)), s"${name}.${lastName}@example.com".toLowerCase, Some(name), Some(lastName), Some(birthDate), Option(personId), IDPEntityId.google, Some(gender), Some("AB"), Some("004"), "en") }
   }
 
   private def personOidFromIndex(index: Int) = f"1.2.246.562.24.${index + 1000}%011d"

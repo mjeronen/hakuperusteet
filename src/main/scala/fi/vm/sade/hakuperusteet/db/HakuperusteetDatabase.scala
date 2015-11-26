@@ -39,7 +39,7 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   def upsertPartialUser(partialUser: User): Option[User] = {
     val upsertedUser = (Tables.User returning Tables.User).insertOrUpdate(partialUserToUserRow(partialUser)).run
     upsertedUser match {
-      case Some(r) => Some(User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid)))
+      case Some(r) => Some(User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid), r.uilang))
       case None => None
     }
   }
@@ -135,12 +135,12 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
 
   private def partialUserToUserRow(u: User): Tables.UserRow = {
     val id = u.id.getOrElse(useAutoIncrementId)
-    UserRow(id, u.personOid, u.email, u.idpentityid.toString)
+    UserRow(id, u.personOid, u.email, u.idpentityid.toString, u.uiLang)
   }
 
   private def userToUserRow(u: User): (Tables.UserRow, Tables.UserDetailsRow) = {
     val id = u.id.getOrElse(useAutoIncrementId)
-    (UserRow(id, u.personOid, u.email, u.idpentityid.toString), UserDetailsRow(id, u.firstName.get,
+    (UserRow(id, u.personOid, u.email, u.idpentityid.toString, u.uiLang), UserDetailsRow(id, u.firstName.get,
       u.lastName.get, u.gender.get, new sql.Date(u.birthDate.get.getTime), u.personId, u.nativeLanguage.get, u.nationality.get))
   }
 
@@ -148,12 +148,12 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
     val r = u._1
     (u._2) match {
       case Some(details) => userRowAndDetailsToUser(r, details)
-      case _ => User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid))
+      case _ => User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid), r.uilang)
     }
   }
 
   private def userRowAndDetailsToUser(r: Tables.UserRow, d: Tables.UserDetailsRow): User =
-   User(Some(r.id), r.henkiloOid, r.email, Some(d.firstname), Some(d.lastname), Some(d.birthdate), d.personid, IDPEntityId.withName(r.idpentityid), Some(d.gender), Some(d.nativeLanguage), Some(d.nationality))
+   User(Some(r.id), r.henkiloOid, r.email, Some(d.firstname), Some(d.lastname), Some(d.birthdate), d.personid, IDPEntityId.withName(r.idpentityid), Some(d.gender), Some(d.nativeLanguage), Some(d.nationality), r.uilang)
 
   private def now = new java.sql.Timestamp(Calendar.getInstance.getTime.getTime)
 }

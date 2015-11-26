@@ -18,7 +18,7 @@ class HakuperusteetDatabaseSpec extends FlatSpec with LazyLogging with Matchers 
   }
 
   it should "should create new session" in {
-    val user = new User(None, Some("personOid.1.1.1"), "", Some(""), Some(""), Some(new Date()), None, IDPEntityId.oppijaToken, Some(""), Some(""), Some(""))
+    val user = new User(None, Some("personOid.1.1.1"), "", Some(""), Some(""), Some(new Date()), None, IDPEntityId.oppijaToken, Some(""), Some(""), Some(""), "en")
     db.upsertUser(user)
 
     db.findPayments(user).length shouldEqual 0

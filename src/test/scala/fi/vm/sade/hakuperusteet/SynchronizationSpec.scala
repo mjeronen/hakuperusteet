@@ -35,7 +35,7 @@ class SynchronizationSpec extends FunSuite with ScalatraSuite with ServletTestDe
     val personOid = "4.4.4.4"
     val hakemusOid = "1.1.1.1"
     val email = "e@mail.com"
-    val user = database.findUser(email).orElse(database.upsertPartialUser(partialUser(None, Some(personOid), email, IDPEntityId.oppijaToken))).get
+    val user = database.findUser(email).orElse(database.upsertPartialUser(partialUser(None, Some(personOid), email, IDPEntityId.oppijaToken, "en"))).get
 
     val payment1 = Payment(None, personOid, new Date(), "1234", "1234", "1234", PaymentStatus.error,Some(hakemusOid))
     database.upsertPayment(payment1)

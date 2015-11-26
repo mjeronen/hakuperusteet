@@ -11,7 +11,7 @@ import org.json4s.native.JsonMethods._
 import org.json4s._
 import org.json4s.JsonDSL._
 
-case class OppijanTunnistusVerification(email: Option[String], valid: Boolean, metadata: Option[Map[String,String]])
+case class OppijanTunnistusVerification(email: Option[String], valid: Boolean, metadata: Option[Map[String,String]], lang: Option[String])
 case class HakuAppMetadata(hakemusOid: String, personOid: String)
 
 case class OppijanTunnistus(c: Config) extends LazyLogging {
@@ -26,9 +26,9 @@ case class OppijanTunnistus(c: Config) extends LazyLogging {
     }
   }
 
-  def createToken(email: String, hakukohdeOid: String) = {
+  def createToken(email: String, hakukohdeOid: String, uiLang: String) = {
     val siteUrlBase = if (hakukohdeOid.length > 0) s"${c.getString("host.url.base")}ao/$hakukohdeOid/#/token/" else s"${c.getString("host.url.base")}#/token/"
-    val data = Map("email" -> email, "url" -> siteUrlBase)
+    val data = Map("email" -> email, "url" -> siteUrlBase, "lang" -> uiLang)
 
     Request.Post(c.getString("oppijantunnistus.create.url"))
       .useExpectContinue()
@@ -37,7 +37,7 @@ case class OppijanTunnistus(c: Config) extends LazyLogging {
       .execute().returnContent().asString()
   }
 
-  def validateToken(token: String): Option[(String, Option[HakuAppMetadata])] = {
+  def validateToken(token: String): Option[(String, String, Option[HakuAppMetadata])] = {
     logger.info(s"Validating token $token")
     val verifyUrl = c.getString("oppijantunnistus.verify.url") + s"/$token"
 
@@ -49,7 +49,7 @@ case class OppijanTunnistus(c: Config) extends LazyLogging {
     val verification = parse(verifyResult).extract[OppijanTunnistusVerification]
     if(verification.valid) {
       verification.email match {
-        case Some(email) => Some(email, parseHakuAppMetadata(verification.metadata.getOrElse(Map())))
+        case Some(email) => Some(email, verification.lang.get, parseHakuAppMetadata(verification.metadata.getOrElse(Map())))
         case _ => None
       }
     } else {

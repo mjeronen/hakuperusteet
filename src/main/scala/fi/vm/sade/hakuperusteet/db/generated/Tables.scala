@@ -300,18 +300,19 @@ trait Tables {
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param henkiloOid Database column henkilo_oid SqlType(varchar), Length(255,true), Default(None)
    *  @param email Database column email SqlType(varchar), Length(255,true)
-   *  @param idpentityid Database column idpentityid SqlType(varchar), Length(255,true) */
-  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentityid: String)
+   *  @param idpentityid Database column idpentityid SqlType(varchar), Length(255,true)
+   *  @param uilang Database column uilang SqlType(varchar), Length(2,true) */
+  case class UserRow(id: Int, henkiloOid: Option[String] = None, email: String, idpentityid: String, uilang: String)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
   implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[String]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[Int], <<?[String], <<[String], <<[String]))
+    UserRow.tupled((<<[Int], <<?[String], <<[String], <<[String], <<[String]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, "user") {
-    def * = (id, henkiloOid, email, idpentityid) <> (UserRow.tupled, UserRow.unapply)
+    def * = (id, henkiloOid, email, idpentityid, uilang) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), henkiloOid, Rep.Some(email), Rep.Some(idpentityid), Rep.Some(uilang)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -321,6 +322,8 @@ trait Tables {
     val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
     /** Database column idpentityid SqlType(varchar), Length(255,true) */
     val idpentityid: Rep[String] = column[String]("idpentityid", O.Length(255,varying=true))
+    /** Database column uilang SqlType(varchar), Length(2,true) */
+    val uilang: Rep[String] = column[String]("uilang", O.Length(2,varying=true))
 
     /** Uniqueness Index over (henkiloOid) (database name henkilo_oid) */
     val index1 = index("henkilo_oid", henkiloOid, unique=true)

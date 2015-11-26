@@ -74,8 +74,6 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     }
   }
 
-  private def cookieToLang = cookies.get("i18next").filter(lang => List("en","fi","sv").contains(lang)).getOrElse("en")
-
   private def handlePaymentWhenThereIsNoReferenceToPayment(hash: String, href:String) = {
     // todo: handle case when payment completes (with some status) but there's no reference to that payment in DB
     halt(status = 303, headers = Map("Location" -> createUrl(href, hash, None)))

@@ -13,6 +13,8 @@ class HakuperusteetServlet(val configuration: Config, val db: HakuperusteetDatab
 
   def userDataFromSession = db.findUser(user.email).getOrElse(halt(500))
 
+  def cookieToLang = cookies.get("i18next").filter(lang => List("en","fi","sv").contains(lang)).getOrElse("en")
+
   before() {
     contentType = "application/json"
   }

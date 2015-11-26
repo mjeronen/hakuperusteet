@@ -31,8 +31,8 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
 
   def createSession(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
-      case Success(Some((email, Some(metadata)))) => {
-        val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, IDPEntityId.oppijaToken)
+      case Success(Some((email, lang, Some(metadata)))) => {
+        val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, IDPEntityId.oppijaToken, lang)
         upsertIdpEntity(partialUser)
         val existingUser = db.findUser(email)
         val user = existingUser.orElse(db.upsertPartialUser(partialUser)).get
@@ -44,7 +44,7 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
         }
         Some(Session(email, tokenFromRequest, IDPEntityId.oppijaToken.toString))
       }
-      case Success(Some((email, None))) => Some(Session(email, tokenFromRequest, IDPEntityId.oppijaToken.toString))
+      case Success(Some((email, lang, None))) => Some(Session(email, tokenFromRequest, IDPEntityId.oppijaToken.toString))
       case Success(None) => None
       case Failure(f) =>
         logger.error("Oppijantunnistus.validateToken error", f)
