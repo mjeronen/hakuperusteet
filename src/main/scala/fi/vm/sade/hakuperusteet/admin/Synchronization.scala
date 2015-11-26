@@ -16,6 +16,7 @@ import fi.vm.sade.hakuperusteet.koodisto.Countries
 import fi.vm.sade.hakuperusteet.rsa.RSASigner
 import fi.vm.sade.hakuperusteet.tarjonta.{ApplicationSystem, Tarjonta}
 import fi.vm.sade.hakuperusteet.redirect.RedirectCreator._
+import fi.vm.sade.hakuperusteet.util.PaymentUtil
 import org.apache.http.HttpVersion
 import org.apache.http.client.fluent.{Response, Request}
 import org.apache.http.entity.ContentType
@@ -35,18 +36,20 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
   def start = scheduler.scheduleWithFixedDelay(checkTodoSynchronizations, 1, config.getDuration("admin.synchronization.interval", SECONDS), SECONDS)
 
   def checkTodoSynchronizations = asSimpleRunnable { () =>
-      db.findSynchronizationRequests.foreach(syncs => {
-        syncs match {
-          case Some(sync: HakuAppSyncRequest) => synchronizePaymentRow(sync)
-          case Some(sync: ApplicationObjectSyncRequest) => synchronizeUserRow(sync)
-          case _ => logger.error("Unexpected sync request")
-        }
-      })
+    db.fetchNextSyncIds.foreach(checkSynchronizationForId)
+  }
+
+  protected def checkSynchronizationForId(id: Int): Unit = {
+    db.findSynchronizationRequest(id).foreach(syncs => syncs match {
+      case Some(sync: HakuAppSyncRequest) => synchronizePaymentRow(sync)
+      case Some(sync: ApplicationObjectSyncRequest) => synchronizeUserRow(sync)
+      case _ => logger.error("Unexpected sync request")
+    })
   }
 
   private def synchronizePaymentRow(row: HakuAppSyncRequest) = {
-    val payment = db.findPaymentByHenkiloOidAndHakemusOid(row.henkiloOid, row.hakemusOid)
-    (payment match {
+    val payments = PaymentUtil.sortPaymentsByStatus(db.findUserByOid(row.henkiloOid).map(db.findPayments(_)).getOrElse(Seq())).headOption
+    (payments match {
       case Some(payment) => paymentStatusToPaymentState(payment.status)
       case _ => None
     }) match {
@@ -78,7 +81,7 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
         logger.info(s"Synced row id ${row.id} with Haku-App, henkiloOid ${row.henkiloOid}, hakemusOid ${row.hakemusOid} and payment state ${state}")
         db.markSyncDone(row.id)
       case 403 =>
-        logger.info(s"Tried to sync row id ${row.id} with Haku-App, henkiloOid ${row.henkiloOid}, hakemusOid ${row.hakemusOid} and payment state ${state} but the user is no longer liable for payment.")
+        logger.warn(s"Tried to sync row id ${row.id} with Haku-App, henkiloOid ${row.henkiloOid}, hakemusOid ${row.hakemusOid} and payment state ${state} but the user is no longer liable for payment.")
         db.markSyncDone(row.id)
       case _ =>
         logger.error(s"Synchronization error with statuscode $statusCode")
@@ -86,7 +89,7 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
     }
   }
 
-  private def synchronizeUserRow(row: ApplicationObjectSyncRequest) =
+  protected def synchronizeUserRow(row: ApplicationObjectSyncRequest) =
     Try { tarjonta.getApplicationSystem(row.hakuOid) } match {
       case Success(as) => continueWithTarjontaData(row, as)
       case Failure(f) => handleSyncError(row.id, "Synchronization Tarjonta application system throws", f)

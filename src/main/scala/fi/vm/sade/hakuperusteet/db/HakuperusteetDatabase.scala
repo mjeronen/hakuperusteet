@@ -103,11 +103,9 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
 
   private def updateSyncRequest(row: SynchronizationRow) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(row).run
 
-  def fetchNextSyncIds = sql"update synchronization set status = '#${SynchronizationStatus.active.toString}' where id in (select id from synchronization where status = '#${SynchronizationStatus.todo.toString}' or status = '#${SynchronizationStatus.error.toString}' order by status desc, created asc limit 1) returning ( id );".as[Int].run
+  def fetchNextSyncIds: Seq[Int] = sql"update synchronization set status = '#${SynchronizationStatus.active.toString}' where id in (select id from synchronization where status = '#${SynchronizationStatus.todo.toString}' or status = '#${SynchronizationStatus.error.toString}' order by status desc, created asc limit 1) returning ( id );".as[Int].run
 
-  def findSynchronizationRequests: Seq[Option[SyncRequest]] = fetchNextSyncIds.flatMap(findSynchronizationRow(_).map(r =>
-    convertApplicationObjectSyncRequest(r).orElse(convertHakuAppSyncRequest(r))
-  ))
+  def findSynchronizationRequestsForIds(ids: Seq[Int]): Seq[Option[SyncRequest]] = ids.flatMap(findSynchronizationRequest(_))
 
   private def convertApplicationObjectSyncRequest(row: SynchronizationRow) = {
     (row.hakuOid,row.hakukohdeOid) match {
@@ -121,7 +119,9 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
       case _ => None
     }
   }
-  def findSynchronizationRow(id: Int) = Tables.Synchronization.filter(_.id === id).result.run
+  def synchronizationRowToSyncRequest(r: Tables.SynchronizationRow) = convertApplicationObjectSyncRequest(r).orElse(convertHakuAppSyncRequest(r))
+  def findSynchronizationRow(id: Int): Seq[Tables.SynchronizationRow] = Tables.Synchronization.filter(_.id === id).result.run
+  def findSynchronizationRequest(id: Int): Seq[Option[SyncRequest]] = findSynchronizationRow(id).map(synchronizationRowToSyncRequest)
 
   private def paymentToPaymentRow(payment: Payment) =
     PaymentRow(payment.id.getOrElse(useAutoIncrementId), payment.personOid, new Timestamp(payment.timestamp.getTime), payment.reference, payment.orderNumber, payment.status.toString, payment.paymCallId, payment.hakemusOid)

@@ -8,6 +8,7 @@ import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
 import fi.vm.sade.hakuperusteet.domain.{IDPEntityId, Session, User}
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
+import fi.vm.sade.hakuperusteet.util.PaymentUtil
 import org.json4s.native.JsonMethods._
 import org.scalatra.Control
 import org.scalatra.servlet.RichRequest
@@ -33,7 +34,14 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
       case Success(Some((email, Some(metadata)))) => {
         val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, IDPEntityId.oppijaToken)
         upsertIdpEntity(partialUser)
-        db.findUser(email).getOrElse(db.upsertPartialUser(partialUser))
+        val existingUser = db.findUser(email)
+        val user = existingUser.orElse(db.upsertPartialUser(partialUser)).get
+        if(existingUser.isDefined) {
+          val validPayment = PaymentUtil.getValidPayment(db.findPayments(user))
+          if(validPayment.isDefined) {
+            db.insertPaymentSyncRequest(user, validPayment.get.copy(hakemusOid = Some(metadata.hakemusOid)))
+          }
+        }
         Some(Session(email, tokenFromRequest, IDPEntityId.oppijaToken.toString))
       }
       case Success(Some((email, None))) => Some(Session(email, tokenFromRequest, IDPEntityId.oppijaToken.toString))
