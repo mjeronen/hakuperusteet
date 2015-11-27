@@ -4,8 +4,9 @@ import java.util.Date
 
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
+import fi.vm.sade.hakuperusteet.domain.PaymentStatus
 import fi.vm.sade.hakuperusteet.domain.PaymentStatus._
-import fi.vm.sade.hakuperusteet.domain.{PaymentState, User, PaymentStatus, Payment}
+import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.email.{ReceiptValues, EmailTemplate, EmailSender}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.hakuapp.HakuAppClient
@@ -78,7 +79,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     // todo: handle case when payment completes (with some status) but there's no reference to that payment in DB
     halt(status = 303, headers = Map("Location" -> createUrl(href, hash, None)))
   }
-  private def handleHakuAppPayment(hakemusOid: String)(hash: String, href: String, userData: User, p: Payment, status: PaymentStatus) = {
+  private def handleHakuAppPayment(hakemusOid: String)(hash: String, href: String, userData: AbstractUser, p: Payment, status: PaymentStatus) = {
     val paymentWithSomeStatus = p.copy(status = status, hakemusOid = Some(hakemusOid))
     db.upsertPayment(paymentWithSomeStatus)
     AuditLog.auditPayment(userData, paymentWithSomeStatus)
@@ -89,7 +90,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     val url = href + s"app/$hakemusOid$hash"
     halt(status = 303, headers = Map("Location" -> url))
   }
-  private def handlePayment(hakukohdeOid: Option[String])(hash: String, href: String, userData: User, p: Payment, status: PaymentStatus) = {
+  private def handlePayment(hakukohdeOid: Option[String])(hash: String, href: String, userData: AbstractUser, p: Payment, status: PaymentStatus) = {
     val paymentWithSomeStatus = p.copy(status = status)
     db.upsertPayment(paymentWithSomeStatus)
     AuditLog.auditPayment(userData, paymentWithSomeStatus )
@@ -102,7 +103,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
   def referenceNumberFromPersonOid(personOid: String) = personOid.split("\\.").toList.last
 
   private def handleReturn(href: String, hash: String, status: PaymentStatus, // hakukohdeOid: Option[String], hakemusOid: Option[String], status: PaymentStatus,
-                           handlePayment: (String, String, User, Payment, PaymentStatus) => Unit) = {
+                           handlePayment: (String, String, AbstractUser, Payment, PaymentStatus) => Unit) = {
     val macParams = createMacParams
     val expectedMac = params.getOrElse("MAC", "")
     if (!Vetuma.verifyReturnMac(config.getString("vetuma.shared.secret"), macParams, expectedMac)) halt(409)
@@ -121,7 +122,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
     List(p("RCVID"), p("TIMESTMP"), p("SO"), p("LG"), p("RETURL"), p("CANURL"), p("ERRURL"), p("PAYID"), p("REF"), p("ORDNR"), p("PAID"), p("STATUS"))
   }
 
-  private def sendReceipt(userData: User, payment: Payment) = {
+  private def sendReceipt(userData: AbstractUser, payment: Payment) = {
     val p = ReceiptValues(userData.fullName, config.getString("vetuma.amount"), payment.reference)
     emailSender.send(userData.email, Translate("email.receipt", getUserLang(userData),"title"), EmailTemplate.renderReceipt(p, getUserLang(userData)))
   }

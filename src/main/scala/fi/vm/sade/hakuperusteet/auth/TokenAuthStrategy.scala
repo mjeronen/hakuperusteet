@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{IDPEntityId, Session, User}
+import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.henkilo.HenkiloClient
 import fi.vm.sade.hakuperusteet.oppijantunnistus.OppijanTunnistus
 import fi.vm.sade.hakuperusteet.util.PaymentUtil
@@ -32,10 +32,10 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
   def createSession(tokenFromRequest: String) = {
     Try { oppijanTunnistus.validateToken(tokenFromRequest) } match {
       case Success(Some((email, lang, Some(metadata)))) => {
-        val partialUser: User = User.partialUser(None, Some(metadata.personOid), email, IDPEntityId.oppijaToken, lang)
+        val partialUser: PartialUser = PartialUser(None, Some(metadata.personOid), email, IDPEntityId.oppijaToken, lang)
         upsertIdpEntity(partialUser)
         val existingUser = db.findUser(email)
-        val user = existingUser.orElse(db.upsertPartialUser(partialUser)).get
+        val user: AbstractUser = existingUser.orElse(db.upsertPartialUser(partialUser)).get
         if(existingUser.isDefined) {
           val validPayment = PaymentUtil.getValidPayment(db.findPayments(user))
           if(validPayment.isDefined) {
@@ -52,7 +52,7 @@ class TokenAuthStrategy (config: Config, db: HakuperusteetDatabase, oppijanTunni
     }
   }
   
-  def upsertIdpEntity(user: User): Unit = {
+  def upsertIdpEntity(user: AbstractUser): Unit = {
     Try(henkiloClient.upsertIdpEntity(user).run) match {
       case Success(h) =>
       case Failure(f) => {

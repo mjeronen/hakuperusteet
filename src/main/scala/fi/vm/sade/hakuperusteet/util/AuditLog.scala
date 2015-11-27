@@ -21,9 +21,9 @@ object AuditLog {
   def auditAdminPostEducation(henkiloOid: String, userData: User, education: ApplicationObject) = auditAdmin.log(
     buildCommonEducation(userData, education).virkailijaHenkiloOid(henkiloOid).build())
 
-  def auditPayment(userData: User, payment: Payment) = audit.log(buildCommonPayment(userData, payment).build())
+  def auditPayment(userData: AbstractUser, payment: Payment) = audit.log(buildCommonPayment(userData, payment).build())
 
-  def auditAdminPayment(henkiloOid: String, userData: User, payment: Payment) = auditAdmin.log(
+  def auditAdminPayment(henkiloOid: String, userData: AbstractUser, payment: Payment) = auditAdmin.log(
     buildCommonPayment(userData, payment).virkailijaHenkiloOid(henkiloOid).build())
 
   private def buildCommonUserData(userData: User) = builder()
@@ -47,7 +47,7 @@ object AuditLog {
       .educationLevel(education.educationLevel)
       .educationCountry(education.educationCountry)
 
-  private def buildCommonPayment(userData: User, payment: Payment) = builder()
+  private def buildCommonPayment(userData: AbstractUser, payment: Payment) = builder()
       .oppijaHenkiloOid(userData.personOid.getOrElse("<unknown>"))
       .email(userData.email)
       .setOperaatio(statusToOperation(payment.status))

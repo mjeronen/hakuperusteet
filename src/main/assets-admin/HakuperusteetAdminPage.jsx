@@ -18,6 +18,8 @@ export default class HakuperusteetPage extends React.Component {
         const controller = this.props.controller
         const users = _.isEmpty(state.users) ? [] : state.users
         const oppijaClassName = state.isSearching ? "sidebar oppija-search searching" : "sidebar oppija-search"
+        const fullName = (user) => (user.firstName && user.lastName) ? <span>{user.firstName}&nbsp;{user.lastName}</span> : <span>{user.email}</span>
+
         const results = state.isSearching ? <ul></ul> : <ul>
                         {users.filter(u => {
                             if(_.isEmpty(state.userSearch)) {
@@ -28,7 +30,7 @@ export default class HakuperusteetPage extends React.Component {
                             }
                         }).map((u, i) => {
                             const selected = u.id == state.id ? "selected user" : "user"
-                            return <li key={i} className={selected}><a onClick={this.selectUser.bind(this, u)}>{u.firstName}&nbsp;{u.lastName}</a></li>;
+                            return <li key={i} className={selected}><a onClick={this.selectUser.bind(this, u)}>{fullName(u)}</a></li>;
                         })}
         </ul>
 

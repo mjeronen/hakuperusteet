@@ -3,7 +3,7 @@ package fi.vm.sade.hakuperusteet
 import com.typesafe.config.Config
 import fi.vm.sade.hakuperusteet.auth.TokenAuthStrategy
 import fi.vm.sade.hakuperusteet.db.HakuperusteetDatabase
-import fi.vm.sade.hakuperusteet.domain.{ApplicationObject, Session, SessionData, User}
+import fi.vm.sade.hakuperusteet.domain._
 import fi.vm.sade.hakuperusteet.email.{EmailSender, EmailTemplate, WelcomeValues}
 import fi.vm.sade.hakuperusteet.google.GoogleVerifier
 import fi.vm.sade.hakuperusteet.henkilo.{HenkiloClient, IfGoogleAddEmailIDP}
@@ -58,19 +58,24 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   post("/educationData") {
     failUnlessAuthenticated
     val params = parse(request.body).extract[Params]
-    val userData = userDataFromSession
-    applicationObjectValidator.parseApplicationObjectWithoutPersonOid(params).bitraverse(
-      errors => renderConflictWithErrors(errors),
-      partialEducation => addNewEducation(user, userData, partialEducation(userData.personOid.getOrElse(halt(500))))
-    )
+    (userDataFromSession) match {
+      case userData: User =>
+        applicationObjectValidator.parseApplicationObjectWithoutPersonOid(params).bitraverse(
+          errors => renderConflictWithErrors(errors),
+          partialEducation => addNewEducation(user, userData, partialEducation(userData.personOid.getOrElse(halt(500))))
+        )
+    }
   }
 
   private def returnUserData = {
     db.findUser(user.email) match {
-      case Some(u) =>
+      case Some(u : User) =>
         val educations = db.findApplicationObjects(u).toList
         val payments = db.findPayments(u).toList
         write(SessionData(user, Some(u), educations, payments))
+      case Some(u : PartialUser) =>
+        val payments = db.findPayments(u).toList
+        write(SessionData(user, Some(u), List(), payments))
       case None => write(SessionData(user, None, List.empty, List.empty))
     }
   }

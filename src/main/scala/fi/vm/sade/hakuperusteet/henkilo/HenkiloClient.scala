@@ -5,7 +5,7 @@ import java.util.Date
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import fi.vm.sade.hakuperusteet.domain.IDPEntityId.IDPEntityId
-import fi.vm.sade.hakuperusteet.domain.{Henkilo, IDPEntityId, User}
+import fi.vm.sade.hakuperusteet.domain.{AbstractUser, Henkilo, IDPEntityId, User}
 import fi.vm.sade.hakuperusteet.util.CasClientUtils
 import fi.vm.sade.utils.cas.{CasAuthenticatingClient, CasClient, CasParams}
 import org.http4s.Uri._
@@ -61,7 +61,7 @@ class HenkiloClient(henkiloServerUrl: String, client: Client) extends LazyLoggin
 
   def upsertHenkilo(user: FindOrCreateUser) = client.prepAs[Henkilo](req(user))(json4sOf[Henkilo]).run
 
-  def upsertIdpEntity(user: User): Task[Henkilo] = user.personOid match {
+  def upsertIdpEntity(user: AbstractUser): Task[Henkilo] = user.personOid match {
     case Some(oid) => client.prepAs[Henkilo](req(IdpUpsertRequest(oid, user.email)))(json4sOf[Henkilo])
     case _ => Task.fail(new IllegalArgumentException)
   }

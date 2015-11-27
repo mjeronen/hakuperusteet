@@ -140,7 +140,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
     contentType = "application/json"
     val search = params.getOrElse("search", halt(400)).toLowerCase
     // TODO What do we want to search here? Do optimized query when search terms are decided!
-    write(db.allUsers.filter(u => search.isEmpty || u.email.toLowerCase.contains(search) || (u.firstName + " " + u.lastName).toLowerCase.contains(search)))
+    write(db.allUsers.filter(u => search.isEmpty || u.email.toLowerCase.contains(search) || (u.fullName).toLowerCase.contains(search)))
   }
 
   get("/api/v1/admin/:personoid") {
@@ -149,7 +149,8 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
     val personOid = params("personoid")
     val user = db.findUserByOid(personOid)
     user match {
-      case Some(u) => write(fetchUserData(u))
+      case Some(u: User) => write(fetchUserData(u))
+      case Some(u: PartialUser) => write(fetchPartialUserData(u))
       case _ => halt(status = 404, body = s"User ${personOid} not found")
     }
   }
@@ -175,8 +176,14 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
       education => {
         db.upsertApplicationObject(education)
         val u = db.findUserByOid(education.personOid).get
-        AuditLog.auditAdminPostEducation(user.oid, u, education)
-        halt(status = 200, body = write(syncAndWriteResponse(u)))
+        (u) match {
+          case u: User =>
+            AuditLog.auditAdminPostEducation(user.oid, u, education)
+            halt(status = 200, body = write(syncAndWriteResponse(u)))
+          case u: PartialUser =>
+            halt(status = 500, body = "Tried to submit applications to partial user!")
+        }
+
       }
     )
   }
@@ -190,11 +197,17 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
       partialPayment => {
         val paymentWithoutTimestamp = partialPayment(new Date())
         val u = db.findUserByOid(paymentWithoutTimestamp.personOid).get
-        val oldPayment = db.findPaymentByOrderNumber(u, paymentWithoutTimestamp.orderNumber).get
-        val payment = partialPayment(oldPayment.timestamp)
-        db.upsertPayment(payment)
-        AuditLog.auditAdminPayment(user.oid, u, payment)
-        halt(status = 200, body = write(syncAndWriteResponse(u)))
+        (u) match {
+          case u: User =>
+            val oldPayment = db.findPaymentByOrderNumber(u, paymentWithoutTimestamp.orderNumber).get
+            val payment = partialPayment(oldPayment.timestamp)
+            db.upsertPayment(payment)
+            AuditLog.auditAdminPayment(user.oid, u, payment)
+            halt(status = 200, body = write(syncAndWriteResponse(u)))
+          case u: PartialUser =>
+            halt(status = 500, body = "Tried to submit payments to partial user!")
+        }
+
       }
     )
 
@@ -226,12 +239,14 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
 
   private def saveUserData(newUserData: User) = {
     db.findUserByOid(newUserData.personOid.getOrElse(halt(500, body = "PersonOid is mandatory"))) match {
-      case Some(oldUserData) =>
+      case Some(oldUserData: User) =>
         val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
         saveUpdatedUserData(updatedUserData)
       case _ => halt(404)
     }
   }
+
+  private def fetchPartialUserData(u: PartialUser): PartialUserData = PartialUserData(u, db.findPayments(u))
 
   private def fetchUserData(u: User): UserData = UserData(u, db.findApplicationObjects(u), db.findPayments(u))
 

@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import EducationForm from './education/EducationForm.jsx'
 import UserDataForm from './userdata/UserDataForm.jsx'
+import PartialUserDataForm from './userdata/PartialUserDataForm.jsx'
 import PaymentForm from './payment/PaymentForm.jsx'
 
 export default class HakuperusteetAdminForm extends React.Component {
@@ -19,6 +20,11 @@ export default class HakuperusteetAdminForm extends React.Component {
         const payments = _.isEmpty(state.payments) ? [] : state.payments
         const paymentsTitle = payments.length > 0 ? "Maksut" : "Hakijalla ei ole maksuja"
         if(isUserSelected) {
+            if(state.partialUser) {
+                return <section className="main-content oppija">
+                    <PartialUserDataForm state={state} controller={controller} />
+                </section>
+            }
             return <section className="main-content oppija">
                 <UserDataForm state={state} controller={controller} />
                 <h3>{paymentsTitle}</h3>

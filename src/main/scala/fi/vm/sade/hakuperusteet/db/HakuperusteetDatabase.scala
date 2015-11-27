@@ -26,33 +26,36 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   }
   val useAutoIncrementId = 0
 
-  def findUser(email: String): Option[User] = {
+  def findUser(email: String): Option[AbstractUser] = {
     // join Tables.UserDetails on (_.id === _.id)
     (Tables.User.filter(_.email === email) joinLeft Tables.UserDetails on (_.id === _.id)).result.headOption.run.map(userRowToUser)
   }
 
-  def findUserByOid(henkiloOid: String): Option[User] =
+  def findUserByOid(henkiloOid: String): Option[AbstractUser] =
     (Tables.User.filter(_.henkiloOid === henkiloOid) joinLeft Tables.UserDetails on (_.id === _.id)).result.headOption.run.map(userRowToUser)
 
-  def allUsers: Seq[User] = (Tables.User joinLeft Tables.UserDetails on (_.id === _.id)).result.run.map(userRowToUser)
+  def allUsers: Seq[AbstractUser] = (Tables.User joinLeft Tables.UserDetails on (_.id === _.id)).result.run.map(userRowToUser)
 
-  def upsertPartialUser(partialUser: User): Option[User] = {
+  def upsertPartialUser(partialUser: PartialUser): Option[AbstractUser] = {
     val upsertedUser = (Tables.User returning Tables.User).insertOrUpdate(partialUserToUserRow(partialUser)).run
     upsertedUser match {
-      case Some(r) => Some(User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid), r.uilang))
+      case Some(r) => Some(PartialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid), r.uilang))
       case None => None
     }
   }
 
-  def upsertUser(user: User): Option[User] = {
+  def upsertUser(user: User): Option[AbstractUser] = {
     val (u,d) = userToUserRow(user)
     try {
       val upsertedUser = (Tables.User returning Tables.User).insertOrUpdate(u).run
       upsertedUser match {
         case Some(newUser) => {
           val withCopiedId = d.copy(id = newUser.id)
-          val upsertedUserDetails = (Tables.UserDetails returning Tables.UserDetails).insertOrUpdate(withCopiedId).run
-          Some(userRowToUser(newUser,upsertedUserDetails))
+          val upsertedUserDetails: Option[Tables.UserDetailsRow] = (Tables.UserDetails returning Tables.UserDetails).insertOrUpdate(withCopiedId).run
+          (upsertedUserDetails) match {
+            case Some(upsertedUserDetails) => Some(userRowAndDetailsToUser(newUser, upsertedUserDetails))
+            case _ => Some(userRowToUser(newUser, None))
+          }
         }
         case None => None
       }
@@ -67,7 +70,7 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   def findApplicationObjects(user: User): Seq[ApplicationObject] =
     Tables.ApplicationObject.filter(_.henkiloOid === user.personOid).result.run.map(aoRowToAo)
 
-  def findApplicationObjectByHakukohdeOid(user: User, hakukohdeOid: String) =
+  def findApplicationObjectByHakukohdeOid(user: AbstractUser, hakukohdeOid: String) =
     Tables.ApplicationObject.filter(_.henkiloOid === user.personOid).filter(_.hakukohdeOid === hakukohdeOid).result.headOption.run.map(aoRowToAo)
 
   def upsertApplicationObject(applicationObject: ApplicationObject) =
@@ -76,10 +79,10 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   def findPaymentByHenkiloOidAndHakemusOid(henkiloOid: String, hakemusOid: String): Option[Payment] =
     Tables.Payment.filter(_.henkiloOid === henkiloOid).filter(_.hakemusOid === hakemusOid).sortBy(_.tstamp.desc).result.headOption.run.map(paymentRowToPayment)
 
-  def findPaymentByOrderNumber(user: User, orderNumber: String): Option[Payment] =
+  def findPaymentByOrderNumber(user: AbstractUser, orderNumber: String): Option[Payment] =
     Tables.Payment.filter(_.henkiloOid === user.personOid).filter(_.orderNumber === orderNumber).sortBy(_.tstamp.desc).result.headOption.run.map(paymentRowToPayment)
 
-  def findPayments(user: User): Seq[Payment] =
+  def findPayments(user: AbstractUser): Seq[Payment] =
     Tables.Payment.filter(_.henkiloOid === user.personOid).sortBy(_.tstamp.desc).result.run.map(paymentRowToPayment)
 
   def upsertPayment(payment: Payment): Option[Payment] =
@@ -90,7 +93,7 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
   def insertSyncRequest(user: User, ao: ApplicationObject) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
     SynchronizationRow(useAutoIncrementId, now, user.personOid.get, Some(ao.hakuOid), Some(ao.hakukohdeOid), SynchronizationStatus.todo.toString, None, None)).run
 
-  def insertPaymentSyncRequest(user:User, payment: Payment) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
+  def insertPaymentSyncRequest(user:AbstractUser, payment: Payment) = (Tables.Synchronization returning Tables.Synchronization).insertOrUpdate(
     SynchronizationRow(useAutoIncrementId, now, user.personOid.get, None, None, SynchronizationStatus.todo.toString, None, payment.hakemusOid)).run
 
   def markSyncDone(id: Int): Unit = findSynchronizationRow(id).foreach(markSyncDone)
@@ -133,7 +136,7 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
 
   private def aoToAoRow(e: ApplicationObject) = ApplicationObjectRow(e.id.getOrElse(useAutoIncrementId), e.personOid, e.hakukohdeOid, e.educationLevel, e.educationCountry, e.hakuOid)
 
-  private def partialUserToUserRow(u: User): Tables.UserRow = {
+  private def partialUserToUserRow(u: PartialUser): Tables.UserRow = {
     val id = u.id.getOrElse(useAutoIncrementId)
     UserRow(id, u.personOid, u.email, u.idpentityid.toString, u.uiLang)
   }
@@ -144,11 +147,11 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
       u.lastName.get, u.gender.get, new sql.Date(u.birthDate.get.getTime), u.personId, u.nativeLanguage.get, u.nationality.get))
   }
 
-  private def userRowToUser(u: (Tables.UserRow, Option[Tables.UserDetailsRow])) = {
+  private def userRowToUser(u: (Tables.UserRow, Option[Tables.UserDetailsRow])): AbstractUser = {
     val r = u._1
     (u._2) match {
       case Some(details) => userRowAndDetailsToUser(r, details)
-      case _ => User.partialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid), r.uilang)
+      case _ => PartialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid), r.uilang)
     }
   }
 

@@ -97,8 +97,13 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
 
   private def continueWithTarjontaData(row: ApplicationObjectSyncRequest, as: ApplicationSystem) =
     db.findUserByOid(row.henkiloOid).foreach { (u) =>
-      db.findApplicationObjectByHakukohdeOid(u, row.hakukohdeOid)
-        .foreach(synchronizeWithData(row, as, u, db.findPayments(u)))
+      (u) match {
+        case u:User =>
+          db.findApplicationObjectByHakukohdeOid(u, row.hakukohdeOid)
+            .foreach(synchronizeWithData(row, as, u, db.findPayments(u)))
+        case u: PartialUser =>
+          logger.error("PartialUser in user sync loop!")
+      }
     }
 
   private def synchronizeWithData(row: ApplicationObjectSyncRequest, as: ApplicationSystem, u: User, payments: Seq[Payment])(ao: ApplicationObject) {

@@ -26,16 +26,22 @@ class FormRedirectServlet(config: Config, db: HakuperusteetDatabase, oppijanTunn
   get("/redirect") {
     failUnlessAuthenticated
 
-    val userData = userDataFromSession
-    val hakukohdeOid = params.get("hakukohdeOid").getOrElse(halt(409))
-    val applicationObjectForThisHakukohde = db.findApplicationObjectByHakukohdeOid(userDataFromSession, hakukohdeOid).getOrElse(halt(409))
-    val educationLevel = Some(applicationObjectForThisHakukohde.educationLevel).getOrElse(halt(409))
-    Try { tarjonta.getApplicationSystem(applicationObjectForThisHakukohde.hakuOid) } match {
-      case Success(as) => doRedirect(userData, applicationObjectForThisHakukohde, as, educationLevel)
-      case Failure(f) =>
-        logger.error("FormRedirectServlet throws", f)
+    (userDataFromSession) match {
+      case userData: User =>
+        val hakukohdeOid = params.get("hakukohdeOid").getOrElse(halt(409))
+        val applicationObjectForThisHakukohde = db.findApplicationObjectByHakukohdeOid(userDataFromSession, hakukohdeOid).getOrElse(halt(409))
+        val educationLevel = Some(applicationObjectForThisHakukohde.educationLevel).getOrElse(halt(409))
+        Try { tarjonta.getApplicationSystem(applicationObjectForThisHakukohde.hakuOid) } match {
+          case Success(as) => doRedirect(userData, applicationObjectForThisHakukohde, as, educationLevel)
+          case Failure(f) =>
+            logger.error("FormRedirectServlet throws", f)
+            halt(500)
+        }
+      case _ =>
+        logger.error("Session had no valid user for redirection!")
         halt(500)
     }
+
   }
 
   def doRedirect(userData: User, applicationObjectForThisHakukohde: ApplicationObject, as: ApplicationSystem, educationLevel : String): String = {

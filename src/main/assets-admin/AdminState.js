@@ -51,7 +51,7 @@ export function initAppState(props) {
         .filter(uniquePersonOid => uniquePersonOid ? true : false)
         .flatMap(uniquePersonOid => Bacon.fromPromise(HttpUtil.get(`/hakuperusteetadmin/api/v1/admin/${uniquePersonOid}`)))
         .merge(serverUpdatesBus)
-    const updateApplicationObjectS = updateRouteS.flatMap(userdata => Bacon.fromArray(userdata.applicationObject))
+    const updateApplicationObjectS = updateRouteS.flatMap(userdata => Bacon.fromArray(userdata.applicationObject ? userdata.applicationObject : []))
     const tarjontaS = updateApplicationObjectS.map(ao => ao.hakukohdeOid).flatMap(fetchFromTarjonta).toEventStream()
     const updateFieldS = dispatcher.stream(events.updateField).merge(serverUpdatesBus)
     const fieldValidationS = dispatcher.stream(events.fieldValidation)
@@ -112,6 +112,9 @@ export function initAppState(props) {
         return {...state, ['payments']: updatedPayments}
     }
     function onUpdateEducationForm(state, newAo) {
+        if(newAo == null) {
+            return {...state, ['applicationObjects']: []}
+        }
         function decorateWithErrors(a) {
             const aoFromServer = _.find(state.fromServer.applicationObject, ao => ao.id == newAo.id)
             return {...applicationObjectWithValidationErrors(_.isMatch(a, aoFromServer) ? withNoChanges(a) : withChanges(a))}
@@ -129,7 +132,7 @@ export function initAppState(props) {
     }
     function onUpdateUser(state, user) {
         const referenceUser = withPartialPersonId(decorateWithHasPersonId(user.user))
-        const fromServer = {['fromServer']: {...user, ['user']: referenceUser}}
+        const fromServer = {['fromServer']: {...user, ['user']: referenceUser}, ['partialUser']: referenceUser.partialUser}
         const payments = {['payments']: _.map(user.payments, withNoChanges)}
         const applicationObjects = {['applicationObjects']: _.map(user.applicationObject, withNoChanges)}
         return {...state,...withNoChanges(referenceUser),...payments,...applicationObjects,...fromServer}
