@@ -16,7 +16,7 @@ export default class EducationForm extends React.Component {
     const state = this.props.state
     const controller = this.props.controller
     const tarjonta = tarjontaForHakukohdeOid(state, state.hakukohdeOid)
-    const name = tarjonta.name
+    const name = getTarjontaNameOrFallback(tarjonta.name, resolveLang())
     const disabled = (validateEducationForm(state)) ? "" : "disabled"
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     return <form id="educationForm" onSubmit={controller.formSubmits}>
