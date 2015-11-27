@@ -12,7 +12,7 @@ object IDPEntityId extends Enumeration {
 case class User(id: Option[Int], personOid: Option[String], email: String, firstName: Option[String], lastName: Option[String], birthDate: Option[Date],
                 personId: Option[String], idpentityid: IDPEntityId, gender: Option[String], nativeLanguage: Option[String], nationality: Option[String],
                 uiLang: String) {
-  def fullName = s"$firstName $lastName"
+  def fullName = s"${firstName.getOrElse("")} ${lastName.getOrElse("")}"
 }
 
 object User {
