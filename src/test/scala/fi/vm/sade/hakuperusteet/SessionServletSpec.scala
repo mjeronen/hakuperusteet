@@ -36,7 +36,7 @@ class SessionServletSpec extends FunSuite with ScalatraSuite with ServletTestDep
   test("valid emailToken") {
     post("/emailToken", emailTokenPayload) {
       status should equal (200)
-      body should equal ("""{"token":"dummyLoginToken"}""")
+      body should equal ("""{"status":"ok"}""")
     }
   }
 
