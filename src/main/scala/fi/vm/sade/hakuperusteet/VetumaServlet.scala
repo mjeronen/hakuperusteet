@@ -41,7 +41,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
 
   private def createVetumaWithHref(href: String, params: Option[String]) = {
     val userData = userDataFromSession
-    val language = "en"
+    val language = getUserLang(userData)
     val referenceNumber = referenceNumberFromPersonOid(userData.personOid.getOrElse(halt(500)))
     val orderNro = referenceNumber + db.nextOrderNumber()
     val paymCallId = "PCID" + orderNro
