@@ -81,7 +81,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
     Try(oppijanTunnistus.createToken(email, hakukohdeOid, uiLang)) match {
       case Success(token) =>
         logger.info(s"Sending token to $email with value $token")
-        halt(status = 200, body = compact(render(Map("token" -> token))))
+        halt(status = 200, body = compact(render(Map("status" -> "ok"))))
       case Failure(f) => logAndHalt("Oppijantunnistus.createToken error", f)
     }
 
