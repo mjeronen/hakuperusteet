@@ -13,8 +13,8 @@
       },
       "sv": {
         "title": "opintopolku - Rekisteröinti onnistui",
-        "dear": "Dear",
-        "txt": "<p>Your registration was successful. Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
+        "dear": "Hej",
+        "txt": "<p>Registreringen lyckades. Använd samma e-postadress då du söker till andra ansökningsmål i Studieinfo.</p><p>Svara inte på detta meddelande – det har skickats automatiskt.</p>"
       }
     },
     "receipt": {
