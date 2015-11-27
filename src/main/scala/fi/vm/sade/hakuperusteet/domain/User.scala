@@ -22,5 +22,8 @@ case class PartialUser(id: Option[Int], personOid: Option[String], email: String
 case class User(id: Option[Int], personOid: Option[String], email: String, firstName: Option[String], lastName: Option[String], birthDate: Option[Date],
                 personId: Option[String], idpentityid: IDPEntityId, gender: Option[String], nativeLanguage: Option[String], nationality: Option[String],
                 uiLang: String) extends AbstractUser {
-  def fullName = s"$firstName $lastName"
+  def fullName = (firstName, lastName) match {
+    case (Some(firstName), Some(lastName)) => s"$firstName $lastName"
+    case _ => "<no name>"
+  }
 }
