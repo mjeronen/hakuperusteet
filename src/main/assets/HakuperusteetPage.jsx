@@ -4,7 +4,7 @@ import _ from 'lodash'
 import './css/props.less'
 import '../assets-common/css/hakuperusteet.less'
 
-import {showUserDataForm, showEducationForm, showVetumaStart, showHakuList} from './AppLogic.js'
+import {showUserDataForm, showEducationForm, showVetumaStart, showHakuList, isHakuAppView} from './AppLogic.js'
 import Header from './Header.jsx'
 import Session from './session/Session.jsx'
 import ProgramInfo from './programinfo/ProgramInfo.jsx'
@@ -38,7 +38,7 @@ export default class HakuperusteetPage extends React.Component {
       <Footer />
       </div>
     }
-    const content = _.isEmpty(state.hakemusOid) ? hakuperusteetContent() : hakuAppContent()
+    const content = isHakuAppView(state) ? hakuAppContent() : hakuperusteetContent()
 
     return <div>
       <Header controller={controller} />

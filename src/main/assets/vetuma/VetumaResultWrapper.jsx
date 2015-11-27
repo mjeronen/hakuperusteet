@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 var ReactTransitionGroup = React.addons.CSSTransitionGroup
 
-import {showVetumaResultOk, showVetumaResultCancel, showVetumaResultError} from '../AppLogic.js'
+import {showVetumaResultOk, showVetumaResultCancel, showVetumaResultError, isHakuAppView} from '../AppLogic.js'
 
 import VetumaResultOk from './VetumaResultOk.jsx'
 import VetumaResultCancel from './VetumaResultCancel.jsx'
@@ -12,7 +12,7 @@ import VetumaResultError from './VetumaResultError.jsx'
 
 export default class VetumaResultWrapper extends React.Component {
   selectMessage(state) {
-    if (showVetumaResultOk(state)) return <VetumaResultOk state={state} />
+    if (showVetumaResultOk(state) && !isHakuAppView(state)) return <VetumaResultOk state={state} />
     if (showVetumaResultCancel(state)) return <VetumaResultCancel state={state} />
     if (showVetumaResultError(state)) return  <VetumaResultError state={state} />
     return null

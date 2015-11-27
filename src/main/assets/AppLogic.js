@@ -71,6 +71,10 @@ export function showVetumaStart(state) {
       (hasEducationForSelectedHakukohdeOid(state) && paymentRequiredWithCurrentHakukohdeOid(state)))
 }
 
+export function isHakuAppView(state) {
+  return !_.isEmpty(state.hakemusOid)
+}
+
 export function showHakuList(state) {
   return !fatalError(state) && hasUserData(state) && (
       (!hasSelectedHakukohde(state) && (hasValidPayment(state) || !paymentRequired(state))) ||
