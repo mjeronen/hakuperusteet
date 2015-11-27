@@ -6,7 +6,7 @@ import AjaxLoader from '../util/AjaxLoader.jsx'
 import {fetchUrlParamsAndRedirectPost} from '../util/FormUtils.js'
 import {translation, resolveLang} from '../../assets-common/translations/translations.js'
 
-import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
+import {tarjontaForHakukohdeOid, getTarjontaNameOrFallback} from "../util/TarjontaUtil.js"
 
 export default class HakuList extends React.Component {
   render() {
@@ -16,7 +16,7 @@ export default class HakuList extends React.Component {
 
       {[...state.sessionData.applicationObject].map((x, i) =>
         <div key={i}>
-          <p>{tarjontaForHakukohdeOid(state, x.hakukohdeOid).name[resolveLang()]}</p>
+          <p>{getTarjontaNameOrFallback(tarjontaForHakukohdeOid(state, x.hakukohdeOid).name,resolveLang())}</p>
           <form className="redirectToForm" onSubmit={fetchUrlParamsAndRedirectPost(state.properties.formRedirectUrl + "?hakukohdeOid=" + x.hakukohdeOid)} method="POST">
             <input type="submit" name="redirectToForm" value={translation("hakulist.submit")} />
             <AjaxLoader hide={true} />
