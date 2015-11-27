@@ -123,7 +123,7 @@ class VetumaServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus:
 
   private def sendReceipt(userData: User, payment: Payment) = {
     val p = ReceiptValues(userData.fullName, config.getString("vetuma.amount"), payment.reference)
-    emailSender.send(userData.email, Translate("email.receipt.", getUserLang(userData),".title"), EmailTemplate.renderReceipt(p, getUserLang(userData)))
+    emailSender.send(userData.email, Translate("email.receipt", getUserLang(userData),"title"), EmailTemplate.renderReceipt(p, getUserLang(userData)))
   }
 
   private def fetchNameFromTarjonta(hakukohdeOid: String) =

@@ -105,7 +105,7 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
 
   private def sendEmail(newUser: User) = {
     val p = WelcomeValues(newUser.fullName)
-    emailSender.send(newUser.email, Translate("email.welcome.",getUserLang(newUser),".title"), EmailTemplate.renderWelcome(p, getUserLang(newUser)))
+    emailSender.send(newUser.email, Translate("email.welcome",getUserLang(newUser),"title"), EmailTemplate.renderWelcome(p, getUserLang(newUser)))
   }
 
   def upsertUserToHenkilo(userData: User) = Try(henkiloClient.upsertHenkilo(IfGoogleAddEmailIDP(userData))) match {
