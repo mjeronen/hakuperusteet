@@ -186,9 +186,9 @@
         "sv": "Du behöver inte betala ansökningsavgiften på basen av din examens nivå."
       },
       "alreadyPaid": {
-        "en": "You have already paid the application fee of 100€.",
-        "fi": "Olet jo maksanut hakijamaksun 100€",
-        "sv": "Du har redan betalat ansökningsavgiften på 100€."
+        "en": "Thank you! You have paid the application fee for programmes starting in autumn semester 2016.",
+        "fi": "Kiitos! Hakemuksen käsittelymaksu on maksettu syyslukukaudella 2016 alkaviin koulutuksiin.",
+        "sv": "Tack! Du har redan betalat ansökningsavgiften på 100€."
       }
     }
   },
