@@ -22,8 +22,8 @@ export default class HakuperusteetPage extends React.Component {
     const controller = this.props.controller
     function hakuAppContent() {
       return <div className="content">
-        <HakuApp state={state} controller={controller} />
         <VetumaResultWrapper state={state}/>
+        <HakuApp state={state} controller={controller} />
         <Footer />
       </div>
     }
@@ -33,8 +33,8 @@ export default class HakuperusteetPage extends React.Component {
       { showUserDataForm(state) ? <UserDataForm state={state} controller={controller} /> : null}
       { showEducationForm(state) ? <EducationForm state={state} controller={controller} /> : null}
       { showVetumaStart(state) ? <VetumaStart state={state} /> : null}
-      { showHakuList(state) ? <HakuList state={state} /> : null}
       <VetumaResultWrapper state={state}/>
+      { showHakuList(state) ? <HakuList state={state} /> : null}
       <Footer />
       </div>
     }
