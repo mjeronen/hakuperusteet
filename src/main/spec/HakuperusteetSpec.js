@@ -236,7 +236,6 @@ describe('Haku-application landing page', () => {
 
   describe('Submit vetumaForm', () => {
     it('click submit should go to vetuma and return back with successful payment', clickField("input[name='submitVetuma']"))
-    it('should show successful payment as result', assertOneFound(".vetumaResult"))
     it('should show already paid', assertOneFound(".alreadyPaid"))
   })
 })
