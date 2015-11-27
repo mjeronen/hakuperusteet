@@ -2,17 +2,17 @@
   "email": {
     "welcome": {
       "fi": {
-        "title": "opintopolku - Rekisteröinti onnistui",
+        "title": "Opintopolku - Rekisteröinti onnistui",
         "dear": "Hei",
-        "txt": "<p>Rekisteröinti onnistui. TODO: APO Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
+        "txt": "<p>Rekisteröitymisesi onnistui. Käytä samaa sähköpostiosoitetta, kun haet muihin hakukohteisiin Opintopolussa.</p><p>Älä vastaa tähän viestiin - viesti on lähetetty automaattisesti.</p>"
       },
       "en": {
-        "title": "opintopolku - Rekisteröinti onnistui",
+        "title": "Studyinfo - Registration successful",
         "dear": "Dear",
         "txt": "<p>Your registration was successful. Please use the same email address when applying for other study programmes in Studyinfo.</p><p>This is an automatically generated email, please do not reply.</p>"
       },
       "sv": {
-        "title": "opintopolku - Rekisteröinti onnistui",
+        "title": "Studieinfo - Registreringen lyckades",
         "dear": "Hej",
         "txt": "<p>Registreringen lyckades. Använd samma e-postadress då du söker till andra ansökningsmål i Studieinfo.</p><p>Svara inte på detta meddelande – det har skickats automatiskt.</p>"
       }
@@ -26,7 +26,7 @@
         "txt3": ". Samalla maksulla voit hakea muihinkin syyslukukaudella 2016 alkaviin koulutuksiin. Maksu on voimassa lukukauden ajan. Huomaa, että suomalaisissa korkeakouluissa on yleensä vain kaksi lukukautta, syyslukukausi ja kevätlukukausi.</p><p>Älä vastaa tähän viestiin - viesti on lähetetty automaattisesti.</p>"
       },
       "en": {
-        "title": "Studyinfo: Your payment has been received",
+        "title": "Studyinfo - Your payment has been received",
         "dear": "Dear",
         "txt1": "<p>We have received your payment of the application fee of ",
         "txt2": "€ with payment reference number ",
