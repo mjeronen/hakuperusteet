@@ -104,7 +104,7 @@ export function initAppState(props) {
   }
 
   function onLogOut(state, _) {
-    return {...state, ['sessionData']: {}}
+    window.location.reload()
   }
 
   function onChangeLang(state, {field, lang}) {
