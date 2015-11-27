@@ -103,8 +103,14 @@ export function initAppState(props) {
     return {...state, [field]: value}
   }
 
-  function onLogOut(state, _) {
-    window.location.reload()
+  function onLogOut() {
+    if (_.isEmpty(parseAoId())) {
+      // If no direct AO in link -> redirect to frontpage
+      window.location = '/hakuperusteet/';
+    }
+    else {
+      window.location.reload()
+    }
   }
 
   function onChangeLang(state, {field, lang}) {
