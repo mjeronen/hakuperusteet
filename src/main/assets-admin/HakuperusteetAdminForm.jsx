@@ -5,6 +5,7 @@ import EducationForm from './education/EducationForm.jsx'
 import UserDataForm from './userdata/UserDataForm.jsx'
 import PartialUserDataForm from './userdata/PartialUserDataForm.jsx'
 import PaymentForm from './payment/PaymentForm.jsx'
+import PartialUserPaymentForm from './payment/PartialUserPaymentForm.jsx'
 
 export default class HakuperusteetAdminForm extends React.Component {
     constructor(props) {
@@ -23,6 +24,10 @@ export default class HakuperusteetAdminForm extends React.Component {
             if(state.partialUser) {
                 return <section className="main-content oppija">
                     <PartialUserDataForm state={state} controller={controller} />
+                    <h3>{paymentsTitle}</h3>
+                    {payments.map((payment,i) => {
+                      return <PartialUserPaymentForm key={i} state={state} controller={controller} payment={payment}/>
+                      })}
                 </section>
             }
             return <section className="main-content oppija">

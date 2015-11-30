@@ -10,7 +10,7 @@ import {requiredField} from '../../assets/util/FieldValidator.js'
 import {validatePayment} from '../util/PaymentValidator.js'
 import {translation} from '../../assets-common/translations/translations.js'
 
-export default class PaymentForm extends React.Component {
+export default class PartialUserPaymentForm extends React.Component {
   constructor(props) {
     super()
     this.id = "payments"
@@ -29,13 +29,6 @@ export default class PaymentForm extends React.Component {
     const formId = "payment_" + payment.id
     const statusId = "paymentStatus_" + payment.id
 
-    const disabled = (validatePayment(payment) && !requiredField(payment, "noChanges")) ? undefined : "disabled"
-    const errors = requiredField(payment, "noChanges") ? <div className="userDataFormRow">
-      <span className="error">Lomakkeella ei ole muuttuneita tietoja</span>
-    </div> : <div className="userDataFormRow">
-                      { requiredField(payment, "status") ? <span className="error">Maksun tila on pakollinen tieto</span> : null}
-    </div>
-
     return <form id={formId} onSubmit={controller.formSubmits}>
       <div className="userDataFormRow">
         <label htmlFor={this.id}>Aikaleima</label>
@@ -47,17 +40,9 @@ export default class PaymentForm extends React.Component {
       </div>
       {payment.hakemusOid ? <div className="userDataFormRow"><label htmlFor={statusId}>Hakemus OID</label><span>{payment.hakemusOid}</span></div> : null}
       <div className="userDataFormRow">
-          <label htmlFor={statusId}>Maksun tila</label>
-          <select id={statusId} name="status" onChange={this.changes.bind(this, payment)}  onBlur={this.changes.bind(this, payment)} value={payment.status}>
-            {result}
-          </select>
+        <label htmlFor={statusId}>Maksun tila</label>
+        <span>{payment.status}</span>
       </div>
-      <div className="userDataFormRow">
-        <input type="submit" name="submit" value="Submit" disabled={disabled} />
-        <AjaxLoader hide={true} />
-        <span className="serverError general hide">{translation("errors.server.unexpected")}</span>
-      </div>
-      {errors}
     </form>
   }
 
