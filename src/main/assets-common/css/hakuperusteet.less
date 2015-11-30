@@ -39,14 +39,19 @@ body {
     max-width: @pageWidth;
     align-items: flex-start;
   }
+  margin: auto;
+  max-width: @pageWidth;
 }
 
 #header {
   width: 100%;
   height: 90px;
   background-color: #149ECB;
+  display: -ms-flexbox;
   display: flex;
   flex-direction: column;
+  -ms-flex-pack: center;
+  -ms-flex-align: center;
   align-items: center;
   justify-content: center;
   .headerContent {
@@ -304,6 +309,10 @@ select {
 
 .hakuList {
   width: @pageWidth;
+}
+
+img {
+  border: 0;
 }
 
 footer {
