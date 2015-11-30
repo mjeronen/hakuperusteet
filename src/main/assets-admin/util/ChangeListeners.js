@@ -10,11 +10,13 @@ export function initAdminChangeListeners(dispatcher, events) {
   }
 
   function pushPaymentFormChanges(payment, e) {
-    dispatcher.push(events.updatePaymentForm, {...payment, ...valueEventToObject(e)})
+    const eventObj = valueEventToObject(e)
+    dispatcher.push(events.updatePaymentForm, {...payment, ...eventObj})
   }
 
   function pushEducationFormChanges(ao, e) {
-    dispatcher.push(events.updateEducationForm, {...ao, ...valueEventToObject(e)})
+    const eventObj = valueEventToObject(e)
+    dispatcher.push(events.updateEducationForm, {...ao, ...eventObj})
   }
 
   function valueEventToObject(e) {

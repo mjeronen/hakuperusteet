@@ -26,7 +26,9 @@ const events = {
 }
 
 export function changeListeners() {
-    return {...initChangeListeners(dispatcher, events), ...initAdminChangeListeners(dispatcher, events)}
+    const changeListeners = initChangeListeners(dispatcher, events)
+    const adminChangeListeners = initAdminChangeListeners(dispatcher, events)
+    return {...changeListeners, ...adminChangeListeners}
 }
 
 export function initAppState(props) {
@@ -106,7 +108,7 @@ export function initAppState(props) {
     function onUpdatePaymentForm(state, payment) {
         function decorateWithErrors(pp) {
             const pFromServer = _.find(state.fromServer.payments, p => p.id == payment.id)
-            return {...paymentWithValidationErrors(_.isMatch(pp, pFromServer) ? withNoChanges(pp) : withChanges(pp))}
+            return paymentWithValidationErrors(_.isMatch(pp, pFromServer) ? withNoChanges(pp) : withChanges(pp))
         }
         var updatedPayments = _.map(state.payments, (oldP => oldP.id == payment.id ? decorateWithErrors(payment) : oldP))
         return {...state, ['payments']: updatedPayments}
@@ -117,7 +119,7 @@ export function initAppState(props) {
         }
         function decorateWithErrors(a) {
             const aoFromServer = _.find(state.fromServer.applicationObject, ao => ao.id == newAo.id)
-            return {...applicationObjectWithValidationErrors(_.isMatch(a, aoFromServer) ? withNoChanges(a) : withChanges(a))}
+            return applicationObjectWithValidationErrors(_.isMatch(a, aoFromServer) ? withNoChanges(a) : withChanges(a))
         }
         var updatedAos = _.map(state.applicationObjects, (oldAo => oldAo.id == newAo.id ? decorateWithErrors(newAo) : oldAo))
         return {...state, ['applicationObjects']: updatedAos}
@@ -135,11 +137,13 @@ export function initAppState(props) {
         const fromServer = {['fromServer']: {...user, ['user']: referenceUser}, ['partialUser']: referenceUser.partialUser}
         const payments = {['payments']: _.map(user.payments, withNoChanges)}
         const applicationObjects = {['applicationObjects']: _.map(user.applicationObject, withNoChanges)}
-        return {...state,...withNoChanges(referenceUser),...payments,...applicationObjects,...fromServer}
+        const referenceUserWithNoChanges = withNoChanges(referenceUser)
+        return {...state, ...referenceUserWithNoChanges, ...payments, ...applicationObjects, ...fromServer}
     }
     function onFieldValidation(state, {field, value}) {
         const newValidationErrors = parseNewValidationErrors(state, field, value)
-        return {...state, ['validationErrors']: {...newValidationErrors, ...validateIfNoChanges(state, state.fromServer.user)}}
+        const withoutChanges = validateIfNoChanges(state, state.fromServer.user)
+        return {...state, ['validationErrors']: {...newValidationErrors, ...withoutChanges}}
     }
     function fetchFromTarjonta(hakukohde) {
         return Bacon.fromPromise(HttpUtil.get(tarjontaUrl + "/" + hakukohde))
