@@ -77,7 +77,7 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
   private def handleHakuAppPostSuccess(row: HakuAppSyncRequest, state: PaymentState, response: http4s.Response): Unit = {
     val statusCode = response.status.code
     statusCode match {
-      case 200 =>
+      case 200 | 204 =>
         logger.info(s"Synced row id ${row.id} with Haku-App, henkiloOid ${row.henkiloOid}, hakemusOid ${row.hakemusOid} and payment state ${state}")
         db.markSyncDone(row.id)
       case 403 =>
@@ -120,7 +120,7 @@ class Synchronization(config: Config, db: HakuperusteetDatabase, tarjonta: Tarjo
 
   private def handlePostSuccess(row: ApplicationObjectSyncRequest, response: Response): Unit = {
     val statusCode = response.returnResponse().getStatusLine.getStatusCode
-    if (statusCode == 200) {
+    if (statusCode == 200 || statusCode == 204) {
       logger.info(s"Synced row id ${row.id}, henkiloOid ${row.henkiloOid}, hakukohdeoid ${row.hakukohdeOid}")
       db.markSyncDone(row.id)
     } else {
