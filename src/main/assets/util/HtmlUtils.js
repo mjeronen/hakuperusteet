@@ -19,8 +19,8 @@ export function mapAndSortKoodistoByLang(list, lang) {
         map((n) => n.name)[0];
   }
 
-  if(!list) {
-    console.log("POW! Koodisto list undefined.")
+  if(!list || !Array.isArray(list)) {
+    console.log("POW! Koodisto list undefined.", list)
     return []
   }
   return list.map((koodi) => {
