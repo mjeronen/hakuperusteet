@@ -4,9 +4,9 @@ import _ from 'lodash'
 
 import AjaxLoader from '../util/AjaxLoader.jsx'
 import {fetchUrlParamsAndRedirectPost} from '../util/FormUtils.js'
-import {translation, resolveLang} from '../../assets-common/translations/translations.js'
+import {translation, resolveLang, getTarjontaNameOrFallback} from '../../assets-common/translations/translations.js'
 
-import {tarjontaForHakukohdeOid, getTarjontaNameOrFallback} from "../util/TarjontaUtil.js"
+import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export default class HakuList extends React.Component {
   render() {

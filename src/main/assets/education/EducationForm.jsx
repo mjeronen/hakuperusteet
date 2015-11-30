@@ -8,15 +8,15 @@ import AjaxLoader from '../util/AjaxLoader.jsx'
 import EducationErrors from './EducationErrors.jsx'
 
 import {validateEducationForm} from './../util/FieldValidator.js'
-import {translation, resolveLang} from '../../assets-common/translations/translations.js'
-import {tarjontaForHakukohdeOid, getTarjontaNameOrFallback} from "../util/TarjontaUtil.js"
+import {translation, resolveLang, getTarjontaNameOrFallback} from '../../assets-common/translations/translations.js'
+import {tarjontaForHakukohdeOid} from "../util/TarjontaUtil.js"
 
 export default class EducationForm extends React.Component {
   render() {
     const state = this.props.state
     const controller = this.props.controller
     const tarjonta = tarjontaForHakukohdeOid(state, state.hakukohdeOid)
-    const name = getTarjontaNameOrFallback(tarjonta.name, resolveLang())
+    const name = getTarjontaNameOrFallback(tarjonta.name)
     const disabled = (validateEducationForm(state)) ? "" : "disabled"
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries
     return <form id="educationForm" onSubmit={controller.formSubmits}>

@@ -9,7 +9,7 @@ import AjaxLoader from '../util/AjaxLoader.jsx'
 
 import {requiredField} from '../../assets/util/FieldValidator.js'
 import {validateApplicationObject} from '../util/ApplicationObjectValidator.js'
-import {translation, resolveLang} from '../../assets-common/translations/translations.js'
+import {translation, resolveLang, getTarjontaNameOrFallback} from '../../assets-common/translations/translations.js'
 
 
 export default class EducationForm extends React.Component {
@@ -28,7 +28,7 @@ export default class EducationForm extends React.Component {
     const baseEducationOptions = allBaseEducations.filter(function(b) { return _.contains(baseEducationsForCurrent, b.id) })
     const levelResult = createSelectOptions(mapAndSortKoodistoByLang(baseEducationOptions, resolveLang()))
 
-    const name = tarjonta.name
+    const name = getTarjontaNameOrFallback(tarjonta.name, "fi")
     const disabled = (validateApplicationObject(ao) && !requiredField(ao, "noChanges")) ? undefined : "disabled"
 
     const countries = _.isUndefined(state.properties) ? [] : state.properties.countries

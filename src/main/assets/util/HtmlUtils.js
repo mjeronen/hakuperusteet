@@ -20,7 +20,6 @@ export function mapAndSortKoodistoByLang(list, lang) {
   }
 
   if(!list || !Array.isArray(list)) {
-    console.log("POW! Koodisto list undefined.", list)
     return []
   }
   return list.map((koodi) => {

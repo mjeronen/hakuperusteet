@@ -6,7 +6,3 @@ export function tarjontaForHakukohdeOid(state, hakukohdeOid) {
   if (_.isUndefined(state.tarjonta[hakukohdeOid])) return emptyTarjonta
   return state.tarjonta[hakukohdeOid]
 }
-
-export function getTarjontaNameOrFallback(names, lang){
-  return names[lang] || names.fi || names.sv || names.en || names
-}

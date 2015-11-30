@@ -15,9 +15,8 @@ export default class Nationality extends React.Component {
   }
 
   render() {
-    const countries = _.isEmpty(this.props.countries) ? {} : this.props.countries
     const selected = _.isEmpty(this.props.state) ? null : this.props.state[this.id]
-    const result = createSelectOptions(mapAndSortKoodistoByLang(countries, resolveLang()))
+    const result = createSelectOptions(mapAndSortKoodistoByLang(this.props.countries, resolveLang()))
 
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>{translation("title.nationality") + " *"}</label>

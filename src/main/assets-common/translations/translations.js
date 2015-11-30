@@ -15,8 +15,8 @@ export function translation(key, lang = resolveLang()) {
     }
 }
 
-export function resolveMap(map) {
-    return map[resolveLang()] || map["en"] || map["fi"] || map["sv"]
+export function getTarjontaNameOrFallback(names, lang = resolveLang()){
+    return names[lang] || names.fi || names.sv || names.en || names
 }
 
 export function setLang(val) {

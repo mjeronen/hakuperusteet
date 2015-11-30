@@ -15,9 +15,8 @@ export default class NativeLanguage extends React.Component {
   }
 
   render() {
-    const languages = _.isEmpty(this.props.languages) ? {} : this.props.languages
     const selected = _.isEmpty(this.props.state) ? null : this.props.state[this.id]
-    const result = createSelectOptions(mapAndSortKoodistoByLang(languages, resolveLang()))
+    const result = createSelectOptions(mapAndSortKoodistoByLang( this.props.languages, resolveLang()))
 
     return <div className="userDataFormRow">
       <label htmlFor={this.id}>{translation("title.native.language")  + " *"}</label>
