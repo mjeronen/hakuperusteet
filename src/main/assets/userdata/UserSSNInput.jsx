@@ -19,7 +19,7 @@ export default class UserSSNInput extends React.Component {
   }
 
   render() {
-    const hasPersonId = (this.props.state.hasPersonId == true) ? true : false
+    const hasPersonId = this.props.state.hasPersonId == true
     const disabled = hasPersonId ? "" : "disabled"
     const checked = hasPersonId ? true : null
     return <div className="userDataFormRow">
