@@ -53,17 +53,20 @@ export function hasAuthenticationError(state) {
 }
 
 export function showUserDataForm(state) {
-  return !fatalError(state) && !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && _.isUndefined(state.sessionData.user)
+  return !fatalError(state) && !_.isUndefined(state.sessionData) && !_.isUndefined(state.sessionData.session) && (_.isUndefined(state.sessionData.user) || isPartialUser(state))
 }
 
 export function showEducationForm(state) {
-  return !fatalError(state) && hasUserData(state) && hasSelectedHakukohde(state) && !hasEducationForSelectedHakukohdeOid(state)
+  return !fatalError(state) && !isPartialUser(state) && hasUserData(state) && hasSelectedHakukohde(state) && !hasEducationForSelectedHakukohdeOid(state)
 }
 function hasNoValidPayment(state) {
   return _.all(state.sessionData.payment, function(p) { return p.status != "ok"})
 }
 export function showVetumaStartForHakemus(state) {
   return !fatalError(state) && hasUserData(state) && hasNoValidPayment(state)
+}
+export function isPartialUser(state) {
+  return hasUserData(state) && state.sessionData.user.partialUser
 }
 export function showVetumaStart(state) {
   return !fatalError(state) && hasUserData(state) && hasNoValidPayment(state) && (

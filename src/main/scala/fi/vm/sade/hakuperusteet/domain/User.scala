@@ -9,6 +9,8 @@ object IDPEntityId extends Enumeration {
   val google, oppijaToken = Value
 }
 trait AbstractUser {
+  def id: Option[Int]
+  def idpentityid: IDPEntityId
   def email: String
   def fullName: String
   def personOid: Option[String]

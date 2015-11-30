@@ -93,10 +93,21 @@ class SessionServlet(config: Config, db: HakuperusteetDatabase, oppijanTunnistus
   def createNewUser(session: Session, userData: User) = {
     logger.info(s"Updating userData: $userData")
     val newUser = upsertUserToHenkilo(userData)
-    val userWithId = db.upsertUser(newUser)
-    sendEmail(newUser)
-    AuditLog.auditPostUserdata(userData)
-    halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, List.empty, List.empty))))
+    db.findUser(newUser.email) match {
+      case Some(u : User) =>
+        logger.error("Updating existing user data is not allowed!")
+        halt(500)
+      case Some(u: PartialUser) =>
+        val userWithId = db.insertUserDetails(userData.copy(id = u.id))
+        sendEmail(newUser)
+        AuditLog.auditPostUserdata(userData)
+        halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, List.empty, List.empty))))
+      case None =>
+        val userWithId = db.upsertUser(newUser)
+        sendEmail(newUser)
+        AuditLog.auditPostUserdata(userData)
+        halt(status = 200, body = write(UserDataResponse("sessionData", SessionData(session, userWithId, List.empty, List.empty))))
+    }
   }
 
   def addNewEducation(session: Session, userData: User, education: ApplicationObject) = {

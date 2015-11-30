@@ -44,18 +44,29 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
     }
   }
 
+  private def upsertUserDetails(user: Tables.UserRow, details: Tables.UserDetailsRow) = {
+    val upsertedUserDetails: Option[Tables.UserDetailsRow] = (Tables.UserDetails returning Tables.UserDetails).insertOrUpdate(details).run
+    (upsertedUserDetails) match {
+      case Some(upsertedUserDetails) => Some(userRowAndDetailsToUser(user, upsertedUserDetails))
+      case _ => Some(userRowToUser(user, None))
+    }
+  }
+  def insertUserDetails(user: User) = {
+    val (u,d) = userToUserRow(user)
+    val upsertedUserDetails: Option[Tables.UserDetailsRow] = (Tables.UserDetails returning Tables.UserDetails).insertOrUpdate(d).run
+    (upsertedUserDetails) match {
+      case Some(upsertedUserDetails) => Some(abstractUserAndDetailsToUser(user, upsertedUserDetails))
+      case _ => Some(user)
+    }
+  }
   def upsertUser(user: User): Option[AbstractUser] = {
     val (u,d) = userToUserRow(user)
     try {
       val upsertedUser = (Tables.User returning Tables.User).insertOrUpdate(u).run
       upsertedUser match {
         case Some(newUser) => {
-          val withCopiedId = d.copy(id = newUser.id)
-          val upsertedUserDetails: Option[Tables.UserDetailsRow] = (Tables.UserDetails returning Tables.UserDetails).insertOrUpdate(withCopiedId).run
-          (upsertedUserDetails) match {
-            case Some(upsertedUserDetails) => Some(userRowAndDetailsToUser(newUser, upsertedUserDetails))
-            case _ => Some(userRowToUser(newUser, None))
-          }
+          val detailsWithCopiedId: Tables.UserDetailsRow = d.copy(id = newUser.id)
+          upsertUserDetails(newUser, detailsWithCopiedId)
         }
         case None => None
       }
@@ -154,6 +165,8 @@ case class HakuperusteetDatabase(db: DB) extends LazyLogging {
       case _ => PartialUser(Some(r.id), r.henkiloOid, r.email, IDPEntityId.withName(r.idpentityid), r.uilang)
     }
   }
+  private def abstractUserAndDetailsToUser(r: AbstractUser, d: Tables.UserDetailsRow): User =
+    User(r.id, r.personOid, r.email, Some(d.firstname), Some(d.lastname), Some(d.birthdate), d.personid, r.idpentityid, Some(d.gender), Some(d.nativeLanguage), Some(d.nationality), r.uiLang)
 
   private def userRowAndDetailsToUser(r: Tables.UserRow, d: Tables.UserDetailsRow): User =
    User(Some(r.id), r.henkiloOid, r.email, Some(d.firstname), Some(d.lastname), Some(d.birthdate), d.personid, IDPEntityId.withName(r.idpentityid), Some(d.gender), Some(d.nativeLanguage), Some(d.nationality), r.uilang)

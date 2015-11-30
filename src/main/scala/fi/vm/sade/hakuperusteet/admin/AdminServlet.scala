@@ -216,7 +216,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
   error { case e: Throwable => logger.error("uncaught exception", e) }
 
   private def upsertAndAudit(userData: User) = {
-    db.upsertUser(userData)
+    db.insertUserDetails(userData)
     AuditLog.auditAdminPostUserdata(user.oid, userData)
     syncAndWriteResponse(userData)
   }
@@ -242,6 +242,7 @@ class AdminServlet(val resourcePath: String, protected val cfg: Config, oppijanT
       case Some(oldUserData: User) =>
         val updatedUserData = oldUserData.copy(firstName = newUserData.firstName, lastName = newUserData.lastName, birthDate = newUserData.birthDate, personId = newUserData.personId, gender = newUserData.gender, nativeLanguage = newUserData.nativeLanguage, nationality = newUserData.nationality)
         saveUpdatedUserData(updatedUserData)
+
       case _ => halt(404)
     }
   }

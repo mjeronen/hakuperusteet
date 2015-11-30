@@ -14,7 +14,8 @@ export function submitUserDataToServer(state) {
         gender: state.gender,
         nativeLanguage: state.nativeLanguage,
         nationality: state.nationality,
-        idpentityid: state.idpentityid
+        idpentityid: state.idpentityid,
+        uiLang: state.uiLang
     }
 
     if (!_.isEmpty(state.personId) && state.hasPersonId) {
