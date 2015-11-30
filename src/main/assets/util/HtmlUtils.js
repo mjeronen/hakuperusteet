@@ -21,7 +21,7 @@ export function mapAndSortKoodistoByLang(list, lang) {
 
   if(!list) {
     console.log("POW! Koodisto list undefined.")
-    return ""
+    return []
   }
   return list.map((koodi) => {
     var value = findNameByLang(koodi, lang) || findNameByLang(koodi, "en") || findNameByLang(koodi, "fi") || findNameByLang(koodi, "sv");
