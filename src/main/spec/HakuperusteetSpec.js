@@ -240,6 +240,57 @@ describe('Haku-application landing page', () => {
   })
 })
 
+describe('Creating "ulkolomake" with partially generated user', () => {
+  before(openPage("/hakuperusteet/ao/1.2.246.562.20.31077988074#/token/hakuApp", hakuperusteetLoaded))
+
+  it('should show userDataForm', assertOneFound("#userDataForm"))
+
+  describe('Insert data', () => {
+    it('initially submit should be disabled', assertSubmitDisabled)
+    it('initially show all missing errors', assertElementsFound("#userDataForm .error", 6))
+
+    it('insert firstName', setField("#firstName", "Haku"))
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('insert lastName', setField("#lastName", "App"))
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('insert birthDate', setField("#birthDate", "15051979"))
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('select gender', clickField("#gender-male"))
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('select nativeLanguage', setField("#nativeLanguage", "FI"))
+    it('submit should be disabled', assertSubmitDisabled)
+
+    it('select nationality', setField("#nationality", "246"))
+    it('submit should be enabled', assertSubmitEnabled)
+    it('should not show missing errors', assertNotFound("#userDataForm .error"))
+  })
+
+  describe('Submit userDataForm', () => {
+    it('click submit should post userdata', clickField("input[name='submit']"))
+    it('should open educationForm after submit', assertOneFound("#educationForm"))
+
+    describe('Insert education data', () => {
+      it('select educationLevel discretionary', setField("#educationLevel", "100"))
+      it('select educationCountry - Solomin Islands', setField("#educationCountry", "090"))
+      it('submit should be enabled', assertSubmitEnabled)
+      it('should not show missing errors', assertNotFound("#educationForm .error"))
+      it('paymentRequired should be visible', assertOneFound(".paymentRequired"))
+      it('noPaymentRequired should be hidden', assertNotFound(".noPaymentRequired"))
+    })
+
+    describe('Submit educationForm', () => {
+      it('click submit should post educationdata', clickField("input[name='submit']"))
+      it('should show to application objects on hakulist page', assertElementsFound(".redirectToForm", 1))
+    })
+  })
+
+
+})
+
 function assertSubmitDisabled() { return S2("input[name='submit']").then(expectToBeDisabled).then(done).catch(done) }
 function assertSubmitEnabled() { return S2("input[name='submit']").then(expectToBeEnabled).then(done).catch(done)}
 function assertOneFound(selector) { return () => { return S2(selector).then(expectElementsFound(1)).then(done).catch(done) }}
