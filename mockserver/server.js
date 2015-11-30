@@ -203,6 +203,10 @@ app.get('/ryhmasahkoposti-service/j_spring_cas_security_check', function(req, re
   res.append('Set-Cookie', 'JSESSIONID=foobar-123');
   res.send({});
 });
+app.get('/haku-app/j_spring_cas_security_check', function(req, res){
+  res.append('Set-Cookie', 'JSESSIONID=foobar-123');
+  res.send({});
+});
 var appPort = process.env.PORT || 3000
 console.log("Mock server listening " + appPort)
 app.listen(appPort);

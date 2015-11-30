@@ -18,7 +18,7 @@ object HakuAppClient {
     val username = c.getString("hakuperusteet.user")
     val password = c.getString("hakuperusteet.password")
     val casClient = new CasClient(host, org.http4s.client.blaze.defaultClient)
-    val casParams = CasParams("/authentication-service", username, password)
+    val casParams = CasParams("/haku-app", username, password)
     new HakuAppClient(host, new CasAuthenticatingClient(casClient, casParams, org.http4s.client.blaze.defaultClient))
   }
 }
