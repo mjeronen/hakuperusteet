@@ -34,6 +34,8 @@ To start hakuperusteet after Postgres is up, run the following commands:
 
 By default hakuperusteet uses services from Luokka-environment.
 
+You can proceed to the form page by signing in with Google (the blue button).
+
 To start hakuperusteet-admin, run the following commands:
 
 1. `npm install`
